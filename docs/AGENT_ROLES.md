@@ -1,0 +1,106 @@
+# Agent Roles
+
+Every role in this playbook is a focused agent: it has one input artefact,
+one output artefact, one set of decisions it owns, and one explicit handoff.
+Roles never bleed into each other — if work crosses a boundary, the agent
+hands off rather than reaching across.
+
+This document is the role matrix. Each role has a longer brief in
+`agents/<role>.md`.
+
+---
+
+## Why roles instead of one big agent
+
+Single-agent systems suffer two failure modes:
+
+1. **Context bloat.** A general agent ends up holding the PRD, the design
+   spec, the architecture, the implementation, and the QA notes — and runs
+   out of context window mid-task.
+2. **Skill mixing.** Product judgement and security judgement use different
+   reasoning patterns. Mixing them in one prompt produces mediocre output
+   in both.
+
+Roles fix both: each agent owns a narrow surface, hands off through a
+template, and leaves the rest of the system out of its head.
+
+---
+
+## Role matrix
+
+| Role | Input | Output | Hand off to | Brief |
+|------|-------|--------|-------------|-------|
+| Orchestrator | Human ask | Slice plan | Engineering Manager | `agents/orchestrator.md` |
+| Engineering Manager | Slice plan | Scoped work item, gate map | PM or Architect | `agents/engineering-manager.md` |
+| Product Manager | Scoped work item | PRD | UX Researcher | `agents/product-manager.md` |
+| UX Researcher | PRD | Feature spec | UI Designer | `agents/ux-researcher.md` |
+| UI Designer | Feature spec | UX spec | Software Architect | `agents/ui-designer.md` |
+| Software Architect | Feature spec + UX spec | Tech spec | Frontend / Backend / AI | `agents/software-architect.md` |
+| Frontend Developer | Tech spec | Code + targeted tests | QA Evidence | `agents/frontend-developer.md` |
+| Backend Architect | Tech spec | Code + targeted tests | QA Evidence | `agents/backend-architect.md` |
+| AI Engineer | Tech spec | Code + evals + targeted tests | QA Evidence | `agents/ai-engineer.md` |
+| QA Evidence | Diff + tech spec | QA evidence doc | Security & Privacy | `agents/qa-evidence.md` |
+| Security & Privacy | Diff + QA evidence | Pass/fail + findings | Release Manager | `agents/security-privacy.md` |
+| Release Manager | All artefacts | Go/no-go + checklist | Post-Launch | `agents/release-manager.md` |
+| Post-Launch Learning | Released change | Post-launch review | Orchestrator | `agents/post-launch-learning.md` |
+
+---
+
+## Engineering Manager — first-class role
+
+The EM is not a coordinator that passes notes around. The EM is the agent
+that defends the team from itself: from doing too much in one slice, from
+skipping a gate because it feels slow, from letting one engineer's context
+window become the bottleneck.
+
+Concrete EM responsibilities:
+
+- **Scope.** Reject slices that are too large for one focused implementation
+  pass. Demand a split.
+- **Sequencing.** Decide which stages run, which are compressed, and in
+  what order. Document why.
+- **Context discipline.** Make sure each downstream agent gets only what it
+  needs — not the whole repo, not the whole PRD if a one-paragraph excerpt
+  will do.
+- **Gates.** Confirm the right release gates apply for this slice.
+- **Handoffs.** Verify each handoff artefact is complete before the next
+  agent starts, so they don't have to re-derive context.
+- **Escalation.** If a downstream agent is stuck because of missing input,
+  the EM is the agent that escalates back up the chain rather than letting
+  the engineer guess.
+
+The EM's output is captured in `templates/AGENT_HANDOFF_TEMPLATE.md`. See
+`agents/engineering-manager.md` and `prompts/em-scope-review.md`.
+
+---
+
+## Handoff principles
+
+Every handoff carries:
+
+1. **The artefact** (the thing the next agent reads).
+2. **The minimal repo context** (file paths, commands, test names — not
+   "the whole codebase").
+3. **The success criteria** (what "done" looks like for this stage).
+4. **The constraints inherited from prior stages** (e.g. "no submit code
+   path", "don't weaken the existing approval gate").
+
+If a handoff is missing any of these, the receiving agent rejects it back
+to the EM rather than guessing.
+
+---
+
+## Roles you will not see here
+
+This system intentionally does not include:
+
+- **Project manager** — the EM owns sequencing, the Orchestrator owns
+  conversation with the human.
+- **Generic developer** — front, back, and AI work have different
+  invariants (UI states vs. data integrity vs. eval safety). One generic
+  role would erase that.
+- **DevOps / SRE** — release behaviours that need them belong to the
+  Release Manager and the Security & Privacy Agent. Add them as a separate
+  role when production operations become first-class for the project.
+- **Solutions engineer / customer success** — out of scope for build-time.
+  Add a customer-feedback agent in post-launch when the product has users.
