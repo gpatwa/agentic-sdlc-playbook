@@ -7,16 +7,12 @@ engineering manager, product manager, designers, architects, developers, QA, sec
 release, and post-launch — collaborate to ship safe, high-quality software with a small
 human in the loop.
 
-> **This folder is designed to be extracted into a standalone reusable repo.**
-> Everything under `agentic-sdlc/` is intentionally project-agnostic so it can be
-> lifted as-is into a separate `agentic-sdlc` repository and consumed by multiple
-> products. Anything specific to a particular product lives in that product's
-> `.agentic/` folder (one per product) — never inside `agentic-sdlc/` itself.
-> When extracting, copy the entire `agentic-sdlc/` tree; leave `.agentic/` behind.
+> **This repository is the reusable source of truth for Agentic SDLC.**
+> Everything here is intentionally project-agnostic so it can be consumed by
+> multiple products. Each product repo should keep its own `.agentic/` folder
+> with project-specific context — never add product-specific files here.
 
-It lives inside `agentic-job-ops/` for now so it can evolve alongside its first user.
-The intent is to extract it into a standalone repo (`agentic-sdlc`) once the structure
-stabilises. Anything project-specific belongs in `.agentic/` (one folder per product).
+Agentic Job Ops is the first reference implementation.
 
 ## What's here
 
