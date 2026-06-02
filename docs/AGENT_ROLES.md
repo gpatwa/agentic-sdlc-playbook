@@ -113,6 +113,11 @@ This system intentionally does not include:
 - **Generic DevOps** — day-to-day platform plumbing belongs to the Backend
   Architect and the Release Manager. (Production *reliability* is now a
   first-class enterprise overlay role — see below.)
+- **Go-to-market / marketing / pricing** — out of build-time scope. The
+  Orchestrator surfaces market and customer signal (from the Market
+  Researcher and Customer Success) to the human, who owns positioning,
+  pricing, and launch. The playbook informs these decisions; it doesn't
+  make them.
 
 ### Enterprise overlay roles
 
