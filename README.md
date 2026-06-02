@@ -20,6 +20,7 @@ Agentic Job Ops is the first reference implementation.
 agentic-sdlc/
   README.md                        ← you are here
   docs/                            ← how the system works
+    ARCHITECTURE.md                ← system design + data flow (start here)
     AGENTIC_SDLC.md                ← end-to-end lifecycle
     AGENT_ROLES.md                 ← who does what, who hands off to whom
     RELEASE_GATES.md               ← merge / release / launch gates
