@@ -30,19 +30,23 @@ template, and leaves the rest of the system out of its head.
 
 | Role | Input | Output | Hand off to | Brief |
 |------|-------|--------|-------------|-------|
-| Orchestrator | Human ask | Slice plan | Engineering Manager | `agents/orchestrator.md` |
-| Engineering Manager | Slice plan | Scoped work item, gate map | PM or Architect | `agents/engineering-manager.md` |
+| Orchestrator | Human ask | Slice plan | Market Researcher or Engineering Manager | `agents/orchestrator.md` |
+| Market Researcher | Human ask + project context | Discovery brief | Engineering Manager (or PM if pre-approved) | `agents/market-researcher.md` |
+| Engineering Manager | Slice plan or discovery brief | Scoped work item, gate map | PM or Architect | `agents/engineering-manager.md` |
 | Product Manager | Scoped work item | PRD | UX Researcher | `agents/product-manager.md` |
 | UX Researcher | PRD | Feature spec | UI Designer | `agents/ux-researcher.md` |
 | UI Designer | Feature spec | UX spec | Software Architect | `agents/ui-designer.md` |
-| Software Architect | Feature spec + UX spec | Tech spec | Frontend / Backend / AI | `agents/software-architect.md` |
+| Software Architect | Feature spec + UX spec | Tech spec | Frontend / Backend / AI / ML, plus Analytics Engineer | `agents/software-architect.md` |
+| Analytics Engineer | PRD success criteria + tech spec | Event contract + metric definitions | Engineers + QA Evidence | `agents/analytics-engineer.md` |
 | Frontend Developer | Tech spec | Code + targeted tests | QA Evidence | `agents/frontend-developer.md` |
 | Backend Architect | Tech spec | Code + targeted tests | QA Evidence | `agents/backend-architect.md` |
 | AI Engineer | Tech spec | Code + evals + targeted tests | QA Evidence | `agents/ai-engineer.md` |
+| ML Engineer | Tech spec (modelling problem) | Model + dataset + model card + monitoring contract | Backend Architect + QA Evidence | `agents/ml-engineer.md` |
 | QA Evidence | Diff + tech spec | QA evidence doc | Security & Privacy | `agents/qa-evidence.md` |
 | Security & Privacy | Diff + QA evidence | Pass/fail + findings | Release Manager | `agents/security-privacy.md` |
 | Release Manager | All artefacts | Go/no-go + checklist | Post-Launch | `agents/release-manager.md` |
-| Post-Launch Learning | Released change | Post-launch review | Orchestrator | `agents/post-launch-learning.md` |
+| Data Analyst | Question + warehouse + experiment spec | Readout (experiment or post-launch) | Asking agent (PM, Post-Launch, Release Manager) | `agents/data-analyst.md` |
+| Post-Launch Learning | Released change + Data Analyst readout | Post-launch review | Orchestrator | `agents/post-launch-learning.md` |
 
 ---
 

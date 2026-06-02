@@ -12,22 +12,25 @@ a single bug. Skip stages only when the project pack explicitly allows it.
 ## Stages
 
 ```
-1. Intake          → Orchestrator
-2. Scope Review    → Engineering Manager
-3. Discovery       → Product Manager
-4. UX Research     → UX Researcher
-5. UI Design       → UI Designer
-6. Architecture    → Software Architect
-7. Implementation  → Frontend / Backend / AI Engineers
-8. QA Evidence     → QA Evidence Agent
-9. Security Review → Security & Privacy Agent
-10. Release Gate   → Release Manager
-11. Post-Launch    → Post-Launch Learning Agent
+ 1. Intake           → Orchestrator
+ 2. Market Research  → Market Researcher                       (optional)
+ 3. Scope Review     → Engineering Manager
+ 4. Discovery        → Product Manager
+ 5. UX Research      → UX Researcher
+ 6. UI Design        → UI Designer
+ 7. Architecture     → Software Architect
+       (in parallel) → Analytics Engineer  (instrumentation contract)
+ 8. Implementation   → Frontend / Backend / AI / ML Engineers
+ 9. QA Evidence      → QA Evidence Agent
+10. Security Review  → Security & Privacy Agent
+11. Release Gate     → Release Manager
+12. Post-Launch      → Post-Launch Learning Agent
+       (data spine)  → Data Analyst        (experiment + metric readout)
 ```
 
-Not every slice needs every stage. The Engineering Manager (stage 2) is
+Not every slice needs every stage. The Engineering Manager (stage 3) is
 responsible for compressing the lifecycle when the change is small (e.g. a
-trivial bug fix may collapse stages 3–6 into a single tech spec).
+trivial bug fix may collapse stages 2 and 4–7 into a single tech spec).
 
 ---
 
@@ -38,16 +41,37 @@ trivial bug fix may collapse stages 3–6 into a single tech spec).
 **Output:** A short slice plan that names which stages will run, which agents
 will be invoked, and what the success criteria are.
 
-**Hand off to:** Engineering Manager.
+**Hand off to:** Market Researcher (when problem validation is needed) or
+Engineering Manager (when the problem is already validated).
 
 The Orchestrator is the only agent that talks directly to the human user
 across stages. It owns the agenda for the slice. See `agents/orchestrator.md`.
 
 ---
 
-## 2. Scope Review — Engineering Manager
+## 2. Market Research — Market Researcher (optional)
 
-**Input:** Slice plan from the Orchestrator.
+**Input:** The original human ask plus project context.
+
+**Output:** Filled `templates/DISCOVERY_BRIEF_TEMPLATE.md` — problem
+hypothesis, evidence the problem is real, segment, today's workaround,
+competitive landscape, disconfirming evidence, and a recommendation
+(proceed / more discovery / drop).
+
+**Hand off to:** Engineering Manager (or directly to Product Manager when
+the EM has pre-approved a discovery loop).
+
+This stage is the first defence against building the wrong thing. Skip it
+when the problem is well-understood (a known bug, a defined gap with prior
+evidence) and run it when the ask is fuzzy, novel, or expensive. See
+`agents/market-researcher.md`.
+
+---
+
+## 3. Scope Review — Engineering Manager
+
+**Input:** Slice plan from the Orchestrator (or discovery brief from the
+Market Researcher).
 
 **Output:** A scoped, sized work item with explicit non-goals, gates, and
 the list of artefacts that will be produced. The EM is the first defender
@@ -64,7 +88,7 @@ corner. See `agents/engineering-manager.md`.
 
 ---
 
-## 3. Discovery — Product Manager
+## 4. Discovery — Product Manager
 
 **Input:** Scoped work item from the EM.
 
@@ -75,7 +99,7 @@ success criteria, scope, non-goals, open questions.
 
 ---
 
-## 4. UX Research — UX Researcher
+## 5. UX Research — UX Researcher
 
 **Input:** PRD.
 
@@ -86,7 +110,7 @@ journeys, edge cases, accessibility considerations.
 
 ---
 
-## 5. UI Design — UI Designer
+## 6. UI Design — UI Designer
 
 **Input:** Feature spec.
 
@@ -97,7 +121,7 @@ empty, error, success), copy, interaction notes, component reuse map.
 
 ---
 
-## 6. Architecture — Software Architect
+## 7. Architecture — Software Architect
 
 **Input:** Feature spec + UX spec.
 
@@ -105,17 +129,30 @@ empty, error, success), copy, interaction notes, component reuse map.
 service surface, adapter boundaries, integration points, rollback plan,
 audit/feedback/usage event additions.
 
-**Hand off to:** Frontend / Backend / AI Engineers as appropriate.
+**Hand off to:** Frontend / Backend / AI / ML Engineers as appropriate,
+plus the Analytics Engineer in parallel.
+
+The Analytics Engineer runs alongside this stage to turn the PRD success
+criteria into a concrete event contract and metric definitions, so the
+implementation wires real measurement rather than placeholders. See
+`agents/analytics-engineer.md`.
 
 ---
 
-## 7. Implementation — Frontend / Backend / AI Engineers
+## 8. Implementation — Frontend / Backend / AI / ML Engineers
 
-**Input:** Tech spec.
+**Input:** Tech spec (and event contract from the Analytics Engineer for
+any surface that emits events).
 
 **Output:** Code changes plus targeted tests, all in a single, narrowly-
 scoped commit (or a small set of related commits). See
 `docs/OPERATING_MODEL.md` for the one-task-one-commit rule.
+
+The ML Engineer is invoked when the slice depends on a model the team
+trains, fine-tunes, or selects from a candidate set — distinct from the
+AI Engineer, who wires hosted-LLM adapters and prompts. ML Engineer
+outputs include a model card and monitoring contract. See
+`agents/ml-engineer.md`.
 
 **Hand off to:** QA Evidence Agent.
 
@@ -125,7 +162,7 @@ on intent — only on observed evidence.
 
 ---
 
-## 8. QA Evidence — QA Evidence Agent
+## 9. QA Evidence — QA Evidence Agent
 
 **Input:** Implementation diff + tech spec.
 
@@ -142,7 +179,7 @@ the change is observable, and verifies the safety invariants listed in
 
 ---
 
-## 9. Security Review — Security & Privacy Agent
+## 10. Security Review — Security & Privacy Agent
 
 **Input:** Implementation diff + QA evidence.
 
@@ -154,7 +191,7 @@ log-leak risks must be addressed before this stage passes.
 
 ---
 
-## 10. Release Gate — Release Manager
+## 11. Release Gate — Release Manager
 
 **Input:** All prior artefacts.
 
@@ -167,23 +204,36 @@ in `docs/HUMAN_APPROVAL_RULES.md`.
 
 ---
 
-## 11. Post-Launch — Post-Launch Learning Agent
+## 12. Post-Launch — Post-Launch Learning Agent
 
-**Input:** Released change + any production signals available.
+**Input:** Released change, any production signals available, and the
+Data Analyst's experiment / metric readout when one applies.
 
 **Output:** Filled `templates/POST_LAUNCH_REVIEW_TEMPLATE.md` — what we
 learned, what surprised us, what to fold into the next slice's PRD.
 
 **Hand off to:** Orchestrator (closes the loop).
 
+The Data Analyst is the data spine of this stage: they take the metric
+definitions the Analytics Engineer registered against the PRD success
+criteria, run the readout, and hand the result to the Post-Launch agent
+for synthesis. For slices shipped behind an experiment, the Data Analyst
+also runs the experiment readout following
+`templates/EXPERIMENT_SPEC_TEMPLATE.md`. See `agents/data-analyst.md`.
+
 ---
 
 ## When to compress stages
 
-- **Trivial bug fix:** Skip 3–5. EM hands directly to Engineer with a tech
-  spec stub. QA + Security still run.
-- **Pure refactor with no user-facing change:** Skip 3–5 and 11.
-- **Documentation-only change:** Skip 6–9 but still get the EM scope review
-  and a release gate check (because docs can leak claims that affect users).
+- **Trivial bug fix:** Skip 2 and 4–6. EM hands directly to Engineer with
+  a tech spec stub. QA + Security still run.
+- **Pure refactor with no user-facing change:** Skip 2, 4–6, and 12.
+- **Documentation-only change:** Skip 7–10 but still get the EM scope
+  review and a release gate check (because docs can leak claims that
+  affect users).
+- **Well-understood ask (known bug, defined gap):** Skip 2 (Market
+  Research). The EM records why in the slice plan.
+- **No new measurement or modelling:** Skip the Analytics Engineer parallel
+  in 7 and the Data Analyst spine in 12.
 
 The EM owns the decision and records the rationale in the slice plan.
