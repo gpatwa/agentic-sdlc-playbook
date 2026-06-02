@@ -44,9 +44,12 @@ template, and leaves the rest of the system out of its head.
 | ML Engineer | Tech spec (modelling problem) | Model + dataset + model card + monitoring contract | Backend Architect + QA Evidence | `agents/ml-engineer.md` |
 | QA Evidence | Diff + tech spec | QA evidence doc | Security & Privacy | `agents/qa-evidence.md` |
 | Security & Privacy | Diff + QA evidence | Pass/fail + findings | Release Manager | `agents/security-privacy.md` |
+| Compliance Reviewer *(enterprise)* | Security pass + tech spec | Control mapping + evidence | Release Manager | `agents/compliance-reviewer.md` |
 | Release Manager | All artefacts | Go/no-go + checklist | Post-Launch | `agents/release-manager.md` |
 | Data Analyst | Question + warehouse + experiment spec | Readout (experiment or post-launch) | Asking agent (PM, Post-Launch, Release Manager) | `agents/data-analyst.md` |
 | Post-Launch Learning | Released change + Data Analyst readout | Post-launch review | Orchestrator | `agents/post-launch-learning.md` |
+| Site Reliability Engineer *(enterprise)* | Tech spec + monitoring contracts | SLOs, runbooks, incident reviews | Post-Launch + Orchestrator | `agents/sre.md` |
+| Customer Success *(enterprise)* | Live customer signal | Customer signal review | Post-Launch + Orchestrator | `agents/customer-success.md` |
 
 ---
 
@@ -103,8 +106,21 @@ This system intentionally does not include:
 - **Generic developer** — front, back, and AI work have different
   invariants (UI states vs. data integrity vs. eval safety). One generic
   role would erase that.
-- **DevOps / SRE** — release behaviours that need them belong to the
-  Release Manager and the Security & Privacy Agent. Add them as a separate
-  role when production operations become first-class for the project.
-- **Solutions engineer / customer success** — out of scope for build-time.
-  Add a customer-feedback agent in post-launch when the product has users.
+- **Generic DevOps** — day-to-day platform plumbing belongs to the Backend
+  Architect and the Release Manager. (Production *reliability* is now a
+  first-class enterprise overlay role — see below.)
+
+### Enterprise overlay roles
+
+Three roles sit outside the universal lifecycle and switch on for
+enterprise / operational contexts (see
+`project-packs/enterprise-saas-future.md`):
+
+- **Compliance Reviewer** (`agents/compliance-reviewer.md`) — maps a change
+  to named controls and produces auditor-grade evidence, between Security
+  and the Release Gate.
+- **Site Reliability Engineer** (`agents/sre.md`) — SLOs, error budgets,
+  runbooks, and blameless incident reviews in production.
+- **Customer Success** (`agents/customer-success.md`) — account-level
+  customer signal feeding Post-Launch, triangulated against the Data
+  Analyst's quant.

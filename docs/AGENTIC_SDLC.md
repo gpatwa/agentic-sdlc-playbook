@@ -237,3 +237,34 @@ also runs the experiment readout following
   in 7 and the Data Analyst spine in 12.
 
 The EM owns the decision and records the rationale in the slice plan.
+
+---
+
+## Enterprise & operations overlay
+
+The 12 stages above are the universal product-slice lifecycle. Enterprise
+and production-operations contexts add roles that **overlay** the lifecycle
+rather than replace a stage. Enable them via the enterprise project pack;
+the EM records which overlay roles apply in the slice plan.
+
+- **Compliance Review — Compliance Reviewer.** Runs between Security Review
+  (stage 10) and the Release Gate (stage 11) for any slice touching
+  regulated data, audit logs, access control, or contractual commitments.
+  Maps the change to named controls (SOC 2, ISO 27001, GDPR, and ISO 42001
+  for AI) and produces auditor-grade evidence. Output:
+  `templates/COMPLIANCE_REVIEW_TEMPLATE.md`. See
+  `agents/compliance-reviewer.md`.
+- **Reliability — Site Reliability Engineer.** Owns production after
+  release: SLOs, error budgets, alerting, runbooks, and incident response.
+  Receives the monitoring contracts produced in Architecture (stage 7) and
+  by the ML Engineer (stage 8). Turns incidents into blameless postmortems
+  (`templates/INCIDENT_REVIEW_TEMPLATE.md`) whose action items feed the
+  Orchestrator as new slices. See `agents/sre.md`.
+- **Customer Signal — Customer Success.** Feeds Post-Launch (stage 12) with
+  account-level qualitative signal — support themes, health scores, renewal
+  risk — triangulated against the Data Analyst's quantitative readout.
+  Output: `templates/CUSTOMER_SIGNAL_REVIEW_TEMPLATE.md`. See
+  `agents/customer-success.md`.
+
+These roles are additive: a B2C MVP can ignore them; an enterprise
+deployment turns them on.

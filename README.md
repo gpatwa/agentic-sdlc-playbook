@@ -27,37 +27,57 @@ agentic-sdlc/
     HUMAN_APPROVAL_RULES.md        ← what a human MUST approve, always
   agents/                          ← role briefs, one per agent
     orchestrator.md
+    market-researcher.md
     engineering-manager.md
     product-manager.md
     ux-researcher.md
     ui-designer.md
     software-architect.md
+    analytics-engineer.md
     frontend-developer.md
     backend-architect.md
     ai-engineer.md
+    ml-engineer.md
     qa-evidence.md
     security-privacy.md
+    compliance-reviewer.md         ← enterprise overlay
     release-manager.md
+    sre.md                         ← enterprise overlay
+    data-analyst.md
     post-launch-learning.md
+    customer-success.md            ← enterprise overlay
   templates/                       ← fill-in-the-blank artefacts
-    FEATURE_SPEC_TEMPLATE.md
+    DISCOVERY_BRIEF_TEMPLATE.md
     PRD_TEMPLATE.md
+    FEATURE_SPEC_TEMPLATE.md
     UX_SPEC_TEMPLATE.md
     TECH_SPEC_TEMPLATE.md
+    EXPERIMENT_SPEC_TEMPLATE.md
+    MODEL_CARD_TEMPLATE.md
     QA_EVIDENCE_TEMPLATE.md
+    COMPLIANCE_REVIEW_TEMPLATE.md
     RELEASE_CHECKLIST_TEMPLATE.md
-    AGENT_HANDOFF_TEMPLATE.md
+    INCIDENT_REVIEW_TEMPLATE.md
     POST_LAUNCH_REVIEW_TEMPLATE.md
+    CUSTOMER_SIGNAL_REVIEW_TEMPLATE.md
+    AGENT_HANDOFF_TEMPLATE.md
   prompts/                         ← copy-paste prompts to invoke each agent
     orchestrator.md
+    market-research.md
     em-scope-review.md
     product-brief.md
     ux-audit.md
     architect-plan.md
+    analytics-contract.md
     developer-task.md
+    ml-training.md
     qa-evidence.md
     security-review.md
+    compliance-review.md
     release-gate.md
+    reliability-review.md
+    experiment-readout.md
+    customer-signal.md
   project-packs/                   ← guidance per product archetype
     b2c-saas.md
     ai-agent-product.md

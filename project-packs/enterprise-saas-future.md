@@ -35,11 +35,19 @@ If none of these are true, use the B2C pack and revisit later.
 
 ## Lifecycle adjustments
 
-- **Add a Compliance Reviewer agent.** Sits between Security and
-  Release Manager. Confirms data retention, audit export, and
-  contractual commitments are honoured.
-- **Add a Customer Success agent in post-launch.** Captures customer
-  signal alongside product signal.
+These overlay roles are now first-class in the playbook; this pack turns
+them on:
+
+- **Compliance Reviewer** (`agents/compliance-reviewer.md`). Runs between
+  Security and the Release Gate. Maps the change to named controls (SOC 2,
+  ISO 27001, GDPR, ISO 42001 for AI) and produces auditor-grade evidence.
+  Output: `templates/COMPLIANCE_REVIEW_TEMPLATE.md`.
+- **Site Reliability Engineer** (`agents/sre.md`). Owns production after
+  release: SLOs, error budgets, runbooks, and blameless incident reviews
+  (`templates/INCIDENT_REVIEW_TEMPLATE.md`).
+- **Customer Success** (`agents/customer-success.md`). Feeds Post-Launch
+  with account-level signal, triangulated against the Data Analyst's
+  quant. Output: `templates/CUSTOMER_SIGNAL_REVIEW_TEMPLATE.md`.
 - **PRDs include a deployment-shape section.** SaaS, single-tenant,
   on-prem — the answer changes everything downstream.
 
