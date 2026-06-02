@@ -51,6 +51,7 @@ the ones that apply to the slice before go/no-go.
 | Schema / data migration has a plan + rollback | Backend Architect + Data Governance | `templates/MIGRATION_PLAN_TEMPLATE.md` |
 | Threat model for new attack surface | Security & Privacy | `templates/THREAT_MODEL_TEMPLATE.md` |
 | Controls mapped + evidence; named approver | Compliance Reviewer | `templates/COMPLIANCE_REVIEW_TEMPLATE.md` |
+| New subprocessor risk-assessed + DPA in place | Compliance Reviewer | `templates/VENDOR_RISK_TEMPLATE.md` |
 | AI capability risk-tiered; obligations met | AI Governance | `templates/AI_RISK_ASSESSMENT_TEMPLATE.md` |
 | Eval coverage for AI safety invariants | AI Governance | eval suite ↔ invariants |
 | Cost-per-action estimated; kill-switch tested | FinOps | `templates/COST_BUDGET_TEMPLATE.md` |

@@ -78,7 +78,9 @@ them on:
 - PII fields have explicit retention policies in code.
 - SSO / API key revocation is immediate and audited.
 - No customer data flows to a third-party processor without explicit
-  configuration the customer can audit.
+  configuration the customer can audit, a vendor risk assessment
+  (`templates/VENDOR_RISK_TEMPLATE.md`), and the approval required by
+  `docs/HUMAN_APPROVAL_RULES.md` rule 6.
 
 ## What's NOT in this pack
 

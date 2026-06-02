@@ -79,6 +79,25 @@ This is its own category because it changes the cost shape of every test
 run and the data shape of every artefact. The human approves it knowing
 they're agreeing to ongoing token spend.
 
+### 6. Onboarding a new third-party data processor or data commitment
+
+This includes:
+
+- Routing user or customer data to a new third-party / subprocessor (an
+  API, model provider, analytics vendor, storage provider).
+- Signing, altering, or relying on a Data Processing Agreement (DPA) or a
+  customer data-handling commitment.
+- Expanding what an existing processor receives beyond its current scope.
+
+Before any such integration ships, the agent surfaces the processor, the
+data it would receive (with classification), and the DPA status, and the
+human approves. A new subprocessor is risk-assessed with
+`templates/VENDOR_RISK_TEMPLATE.md` first.
+
+This is its own category because it creates an ongoing external data flow
+and a contractual obligation the customer is owed visibility into — neither
+of which a code review alone surfaces.
+
 ---
 
 ## Allowed without approval
