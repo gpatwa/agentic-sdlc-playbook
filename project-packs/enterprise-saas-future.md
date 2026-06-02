@@ -48,6 +48,18 @@ them on:
 - **Customer Success** (`agents/customer-success.md`). Feeds Post-Launch
   with account-level signal, triangulated against the Data Analyst's
   quant. Output: `templates/CUSTOMER_SIGNAL_REVIEW_TEMPLATE.md`.
+- **Data Governance** (`agents/data-governance.md`). Classifies new data,
+  sets residency + retention, and keeps the catalog / RoPA current. Output:
+  `templates/DATA_GOVERNANCE_REVIEW_TEMPLATE.md`.
+- **AI Governance** (`agents/ai-governance.md`). Risk-tiers AI capabilities
+  (NIST AI RMF / EU AI Act / ISO 42001) and owns the eval suite. Output:
+  `templates/AI_RISK_ASSESSMENT_TEMPLATE.md`.
+- **FinOps** (`agents/finops.md`). Cost-per-action, unit economics, and
+  kill-switches for unbounded-cost paths. Output:
+  `templates/COST_BUDGET_TEMPLATE.md`.
+- **Tech Writer** (`agents/tech-writer.md`). User docs, API reference, and
+  release notes matched to shipped behaviour. Output:
+  `templates/DOC_DELTA_TEMPLATE.md`.
 - **PRDs include a deployment-shape section.** SaaS, single-tenant,
   on-prem — the answer changes everything downstream.
 

@@ -34,13 +34,17 @@ agentic-sdlc/
     ui-designer.md
     software-architect.md
     analytics-engineer.md
+    data-governance.md             ← enterprise overlay
     frontend-developer.md
     backend-architect.md
     ai-engineer.md
     ml-engineer.md
+    ai-governance.md               ← enterprise overlay
     qa-evidence.md
     security-privacy.md
     compliance-reviewer.md         ← enterprise overlay
+    finops.md                      ← enterprise overlay
+    tech-writer.md                 ← overlay
     release-manager.md
     sre.md                         ← enterprise overlay
     data-analyst.md
@@ -52,11 +56,15 @@ agentic-sdlc/
     FEATURE_SPEC_TEMPLATE.md
     UX_SPEC_TEMPLATE.md
     TECH_SPEC_TEMPLATE.md
+    DATA_GOVERNANCE_REVIEW_TEMPLATE.md
     EXPERIMENT_SPEC_TEMPLATE.md
     MODEL_CARD_TEMPLATE.md
+    AI_RISK_ASSESSMENT_TEMPLATE.md
     QA_EVIDENCE_TEMPLATE.md
     COMPLIANCE_REVIEW_TEMPLATE.md
+    COST_BUDGET_TEMPLATE.md
     RELEASE_CHECKLIST_TEMPLATE.md
+    DOC_DELTA_TEMPLATE.md
     INCIDENT_REVIEW_TEMPLATE.md
     POST_LAUNCH_REVIEW_TEMPLATE.md
     CUSTOMER_SIGNAL_REVIEW_TEMPLATE.md
@@ -69,12 +77,16 @@ agentic-sdlc/
     ux-audit.md
     architect-plan.md
     analytics-contract.md
+    data-governance-review.md
     developer-task.md
     ml-training.md
+    ai-risk-review.md
     qa-evidence.md
     security-review.md
     compliance-review.md
+    cost-review.md
     release-gate.md
+    doc-update.md
     reliability-review.md
     experiment-readout.md
     customer-signal.md

@@ -242,10 +242,10 @@ The EM owns the decision and records the rationale in the slice plan.
 
 ## Enterprise & operations overlay
 
-The 12 stages above are the universal product-slice lifecycle. Enterprise
-and production-operations contexts add roles that **overlay** the lifecycle
-rather than replace a stage. Enable them via the enterprise project pack;
-the EM records which overlay roles apply in the slice plan.
+The 12 stages above are the universal product-slice lifecycle. Enterprise,
+governance, and production-operations contexts add roles that **overlay**
+the lifecycle rather than replace a stage. Enable them via the enterprise
+project pack; the EM records which overlay roles apply in the slice plan.
 
 - **Compliance Review — Compliance Reviewer.** Runs between Security Review
   (stage 10) and the Release Gate (stage 11) for any slice touching
@@ -265,6 +265,25 @@ the EM records which overlay roles apply in the slice plan.
   risk — triangulated against the Data Analyst's quantitative readout.
   Output: `templates/CUSTOMER_SIGNAL_REVIEW_TEMPLATE.md`. See
   `agents/customer-success.md`.
+- **Data Governance — Data Governance Agent.** Runs alongside Architecture
+  (stage 7) for slices that add or change data. Classifies each new data
+  element, sets residency and retention, and updates the catalog / RoPA the
+  Compliance Reviewer checks against. Output:
+  `templates/DATA_GOVERNANCE_REVIEW_TEMPLATE.md`. See
+  `agents/data-governance.md`.
+- **AI Governance — AI Governance Agent.** For AI / ML slices, assigns a
+  risk tier (NIST AI RMF / EU AI Act / ISO 42001), confirms the tier's
+  obligations, and owns the eval suite as a standing asset (the Eval
+  Curator function). Output: `templates/AI_RISK_ASSESSMENT_TEMPLATE.md`.
+  See `agents/ai-governance.md`.
+- **Cost — FinOps Agent.** For slices with compute / LLM / third-party
+  cost, models cost-per-action and unit economics and requires a tested
+  kill-switch for unbounded-cost paths. Output:
+  `templates/COST_BUDGET_TEMPLATE.md`. See `agents/finops.md`.
+- **Documentation — Tech Writer.** Before the Release Gate, produces the
+  user-facing doc delta — help, API reference, changelog, release notes —
+  matched to what actually shipped (the diff / QA), not the PRD's intent.
+  Output: `templates/DOC_DELTA_TEMPLATE.md`. See `agents/tech-writer.md`.
 
 These roles are additive: a B2C MVP can ignore them; an enterprise
 deployment turns them on.

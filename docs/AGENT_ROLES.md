@@ -38,6 +38,7 @@ template, and leaves the rest of the system out of its head.
 | UI Designer | Feature spec | UX spec | Software Architect | `agents/ui-designer.md` |
 | Software Architect | Feature spec + UX spec | Tech spec | Frontend / Backend / AI / ML, plus Analytics Engineer | `agents/software-architect.md` |
 | Analytics Engineer | PRD success criteria + tech spec | Event contract + metric definitions | Engineers + QA Evidence | `agents/analytics-engineer.md` |
+| Data Governance *(enterprise)* | Tech spec data deltas | Classification + retention + catalog | Compliance Reviewer + engineers | `agents/data-governance.md` |
 | Frontend Developer | Tech spec | Code + targeted tests | QA Evidence | `agents/frontend-developer.md` |
 | Backend Architect | Tech spec | Code + targeted tests | QA Evidence | `agents/backend-architect.md` |
 | AI Engineer | Tech spec | Code + evals + targeted tests | QA Evidence | `agents/ai-engineer.md` |
@@ -45,6 +46,9 @@ template, and leaves the rest of the system out of its head.
 | QA Evidence | Diff + tech spec | QA evidence doc | Security & Privacy | `agents/qa-evidence.md` |
 | Security & Privacy | Diff + QA evidence | Pass/fail + findings | Release Manager | `agents/security-privacy.md` |
 | Compliance Reviewer *(enterprise)* | Security pass + tech spec | Control mapping + evidence | Release Manager | `agents/compliance-reviewer.md` |
+| AI Governance *(enterprise)* | Model card + intended use | Risk tier + eval coverage | Compliance Reviewer + Release Manager | `agents/ai-governance.md` |
+| FinOps *(enterprise)* | Tech spec + projected volume | Cost model + budget + kill-switch | Release Manager | `agents/finops.md` |
+| Tech Writer *(overlay)* | Diff + QA + specs | Doc delta + release notes | Release Manager | `agents/tech-writer.md` |
 | Release Manager | All artefacts | Go/no-go + checklist | Post-Launch | `agents/release-manager.md` |
 | Data Analyst | Question + warehouse + experiment spec | Readout (experiment or post-launch) | Asking agent (PM, Post-Launch, Release Manager) | `agents/data-analyst.md` |
 | Post-Launch Learning | Released change + Data Analyst readout | Post-launch review | Orchestrator | `agents/post-launch-learning.md` |
@@ -112,13 +116,23 @@ This system intentionally does not include:
 
 ### Enterprise overlay roles
 
-Three roles sit outside the universal lifecycle and switch on for
-enterprise / operational contexts (see
+These roles sit outside the universal lifecycle and switch on for
+enterprise / governance / operational contexts (see
 `project-packs/enterprise-saas-future.md`):
 
+- **Data Governance** (`agents/data-governance.md`) — classifies new data
+  and sets residency, retention, and the catalog / RoPA, alongside
+  Architecture.
+- **AI Governance** (`agents/ai-governance.md`) — risk-tiers AI
+  capabilities (NIST AI RMF / EU AI Act / ISO 42001) and owns the eval
+  suite as a standing asset.
 - **Compliance Reviewer** (`agents/compliance-reviewer.md`) — maps a change
   to named controls and produces auditor-grade evidence, between Security
   and the Release Gate.
+- **FinOps** (`agents/finops.md`) — cost-per-action, unit economics, and
+  kill-switches for unbounded-cost paths.
+- **Tech Writer** (`agents/tech-writer.md`) — user docs, API reference, and
+  release notes matched to what actually shipped, before the Release Gate.
 - **Site Reliability Engineer** (`agents/sre.md`) — SLOs, error budgets,
   runbooks, and blameless incident reviews in production.
 - **Customer Success** (`agents/customer-success.md`) — account-level
