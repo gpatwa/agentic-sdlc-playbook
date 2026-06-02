@@ -99,6 +99,8 @@ agentic-sdlc/
     ai-agent-product.md
     browser-automation-product.md
     enterprise-saas-future.md
+  examples/                        ← end-to-end worked examples
+    saved-items-bulk-delete/       ← one slice traced through every stage
 ```
 
 And in the product repo (`/.agentic/`):
@@ -125,6 +127,14 @@ And in the product repo (`/.agentic/`):
 5. **Hit the gates.** No code merges without the gates in
    `docs/RELEASE_GATES.md`. No automated send/submit/destructive action
    without the approvals in `docs/HUMAN_APPROVAL_RULES.md`.
+
+## Worked example
+
+[`examples/saved-items-bulk-delete/`](examples/saved-items-bulk-delete/)
+traces a single slice — bulk-delete for a fictional B2C SaaS — through every
+lifecycle stage, with a filled artefact at each step and a sample product
+`.agentic/`. Start there to see how the templates chain and where the gates
+fire.
 
 ## Core principles
 
