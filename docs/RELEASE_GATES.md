@@ -37,6 +37,32 @@ Gates are deliberately strict. If a gate fails, the failure is the signal
 
 ---
 
+## Enterprise & governance gates
+
+These gates apply when the corresponding overlay role is enabled (see the
+overlay section of `docs/AGENTIC_SDLC.md` and
+`project-packs/enterprise-saas-future.md`). The Release Manager confirms
+the ones that apply to the slice before go/no-go.
+
+| Gate | Owner | How it's checked |
+|------|-------|------------------|
+| New data classified + retention set | Data Governance | `templates/DATA_GOVERNANCE_REVIEW_TEMPLATE.md` |
+| Catalog / RoPA updated for new data flows | Data Governance | catalog diff |
+| Schema / data migration has a plan + rollback | Backend Architect + Data Governance | `templates/MIGRATION_PLAN_TEMPLATE.md` |
+| Threat model for new attack surface | Security & Privacy | `templates/THREAT_MODEL_TEMPLATE.md` |
+| Controls mapped + evidence; named approver | Compliance Reviewer | `templates/COMPLIANCE_REVIEW_TEMPLATE.md` |
+| AI capability risk-tiered; obligations met | AI Governance | `templates/AI_RISK_ASSESSMENT_TEMPLATE.md` |
+| Eval coverage for AI safety invariants | AI Governance | eval suite ↔ invariants |
+| Cost-per-action estimated; kill-switch tested | FinOps | `templates/COST_BUDGET_TEMPLATE.md` |
+| Docs match shipped behaviour; migration notes | Tech Writer | `templates/DOC_DELTA_TEMPLATE.md` |
+| SLOs + runbook + tested rollback (production service) | SRE | runbook + rollback drill |
+| Change request recorded + approved (CAB) | Release Manager | `templates/CHANGE_REQUEST_TEMPLATE.md` |
+
+A gate that doesn't apply to the slice is marked "n/a" with a one-line
+reason in the release checklist — the same discipline as the core gates.
+
+---
+
 ## Three release tiers
 
 Not every change carries the same risk. The Release Manager picks the tier
@@ -70,6 +96,9 @@ party; change that alters auth/permissions.
 - Dry-run on a fixture before live.
 - Audit event coverage manually verified.
 - Post-launch monitoring plan.
+- In enterprise contexts: every applicable enterprise & governance gate
+  above, plus a recorded, approved change request
+  (`templates/CHANGE_REQUEST_TEMPLATE.md`) with a named approver.
 
 ---
 
