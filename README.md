@@ -102,6 +102,9 @@ agentic-sdlc/
     enterprise-saas-future.md
   examples/                        ← end-to-end worked examples
     saved-items-bulk-delete/       ← one slice traced through every stage
+  execution/                       ← makes the playbook self-running (.claude/ pack)
+    install.mjs                    ← generates subagents from briefs; installs the pack
+    pack/                          ← commands, protocols, CLAUDE template
 ```
 
 And in the product repo (`/.agentic/`):
@@ -136,6 +139,15 @@ traces a single slice — bulk-delete for a fictional B2C SaaS — through every
 lifecycle stage, with a filled artefact at each step and a sample product
 `.agentic/`. Start there to see how the templates chain and where the gates
 fire.
+
+## Running it autonomously
+
+The [`execution/`](execution/) pack turns these briefs into a self-running
+system. Install it into a product repo (`node <playbook>/execution/install.mjs .`)
+and a Claude Code session can drive the lifecycle with `/agentic-slice` —
+delegating each stage to a generated subagent, tracking resumable state, and
+**pausing for human approval** where the rules require it. See
+[execution/README.md](execution/README.md).
 
 ## Core principles
 

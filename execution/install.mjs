@@ -1,0 +1,112 @@
+#!/usr/bin/env node
+// Installs the Agentic SDLC execution pack into a product repo.
+// Usage: node <playbook>/execution/install.mjs <product-dir>
+//
+// - Generates .claude/agents/<role>.md from the playbook's agents/*.md briefs
+//   (Claude Code subagent format: frontmatter + inlined brief + protocol pointers).
+// - Copies commands + protocols into .claude/.
+// - Writes CLAUDE.md (autonomous-run guide) and .claude/agentic.config.json.
+// Dependency-free; Node 18+.
+
+import {
+  readFileSync, writeFileSync, readdirSync, mkdirSync, copyFileSync, existsSync,
+} from "node:fs";
+import { join, dirname, basename, relative } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const playbookRoot = join(here, "..");
+const packDir = join(here, "pack");
+
+const productDir = process.argv[2];
+if (!productDir) {
+  console.error("usage: node <playbook>/execution/install.mjs <product-dir>");
+  process.exit(1);
+}
+if (!existsSync(join(productDir, ".agentic"))) {
+  console.error(`! ${productDir} has no .agentic/ — is it a product repo?`);
+  process.exit(1);
+}
+
+// Roles that run commands (need Bash); everyone else is doc-only (least privilege).
+const BASH_ROLES = new Set([
+  "frontend-developer", "backend-architect", "ai-engineer", "ml-engineer",
+  "qa-evidence", "security-privacy", "sre", "analytics-engineer",
+]);
+
+const firstHeading = (md) => (md.match(/^#\s+(.+)$/m)?.[1] || "Agent").trim();
+const mission = (md) => {
+  const m = md.match(/##\s+Mission\s*\n+([\s\S]*?)(?:\n##\s|\n#\s|$)/);
+  if (!m) return "";
+  return m[1].trim().split(/\n\s*\n/)[0].replace(/\s+/g, " ").trim();
+};
+
+const claudeDir = join(productDir, ".claude");
+const outAgents = join(claudeDir, "agents");
+mkdirSync(outAgents, { recursive: true });
+
+const playbookRel = relative(productDir, playbookRoot) || ".";
+
+let count = 0;
+for (const file of readdirSync(join(playbookRoot, "agents")).filter((f) => f.endsWith(".md"))) {
+  const slug = basename(file, ".md");
+  const brief = readFileSync(join(playbookRoot, "agents", file), "utf8");
+  const title = firstHeading(brief);
+  const miss = mission(brief);
+  const desc =
+    (miss.length > 180 ? miss.slice(0, 177) + "..." : miss) ||
+    `${title} for the Agentic SDLC.`;
+  const tools = BASH_ROLES.has(slug)
+    ? "Read, Write, Edit, Bash, Grep, Glob"
+    : "Read, Write, Edit, Grep, Glob";
+
+  const out = `---
+name: ${slug}
+description: ${desc.replace(/\n/g, " ")}
+tools: ${tools}
+model: inherit
+---
+
+You are the **${title}** in an autonomous Agentic SDLC run. Stay strictly in this role.
+
+## Operating rules (execution pack)
+
+- Read \`.agentic/\` (PROJECT_CONTEXT, SAFETY_INVARIANTS, LOCAL_COMMANDS, CURRENT_MVP_STATUS) before acting.
+- Read your input artefact from \`runs/<slice-id>/\`. Write your output artefact there.
+- Update \`runs/<slice-id>/STATE.md\` per \`.claude/protocols/SLICE_STATE.md\` when you finish.
+- If your stage hits a human-approval action, STOP and follow \`.claude/protocols/APPROVAL_PROTOCOL.md\` — do not proceed on assumed approval.
+- On a failed gate, follow \`.claude/protocols/FAILURE_LOOP.md\` (bounded retries, then escalate).
+- Hand off only through artefacts. The full methodology lives in the playbook at \`${playbookRel}\`.
+
+## Your role brief
+
+${brief.trim()}
+`;
+  writeFileSync(join(outAgents, `${slug}.md`), out);
+  count++;
+}
+
+const copyDir = (src, dst) => {
+  mkdirSync(dst, { recursive: true });
+  for (const f of readdirSync(src)) copyFileSync(join(src, f), join(dst, f));
+};
+copyDir(join(packDir, "commands"), join(claudeDir, "commands"));
+copyDir(join(packDir, "protocols"), join(claudeDir, "protocols"));
+
+const claudeMd = readFileSync(join(packDir, "CLAUDE.md"), "utf8")
+  .replaceAll("{{PLAYBOOK_PATH}}", playbookRel);
+writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
+
+writeFileSync(
+  join(claudeDir, "agentic.config.json"),
+  JSON.stringify(
+    { playbookPath: playbookRel, generatedAt: new Date().toISOString(), agentCount: count },
+    null, 2,
+  ) + "\n",
+);
+
+console.log(`Installed Agentic SDLC execution pack into ${claudeDir}`);
+console.log(`  agents generated : ${count}`);
+console.log(`  commands         : ${readdirSync(join(claudeDir, "commands")).length}`);
+console.log(`  protocols        : ${readdirSync(join(claudeDir, "protocols")).length}`);
+console.log(`  playbook (rel)   : ${playbookRel}`);
