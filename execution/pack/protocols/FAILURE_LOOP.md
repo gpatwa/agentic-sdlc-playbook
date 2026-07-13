@@ -8,11 +8,17 @@ hours (or budget) spinning on the same failure. It is the encoded lesson of
 ## Definitions
 
 - A **failure** is: a gate fails (typecheck/test/build/qa/security), an
-  agent can't produce its artefact, or a handoff is rejected as incomplete.
+  agent can't produce its artefact, a handoff is rejected as incomplete,
+  **or a stage attempt exceeds its wall-clock budget**.
 - The **retry budget** is per stage. Default: **2 retries** (3 attempts
   total) for that stage.
 - The **slice iteration cap** bounds total back-and-forth across the whole
   slice. Default: **6 stage re-entries**.
+- The **stage wall-clock budget** bounds a single attempt in time. Default:
+  **20 minutes** (`defaults.stageWallClockMinutes` in
+  `.claude/agentic.config.json`). Iterations were bounded from day one;
+  time was not — a hung stage is a failure event, not something to wait
+  out. Stop it, record it, count it against the retry budget.
 
 ## Steps
 
@@ -21,7 +27,9 @@ hours (or budget) spinning on the same failure. It is the encoded lesson of
    Failure budget table. It does **not** silently retry.
 2. **Retry within budget.** Re-run the stage with the failure as input
    (e.g., the engineer fixes the failing test and re-runs). Increment the
-   counter.
+   counter. **The final retry escalates one model class** (see
+   `MODEL_ROUTING.md`) — a same-model identical retry adds little
+   information; don't spend the last attempt repeating the experiment.
 3. **Budget spent → escalate.** When a stage exhausts its retries, or the
    slice hits its iteration cap:
    - Set `STATE.md` → `Status: blocked-on-failure`.

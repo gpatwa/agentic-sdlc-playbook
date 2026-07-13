@@ -34,6 +34,15 @@ const BASH_ROLES = new Set([
   "qa-evidence", "security-privacy", "sre", "analytics-engineer",
 ]);
 
+// Static model defaults per pack/protocols/MODEL_ROUTING.md layer 1.
+// The Orchestrator overrides at spawn time for tier/failure escalation.
+const MODEL_FOR_ROLE = {
+  "software-architect": "opus",
+  "security-privacy": "opus",
+  "orchestrator": "opus",
+};
+const DEFAULT_MODEL = "sonnet";
+
 const firstHeading = (md) => (md.match(/^#\s+(.+)$/m)?.[1] || "Agent").trim();
 const mission = (md) => {
   const m = md.match(/##\s+Mission\s*\n+([\s\S]*?)(?:\n##\s|\n#\s|$)/);
@@ -59,12 +68,13 @@ for (const file of readdirSync(join(playbookRoot, "agents")).filter((f) => f.end
   const tools = BASH_ROLES.has(slug)
     ? "Read, Write, Edit, Bash, Grep, Glob"
     : "Read, Write, Edit, Grep, Glob";
+  const model = MODEL_FOR_ROLE[slug] ?? DEFAULT_MODEL;
 
   const out = `---
 name: ${slug}
 description: ${desc.replace(/\n/g, " ")}
 tools: ${tools}
-model: inherit
+model: ${model}
 ---
 
 You are the **${title}** in an autonomous Agentic SDLC run. Stay strictly in this role.
@@ -100,7 +110,18 @@ writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
 writeFileSync(
   join(claudeDir, "agentic.config.json"),
   JSON.stringify(
-    { playbookPath: playbookRel, generatedAt: new Date().toISOString(), agentCount: count },
+    {
+      packVersion: 2,
+      playbookPath: playbookRel,
+      generatedAt: new Date().toISOString(),
+      agentCount: count,
+      defaults: {
+        stageWallClockMinutes: 20,
+        retryCapPerStage: 2,
+        sliceIterationCap: 6,
+        modelClasses: { opus: "opus", sonnet: "sonnet", haiku: "haiku" },
+      },
+    },
     null, 2,
   ) + "\n",
 );

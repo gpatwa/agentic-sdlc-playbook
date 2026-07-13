@@ -46,6 +46,17 @@ the originating conversation.
 |-------|--------------|-----|--------------|
 | <stage> | 0 | 2 | — |
 
+## Trace
+
+One row per stage attempt — this is the pipeline's telemetry. Fill Tokens /
+Tool calls from the harness's usage stats where available; wall-clock
+always. Totals row = the slice's run cost. Feeds `PIPELINE_SLOS.md`.
+
+| Stage | Model | Start (UTC) | End (UTC) | Wall | Tokens | Tool calls | Retry # |
+|-------|-------|-------------|-----------|------|--------|------------|---------|
+| <stage> | <model> | <ts> | <ts> | <m:ss> | <n> | <n> | 0 |
+| **Total** | | | | | <Σ> | <Σ> | |
+
 ## Next action
 
 <one line: the very next thing to do — what a resuming session executes>

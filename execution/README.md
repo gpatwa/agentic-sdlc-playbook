@@ -11,15 +11,22 @@ resumable state, the human-approval interrupt, and bounded failure loops.
 ```
 execution/
   install.mjs              ← generates .claude/agents/ from briefs, installs the pack
+  ADAPTERS.md              ← provider-adapter contract (this pack = the Claude Code adapter)
   pack/
     CLAUDE.md              ← autonomous-run guide (installed to product root)
     commands/              ← /agentic-slice, /agentic-resume, /agentic-status
     protocols/
-      SLICE_STATE.md       ← resumable per-slice state file convention
+      SLICE_STATE.md       ← resumable per-slice state + Trace table (pipeline telemetry)
       APPROVAL_PROTOCOL.md ← the human-approval interrupt (pause / wait / record)
-      FAILURE_LOOP.md      ← retry budget + escalation (anti-runaway)
+      FAILURE_LOOP.md      ← retry budget + wall-clock budget + escalation (anti-runaway)
+      MODEL_ROUTING.md     ← per-role model defaults, tier + failure escalation
+      PIPELINE_SLOS.md     ← SLOs + DORA metrics for the SDLC itself
   README.md                ← you are here
 ```
+
+Generated agents carry a static model default per `MODEL_ROUTING.md`
+(opus for Architect / Security / Orchestrator, sonnet otherwise); the
+Orchestrator escalates at spawn time for Tier-3 slices and final retries.
 
 ## Install into a product repo
 
