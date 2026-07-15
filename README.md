@@ -21,6 +21,7 @@ agentic-sdlc/
   README.md                        ← you are here
   docs/                            ← how the system works
     ARCHITECTURE.md                ← system design + data flow (start here)
+    VALIDATION_MATRIX.md           ← how the playbook is proven, phase by phase
     AGENTIC_SDLC.md                ← end-to-end lifecycle
     AGENT_ROLES.md                 ← who does what, who hands off to whom
     RELEASE_GATES.md               ← merge / release / launch gates

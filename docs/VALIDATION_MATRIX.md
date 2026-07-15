@@ -1,0 +1,44 @@
+# Validation Matrix
+
+The playbook is validated by **reference apps** — each chosen to exercise
+machinery the previous runs never touched. This file is the roadmap and the
+scorecard. Update the status column as runs land; link evidence, don't
+restate it.
+
+Reference target: [stash-seed](https://github.com/gpatwa/stash-seed) (and
+derivatives), per the phase plan below.
+
+## Phases
+
+| # | Phase | Pack | What it uniquely validates | Status | Evidence |
+|---|-------|------|---------------------------|--------|----------|
+| 0 | Paper worked example (bulk-delete) | b2c-saas | Artefact chain composes; gates map to a real slice | ✅ done | `examples/saved-items-bulk-delete/` |
+| 0.5 | Live run-1 (bulk-delete, Tier 2) | b2c-saas | Agents execute the pipeline on real code; independent QA/Security converge | ✅ done | stash-seed PR #1, `runs/run-1/` |
+| 1 | Live run-2 (email-digest, **Tier 3**) | b2c-saas | **Human-approval interrupt** (pause / explicit yes / durable record / scope enforcement); execution pack v2: model routing, per-stage tracing, wall-clock budgets, pipeline SLOs | ✅ done | stash-seed PR #2, `runs/email-digest/` (note the recorded Tier-3 token-SLO miss — telemetry working) |
+| 2 | HTTP API + CI + local/real deploy | b2c-saas | The **deploy half**: gates-as-code (CI required checks), environment model, post-deploy smoke, rollback drill, SRE SLOs on a live endpoint | ⬜ next | — |
+| 3 | stash-digest LLM slice | ai-agent-product | Deterministic-first LLM discipline live: eval gates, AI Governance risk tier, FinOps kill-switch, **rule-5 interrupt** (real model = separate approval) | ⬜ | — |
+| 4 | Greenfield app from a one-paragraph brief | any | The **discovery half** live (Market Researcher → PM → UX → UI); creating `.agentic/` from nothing; multi-slice 0→1 | ⬜ | — |
+| 5 | stash-teams multi-tenancy | enterprise-saas-future | Enterprise overlays live: Data Governance, Compliance control mapping, RBAC Tier 3 with named approver | ⬜ | — |
+| R | Red-team slices (one per phase) | any | **Refusal**: an ask that violates a safety invariant must be blocked and surfaced, not built (e.g. "auto-delete items older than 30 days, no confirmation") | ⬜ recurring | — |
+
+## Machinery still unvalidated or unenforced (tracked, not phase-bound)
+
+- **Gates are honor-system** — no hooks / CI required-checks enforce them
+  yet (Phase 2 closes most of this).
+- **Failure loop under real failure** — every run so far had zero retries;
+  the retry/escalation path hasn't fired live. (A red-team or induced-failure
+  slice covers it.)
+- **DORA aggregation** — Trace tables exist per slice; nothing aggregates
+  across `runs/*/STATE.md` yet (`PIPELINE_SLOS.md` names the metrics).
+- **Rule-6 deferred slice** — wiring a real email provider under
+  preconditions P-1..P-6 (stash-seed `runs/email-digest/05-security-review.md`)
+  would validate vendor-risk + a second interrupt type.
+- **Tier-3 token budget** — first Tier-3 run measured 504k vs the 400k
+  target; re-baseline or slim prompts per the post-launch recommendation
+  (no silent loosening).
+
+## How to add a phase
+
+One row, one uniquely-validated mechanism, smallest app that exercises it.
+If a proposed phase doesn't validate anything new, it's a demo, not a
+phase.
