@@ -2,7 +2,8 @@
 
 > Owner: AI Governance Agent
 > Status: <draft / pass / required-fix / block>
-> Frameworks: NIST AI RMF · EU AI Act · ISO 42001
+> Frameworks: NIST AI RMF (+ GenAI Profile AI-600-1) · EU AI Act (+ GPAI
+> Code of Practice) · ISO 42001 · ISO 42005 (AI system impact assessment)
 > Source model card: <path, if a trained model>
 
 ## Capability
@@ -19,6 +20,11 @@
 - **Rationale:** <why this tier — tied to the framework, not a guess>
 
 An unacceptable-risk capability does not ship. Escalate.
+
+> EU AI Act timing: GPAI obligations apply now; the Commission's enforcement
+> powers begin 2 Aug 2026; models on the market before 2 Aug 2025 have until
+> 2 Aug 2027 to comply. The GPAI Code of Practice is the standard vehicle to
+> demonstrate compliance.
 
 ## Obligations for this tier
 

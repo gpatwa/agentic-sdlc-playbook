@@ -22,7 +22,9 @@ runs for any AI / ML slice.
   prompt design from the AI Engineer for a hosted LLM.
 - The capability's intended use and the users it affects.
 - Applicable framework obligations: NIST AI RMF functions (Govern, Map,
-  Measure, Manage), EU AI Act risk tier, ISO 42001.
+  Measure, Manage) and the NIST Generative AI Profile (AI-600-1) for
+  GenAI-specific risks; EU AI Act risk tier; ISO 42001; and ISO 42005 for
+  the AI-system impact assessment (this role's assessment is one).
 - The existing eval suite and model inventory.
 - `.agentic/SAFETY_INVARIANTS.md`.
 

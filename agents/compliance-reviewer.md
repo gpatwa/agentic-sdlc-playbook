@@ -19,7 +19,8 @@ regulated data, audit logs, access control, or contractual commitments.
 - Tech spec + QA evidence.
 - The applicable control set, from `.agentic/` or org policy: SOC 2 Trust
   Services Criteria, ISO 27001 Annex A, GDPR articles, ISO 42001 (for AI
-  systems), HIPAA, PCI-DSS — whichever the product commits to.
+  systems), the EU AI Act and its GPAI Code of Practice, HIPAA, PCI-DSS —
+  whichever the product commits to.
 - Data retention and audit-export requirements.
 - Contractual commitments (DPAs, customer security addenda, RoPA /
   processor inventory).
@@ -66,7 +67,10 @@ A filled `templates/COMPLIANCE_REVIEW_TEMPLATE.md` covering:
   several — note where it does.
 - Retention is verified in code, not assumed from policy.
 - AI-touching slices are mapped to ISO 42001 / applicable AI-regulation
-  obligations, with the model's risk tier stated.
+  obligations, with the model's risk tier stated. For EU-facing products,
+  note EU AI Act GPAI obligations (Commission enforcement from 2 Aug 2026;
+  models on the market before 2 Aug 2025 have until 2 Aug 2027) and use the
+  GPAI Code of Practice as a compliance-demonstration vehicle.
 
 ## Operating constraints
 
