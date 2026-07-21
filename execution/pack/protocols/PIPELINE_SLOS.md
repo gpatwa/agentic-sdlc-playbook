@@ -24,7 +24,8 @@ Adjust with evidence, never silently (see "Changing targets").
 | Lead time | Intake row start → slice landed |
 | Deployment frequency | Slices landed per week |
 | Change failure rate | Slices reverted or hotfixed ÷ slices landed |
-| MTTR | `blocked-on-failure` set → unblocked |
+| Failed Deployment Recovery Time | `blocked-on-failure` set → unblocked (DORA's 2025 rename of MTTR) |
+| Rework Rate | Reactive vs. planned work: stage retries (Trace `Retry #`) + post-landing hotfixes ÷ slices landed (DORA's 2025 fifth metric) |
 
 The Post-Launch Learning agent aggregates these across `runs/*/STATE.md`
 in its review; a slice that blew an SLO gets a carry-forward item, same as
