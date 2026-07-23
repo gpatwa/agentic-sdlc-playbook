@@ -123,6 +123,27 @@ above each map back to one of these:
 
 ---
 
+## Enforcing gates in CI (gates as code)
+
+The gates above are only as strong as their enforcement. Running them by
+hand — or trusting an agent to — is the honor-system baseline. To make them
+binding, run them as **required status checks** in CI:
+
+- Each mechanical gate becomes a CI step (typecheck, tests, build, the local
+  regression command). A red step blocks the merge.
+- Branch protection on the default branch requires the check to pass before
+  merge — this is what turns a gate from convention into a wall.
+- The Release Manager then confirms the green check on the merge commit
+  instead of re-running the gates by hand.
+
+Reference implementation: the CI workflow in the `stash-seed` reference app
+(`.github/workflows/ci.yml`) runs each gate as a discrete step. The gates
+that need judgment — compliance approver, human approval per
+`docs/HUMAN_APPROVAL_RULES.md` — stay human-verified. CI enforces the
+mechanical gates; it does not replace the judgment ones.
+
+---
+
 ## How to use this list
 
 When the Release Manager reviews a slice, they walk this list top to

@@ -50,6 +50,9 @@ The Release Manager walks
 - For each gate that's missing evidence, return the slice to the owning
   agent.
 - For each gate that was skipped, record the rationale in the checklist.
+- Where CI enforces a gate as a required status check, the passing check on
+  the merge commit is the artefact — confirm it rather than re-running the
+  gate by hand (see `docs/RELEASE_GATES.md` "Enforcing gates in CI").
 
 A skipped gate without a rationale is a release blocker.
 
