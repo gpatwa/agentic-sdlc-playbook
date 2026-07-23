@@ -22,6 +22,7 @@ agentic-sdlc/
   docs/                            ← how the system works
     ARCHITECTURE.md                ← system design + data flow (start here)
     VALIDATION_MATRIX.md           ← how the playbook is proven, phase by phase
+    PLATFORM_EVAL.md               ← the platform success scorecard + benchmark
     STANDARDS_WATCH.md             ← external standards/ecosystem tracker
     AGENTIC_SDLC.md                ← end-to-end lifecycle
     AGENT_ROLES.md                 ← who does what, who hands off to whom
