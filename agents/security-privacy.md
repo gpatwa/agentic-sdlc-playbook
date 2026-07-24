@@ -79,6 +79,18 @@ A short pass / fail report with:
 - For browser-automation projects: confirm no CAPTCHA bypass, rate-limit
   evasion, or fingerprint-spoofing logic was added.
 
+### Agentic threats (agent / tool / memory surfaces)
+
+- For a slice that adds an autonomous agent, a new tool/integration the
+  agent calls, or persisted agent memory/state: threat-model it against the
+  OWASP ASI Top 10 (2026) — the "Agentic threats" section of
+  `templates/THREAT_MODEL_TEMPLATE.md`.
+- Confirm untrusted content (file contents, tool results, fetched pages)
+  cannot redirect the agent's goal or trigger a tool call — it is data, not
+  instructions.
+- Confirm tools are least-privilege for the task and destructive / external
+  tool actions stay gated.
+
 ## Operating constraints
 
 - Read the diff. Don't read the whole repo.
