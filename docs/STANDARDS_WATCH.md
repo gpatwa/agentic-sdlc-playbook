@@ -19,7 +19,7 @@ deferred items aren't lost between reviews — it's the counterpart to
 | Development | Why it fits Phase 2 | Trigger |
 |-------------|---------------------|---------|
 | **OWASP Top 10 for Agentic Applications** (ASI01–ASI10, Dec 2025) | Phase 2 is security-hardening; add an ASI mapping to `THREAT_MODEL_TEMPLATE.md` + the Security scan list, and **self-apply to the execution pack** (it is itself an agentic app) | Phase 2 start |
-| Eval-gated merge (Braintrust pattern) | Becomes a CI required-check when CI exists | Phase 2 (CI) |
+| Eval-gated merge (Braintrust pattern) | Becomes a CI required-check when CI exists | ✅ pattern codified in `RELEASE_GATES` "Enforcing gates in CI"; per-product eval suites plug in |
 | Failure-category taxonomy (Patronus pattern) | A category column on the Trace / `FAILURE_LOOP` table makes Rework Rate diagnosable | Phase 2 |
 | Cheap-evaluator handoff checks (Galileo pattern) | A haiku-class validator on each artefact handoff — continuous evals of the pipeline itself; gives the routing table's haiku tier a standing job | Phase 2 |
 | Agent/run inventory (control-plane pattern) | `runs/INDEX.md` + a fleet section in `agentic.config.json` | Phase 2 |
