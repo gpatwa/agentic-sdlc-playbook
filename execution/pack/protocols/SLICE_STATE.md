@@ -42,9 +42,11 @@ the originating conversation.
 
 ## Failure budget
 
-| Stage | Retries used | Cap | Last failure |
-|-------|--------------|-----|--------------|
-| <stage> | 0 | 2 | — |
+Class per `FAILURE_LOOP.md` "Failure categories".
+
+| Stage | Retries used | Cap | Class | Last failure |
+|-------|--------------|-----|-------|--------------|
+| <stage> | 0 | 2 | — | — |
 
 ## Trace
 

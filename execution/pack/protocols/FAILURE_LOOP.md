@@ -49,6 +49,25 @@ hours (or budget) spinning on the same failure. It is the encoded lesson of
 - A loop with no new information after one retry is already a signal:
   escalate early rather than exhaust the budget on identical attempts.
 
+## Failure categories
+
+When you record a failure (in `STATE.md`'s Failure budget table and any
+`ESCALATION`), tag it with a category. This is what makes the Rework Rate
+metric (`PIPELINE_SLOS.md`) diagnosable — *what kind* of rework, not just
+how much.
+
+| Category | Meaning | Typical resolution |
+|----------|---------|--------------------|
+| `tool-error` | A command / tool failed (build broke, test infra, a call errored) | Fix the code or environment; retry |
+| `context-gap` | The agent lacked an input it needed (missing spec detail, file, path) | Escalate up the chain for the missing input |
+| `spec-ambiguity` | The spec was unclear or internally contradictory (the B4 eval) | Human clarifies; do not guess |
+| `gate-violation` | The change would violate a gate / invariant and can't pass honestly | Rework, or escalate — never weaken the gate |
+| `timeout` | The stage exceeded its wall-clock budget | Split the work or escalate |
+| `flaky` | Non-deterministic failure (timing, ordering) | Stabilise before retrying; don't mask |
+
+The same category twice with no new information is the escalate-early
+signal. A failure whose category keeps changing is itself worth surfacing.
+
 ## Distinct from approval
 
 A **failure** block (this protocol) means something is broken and the human
