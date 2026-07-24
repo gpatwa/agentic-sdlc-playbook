@@ -287,3 +287,25 @@ project pack; the EM records which overlay roles apply in the slice plan.
 
 These roles are additive: a B2C MVP can ignore them; an enterprise
 deployment turns them on.
+
+---
+
+## Deploying a slice
+
+Landing a slice is where the release gates become a wall (see
+`docs/RELEASE_GATES.md` "Enforcing gates in CI"). The deploy itself:
+
+- **The deploy is a human-approved action.** Promoting a build to a live
+  environment is `docs/HUMAN_APPROVAL_RULES.md` rule 3 — the Release Manager
+  confirms the human sign-off; the run does not deploy on its own.
+- **Post-deploy smoke enforces safety, not just liveness.** After a deploy,
+  a smoke test runs against the *running* service and re-checks the safety
+  invariants (a data endpoint must not leak; a gated action must not send).
+  A build that passes a health ping but violates an invariant is caught
+  here, before it serves traffic.
+- **Rollback is drilled, not assumed.** The rollback path is executed — a
+  bad build is deployed on purpose, caught by the smoke, and rolled back —
+  so "we can roll back" is a tested fact. The SRE owns this in production.
+- **Environments promote dev → staging → prod**, and each promotion re-runs
+  the smoke. The reference app runs the smoke and an executed rollback drill
+  as CI gates (`stash-seed`: `scripts/smoke.mjs`, `scripts/rollback-drill.mjs`).

@@ -142,6 +142,19 @@ that need judgment — compliance approver, human approval per
 `docs/HUMAN_APPROVAL_RULES.md` — stay human-verified. CI enforces the
 mechanical gates; it does not replace the judgment ones.
 
+**Deploy-half gates** (for a service with a runtime surface):
+
+- **Post-deploy smoke** — after a deploy, an automated check runs against
+  the *running* service and re-asserts the safety invariants, not just
+  liveness. A green health check with a red safety check still fails.
+- **Rollback drill executed** — the rollback path is run, not assumed: a
+  bad build is caught by the smoke and rolled back. Required before a
+  service is exposed. Reference: `stash-seed` `scripts/rollback-drill.mjs`.
+
+**Eval-gated merge** (for AI slices): the AI Governance eval suite
+(`agents/ai-governance.md`) runs as a required check — a regression in a
+safety-invariant eval blocks the merge, the same as a failing test.
+
 ---
 
 ## How to use this list
