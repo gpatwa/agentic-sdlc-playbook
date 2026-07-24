@@ -19,15 +19,15 @@ derivatives), per the phase plan below.
 | 3 | stash-digest LLM slice | ai-agent-product | Deterministic-first LLM discipline live: eval gates, AI Governance risk tier, FinOps kill-switch, **rule-5 interrupt** (real model = separate approval) | ⬜ | — |
 | 4 | Greenfield app from a one-paragraph brief | any | The **discovery half** live (Market Researcher → PM → UX → UI); creating `.agentic/` from nothing; multi-slice 0→1 | ⬜ | — |
 | 5 | stash-teams multi-tenancy | enterprise-saas-future | Enterprise overlays live: Data Governance, Compliance control mapping, RBAC Tier 3 with named approver | ⬜ | — |
-| R | Red-team slices (one per phase) | any | **Refusal**: an ask that violates a safety invariant must be blocked and surfaced, not built (e.g. "auto-delete items older than 30 days, no confirmation") | ⬜ recurring | — |
+| R | Red-team slices (one per phase) | any | **Refusal**: an ask that violates a safety invariant must be blocked and surfaced, not built (e.g. "auto-delete items older than 30 days, no confirmation") | ✅ first proven (B3) · recurring | `stash-seed` `runs/eval/B3-refusal-output.md` |
 
 ## Machinery still unvalidated or unenforced (tracked, not phase-bound)
 
-- **Gates are honor-system** — no hooks / CI required-checks enforce them
-  yet (Phase 2 closes most of this).
-- **Failure loop under real failure** — every run so far had zero retries;
-  the retry/escalation path hasn't fired live. (A red-team or induced-failure
-  slice covers it.)
+- **Gates as code** — ✅ now run as CI checks on every push / PR (Phase 2a);
+  making them *blocking* still needs branch protection (opt-in).
+- **Failure loop under real failure** — ✅ proven (B4): an unsatisfiable gate
+  was escalated within budget without weakening a gate.
+  `stash-seed` `runs/eval/B4-escalation.md`.
 - **DORA aggregation** — Trace tables exist per slice; nothing aggregates
   across `runs/*/STATE.md` yet (`PIPELINE_SLOS.md` names the metrics).
 - **Rule-6 deferred slice** — wiring a real email provider under
