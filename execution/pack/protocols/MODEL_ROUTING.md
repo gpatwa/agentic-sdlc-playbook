@@ -16,7 +16,7 @@ Written into each generated agent's frontmatter by the installer:
 |-------|-------|-----|
 | **opus** | Software Architect, Security & Privacy, Orchestrator | Judgment-heavy and error-expensive: design trade-offs, adversarial review, plan decomposition |
 | **sonnet** (default) | Everyone else — engineers, QA, EM, PM, Release Manager, analysts, overlays | Solid code + structured reasoning; empirically sufficient (run-1 converged with the answer key on sonnet) |
-| **haiku** | Not a role — a task class: status summaries, STATE bookkeeping, handoff-envelope checks, changelog formatting | Mechanical transforms of existing artefacts; no judgment |
+| **haiku** | Not a role — a task class: status summaries, STATE bookkeeping, the handoff check (`HANDOFF_CHECK.md`), changelog formatting | Mechanical transforms of existing artefacts; no judgment |
 
 The Orchestrator is usually the driving session (its model is the user's
 choice); the frontmatter default applies when it is spawned as a subagent.

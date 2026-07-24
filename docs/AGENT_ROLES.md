@@ -97,7 +97,9 @@ Every handoff carries:
    path", "don't weaken the existing approval gate").
 
 If a handoff is missing any of these, the receiving agent rejects it back
-to the EM rather than guessing.
+to the EM rather than guessing. In an autonomous run, a cheap handoff check
+enforces exactly this at every stage boundary before the next agent starts
+(`execution/pack/protocols/HANDOFF_CHECK.md`).
 
 ---
 
