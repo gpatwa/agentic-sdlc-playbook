@@ -33,9 +33,13 @@ derivatives), per the phase plan below.
 - **Rule-6 deferred slice** — wiring a real email provider under
   preconditions P-1..P-6 (stash-seed `runs/email-digest/05-security-review.md`)
   would validate vendor-risk + a second interrupt type.
-- **Tier-3 token budget** — first Tier-3 run measured 504k vs the 400k
-  target; re-baseline or slim prompts per the post-launch recommendation
-  (no silent loosening).
+- **Token budget model** — ✅ re-baselined 2026-07-25 to a per-stage cap
+  (≤150k/stage) + a stage-count-scaled slice envelope (stages × 100k), in
+  `PIPELINE_SLOS.md`. This reclassified email-digest's Tier-3 "miss"
+  (629k across 7 stages = 90k/stage) as a false alarm of the old flat budget,
+  and localized llm-summary's real overage to a single stage (FinOps 396k).
+  Open follow-up: a scope guardrail for `agents/finops.md` so a $0-live slice
+  doesn't model the entire future real-model slice.
 
 ## How to add a phase
 
