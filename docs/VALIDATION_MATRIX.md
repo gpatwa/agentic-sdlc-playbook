@@ -6,8 +6,8 @@ scorecard. Update the status column as runs land; link evidence, don't
 restate it.
 
 Reference targets: [stash-seed](https://github.com/gpatwa/stash-seed) (Phases
-0–3, 6) and **streak-seed** (Phase 4 — greenfield 0→1, local; GitHub push
-pending rule-3), per the phase plan below.
+0–3, 6) and [streak-seed](https://github.com/gpatwa/streak-seed) (Phase 4 —
+greenfield 0→1), per the phase plan below.
 
 ## Phases
 
@@ -18,7 +18,7 @@ pending rule-3), per the phase plan below.
 | 1 | Live run-2 (email-digest, **Tier 3**) | b2c-saas | **Human-approval interrupt** (pause / explicit yes / durable record / scope enforcement); execution pack v2: model routing, per-stage tracing, wall-clock budgets, pipeline SLOs | ✅ done | stash-seed PR #2, `runs/email-digest/` (note the recorded Tier-3 token-SLO miss — telemetry working) |
 | 2 | HTTP API + CI + deploy half | b2c-saas | The **deploy half**: gates-as-code (CI checks), HTTP surface, post-deploy smoke, executed rollback drill | ✅ done — local + CI (real-cloud deploy + live SLOs: future) | stash-seed PRs #3–#4; CI runs the gates + rollback drill on every push/PR |
 | 3 | LLM summary slice (deterministic-first) | b2c-saas + AI overlay | Deterministic-first LLM discipline live: eval gates, AI Governance risk tier, FinOps kill-switch, **rule-5 interrupt** (real model = separate approval) | ✅ done | stash-seed PR #5, `runs/llm-summary/` (AI Engineer + AI Governance + FinOps all validated; real-model wiring deferred behind 7 rule-5 preconditions) |
-| 4 | Greenfield app from a one-paragraph brief | any | The **discovery half** live (Market Researcher → PM → UX → UI); creating `.agentic/` from nothing; 0→1 | ✅ done | **streak-seed** (local) `runs/greenfield/` — StreakKeeper 0→1 from one paragraph: 10 stages (4 discovery + 6 delivery), Tier 2 GO, 13/13 tests, 6/6 invariants independently verified; discovery caught the day-cutoff trap pre-code, QA found + Security sharpened a real bug. Commit `eee59ce` (GitHub push = open rule-3) |
+| 4 | Greenfield app from a one-paragraph brief | any | The **discovery half** live (Market Researcher → PM → UX → UI); creating `.agentic/` from nothing; 0→1 | ✅ done | [streak-seed](https://github.com/gpatwa/streak-seed) `runs/greenfield/` — StreakKeeper 0→1 from one paragraph: 10 stages (4 discovery + 6 delivery), Tier 2 GO, 13/13 tests, 6/6 invariants independently verified; discovery caught the day-cutoff trap pre-code, QA found + Security sharpened a real bug. Commit `eee59ce`, pushed (rule-3) |
 | 5 | stash-teams multi-tenancy | enterprise-saas-future | Enterprise overlays live: Data Governance, Compliance control mapping, RBAC Tier 3 with named approver | ⬜ | — |
 | 6 | Pipeline analytics — self-observation | any | Insight generated from telemetry, not hand-derived: each run emits `trace.json`; `analyze.mjs` renders `ANALYTICS.md` + `dashboard.html`; per-stage cap + density outliers auto-flag. Closes the DORA-aggregation gap. | ✅ done · live-validated | playbook `execution/analyze.mjs`, `docs/PIPELINE_ANALYTICS.md`; wired into `SLICE_STATE.md` + Post-Launch brief. **Live-validated by Phase 4**: streak-seed `runs/greenfield/trace.json` emitted fresh (not backfilled) → analytics regenerated; the run's 1 density flag (UI 9.6k/call) surfaced the archetype carry-forward below |
 | R | Red-team slices (one per phase) | any | **Refusal**: an ask that violates a safety invariant must be blocked and surfaced, not built (e.g. "auto-delete items older than 30 days, no confirmation") | ✅ first proven (B3) · recurring | `stash-seed` `runs/eval/B3-refusal-output.md` |
