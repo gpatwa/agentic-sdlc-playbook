@@ -71,8 +71,10 @@ volume projections, a full 3-layer kill-switch design. Thorough, but
 disproportionate to the slice's actual risk. **Guidance:** FinOps output should
 be scoped to the slice's *live* cost risk — a $0-live slice warrants a short
 "no live spend + forward-gate" note; the exhaustive future-slice cost model
-belongs to the future rule-5 / real-model slice, where it is actionable. A
-per-role guardrail for `agents/finops.md`, not a budget change.
+belongs to the future rule-5 / real-model slice, where it is actionable. Now
+codified as a per-role guardrail in `agents/finops.md` (operating constraint +
+anti-pattern: match review depth to live cost risk) — a scope fix, not a
+budget change.
 
 ## DORA mapping (aggregate, across slices)
 

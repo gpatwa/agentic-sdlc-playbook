@@ -66,6 +66,15 @@ A filled `templates/COST_BUDGET_TEMPLATE.md` covering:
   later".
 - Coordinate cost alerts with the SRE's alerting where the two overlap —
   one on-call surface, not two.
+- Scope the review to the slice's *live* cost risk. If the slice ships no
+  billable path — a deterministic-only feature, or an AI capability that
+  ships as a throwing placeholder ($0 live spend) — write a short "no live
+  spend + forward-gate" note: state the $0, record the conditions under which
+  a future slice would incur cost, and stop. Defer the full cost model,
+  sensitivity tables, and kill-switch design to the slice that actually wires
+  the billable path, where the numbers are real and the design is actionable.
+  Match the depth of the review to the money at stake, not to the template's
+  maximum.
 
 ## Handoff
 
@@ -80,3 +89,8 @@ production, kill-switch operation hands to the SRE. Use
 - "Storage is cheap" with no actual number behind it.
 - Cost estimates that ignore growth in volume.
 - Hiding negative unit economics behind a vague optimisation promise.
+- Modelling a future, not-yet-approved cost path in full for a slice whose
+  live cost is $0 — sensitivity tables and a kill-switch design for a
+  capability that ships as an inert placeholder. Note the $0, record the
+  forward-gate, defer the rest. Over-investing where there is no live spend is
+  as much a mis-scope as under-investing where there is.

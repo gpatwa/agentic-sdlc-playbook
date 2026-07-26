@@ -38,8 +38,9 @@ derivatives), per the phase plan below.
   `PIPELINE_SLOS.md`. This reclassified email-digest's Tier-3 "miss"
   (629k across 7 stages = 90k/stage) as a false alarm of the old flat budget,
   and localized llm-summary's real overage to a single stage (FinOps 396k).
-  Open follow-up: a scope guardrail for `agents/finops.md` so a $0-live slice
-  doesn't model the entire future real-model slice.
+  ✅ follow-up done: a scope guardrail is now codified in `agents/finops.md`
+  (match review depth to live cost risk) so a $0-live slice doesn't model the
+  entire future real-model slice.
 
 ## How to add a phase
 
