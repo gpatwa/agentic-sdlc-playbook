@@ -16,6 +16,7 @@ the qualitative SLOs are unchanged. Adjust with evidence, never silently
 | Stage wall-clock | p50 ≤ 5 min · p95 ≤ 20 min (the `FAILURE_LOOP.md` budget) | Trace: Start/End per stage |
 | Per-stage token budget | ≤ 150k subagent tokens p95, **each spawned stage** | Trace: Tokens column, per row |
 | Slice token envelope | ≤ spawned-stage-count × 100k subagent tokens p95 | Trace: Tokens total ÷ stage count |
+| Stage density | ≤ the stage's **archetype** cap (design 15k · review 8k · build 5k tok/call) | Trace: Tokens ÷ Tool calls, per row |
 | Approval surfacing | 100% of gated actions surfaced at Intake — never discovered at Release | Approvals table: request row exists before any implementation stage row |
 | Escalation latency | A blocked slice surfaces to the human in the same turn it blocks | STATE status transitions |
 
@@ -48,6 +49,33 @@ Every legitimate stage across all three runs lands ≤ 126k. So:
   is not falsely red against a 4-stage baseline. A slice can pass every
   per-stage cap yet still bust the envelope (all stages high-but-legit) — that
   is a real signal too: the slice ran collectively hot, review its scope.
+
+## Density by archetype (2026-07-26)
+
+A stage's tokens-per-tool-call is set by **what it produces**, not by its risk
+tier: design stages reason long and call few tools; build stages call many tools
+and reason less per call. A single flat baseline (~3.6k, from the coding-heavy
+runs) therefore misflagged legitimate design work.
+
+Evidence — 23 traced stages across three runs cluster cleanly, with real gaps
+between the groups:
+
+| Archetype | Stages | Observed (ex-outlier) | Cap |
+|-----------|--------|----------------------|-----|
+| **design** — reason → long artefact, few calls | Market Research, PRD, UX, UI, AI Governance, FinOps | 5,533–9,807 | **15k** |
+| **review** — read artefacts → verdict | Scope, Architecture, Security, Release, Post-Launch | 3,337–5,177 | **8k** |
+| **build** — heavy file / test I/O | Implementation, QA, AI Engineer | 2,549–3,137 | **5k** |
+
+Each cap carries headroom over its observed max. `analyze.mjs` classifies by
+stage name (a stage may override with an `archetype` field in `trace.json`;
+unknown names fall to **review**, the middle band) and reports every stage as a
+percentage of its own cap.
+
+**Net effect: more discriminating, not looser.** It cleared two false positives
+(greenfield UI 9.7k → 64%; AI Governance 9.8k → 65%) while FinOps still fires at
+**264%**. AI Governance and FinOps are the same archetype on the same run — the
+flat rule called both outliers; this one separates legitimate analysis from real
+over-production.
 
 ### What this reclassifies
 
