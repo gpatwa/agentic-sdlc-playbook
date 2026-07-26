@@ -13,6 +13,8 @@ the originating conversation.
 - Never advance `Current stage` past a stage whose gate hasn't passed.
 - Never advance past an open approval (see `APPROVAL_PROTOCOL.md`).
 - Artefacts are referenced by path, never inlined.
+- Alongside `STATE.md`, emit `runs/<slice-id>/trace.json` — machine-readable
+  telemetry mirroring the Trace table (see "Machine-readable trace").
 
 ## Template
 
@@ -63,6 +65,23 @@ always. Totals row = the slice's run cost. Feeds `PIPELINE_SLOS.md`.
 
 <one line: the very next thing to do — what a resuming session executes>
 ```
+
+## Machine-readable trace
+
+Alongside `STATE.md`, each run emits **`runs/<slice-id>/trace.json`** — the same
+per-stage telemetry as the Trace table, machine-readable, so analytics can
+aggregate across runs without parsing markdown. STATE.md stays the human mirror;
+neither is hand-parsed for numbers.
+
+```json
+{ "schema": "agentic-sdlc/trace@1", "slice": "<id>", "tier": 2,
+  "overlay": false, "landed": true, "started": "<UTC>",
+  "stages": [ { "stage": "<name>", "model": "<model>",
+               "tokens": 0, "toolCalls": 0, "retries": 0 } ] }
+```
+
+The Post-Launch agent regenerates `runs/ANALYTICS.md` + `runs/dashboard.html`
+from all traces via `execution/analyze.mjs` at slice close.
 
 ## Status values
 

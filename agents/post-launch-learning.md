@@ -27,6 +27,13 @@ A filled `templates/POST_LAUNCH_REVIEW_TEMPLATE.md` covering:
 - What to fold into the next PRD (carry-forward items).
 - Any follow-up slices to file (with a one-line description each).
 
+Also at slice close, refresh the pipeline analytics: confirm this slice's
+`runs/<slice-id>/trace.json` is complete (per `SLICE_STATE.md`), then regenerate
+`runs/ANALYTICS.md` + `runs/dashboard.html` via
+`node <playbook>/execution/analyze.mjs .`. Treat any stage the generator flags —
+over the per-stage token cap or ≥ 2× the density baseline (`PIPELINE_SLOS.md`) —
+as a carry-forward, the way the FinOps 396k outlier was.
+
 ## Decisions the Post-Launch Agent owns
 
 - What gets captured as carry-forward.
@@ -47,6 +54,8 @@ A filled `templates/POST_LAUNCH_REVIEW_TEMPLATE.md` covering:
 - Carry-forward items are concrete enough to use ("the empty state
   needs a clearer next-step CTA") rather than vague ("UX could be
   better").
+- The slice's `trace.json` exists and the analytics views were regenerated —
+  pipeline telemetry is never left stale.
 
 ## When to run this stage
 
