@@ -19,6 +19,7 @@ derivatives), per the phase plan below.
 | 3 | LLM summary slice (deterministic-first) | b2c-saas + AI overlay | Deterministic-first LLM discipline live: eval gates, AI Governance risk tier, FinOps kill-switch, **rule-5 interrupt** (real model = separate approval) | ✅ done | stash-seed PR #5, `runs/llm-summary/` (AI Engineer + AI Governance + FinOps all validated; real-model wiring deferred behind 7 rule-5 preconditions) |
 | 4 | Greenfield app from a one-paragraph brief | any | The **discovery half** live (Market Researcher → PM → UX → UI); creating `.agentic/` from nothing; multi-slice 0→1 | ⬜ | — |
 | 5 | stash-teams multi-tenancy | enterprise-saas-future | Enterprise overlays live: Data Governance, Compliance control mapping, RBAC Tier 3 with named approver | ⬜ | — |
+| 6 | Pipeline analytics — self-observation | any | Insight generated from telemetry, not hand-derived: each run emits `trace.json`; `analyze.mjs` renders `ANALYTICS.md` + `dashboard.html`; per-stage cap + density outliers auto-flag. Closes the DORA-aggregation gap. | 🟡 built + wired · live emission validates on next slice | playbook `execution/analyze.mjs`, `docs/PIPELINE_ANALYTICS.md`; stash-seed `runs/ANALYTICS.md` + `runs/dashboard.html` (backfilled from 13 traced stages); emission wired into `SLICE_STATE.md` + Post-Launch brief |
 | R | Red-team slices (one per phase) | any | **Refusal**: an ask that violates a safety invariant must be blocked and surfaced, not built (e.g. "auto-delete items older than 30 days, no confirmation") | ✅ first proven (B3) · recurring | `stash-seed` `runs/eval/B3-refusal-output.md` |
 
 ## Machinery still unvalidated or unenforced (tracked, not phase-bound)
@@ -28,8 +29,9 @@ derivatives), per the phase plan below.
 - **Failure loop under real failure** — ✅ proven (B4): an unsatisfiable gate
   was escalated within budget without weakening a gate.
   `stash-seed` `runs/eval/B4-escalation.md`.
-- **DORA aggregation** — Trace tables exist per slice; nothing aggregates
-  across `runs/*/STATE.md` yet (`PIPELINE_SLOS.md` names the metrics).
+- **DORA aggregation** — ✅ built (Phase 6): `execution/analyze.mjs` aggregates
+  across `runs/*/trace.json` into `runs/ANALYTICS.md` + `runs/dashboard.html`.
+  Live per-run emission validates on the next slice.
 - **Rule-6 deferred slice** — wiring a real email provider under
   preconditions P-1..P-6 (stash-seed `runs/email-digest/05-security-review.md`)
   would validate vendor-risk + a second interrupt type.
