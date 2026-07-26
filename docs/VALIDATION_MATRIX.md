@@ -45,15 +45,20 @@ greenfield 0→1), per the phase plan below.
   ✅ follow-up done: a scope guardrail is now codified in `agents/finops.md`
   (match review depth to live cost risk) so a $0-live slice doesn't model the
   entire future real-model slice.
-- **Density baseline is stage-archetype-dependent** — the Phase-4 greenfield run
-  showed design/discovery stages at ~5.5–9.7k tok/call vs ~3k for build/verify,
-  so the flat ~3.6k density detector misflags design work (it flagged UI 9.6k as
-  an "outlier"). Split the density baseline by archetype (design / code /
-  review), not one number. Surfaced by streak-seed `runs/greenfield/10-post-launch.md`.
-- **Greenfield installer bootstrap** — `execution/install.mjs` exits if the
-  target has no `.agentic/`, so a brand-new repo can't install the pack until
-  discovery authors `.agentic/`. Add a `--greenfield` bootstrap path (stub
-  `.agentic/`, then enrich). Surfaced by the Phase-4 run.
+- **Density baseline is stage-archetype-dependent** — ✅ done 2026-07-26. The
+  flat ~3.6k detector cut through two legitimate clusters; density is now capped
+  per archetype (**design 15k · review 8k · build 5k** tok/call), classified in
+  `analyze.mjs` and documented in `PIPELINE_SLOS.md`. More discriminating, not
+  looser: cleared two false positives (greenfield UI 9.7k → 64% of cap; AI
+  Governance 9.8k → 65%) while FinOps still fires at 264% — the same archetype
+  on the same run, now correctly separated. Surfaced by streak-seed
+  `runs/greenfield/10-post-launch.md`.
+- **Greenfield installer bootstrap** — ✅ done 2026-07-26:
+  `execution/install.mjs --greenfield` scaffolds a stub `.agentic/` so a
+  brand-new repo can install the pack before discovery authors it. Stubs are
+  explicit empty placeholders (never invented content — a fabricated
+  SAFETY_INVARIANTS would be trusted downstream); the guard still fails closed
+  without the flag. Surfaced by the Phase-4 run.
 
 ## How to add a phase
 

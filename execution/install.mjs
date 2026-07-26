@@ -18,14 +18,37 @@ const here = dirname(fileURLToPath(import.meta.url));
 const playbookRoot = join(here, "..");
 const packDir = join(here, "pack");
 
-const productDir = process.argv[2];
+const args = process.argv.slice(2);
+const greenfield = args.includes("--greenfield");
+const productDir = args.find((a) => !a.startsWith("--"));
 if (!productDir) {
-  console.error("usage: node <playbook>/execution/install.mjs <product-dir>");
+  console.error("usage: node <playbook>/execution/install.mjs <product-dir> [--greenfield]");
   process.exit(1);
 }
+
+// A greenfield repo has no .agentic/ yet — discovery authors it. Chicken-and-egg:
+// the pack can't install without it. --greenfield scaffolds explicit STUBS so the
+// pack installs; discovery then replaces them. The stubs are deliberately empty
+// placeholders, never plausible invented content — an invented SAFETY_INVARIANTS
+// is worse than none, because downstream agents would trust it.
+const AGENTIC_STUBS = {
+  "PROJECT_CONTEXT.md": `# Project Context — TODO\n\n> **STUB — written by \`install.mjs --greenfield\`. Replace before delivery.**\n> The Market Researcher / PM stages own this: what the product is, who it\n> serves, and the moment they hit the problem. Do not leave as-is.\n`,
+  "SAFETY_INVARIANTS.md": `# Safety Invariants — TODO (EMPTY)\n\n> **STUB — written by \`install.mjs --greenfield\`. This file lists NOTHING yet.**\n> An empty invariants file means nothing is protected: gates that check\n> invariants will find none to enforce. The Architect + Security stages must\n> fill this from the PRD/UX before any delivery stage runs.\n>\n> Each invariant: one line, testable, stated as what MUST hold across releases.\n`,
+  "LOCAL_COMMANDS.md": `# Local Commands — TODO\n\n> **STUB — written by \`install.mjs --greenfield\`. Replace before delivery.**\n> The commands agents run to verify work: typecheck, test, build, qa gate,\n> start. Fill these in as the delivery stages create them.\n`,
+  "CURRENT_MVP_STATUS.md": `# Current MVP Status — TODO\n\n> **STUB — written by \`install.mjs --greenfield\`. Replace as the slice lands.**\n> What exists today, what this slice adds, what is explicitly out of scope.\n`,
+};
+
 if (!existsSync(join(productDir, ".agentic"))) {
-  console.error(`! ${productDir} has no .agentic/ — is it a product repo?`);
-  process.exit(1);
+  if (!greenfield) {
+    console.error(`! ${productDir} has no .agentic/ — is it a product repo?`);
+    console.error(`  new/greenfield repo? re-run with --greenfield to scaffold stub .agentic/ files.`);
+    process.exit(1);
+  }
+  mkdirSync(join(productDir, ".agentic"), { recursive: true });
+  for (const [f, body] of Object.entries(AGENTIC_STUBS)) {
+    writeFileSync(join(productDir, ".agentic", f), body);
+  }
+  console.log(`  scaffolded stub .agentic/ (${Object.keys(AGENTIC_STUBS).length} files) — discovery must replace them`);
 }
 
 // Roles that run commands (need Bash); everyone else is doc-only (least privilege).
