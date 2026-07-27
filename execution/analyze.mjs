@@ -89,6 +89,36 @@ const byArchetype = Object.keys(ARCHETYPES).map((a) => {
     avg: ds.length ? Math.round(ds.reduce((x, y) => x + y, 0) / ds.length) : 0 };
 }).filter((r) => r.n > 0);
 
+// ── DORA (PIPELINE_SLOS.md § DORA mapping) ─────────────────────────────────
+// Only what the traces actually ground. A metric without data is reported as
+// "not captured", never estimated — an unearned green here would undermine the
+// one scorecard that is supposed to be honest.
+const landed = runs.filter((r) => r.landed);
+const withDates = landed.filter((r) => r.started && r.landedAt);
+const hours = (a, b) => (new Date(b) - new Date(a)) / 36e5;
+const leadTimes = withDates.map((r) => ({ slice: r.slice, h: hours(r.started, r.landedAt) }))
+  .filter((x) => Number.isFinite(x.h) && x.h >= 0)
+  .sort((a, b) => a.h - b.h);
+const totalRetries = stages.reduce((a, s) => a + (s.retries || 0), 0);
+const postFixes = runs.reduce((a, r) => a + (r.postLandingFixes || 0), 0);
+const reverted = runs.filter((r) => r.reverted).length;
+
+let spanWeeks = null;
+if (withDates.length > 1) {
+  const ts = withDates.map((r) => new Date(r.landedAt).getTime()).sort((a, b) => a - b);
+  spanWeeks = Math.max((ts[ts.length - 1] - ts[0]) / (7 * 864e5), 1 / 7); // floor at a day
+}
+
+const dora = {
+  leadTimeMedianH: leadTimes.length ? leadTimes[Math.floor(leadTimes.length / 2)].h : null,
+  leadTimes,
+  deployFreqPerWeek: spanWeeks ? landed.length / spanWeeks : null,
+  changeFailureRate: landed.length ? (postFixes + reverted) / landed.length : null,
+  reworkRate: landed.length ? (totalRetries + postFixes) / landed.length : null,
+  totalRetries, postFixes, reverted, landedCount: landed.length,
+  undated: landed.length - withDates.length,
+};
+
 // ── format helpers ──────────────────────────────────────────────────────────
 const ci = (n) => n.toLocaleString("en-US");
 const k = (n) => (n >= 1000 ? (n / 1000).toFixed(n < 10000 ? 1 : 0) + "k" : String(n));
@@ -106,6 +136,17 @@ md += `- Stages: **${fleet.stages}** · Tokens: **${ci(fleet.tokens)}** · Tool 
 md += `- Envelope breaches: **${fleet.envelopeFails}/${perRun.length}** · Stage outliers: **${outliers.length}**\n\n`;
 md += `## Per run\n\n| Run | Tier | Stages | Tokens | Calls | Envelope | Status |\n|-----|------|--------|--------|-------|----------|--------|\n`;
 for (const r of perRun) md += `| ${r.slice} | ${r.tier}${r.overlay ? "+overlay" : ""} | ${r.n} | ${ci(r.tokens)} | ${r.calls} | ${ci(r.envelope)} | ${r.pass ? "✅ pass" : `❌ over ${k(r.overBy)}`} |\n`;
+const hfmt = (h) => (h == null ? "—" : h < 24 ? `${h.toFixed(1)}h` : `${(h / 24).toFixed(1)}d`);
+md += `\n## DORA\n\nPer \`PIPELINE_SLOS.md\` § DORA mapping. **Only metrics the traces ground are reported** — anything without data says so.\n\n`;
+md += `| Metric | Value | Basis |\n|--------|-------|-------|\n`;
+md += `| Lead time (median) | ${hfmt(dora.leadTimeMedianH)} | intake → landed, ${withDates.length}/${dora.landedCount} slices dated |\n`;
+md += `| Deployment frequency | ${dora.deployFreqPerWeek ? dora.deployFreqPerWeek.toFixed(1) + " slices/week" : "—"} | ${dora.landedCount} landed over the traced span |\n`;
+md += `| Change failure rate | ${dora.changeFailureRate == null ? "—" : Math.round(dora.changeFailureRate * 100) + "%"} | ${dora.postFixes} post-landing fixes + ${dora.reverted} reverts ÷ ${dora.landedCount} landed |\n`;
+md += `| Rework rate | ${dora.reworkRate == null ? "—" : dora.reworkRate.toFixed(2) + " / slice"} | ${dora.totalRetries} stage retries + ${dora.postFixes} post-landing fixes ÷ ${dora.landedCount} landed |\n`;
+md += `| Failed-deployment recovery time | **not captured** | needs blocked→unblocked timestamps in \`STATE.md\`; no run has recorded them |\n`;
+if (dora.undated > 0) md += `\n> ${dora.undated} landed slice(s) lack \`landedAt\` and are excluded from lead time.\n`;
+if (preTelemetry.length) md += `\n> **Change failure and rework cover traced slices only.** ${preTelemetry.length} pre-telemetry run(s) are invisible here, so a defect shipped by one of them — and fixed later — is not counted. These rates are a floor, not a ceiling.\n`;
+if (leadTimes.length) md += `\nPer-slice lead time: ${leadTimes.map((x) => `${x.slice} ${hfmt(x.h)}`).join(" · ")}\n`;
 md += `\n## Density by archetype\n\nTokens per tool call, measured against each archetype's own cap.\n\n`;
 md += `| Archetype | What it does | Cap | Observed (n) | Range | Avg |\n|-----------|--------------|-----|--------------|-------|-----|\n`;
 for (const a of byArchetype) md += `| **${a.archetype}** | ${a.blurb} | ${ci(a.cap)} | ${a.n} | ${ci(a.min)}–${ci(a.max)} | ${ci(a.avg)} |\n`;
@@ -216,6 +257,17 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--ink2);font-size:12.5p
  <p class="cap">Tokens per tool call as a share of that stage's <b>archetype</b> cap (design ${k(ARCHETYPES.design.cap)} · review ${k(ARCHETYPES.review.cap)} · build ${k(ARCHETYPES.build.cap)}). Dashed line = 100% of cap; labels show the actual tok/call. One flat baseline misflags design work, so each stage is judged against its own kind.</p>
  <div class="plot"><div class="reflayer">${refLine((1 / denScale) * 100, "100% of cap")}</div>${chart2}</div>
  <div class="legend"><span><i style="background:var(--a)"></i>${runs[0].slice}</span>${runs[1] ? `<span><i style="background:var(--b)"></i>${runs[1].slice}</span>` : ""}<span><i style="background:var(--crit)"></i>over its cap</span></div>
+</div>
+<div class="card">
+ <h2>DORA</h2>
+ <p class="cap">Only metrics the traces ground. A metric without data says <b>not captured</b> — never estimated.</p>
+ <div class="tblwrap"><table><thead><tr><th>Metric</th><th class="n">Value</th><th>Basis</th></tr></thead><tbody>
+ <tr><td>Lead time (median)</td><td class="n">${hfmt(dora.leadTimeMedianH)}</td><td>intake → landed · ${withDates.length}/${dora.landedCount} dated</td></tr>
+ <tr><td>Deployment frequency</td><td class="n">${dora.deployFreqPerWeek ? dora.deployFreqPerWeek.toFixed(1) + "/wk" : "—"}</td><td>${dora.landedCount} landed over the traced span</td></tr>
+ <tr><td>Change failure rate</td><td class="n">${dora.changeFailureRate == null ? "—" : Math.round(dora.changeFailureRate * 100) + "%"}</td><td>${dora.postFixes} post-landing fixes + ${dora.reverted} reverts</td></tr>
+ <tr><td>Rework rate</td><td class="n">${dora.reworkRate == null ? "—" : dora.reworkRate.toFixed(2)}</td><td>${dora.totalRetries} retries + ${dora.postFixes} fixes ÷ ${dora.landedCount} landed</td></tr>
+ <tr><td>Failed-deploy recovery</td><td class="n">n/a</td><td><b>not captured</b> — needs blocked→unblocked timestamps</td></tr>
+ </tbody></table></div>
 </div>
 <div class="card">
  <h2>Archetype baselines</h2>

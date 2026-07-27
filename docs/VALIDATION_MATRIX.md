@@ -60,7 +60,14 @@ greenfield 0→1), per the phase plan below.
 - **DORA aggregation** — ✅ built + live-validated (Phase 6):
   `execution/analyze.mjs` aggregates across `runs/*/trace.json` into
   `runs/ANALYTICS.md` + `runs/dashboard.html`. Live per-run emission proven by
-  the Phase-4 greenfield run (streak-seed).
+  the Phase-4 greenfield run (streak-seed). **The DORA metrics themselves are
+  now computed** (2026-07-26) — lead time, deployment frequency, change failure
+  rate, rework rate — after an earlier ✅ here overstated things: the generator
+  aggregated *cost* only. Failed-deployment recovery time is reported as **not
+  captured** rather than estimated (it needs blocked→unblocked timestamps no run
+  has recorded), and change-failure/rework are flagged as a **floor**, since
+  pre-telemetry runs are invisible to them — stash-seed's Phase-2b slice shipped
+  the wildcard bind fixed today and cannot be counted.
 - **Rule-6 deferred slice** — wiring a real email provider under
   preconditions P-1..P-6 (stash-seed `runs/email-digest/05-security-review.md`)
   would validate vendor-risk + a second interrupt type.
