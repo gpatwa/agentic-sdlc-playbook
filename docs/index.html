@@ -146,6 +146,19 @@
   .repo .arrow{color:var(--signal-ink)}
   .repos{display:flex;gap:12px;flex-wrap:wrap}
   .colophon{font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.02em;max-width:34ch;line-height:1.6}
+
+  /* doc index */
+  .docs{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin-top:36px;
+    background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  @media (max-width:640px){.docs{grid-template-columns:1fr}}
+  a.doc{background:var(--surface);padding:20px 22px;text-decoration:none;display:block;transition:background .15s}
+  a.doc:hover{background:var(--raise)}
+  a.doc .t{font-family:var(--mono);font-size:12.5px;color:var(--signal-ink);display:flex;
+    align-items:center;gap:7px;letter-spacing:.01em}
+  a.doc .t .arrow{opacity:.55}
+  a.doc .d{color:var(--muted);font-size:.94rem;margin-top:7px;line-height:1.5}
+  a.doc.feature{grid-column:1/-1}
+  a.doc.feature .t{font-size:14px;font-weight:600}
 </style>
 
 <header class="top">
@@ -155,6 +168,8 @@
       <a href="#what">What it does</a>
       <a href="#use" class="hide-sm">How to use</a>
       <a href="#proof">Evidence</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="#docs" class="hide-sm">Docs</a>
       <a href="https://github.com/gpatwa/agentic-sdlc-playbook">GitHub&nbsp;&#8599;</a>
     </nav>
   </div>
@@ -265,6 +280,42 @@ architect &rarr; engineer &rarr; qa &rarr; security &rarr; release
       </div>
       <div class="note">
         The runs correct <b>themselves</b>&mdash;and sometimes their author. Security review caught a finished slice quietly listening on <span class="amber">every network interface</span> instead of loopback, reached a user&rsquo;s data across the LAN to prove it, and <b>sent the work back</b>; the same flaw was then found and fixed in the older app it came from. Earlier, discovery <b>caught a correctness trap before a line of code existed</b>, and QA found a bug whose proposed fix Security then <b>proved insufficient</b>. A slice that blew its token budget didn&rsquo;t get a quieter budget&mdash;the budget was re-derived from evidence and the one genuinely hot stage was flagged. And the two hardest tests still pass: shown an unsafe ask it <b>refused at intake</b>; shown an impossible one it <b>bounded the failure and escalated</b>&mdash;without weakening a gate.
+      </div>
+    </section>
+
+    <section id="docs">
+      <p class="sec-label">The documents</p>
+      <h2>The methodology is the source.</h2>
+      <p class="intro">There is no hidden implementation &mdash; the specs below <em>are</em> the system. Agents are generated from these files, and the gates are enforced from them.</p>
+      <div class="docs">
+        <a class="doc feature" href="architecture.html">
+          <span class="t">Architecture &amp; data flow <span class="arrow">&#8594;</span></span>
+          <span class="d">Three views: the agent topology, how the repo realizes it, and the execution loop that measures and budgets its own runs. Start here.</span>
+        </a>
+        <a class="doc" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENTIC_SDLC.md">
+          <span class="t">AGENTIC_SDLC.md <span class="arrow">&#8599;</span></span>
+          <span class="d">The lifecycle, stage by stage &mdash; what happens at each one and what it produces.</span>
+        </a>
+        <a class="doc" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_ROLES.md">
+          <span class="t">AGENT_ROLES.md <span class="arrow">&#8599;</span></span>
+          <span class="d">All 24 roles: who owns which decision, and&mdash;just as important&mdash;which they don&rsquo;t.</span>
+        </a>
+        <a class="doc" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/RELEASE_GATES.md">
+          <span class="t">RELEASE_GATES.md <span class="arrow">&#8599;</span></span>
+          <span class="d">The control plane. Which gates run per release tier, and what a red one does.</span>
+        </a>
+        <a class="doc" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md">
+          <span class="t">HUMAN_APPROVAL_RULES.md <span class="arrow">&#8599;</span></span>
+          <span class="d">The six actions that always stop for a human. Short, fixed, and non-negotiable.</span>
+        </a>
+        <a class="doc" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/pack/protocols/RUN_ECONOMICS.md">
+          <span class="t">RUN_ECONOMICS.md <span class="arrow">&#8599;</span></span>
+          <span class="d">Budget checked before the spend, depth tiers, and why an interrupted stage must leave its work on disk.</span>
+        </a>
+        <a class="doc" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md">
+          <span class="t">VALIDATION_MATRIX.md <span class="arrow">&#8599;</span></span>
+          <span class="d">The scorecard &mdash; including what is <em>not</em> validated yet. The open items are listed on purpose.</span>
+        </a>
       </div>
     </section>
 
