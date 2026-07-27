@@ -8,10 +8,10 @@
 <body>
 <style>
   :root{
-    --ground:#eef1f5; --surface:#ffffff; --raise:#f7f9fb;
+    --ground:#e9edf3; --surface:#ffffff; --raise:#f7f9fb;
     --ink:#141922; --muted:#586172; --faint:#8a93a1;
     --line:#d7dce4; --line-strong:#c3cad5;
-    --signal:#a9640f; --signal-ink:#8a5310; --signal-soft:#f4e8d4;
+    --signal:#c07214; --signal-ink:#96530b; --signal-soft:#f8e9d0;
     --pass:#2e8b68; --fail:#b9503a;
     --shadow:0 1px 2px rgba(20,25,34,.05),0 14px 34px -14px rgba(20,25,34,.16);
     --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
@@ -147,6 +147,13 @@
   .repos{display:flex;gap:12px;flex-wrap:wrap}
   .colophon{font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.02em;max-width:34ch;line-height:1.6}
 
+  /* honest limits */
+  .limits{display:flex;flex-direction:column;gap:20px;margin-top:34px;max-width:70ch}
+  .limits li{list-style:none;position:relative;padding-left:22px;color:var(--muted);font-size:.99rem;line-height:1.6}
+  .limits li::before{content:"";position:absolute;left:0;top:.6em;width:8px;height:2px;background:var(--line-strong)}
+  .limits li b{color:var(--ink);font-weight:650}
+  ul.limits{padding:0;margin-top:34px}
+
   /* doc index */
   .docs{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin-top:36px;
     background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
@@ -168,6 +175,7 @@
       <a href="#what">What it does</a>
       <a href="#use" class="hide-sm">How to use</a>
       <a href="#proof">Evidence</a>
+      <a href="#limits" class="hide-sm">Limits</a>
       <a href="architecture.html">Architecture</a>
       <a href="#docs" class="hide-sm">Docs</a>
       <a href="https://github.com/gpatwa/agentic-sdlc-playbook">GitHub&nbsp;&#8599;</a>
@@ -281,6 +289,18 @@ architect &rarr; engineer &rarr; qa &rarr; security &rarr; release
       <div class="note">
         The runs correct <b>themselves</b>&mdash;and sometimes their author. Security review caught a finished slice quietly listening on <span class="amber">every network interface</span> instead of loopback, reached a user&rsquo;s data across the LAN to prove it, and <b>sent the work back</b>; the same flaw was then found and fixed in the older app it came from. Earlier, discovery <b>caught a correctness trap before a line of code existed</b>, and QA found a bug whose proposed fix Security then <b>proved insufficient</b>. A slice that blew its token budget didn&rsquo;t get a quieter budget&mdash;the budget was re-derived from evidence and the one genuinely hot stage was flagged. And the two hardest tests still pass: shown an unsafe ask it <b>refused at intake</b>; shown an impossible one it <b>bounded the failure and escalated</b>&mdash;without weakening a gate.
       </div>
+    </section>
+
+    <section id="limits">
+      <p class="sec-label">Honest limits</p>
+      <h2>Where it costs you, and where it isn&rsquo;t proven.</h2>
+      <p class="intro">The scorecard in this repo lists what <em>isn&rsquo;t</em> validated, so this page should too.</p>
+      <ul class="limits">
+        <li><b>It spends real tokens.</b> A slice runs four to ten stages at roughly 70k&ndash;130k tokens each &mdash; a full greenfield build measured 947k. That is the price of every stage forming its own independent judgement, and it is exactly why the pipeline checks a budget <em>before</em> each step rather than reporting the damage after.</li>
+        <li><b>Small changes do not need this.</b> Running a one-line fix through nine gated stages is theatre. The Engineering Manager compresses the pipeline for small slices and records why; reach for the full chain where being wrong is expensive, not by default.</li>
+        <li><b>Least-privilege binds conditionally.</b> Per-role tool restrictions are generated correctly, but only take effect when the orchestrator session runs inside the product repo. Run it from elsewhere and you get capable agents with unrestricted tools &mdash; documented on the architecture page rather than buried.</li>
+        <li><b>Not yet proven:</b> real-cloud deploy and live production SLOs, enterprise multi-tenancy, and a real model wired into a shipped feature. Each is listed as open in the validation matrix &mdash; none of them are claimed here.</li>
+      </ul>
     </section>
 
     <section id="docs">
