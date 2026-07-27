@@ -89,6 +89,70 @@ system definition.
 | `project-packs/` | **Configuration** per product archetype | `b2c-saas`, `ai-agent-product`, `browser-automation-product`, `enterprise-saas-future` |
 | `examples/` | A **captured run** of the whole pipeline | `saved-items-bulk-delete/` — one slice traced through every stage, with a sample `.agentic/` |
 | `.agentic/` *(lives in the product repo)* | **Per-product context/state** read by every node | `PROJECT_CONTEXT`, `SAFETY_INVARIANTS`, `LOCAL_COMMANDS`, `CURRENT_MVP_STATUS` |
+| `execution/` | **Runtime** — compiles the methodology into an executable pack | `install.mjs` (generates `.claude/` agents + protocols + hooks), `analyze.mjs` (renders analytics from telemetry), `hooks/budget-guard.mjs`, `pack/protocols/` (9 protocols) |
+| `runs/` *(lives in the product repo)* | **Execution record + telemetry** | `<slice>/STATE.md` (durable, resumable), `<slice>/trace.json` (machine-readable), the stage artefacts, `ANALYTICS.md` + `dashboard.html` (generated) |
+
+## View 3 — Execution & the feedback loop
+
+Views 1–2 describe the *methodology*. This is the part that actually runs, and
+it closes a loop: the playbook compiles into a product repo, runs there produce
+telemetry, and the telemetry changes the playbook.
+
+```mermaid
+flowchart TB
+    subgraph PB["Playbook (source of truth)"]
+        BR["agents/ — 24 briefs"]
+        PR["execution/pack/protocols/"]
+        INS["execution/install.mjs"]
+        ANA["execution/analyze.mjs"]
+    end
+
+    subgraph PROD["Product repo (stash-seed / streak-seed)"]
+        CL[".claude/ — generated agents,<br/>protocols, hooks"]
+        AGC[".agentic/ — product context"]
+        ORCH["Orchestrator session"]
+        ST["runs/&lt;slice&gt;/STATE.md<br/>+ artefacts"]
+        TR["runs/&lt;slice&gt;/trace.json"]
+        OUT["runs/ANALYTICS.md<br/>+ dashboard.html"]
+    end
+
+    BR --> INS
+    PR --> INS
+    INS -->|"generates (least-privilege tools per role)"| CL
+    CL --> ORCH
+    AGC -. "read first" .-> ORCH
+    ORCH -->|"spawns each stage"| STG["Role subagent"]
+    GUARD{{"budget-guard hook<br/>PreToolUse on Agent"}}
+    ORCH -. "every spawn checked" .-> GUARD
+    GUARD -. "over budget → ask / degrade / stop" .-> ORCH
+    STG -->|"writes artefact, incrementally"| ST
+    ST -->|"at close"| TR
+    TR --> ANA
+    ANA -->|"renders"| OUT
+    OUT -.->|"outliers → carry-forwards"| BR
+    OUT -.->|"re-baselined budgets + SLOs"| PR
+```
+
+**How to read it:**
+
+- **The playbook compiles.** `install.mjs` turns briefs + protocols into a
+  runnable `.claude/` pack inside the product repo — agents carry per-role
+  least-privilege `tools:`. *Caveat:* those restrictions only bind when the
+  Orchestrator session is rooted **in the product repo**, where the generated
+  agents are discoverable.
+- **Cost is governed before it is spent.** The budget guard runs as a
+  `PreToolUse` hook on every `Agent` spawn and asks the human when a spawn would
+  exceed the slice's declared budget (`RUN_ECONOMICS.md`). It **fails open** by
+  design — a cost control must never block legitimate work; release gates fail
+  closed, convenience guards fail open.
+- **Telemetry is data, not prose.** Each run emits `trace.json` alongside the
+  human-readable `STATE.md`; `analyze.mjs` renders both human views from it.
+  Author once, render many — the views are never hand-maintained, so they cannot
+  drift from the record.
+- **The dotted return edges are the point.** Detected outliers become
+  carry-forwards that change *briefs*; measured cost re-baselines *budgets and
+  SLOs*. That is what makes this a control loop rather than a pipeline with a
+  dashboard bolted on.
 
 ## Under the hood
 
@@ -103,11 +167,22 @@ Three properties make the pipeline work:
 3. **The human is in the loop by rule, not by vibe.** A small, fixed list of
    actions always stops for explicit human approval. Everything else the
    agents are trusted to do within a slice.
+4. **The system observes and governs itself.** Runs emit machine-readable
+   telemetry; generated analytics flag their own outliers; budgets are checked
+   before the spend, not reconciled after. When a measurement contradicts a
+   target, the target is re-derived from evidence and the change is recorded —
+   never quietly loosened to make a red thing green.
 
 ## What this is — and how we chose to capture it
 
-This is a **methodology**, not a running system, so there is no deployment
-or container diagram to draw. We considered generating an interactive
+This began as a **methodology** rather than a running system, and Views 1–2
+capture it that way. That is now only half the story: `execution/` compiles the
+methodology into a pack that really executes (generators, protocols, a
+`PreToolUse` hook, telemetry, analytics), which is what View 3 draws. There is
+still no deployment or container diagram, because the "runtime" is a developer
+machine and a product repo, not a fleet.
+
+We considered generating an interactive
 knowledge graph (à la code-comprehension tools that parse source with
 tree-sitter), but those target *code structure* — this repo is markdown
 specs, so such a tool would find little to graph. Hand-authored **Mermaid**
