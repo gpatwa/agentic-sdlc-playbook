@@ -15,6 +15,16 @@ A session driving a slice acts as the **Orchestrator**: it reads
 `.agentic/`, plans the slice, and delegates each stage to the role
 subagents in `.claude/agents/` (generated from the playbook briefs).
 
+> **Run the Orchestrator from THIS repo — not from the playbook.** The role
+> agents and their least-privilege `tools:` frontmatter are discovered from
+> *this* project's `.claude/agents/`. A session rooted elsewhere (e.g. in the
+> playbook) cannot see them: it falls back to spawning general-purpose agents
+> with briefs inlined and **full tools**, so the per-role tool restrictions are
+> silently not in force. The briefs also state their own tool boundary as a
+> second layer, but that is honor-system — only spawning the generated agents
+> is enforcement. If you orchestrate with inlined briefs, record in `STATE.md`
+> that least-privilege was not enforced for that run.
+
 ## Non-negotiable rules
 
 1. **Human approval is a hard stop.** Any action in the playbook's

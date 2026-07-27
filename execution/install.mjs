@@ -108,6 +108,7 @@ You are the **${title}** in an autonomous Agentic SDLC run. Stay strictly in thi
 - Read your input artefact from \`runs/<slice-id>/\`. Write your output artefact there.
 - **Write your artefact incrementally, section by section, as you go** — never buffer the whole document to one write at the end (\`.claude/protocols/RUN_ECONOMICS.md\`). If you are interrupted, what you finished must already be on disk.
 - Work at the **depth the brief states** (smoke / standard / adversarial). Do not escalate rigor on your own initiative — match effort to what is actually at stake.
+- **Your tool boundary is: ${tools}.** You have no others. If a task appears to need a tool outside that list, stop and hand back rather than working around it. When this brief is spawned from \`.claude/agents/\` the harness enforces this; when it is **inlined** into a general-purpose agent it cannot, so honor it yourself — the boundary is the role's, not the harness's.
 - Update \`runs/<slice-id>/STATE.md\` per \`.claude/protocols/SLICE_STATE.md\` when you finish. Do not invent token/tool-call figures — the Orchestrator records telemetry from the harness.
 - If your stage hits a human-approval action, STOP and follow \`.claude/protocols/APPROVAL_PROTOCOL.md\` — do not proceed on assumed approval.
 - On a failed gate, follow \`.claude/protocols/FAILURE_LOOP.md\` (bounded retries, then escalate).
@@ -127,6 +128,36 @@ const copyDir = (src, dst) => {
 };
 copyDir(join(packDir, "commands"), join(claudeDir, "commands"));
 copyDir(join(packDir, "protocols"), join(claudeDir, "protocols"));
+copyDir(join(here, "hooks"), join(claudeDir, "hooks"));
+
+// Wire the budget guard as a PreToolUse hook on Agent spawns, so
+// RUN_ECONOMICS.md's pre-spawn check is mechanical, not a discipline the
+// Orchestrator has to remember. Merge — never clobber existing settings.
+const settingsPath = join(claudeDir, "settings.json");
+const HOOK_CMD = "node .claude/hooks/budget-guard.mjs";
+let settings = {};
+if (existsSync(settingsPath)) {
+  try {
+    settings = JSON.parse(readFileSync(settingsPath, "utf8"));
+  } catch {
+    console.log("  ! .claude/settings.json is not valid JSON — leaving it alone");
+    settings = null;
+  }
+}
+if (settings) {
+  settings.hooks ??= {};
+  settings.hooks.PreToolUse ??= [];
+  const already = settings.hooks.PreToolUse.some((e) =>
+    (e?.hooks ?? []).some((h) => h?.command === HOOK_CMD),
+  );
+  if (!already) {
+    settings.hooks.PreToolUse.push({
+      matcher: "Agent",
+      hooks: [{ type: "command", command: HOOK_CMD, timeout: 10 }],
+    });
+    writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
+  }
+}
 
 const claudeMd = readFileSync(join(packDir, "CLAUDE.md"), "utf8")
   .replaceAll("{{PLAYBOOK_PATH}}", playbookRel);

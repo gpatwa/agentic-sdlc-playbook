@@ -35,6 +35,22 @@ greenfield 0→1), per the phase plan below.
   Implementation, was fixed with two regression tests, and the blocker was
   re-verified (`streak-seed` `runs/http-layer/`). Six runs in, the fail-closed
   loop had never actually stopped a slice before.
+- **Budget control is enforced, not just documented** — ✅ `execution/hooks/budget-guard.mjs`
+  runs as a `PreToolUse` hook on `Agent` spawns (wired into `.claude/settings.json`
+  by `install.mjs`). It reads the active slice's Budget block and *asks the human
+  with the numbers* when a spawn would exceed budget. **Fails open by design** —
+  a cost control must never block legitimate work on a parse bug; release gates
+  fail closed, convenience guards fail open. Verified on all paths incl. corrupt
+  state and garbage input.
+- **Least-privilege: diagnosed, partially closed** — the generated
+  `.claude/agents/*.md` carry correct restrictive `tools:` frontmatter, but it is
+  only enforced when the Orchestrator session is **rooted in the product repo**,
+  where those agents are discoverable. Orchestrating from the playbook (as every
+  run so far did) falls back to general-purpose agents with inlined briefs and
+  full tools — so least-privilege was **not in force** for runs 0.5–5. Now:
+  the constraint is documented loudly in the pack `CLAUDE.md`, and each generated
+  brief states its own tool boundary as a second, honor-system layer. Full
+  enforcement still requires running the Orchestrator from the product repo.
 - **Run cost is now controlled, not just measured** — ✅ `RUN_ECONOMICS.md`
   (2026-07-26): budget checked *before* every spawn, explicit depth tiers
   (smoke/standard/adversarial), incremental artefacts so an interrupted stage
