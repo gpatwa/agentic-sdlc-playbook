@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agentic SDLC — Architecture</title>
+</head>
+<body>
+<style>
+  :root{
+    --ground:#eef1f5; --surface:#ffffff; --raise:#f7f9fb;
+    --ink:#141922; --muted:#586172; --faint:#8a93a1;
+    --line:#d7dce4; --line-strong:#c3cad5;
+    --signal:#a9640f; --signal-ink:#8a5310; --signal-soft:#f4e8d4;
+    --pass:#2e8b68; --fail:#b9503a;
+    --shadow:0 1px 2px rgba(20,25,34,.05),0 14px 34px -14px rgba(20,25,34,.16);
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0e1116; --surface:#161b22; --raise:#1b222b;
+      --ink:#e7ebf1; --muted:#8c96a5; --faint:#69717e;
+      --line:#242c37; --line-strong:#36404e;
+      --signal:#e9a23b; --signal-ink:#f0b862; --signal-soft:#2a2113;
+      --pass:#47b98c; --fail:#e0755a;
+      --shadow:0 1px 2px rgba(0,0,0,.35),0 20px 44px -18px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0e1116; --surface:#161b22; --raise:#1b222b;
+    --ink:#e7ebf1; --muted:#8c96a5; --faint:#69717e;
+    --line:#242c37; --line-strong:#36404e;
+    --signal:#e9a23b; --signal-ink:#f0b862; --signal-soft:#2a2113;
+    --pass:#47b98c; --fail:#e0755a;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 20px 44px -18px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--sans);font-size:16.5px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .wrap{max-width:820px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+  ::selection{background:var(--signal-soft);color:var(--signal-ink)}
+  :focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:3px}
+  h1,h2,h3{text-wrap:balance;letter-spacing:-.02em;line-height:1.15;margin:0}
+
+  /* top bar — same brand as the landing page */
+  header.top{border-bottom:1px solid var(--line);position:sticky;top:0;
+    background:color-mix(in srgb,var(--ground) 86%,transparent);backdrop-filter:blur(8px);z-index:5}
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;max-width:820px}
+  .brand{font-family:var(--mono);font-weight:600;font-size:15px;letter-spacing:-.01em;
+    display:flex;align-items:center;gap:10px;text-decoration:none}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 4px var(--signal-soft)}
+  .top nav{display:flex;gap:22px;font-family:var(--mono);font-size:13px}
+  .top nav a{color:var(--muted);text-decoration:none}
+  .top nav a:hover{color:var(--ink)}
+  @media (max-width:640px){.top nav a.hide-sm{display:none}}
+
+  /* document head */
+  .doc-head{padding:56px 0 30px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 16px}
+  .doc-head h1{font-size:clamp(1.9rem,4.6vw,2.6rem);font-weight:800;max-width:20ch}
+  .doc-head .lede{color:var(--muted);font-size:1.08rem;margin:18px 0 0;max-width:62ch}
+  .src{margin:22px 0 0;font-family:var(--mono);font-size:12.5px;color:var(--faint);
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .src a{color:var(--signal-ink);text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:1px}
+  .src a:hover{border-color:var(--signal)}
+  .src .sep{color:var(--line-strong)}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  .sec-label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--signal-ink);margin:0 0 12px}
+  section h2{font-size:clamp(1.35rem,3vw,1.75rem);font-weight:800;max-width:24ch}
+  p{margin:16px 0 0;max-width:68ch}
+  p:first-of-type{margin-top:14px}
+  strong,b{font-weight:650}
+  em{color:var(--ink)}
+  code{font-family:var(--mono);font-size:.87em;background:var(--raise);
+    border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+  a.ref{color:var(--signal-ink);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+  a.ref:hover{border-color:var(--signal)}
+
+  ul.notes{margin:20px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px}
+  ul.notes li{position:relative;padding-left:20px;color:var(--muted);max-width:68ch}
+  ul.notes li::before{content:"";position:absolute;left:2px;top:.62em;width:6px;height:6px;
+    border-radius:50%;background:var(--line-strong)}
+  ul.notes li b{color:var(--ink)}
+  ol.props{margin:20px 0 0;padding:0;list-style:none;counter-reset:p;
+    display:flex;flex-direction:column;gap:18px}
+  ol.props li{counter-increment:p;display:grid;grid-template-columns:auto 1fr;gap:15px;
+    color:var(--muted);max-width:70ch}
+  ol.props li::before{content:counter(p,decimal-leading-zero);font-family:var(--mono);
+    font-size:12px;color:var(--signal-ink);border:1px solid var(--line-strong);border-radius:7px;
+    width:31px;height:31px;display:grid;place-items:center;font-weight:600}
+  ol.props li b{color:var(--ink)}
+
+  /* diagram frame — echoes the landing page's instrument panel */
+  .fig{margin:26px 0 0;border:1px solid var(--line);border-radius:14px;
+    background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+  .fig-head{padding:12px 18px;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--muted)}
+  .fig-body{padding:22px 14px;overflow-x:auto}
+  .fig-body pre.mermaid{margin:0;text-align:center;background:none;border:0;min-width:min-content}
+
+  .tblwrap{overflow-x:auto;margin:24px 0 0;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;white-space:nowrap}
+  td:first-child{white-space:nowrap;font-family:var(--mono);font-size:12.5px;color:var(--signal-ink)}
+  td b{color:var(--ink)}
+
+  .callout{margin:26px 0 0;padding:17px 19px;border:1px dashed var(--line-strong);
+    border-radius:12px;background:var(--surface);color:var(--muted);font-size:.96rem}
+  .callout b{color:var(--ink)}
+
+  footer{border-top:1px solid var(--line);padding:36px 0 56px;margin-top:8px}
+  .repos{display:flex;gap:12px;flex-wrap:wrap}
+  .repo{font-family:var(--mono);font-size:13px;text-decoration:none;color:var(--ink);
+    border:1px solid var(--line-strong);border-radius:9px;padding:10px 14px;
+    display:inline-flex;gap:9px;align-items:center;background:var(--surface);transition:border-color .2s}
+  .repo:hover{border-color:var(--signal)}
+  .repo .arrow{color:var(--signal-ink)}
+  .colophon{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin:20px 0 0;max-width:60ch;line-height:1.6}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="dot"></span>agentic&#8209;sdlc</a>
+    <nav>
+      <a href="index.html">Overview</a>
+      <a href="#loop" class="hide-sm">The loop</a>
+      <a href="https://github.com/gpatwa/agentic-sdlc-playbook">GitHub&nbsp;&#8599;</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="doc-head">
+      <p class="eyebrow">Architecture &amp; data flow</p>
+      <h1>A pipeline of narrow agents, gated end to end.</h1>
+      <p class="lede">How the lifecycle is put together: the agent topology, the artefacts that flow between them, and the control loop that measures and budgets its own runs.</p>
+      <p class="src">
+        <span>source</span>
+        <a href="https://github.com/gpatwa/agentic-sdlc-playbook">agentic-sdlc-playbook</a>
+        <span class="sep">&middot;</span><span>reference apps</span>
+        <a href="https://github.com/gpatwa/stash-seed">stash-seed</a>
+        <span class="sep">&middot;</span>
+        <a href="https://github.com/gpatwa/streak-seed">streak-seed</a>
+      </p>
+    </div>
+
+    <section>
+      <p class="sec-label">The problem</p>
+      <h2>One agent holding everything degrades.</h2>
+      <p>A single general-purpose agent asked to &ldquo;build the feature&rdquo; holds the PRD, the design, the architecture, the code, and the QA notes in one context window &mdash; and degrades. This is the alternative: a <b>pipeline of narrow agents</b>, each with one job, passing <b>artefacts</b> to the next, gated by a <b>control plane</b>, with a <b>human at the points that matter</b>.</p>
+      <p>So the architecture here is not services and databases. It is an information-processing system:</p>
+      <ul class="notes">
+        <li><b>Nodes</b> are agents &mdash; one brief each.</li>
+        <li><b>Edges</b> are artefacts &mdash; the data passed from one agent to the next.</li>
+        <li><b>Inputs</b> are the product&rsquo;s <code>.agentic/</code> context plus a project pack, read by every agent.</li>
+        <li><b>Control plane</b> is release gates plus human-approval rules, gating each transition.</li>
+        <li><b>Loop</b> &mdash; Post-Launch feeds the Orchestrator, which starts the next slice.</li>
+      </ul>
+    </section>
+
+    <section>
+      <p class="sec-label">View 1</p>
+      <h2>Lifecycle data flow</h2>
+      <p>Edges are artefacts. Dotted edges are optional or parallel paths and context reads. The control plane gates the transitions.</p>
+      <div class="fig">
+        <div class="fig-head">human ask &rarr; shipped, reviewed, learned-from change</div>
+        <div class="fig-body">
+<pre class="mermaid">
+flowchart TB
+    H(["Human"]) -->|ask| O["Orchestrator"]
+    O -. "fuzzy / novel ask" .-> MR["Market Researcher"]
+    MR -. "discovery brief" .-> EM["Engineering Manager"]
+    O -->|"slice plan"| EM
+    EM -->|"scoped work"| PM["Product Manager"]
+    PM -->|"PRD"| UX["UX Researcher"]
+    UX -->|"feature spec"| UI["UI Designer"]
+    UI -->|"UX spec"| AR["Software Architect"]
+    AR -->|"tech spec"| ENG["Engineers - FE/BE/AI/ML"]
+    ENG -->|"diff + tests"| QA["QA Evidence"]
+    QA -->|"QA evidence"| SEC["Security and Privacy"]
+    SEC -->|"findings"| REL["Release Manager"]
+    REL -->|"ship"| PL["Post-Launch Learning"]
+    PL -. "carry-forward" .-> O
+    AG[(".agentic context + project pack")] -. "read first by every stage" .-> PM
+    GATES{{"Release Gates + Human Approval Rules"}}
+    ENG -. "impl gates" .-> GATES
+    SEC -. "security gates" .-> GATES
+    REL -. "confirms all gates" .-> GATES
+</pre>
+        </div>
+      </div>
+      <ul class="notes">
+        <li>A slice enters as a free-form <b>human ask</b> and leaves as a <b>shipped, reviewed, learned-from change</b>. The loop back from Post-Launch is what makes it a lifecycle rather than a line.</li>
+        <li>Each agent reads only its <b>incoming artefact, the <code>.agentic</code> context, and the project pack</b> &mdash; not the whole repo, not the prior conversation. That context discipline is why the role split saves tokens.</li>
+        <li>The <b>Engineering Manager</b> compresses the pipeline for small slices (skip Market Research, collapse design) and records why.</li>
+        <li><b>Overlay roles</b> &mdash; Data Governance, AI Governance, Compliance, FinOps, Tech Writer, SRE, Customer Success &mdash; attach when an enterprise context is enabled. They are additive; a B2C MVP runs without them.</li>
+        <li>The <b>control plane is not a stage</b> &mdash; it gates transitions. An artefact cannot advance until its gate passes, and a fixed list of actions (send, deploy, destroy, new data processor) halts for a human.</li>
+      </ul>
+    </section>
+
+    <section>
+      <p class="sec-label">View 2</p>
+      <h2>How the repo realizes it</h2>
+      <p>Every architectural concept maps to a folder. The repo <em>is</em> the system definition.</p>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>Path</th><th>Architectural role</th></tr></thead>
+          <tbody>
+            <tr><td>docs/</td><td><b>Lifecycle definition + control plane.</b> The pipeline, role topology, release gates, approval rules, context discipline.</td></tr>
+            <tr><td>agents/</td><td><b>Nodes</b> &mdash; 24 role briefs: mission, inputs, outputs, decisions owned and not owned, quality bar, handoff.</td></tr>
+            <tr><td>templates/</td><td><b>Artefact bus</b> &mdash; the message format between nodes; a handoff envelope every transition uses.</td></tr>
+            <tr><td>prompts/</td><td><b>Node instantiation</b> &mdash; one copy-paste prompt per role.</td></tr>
+            <tr><td>project-packs/</td><td><b>Configuration</b> per product archetype.</td></tr>
+            <tr><td>execution/</td><td><b>Runtime</b> &mdash; compiles the methodology into an executable pack: the installer, the analytics generator, the budget-guard hook, the protocols.</td></tr>
+            <tr><td>.agentic/</td><td><b>Per-product context</b> read by every node (lives in the product repo).</td></tr>
+            <tr><td>runs/</td><td><b>Execution record + telemetry</b> (lives in the product repo): durable resumable state, machine-readable traces, stage artefacts, generated analytics.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="loop">
+      <p class="sec-label">View 3</p>
+      <h2>Execution and the feedback loop</h2>
+      <p>Views 1 and 2 describe the <em>methodology</em>. This is the part that actually runs &mdash; and it closes a loop: the playbook compiles into a product repo, runs there produce telemetry, and the telemetry changes the playbook.</p>
+      <div class="fig">
+        <div class="fig-head">playbook &rarr; product repo &rarr; telemetry &rarr; back to the playbook</div>
+        <div class="fig-body">
+<pre class="mermaid">
+flowchart TB
+    subgraph PB["Playbook - source of truth"]
+        BR["agents/ - 24 briefs"]
+        PR["protocols/"]
+        INS["install.mjs"]
+        ANA["analyze.mjs"]
+    end
+    subgraph PROD["Product repo"]
+        CL[".claude/ - generated agents, protocols, hooks"]
+        AGC[".agentic/ - product context"]
+        ORCH["Orchestrator session"]
+        STG["Role subagent"]
+        ST["runs/SLICE/STATE.md + artefacts"]
+        TR["runs/SLICE/trace.json"]
+        OUT["ANALYTICS.md + dashboard.html"]
+    end
+    BR --> INS
+    PR --> INS
+    INS -->|"generates, least-privilege per role"| CL
+    CL --> ORCH
+    AGC -. "read first" .-> ORCH
+    GUARD{{"budget-guard hook - PreToolUse on Agent"}}
+    ORCH -. "every spawn checked" .-> GUARD
+    GUARD -. "over budget: ask, degrade, or stop" .-> ORCH
+    ORCH -->|"spawns each stage"| STG
+    STG -->|"writes artefact incrementally"| ST
+    ST -->|"at close"| TR
+    TR --> ANA
+    ANA -->|"renders"| OUT
+    OUT -.->|"outliers become carry-forwards"| BR
+    OUT -.->|"re-baselined budgets and SLOs"| PR
+</pre>
+        </div>
+      </div>
+      <ul class="notes">
+        <li><b>The playbook compiles.</b> The installer turns briefs and protocols into a runnable pack inside the product repo, with per-role least-privilege tools. <em>Caveat:</em> those restrictions only bind when the Orchestrator session is rooted <b>in the product repo</b>, where the generated agents are discoverable.</li>
+        <li><b>Cost is governed before it is spent.</b> A <code>PreToolUse</code> hook checks every agent spawn against the slice&rsquo;s declared budget and asks the human when it would be exceeded. It <b>fails open</b> by design &mdash; a cost control must never block legitimate work. Release gates fail closed; convenience guards fail open.</li>
+        <li><b>Telemetry is data, not prose.</b> Each run emits a machine-readable trace alongside the human-readable state file, and the analytics are <em>rendered</em> from it. Author once, render many &mdash; the views are never hand-maintained, so they cannot drift from the record.</li>
+        <li><b>The dotted return edges are the point.</b> Detected outliers become carry-forwards that change <em>briefs</em>; measured cost re-baselines <em>budgets and SLOs</em>. That is what makes this a control loop rather than a pipeline with a dashboard bolted on.</li>
+      </ul>
+    </section>
+
+    <section>
+      <p class="sec-label">Under the hood</p>
+      <h2>Four properties make it work.</h2>
+      <ol class="props">
+        <li><div><b>Artefacts, not chat.</b> Each agent&rsquo;s only contract is the artefact it reads and the artefact it writes. It does not need the conversation that produced its input &mdash; which is what keeps every node&rsquo;s context small.</div></li>
+        <li><div><b>Gates fail closed.</b> A failed gate sends the slice back to the owning stage, never forward. The gates encode failure modes that have bitten before: silent regression, approval bypass, logged secrets, runaway cost.</div></li>
+        <li><div><b>The human is in the loop by rule, not by vibe.</b> A small, fixed list of actions always stops for explicit approval. Everything else the agents are trusted to do within a slice.</div></li>
+        <li><div><b>The system observes and governs itself.</b> Runs emit telemetry; generated analytics flag their own outliers; budgets are checked before the spend, not reconciled after. When a measurement contradicts a target, the target is re-derived from evidence and the change is recorded &mdash; never quietly loosened to make a red thing green.</div></li>
+      </ol>
+      <div class="callout">
+        This began as a <b>methodology</b> rather than a running system, and Views 1&ndash;2 capture it that way. That is now only half the story: the execution layer compiles the methodology into a pack that really executes &mdash; generators, protocols, a hook, telemetry, analytics &mdash; which is what View 3 draws. There is still no deployment or container diagram, because the runtime is a developer machine and a product repo, not a fleet.
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <div class="repos">
+        <a class="repo" href="https://github.com/gpatwa/agentic-sdlc-playbook">agentic-sdlc-playbook <span class="arrow">&#8599;</span></a>
+        <a class="repo" href="https://github.com/gpatwa/stash-seed">stash-seed <span class="arrow">&#8599;</span></a>
+        <a class="repo" href="https://github.com/gpatwa/streak-seed">streak-seed <span class="arrow">&#8599;</span></a>
+      </div>
+      <p class="colophon">Diagrams are Mermaid, authored by hand and rendered live &mdash; diffable in git, never a stale image. The playbook and the two reference apps it was validated on.</p>
+    </div>
+  </footer>
+</main>
+
+<style>.mermaid svg{max-width:100%;height:auto;display:block;margin:0 auto}</style>
+<script type="module">
+  // Mermaid from CDN — this is a docs page, not shipped product code. The
+  // repo's dependency-free rule governs the seed apps' runtime, not this.
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  mermaid.initialize({ startOnLoad: true, securityLevel: "strict",
+    theme: dark ? "dark" : "neutral", flowchart: { curve: "basis" } });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agentic SDLC</title>
+</head>
+<body>
+<style>
+  :root{
+    --ground:#eef1f5; --surface:#ffffff; --raise:#f7f9fb;
+    --ink:#141922; --muted:#586172; --faint:#8a93a1;
+    --line:#d7dce4; --line-strong:#c3cad5;
+    --signal:#a9640f; --signal-ink:#8a5310; --signal-soft:#f4e8d4;
+    --pass:#2e8b68; --fail:#b9503a;
+    --shadow:0 1px 2px rgba(20,25,34,.05),0 14px 34px -14px rgba(20,25,34,.16);
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0e1116; --surface:#161b22; --raise:#1b222b;
+      --ink:#e7ebf1; --muted:#8c96a5; --faint:#69717e;
+      --line:#242c37; --line-strong:#36404e;
+      --signal:#e9a23b; --signal-ink:#f0b862; --signal-soft:#2a2113;
+      --pass:#47b98c; --fail:#e0755a;
+      --shadow:0 1px 2px rgba(0,0,0,.35),0 20px 44px -18px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0e1116; --surface:#161b22; --raise:#1b222b;
+    --ink:#e7ebf1; --muted:#8c96a5; --faint:#69717e;
+    --line:#242c37; --line-strong:#36404e;
+    --signal:#e9a23b; --signal-ink:#f0b862; --signal-soft:#2a2113;
+    --pass:#47b98c; --fail:#e0755a;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 20px 44px -18px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--sans);font-size:16.5px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+  ::selection{background:var(--signal-soft);color:var(--signal-ink)}
+  :focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:3px}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted);margin:0;
+  }
+  h1,h2,h3{text-wrap:balance;letter-spacing:-.02em;line-height:1.06;margin:0}
+
+  /* ---- top bar ---- */
+  header.top{border-bottom:1px solid var(--line);position:sticky;top:0;
+    background:color-mix(in srgb,var(--ground) 86%,transparent);backdrop-filter:blur(8px);z-index:5}
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{font-family:var(--mono);font-weight:600;font-size:15px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;text-decoration:none}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 4px var(--signal-soft)}
+  .top nav{display:flex;gap:22px;font-family:var(--mono);font-size:13px}
+  .top nav a{color:var(--muted);text-decoration:none}
+  .top nav a:hover{color:var(--ink)}
+  @media (max-width:620px){.top nav a.hide-sm{display:none}}
+
+  /* ---- hero ---- */
+  .hero{padding:76px 0 34px}
+  .hero h1{font-size:clamp(2.35rem,6.2vw,4rem);font-weight:800;margin:18px 0 0;max-width:16ch}
+  .hero .lede{font-size:clamp(1.05rem,2.4vw,1.28rem);color:var(--muted);max-width:58ch;margin:22px 0 0;line-height:1.55}
+  .hero .lede b{color:var(--ink);font-weight:600}
+
+  /* ---- pipeline instrument ---- */
+  .rail-frame{margin:44px 0 8px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+  .rail-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.02em}
+  .rail-head .tick{color:var(--pass)}
+  .rail-scroll{overflow-x:auto;padding:30px 18px 26px}
+  .rail{display:flex;align-items:center;gap:0;min-width:820px;position:relative}
+  .stage{position:relative;flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:11px;text-align:center}
+  .stage .node{width:15px;height:15px;border-radius:50%;background:var(--surface);border:2px solid var(--line-strong);position:relative;z-index:2;transition:transform .25s,border-color .25s,box-shadow .25s}
+  .stage .lbl{font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--muted);white-space:nowrap;transition:color .25s}
+  .stage .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  /* connectors */
+  .stage:not(:last-child)::after{content:"";position:absolute;top:7px;left:50%;width:100%;height:2px;background:var(--line);z-index:1}
+  /* lit trace */
+  .stage.lit .node{border-color:var(--ink);transform:scale(1.15);box-shadow:0 0 0 5px color-mix(in srgb,var(--ink) 10%,transparent)}
+  .stage.lit .lbl{color:var(--ink)}
+  /* the human-approval hold */
+  .stage.hold .node{border-color:var(--signal);background:var(--signal)}
+  .stage.hold .lbl{color:var(--signal-ink);font-weight:600}
+  .stage.hold .cap{color:var(--signal-ink)}
+  .stage.hold.holding .node{animation:pulse 1.5s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--signal) 55%,transparent)}50%{box-shadow:0 0 0 9px color-mix(in srgb,var(--signal) 0%,transparent)}}
+  .rail-foot{padding:0 18px 18px;font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.02em}
+  @media (prefers-reduced-motion:reduce){.stage.hold.holding .node{animation:none}}
+
+  /* ---- sections ---- */
+  section{padding:60px 0;border-top:1px solid var(--line)}
+  .sec-label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--signal-ink);margin:0 0 14px}
+  section h2{font-size:clamp(1.6rem,3.6vw,2.15rem);font-weight:800;max-width:20ch}
+  section .intro{color:var(--muted);max-width:60ch;margin:16px 0 0;font-size:1.05rem}
+
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin-top:38px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  @media (max-width:640px){.cards{grid-template-columns:1fr}}
+  .card{background:var(--surface);padding:26px 24px}
+  .card h3{font-size:1.12rem;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  .card h3 .k{font-family:var(--mono);font-size:11px;color:var(--signal-ink);border:1px solid var(--line-strong);border-radius:5px;padding:2px 6px;letter-spacing:.04em}
+  .card p{color:var(--muted);margin:10px 0 0;font-size:.97rem;line-height:1.58}
+
+  /* how-to steps + terminal */
+  .how{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;margin-top:36px;align-items:start}
+  @media (max-width:780px){.how{grid-template-columns:1fr;gap:28px}}
+  ol.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:flex;flex-direction:column;gap:22px}
+  ol.steps li{counter-increment:s;display:grid;grid-template-columns:auto 1fr;gap:16px}
+  ol.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:13px;color:var(--signal-ink);border:1px solid var(--line-strong);border-radius:8px;width:34px;height:34px;display:grid;place-items:center;font-weight:600}
+  ol.steps h3{font-size:1.02rem;font-weight:700;margin:5px 0 0}
+  ol.steps p{color:var(--muted);margin:6px 0 0;font-size:.95rem}
+  ol.steps code{font-family:var(--mono);font-size:.9em;color:var(--signal-ink);background:var(--signal-soft);padding:1px 6px;border-radius:5px}
+
+  .term{background:var(--raise);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;font-family:var(--mono);font-size:12.5px;line-height:1.7}
+  .term .bar{display:flex;gap:7px;padding:12px 14px;border-bottom:1px solid var(--line)}
+  .term .bar i{width:11px;height:11px;border-radius:50%;background:var(--line-strong);display:block}
+  .term .body{padding:16px 16px 18px;overflow-x:auto;white-space:pre;color:var(--muted)}
+  .term .body .p{color:var(--signal-ink)}
+  .term .body .c{color:var(--ink)}
+  .term .body .g{color:var(--pass)}
+  .term .body .hold{color:var(--signal-ink);font-weight:600}
+  .term .body .dim{color:var(--faint)}
+
+  /* evidence metrics */
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:38px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  @media (max-width:720px){.metrics{grid-template-columns:repeat(2,1fr)}}
+  .metric{background:var(--surface);padding:24px 20px}
+  .metric .n{font-family:var(--mono);font-size:2rem;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+  .metric .n.amber{color:var(--signal-ink)}
+  .metric .l{font-size:.86rem;color:var(--muted);margin-top:9px;line-height:1.4}
+  .note{margin-top:26px;padding:18px 20px;border:1px dashed var(--line-strong);border-radius:12px;color:var(--muted);font-size:.95rem;background:var(--surface)}
+  .note b{color:var(--ink);font-weight:600}
+  .note .amber{color:var(--signal-ink);font-weight:600}
+
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:44px 0 60px}
+  .foot-grid{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between;align-items:flex-end}
+  .repo{font-family:var(--mono);font-size:13.5px;text-decoration:none;color:var(--ink);border:1px solid var(--line-strong);border-radius:9px;padding:11px 15px;display:inline-flex;gap:10px;align-items:center;background:var(--surface);transition:border-color .2s}
+  .repo:hover{border-color:var(--signal)}
+  .repo .arrow{color:var(--signal-ink)}
+  .repos{display:flex;gap:12px;flex-wrap:wrap}
+  .colophon{font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.02em;max-width:34ch;line-height:1.6}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="dot"></span>agentic&#8209;sdlc</a>
+    <nav>
+      <a href="#what">What it does</a>
+      <a href="#use" class="hide-sm">How to use</a>
+      <a href="#proof">Evidence</a>
+      <a href="https://github.com/gpatwa/agentic-sdlc-playbook">GitHub&nbsp;&#8599;</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+    <div class="hero">
+      <p class="eyebrow">Open source &middot; governed multi-agent SDLC</p>
+      <h1>Ship production software with a team of agents&mdash;and a human where it matters.</h1>
+      <p class="lede">Agentic SDLC is a reusable lifecycle for building software with specialized AI agents. Narrow roles hand off through <b>artefacts</b>, every gate <b>fails closed</b>, and the run <b>pauses for a human</b> at the actions that can&rsquo;t be undone&mdash;from a one-paragraph brief to a shipped slice.</p>
+
+      <div class="rail-frame" role="img" aria-label="The lifecycle as a pipeline: Ask, Plan, Design, Build, QA, Security, then a human-approval Hold, then Release and Learn.">
+        <div class="rail-head">
+          <span>slice&nbsp;&middot;&nbsp;intake&nbsp;&rarr;&nbsp;shipped</span>
+          <span class="tick">gates: passing</span>
+        </div>
+        <div class="rail-scroll">
+          <div class="rail" id="rail">
+            <div class="stage"><span class="node"></span><span class="lbl">Ask</span></div>
+            <div class="stage"><span class="node"></span><span class="lbl">Plan</span></div>
+            <div class="stage"><span class="node"></span><span class="lbl">Design</span></div>
+            <div class="stage"><span class="node"></span><span class="lbl">Build</span></div>
+            <div class="stage"><span class="node"></span><span class="lbl">QA</span></div>
+            <div class="stage"><span class="node"></span><span class="lbl">Security</span></div>
+            <div class="stage hold"><span class="node"></span><span class="lbl">Human approval</span><span class="cap">Hold</span></div>
+            <div class="stage"><span class="node"></span><span class="lbl">Release</span></div>
+            <div class="stage"><span class="node"></span><span class="lbl">Learn</span></div>
+          </div>
+        </div>
+        <div class="rail-foot">the run parks at <span style="color:var(--signal-ink)">Hold</span> and waits for an explicit yes &mdash; silence is not consent, and there is no auto-approve.</div>
+      </div>
+    </div>
+
+    <section id="what">
+      <p class="sec-label">What it is</p>
+      <h2>A control plane, not a coding assistant.</h2>
+      <p class="intro">One general agent asked to &ldquo;build the feature&rdquo; holds the whole repo in its head and degrades. This is the alternative: a pipeline of narrow agents, each with one job, gated end to end.</p>
+      <div class="cards">
+        <div class="card">
+          <h3><span class="k">24</span> Narrow roles, not one big agent</h3>
+          <p>Each agent owns one input, one output, one decision&mdash;from market researcher to release manager to SRE&mdash;and hands off through a written artefact, never a shared context window.</p>
+        </div>
+        <div class="card">
+          <h3><span class="k">CI</span> Gates that fail closed</h3>
+          <p>Typecheck, tests, build, QA, security. A red gate sends the slice back, never forward. Not a claim: security review <b>blocked a finished slice</b> over a bug it found, and the work went back until it was fixed.</p>
+        </div>
+        <div class="card">
+          <h3><span class="k">&#9208;</span> Human approval is a hard stop</h3>
+          <p>Sending on a user&rsquo;s behalf, deploying, wiring a real model&mdash;the run parks, records an auditable approval, and refuses to infer consent from a thumbs-up.</p>
+        </div>
+        <div class="card">
+          <h3><span class="k">&#8721;</span> Every run measures&mdash;and budgets&mdash;itself</h3>
+          <p>Per-stage traces become a live dashboard: SLOs, DORA, and the outliers a run flags on itself. Cost is checked <em>before</em> each step, not discovered afterwards&mdash;over budget, the run degrades or stops and asks.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="use">
+      <p class="sec-label">How to use it</p>
+      <h2>Install the pack. Describe a slice. Watch it run.</h2>
+      <div class="how">
+        <ol class="steps">
+          <li>
+            <div><h3>Install into any product repo</h3>
+            <p>The execution pack generates one Claude Code subagent per role from the briefs, with model routing and least-privilege tools baked in.</p>
+            <p style="margin-top:8px"><code>node execution/install.mjs .</code></p></div>
+          </li>
+          <li>
+            <div><h3>Start a slice from one line</h3>
+            <p>The driving session becomes the orchestrator&mdash;it plans the slice and writes a resumable state file.</p>
+            <p style="margin-top:8px"><code>/agentic-slice &quot;let users bulk-delete saved items&quot;</code></p></div>
+          </li>
+          <li>
+            <div><h3>It drives the lifecycle&mdash;and stops for you</h3>
+            <p>Each stage goes to the right agent; gates run between them; and when a rule applies, the run surfaces an approval request and waits.</p></div>
+          </li>
+        </ol>
+
+        <div class="term" aria-hidden="true">
+          <div class="bar"><i></i><i></i><i></i></div>
+<div class="body"><span class="dim">$</span> <span class="c">/agentic-slice "email users a digest of their items"</span>
+
+<span class="dim">orchestrator</span>  intake &middot; scanning for gated actions&hellip;
+<span class="hold">&#9208; HOLD</span>  rule 1 &mdash; sending on a user's behalf
+        run paused &middot; <span class="c">APPROVAL_REQUEST-1.md</span> written
+        <span class="dim">waiting for an explicit yes&hellip;</span>
+
+<span class="dim">you</span>  approve
+
+<span class="g">&#10003;</span> recorded &middot; <span class="c">APPROVAL_RECORD-1.md</span>
+architect &rarr; engineer &rarr; qa &rarr; security &rarr; release
+<span class="g">&#10003;</span> all gates green &middot; <span class="dim">0 retries</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="proof">
+      <p class="sec-label">Evidence</p>
+      <h2>Validated on live runs, not a slide.</h2>
+      <p class="intro">The pipeline has carried slices to merged pull requests on the reference app&mdash;then built a <em>second</em> app from a one-paragraph brief, market research through to a shipped, tested service. Tiers 2 and 3, deterministic-first AI, a greenfield 0&rarr;1&mdash;and a security gate that stopped its own release.</p>
+      <div class="metrics">
+        <div class="metric"><div class="n">0&rarr;1</div><div class="l">a second app built greenfield from one paragraph&mdash;discovery to shipped</div></div>
+        <div class="metric"><div class="n">6</div><div class="l">slices shipped across two apps&mdash;Tiers&nbsp;2&ndash;3, incl. deterministic&#8209;first AI</div></div>
+        <div class="metric"><div class="n amber">3</div><div class="l">approval rules fired live&mdash;send, deploy, real&#8209;model&mdash;each recorded &amp; scope&#8209;enforced</div></div>
+        <div class="metric"><div class="n">0</div><div class="l">retries across every stage of every run</div></div>
+      </div>
+      <div class="note">
+        The runs correct <b>themselves</b>&mdash;and sometimes their author. Security review caught a finished slice quietly listening on <span class="amber">every network interface</span> instead of loopback, reached a user&rsquo;s data across the LAN to prove it, and <b>sent the work back</b>; the same flaw was then found and fixed in the older app it came from. Earlier, discovery <b>caught a correctness trap before a line of code existed</b>, and QA found a bug whose proposed fix Security then <b>proved insufficient</b>. A slice that blew its token budget didn&rsquo;t get a quieter budget&mdash;the budget was re-derived from evidence and the one genuinely hot stage was flagged. And the two hardest tests still pass: shown an unsafe ask it <b>refused at intake</b>; shown an impossible one it <b>bounded the failure and escalated</b>&mdash;without weakening a gate.
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="wrap foot-grid">
+      <div class="repos">
+        <a class="repo" href="https://github.com/gpatwa/agentic-sdlc-playbook">agentic-sdlc-playbook <span class="arrow">&#8599;</span></a>
+        <a class="repo" href="https://github.com/gpatwa/stash-seed">stash-seed <span class="arrow">&#8599;</span></a>
+        <a class="repo" href="https://github.com/gpatwa/streak-seed">streak-seed <span class="arrow">&#8599;</span></a>
+      </div>
+      <p class="colophon">The playbook and the two reference apps it was validated on&mdash;a B2C saved-items service, and a habit tracker built 0&rarr;1 from a sentence. Built, in part, by running the lifecycle on itself.</p>
+    </div>
+  </footer>
+</main>
+
+<script>
+  (function(){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var stages = Array.prototype.slice.call(document.querySelectorAll('#rail .stage'));
+    var hold = document.querySelector('#rail .stage.hold');
+    if(reduce || !stages.length){ if(hold) hold.classList.add('holding'); return; }
+    var i = 0;
+    function step(){
+      if(i > 0 && stages[i-1] && !stages[i-1].classList.contains('hold')) stages[i-1].classList.remove('lit');
+      if(i >= stages.length){ if(hold) hold.classList.add('holding'); return; }
+      var n = stages[i];
+      n.classList.add('lit');
+      var dwell = n.classList.contains('hold') ? 1150 : 300;
+      i++;
+      setTimeout(step, dwell);
+    }
+    setTimeout(step, 650);
+  })();
+</script>
+
+</body>
+</html>
