@@ -8,6 +8,7 @@
 <body>
 <style>
   :root{
+    color-scheme:dark;
     --ground:#14130f; --surface:#1c1b18; --raise:#242320;
     --ink:#f5f4ef; --muted:#a8a29a; --faint:#78736c;
     --line:#2c2a26; --line-strong:#3d3a34;
@@ -16,16 +17,6 @@
     --shadow:0 1px 2px rgba(0,0,0,.4),0 20px 44px -18px rgba(0,0,0,.6);
     --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;
-  }
-  @media (prefers-color-scheme:light){
-    :root:not([data-theme="dark"]){
-      --ground:#faf9f5; --surface:#ffffff; --raise:#f5f3ee;
-      --ink:#141413; --muted:#6b6862; --faint:#918d85;
-      --line:#e6e2d9; --line-strong:#d3cec2;
-      --signal:#c15f3c; --signal-ink:#9a4526; --signal-soft:#f6e7e0;
-      --pass:#3d7a55; --fail:#b0472f;
-      --shadow:0 1px 2px rgba(20,20,19,.05),0 14px 34px -14px rgba(20,20,19,.16);
-    }
   }
   :root[data-theme="light"]{
     --ground:#faf9f5; --surface:#ffffff; --raise:#f5f3ee;
