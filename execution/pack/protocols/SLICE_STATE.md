@@ -58,6 +58,17 @@ Class per `FAILURE_LOOP.md` "Failure categories".
 |-------|--------------|-----|-------|--------------|
 | <stage> | 0 | 2 | — | — |
 
+## Interruptions
+
+Per `RUN_ECONOMICS.md` §6. **Infrastructure** interruptions (usage limit,
+transport error) are *not* retries and do not consume the failure budget;
+**logic** failures do. On re-spawn, hand the agent its partial artefact back and
+tell it to continue from the first missing section — never restart.
+
+| Stage | Cause | Class | Partial artefact reached | Resumed |
+|-------|-------|-------|--------------------------|---------|
+| <stage> | <usage limit / transport / …> | infra \| logic | <last completed section, or "none"> | <yes/no> |
+
 ## Trace
 
 One row per stage attempt — this is the pipeline's telemetry. Fill Tokens /

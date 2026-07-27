@@ -102,11 +102,46 @@ Telemetry is taken from the **harness's** usage numbers, never from an agent's
 self-report — a self-reported figure has already been observed to be wrong
 (98,661 actual vs "~88,000" claimed). The Orchestrator writes the trace.
 
-## Forward (not yet implemented)
+## 6. Stage resume — continue, never restart
 
-- **Crystallization.** Probe harnesses an agent writes to verify something should
-  land as permanent tests, so the *next* run re-verifies with `npm test` (~0
-  tokens) instead of re-deriving at full price. Verification should migrate from
-  LLM to code, permanently — the pipeline should get cheaper the more it is used.
-- **Stage resume** from a partial artefact as a first-class mechanism, not an
-  Orchestrator convention.
+§4 guarantees an interrupted stage left work on disk. This section says what to
+do with it.
+
+**The brief names the artefact's required sections, in order.** The agent writes
+them in that order, so *what exists on disk is what is done* — no separate
+progress file, no bookkeeping to fall out of sync.
+
+On interruption, the Orchestrator:
+
+1. Records it in the `STATE.md` **Interruptions** table (below) — cause, stage,
+   and what the partial artefact reached. This is durable: a cold session picks
+   up the same way.
+2. Classifies it. An **infrastructure** interruption (usage limit, transport
+   error, timeout with no output) is **not** a retry and does not consume the
+   `FAILURE_LOOP.md` budget — nothing about the work failed. A **logic** failure
+   does.
+3. On re-spawn, hands the agent **its own partial artefact as an input**, with:
+   *"Your partial work is at `<path>`. Read it. Continue from the first missing
+   section. Do not restart, and do not rewrite sections that are already
+   complete."*
+
+Restarting a 70%-complete stage from zero is the most expensive thing this
+pipeline can do — it pays full price for work it already owns. Three stages were
+killed this way in one session before this rule existed.
+
+## 7. Crystallization — verification migrates into code
+
+Agent-derived verification is expensive and evaporates; tests are cheap and
+permanent. QA wrote 119 adversarial probes in one stage for 178k tokens; a
+handful became tests and the rest vanished, so the next QA run will re-derive
+them at full price.
+
+**The rule** (owned by QA, `agents/qa-evidence.md`): a probe that establishes
+something a future change could break silently becomes a **test**; one-time
+exploration becomes **a sentence in the report**. Every regression guard must be
+proven non-vacuous — break the fix, confirm the test fails, restore.
+
+This is the only lever here with *compounding* returns: it makes each subsequent
+run cheaper rather than merely capping the current one. A pipeline that
+crystallizes gets stronger and cheaper with use; one that does not pays full
+price forever.

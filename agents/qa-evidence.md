@@ -87,6 +87,29 @@ For each invariant the slice touches:
 For invariants that are not directly testable, record "verified by
 inspection of <file>:<line>".
 
+## Crystallize what you prove
+
+Probe scripts you write to establish a property are **expensive and temporary**;
+tests are **cheap and permanent**. A probe that runs once and is discarded means
+the next run pays full price to re-derive the same knowledge. Verification should
+migrate from agent reasoning into code, permanently — the suite should get
+stronger every slice, and re-verification should get cheaper.
+
+So, before handing off:
+
+- **Land it as a test if a future change could break it silently** — invariant
+  checks, boundary values, and a regression guard for every bug found (yours or
+  anyone's). These belong in `test/`, not in your report.
+- **Summarize it in the report if it was one-time exploration** — a hypothesis
+  you ruled out, a shape you were checking. One sentence, no test.
+- **Prove the test is not vacuous.** A regression guard that passes whether or
+  not the bug exists is worse than none, because it advertises safety it does not
+  provide. Break the fix deliberately, confirm the test fails, restore it, and
+  record that you did.
+
+Judgment, not volume: 100 probes should not become 100 tests. Crystallize the
+load-bearing ones.
+
 ## Handoff
 
 To Security & Privacy Agent. Use `templates/AGENT_HANDOFF_TEMPLATE.md`.
@@ -98,3 +121,5 @@ To Security & Privacy Agent. Use `templates/AGENT_HANDOFF_TEMPLATE.md`.
 - Skipping preview verification because a test passed.
 - Letting the engineer self-QA. The handoff is QA's job for a reason.
 - Marking a failing test as "flaky" without a root-cause investigation.
+- Letting an expensive probe evaporate. If it was worth deriving and it will
+  matter again, it belongs in `test/` before you hand off.
