@@ -42,6 +42,14 @@ the originating conversation.
 |--------|------|-----------|----------|----------|-----------|--------|
 | <action> | <HAR rule #> | yes | <approved/denied/PENDING> | <name> | <ts> | runs/<id>/APPROVAL_RECORD-*.md |
 
+## Budget
+
+Per `RUN_ECONOMICS.md`. Checked **before every spawn** — never reconciled after.
+
+- **Budget:** <n>k tokens  ·  **Depth:** <smoke / standard / adversarial>
+- **Spent:** <n>k (<pct>%)  ·  **Remaining:** <n>k
+- **Next stage:** <stage> (<archetype>) est. <n>k → **<PROCEED / DEGRADE / STOP-AND-ASK>**
+
 ## Failure budget
 
 Class per `FAILURE_LOOP.md` "Failure categories".

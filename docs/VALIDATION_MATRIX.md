@@ -27,9 +27,20 @@ greenfield 0→1), per the phase plan below.
 
 - **Gates as code** — ✅ now run as CI checks on every push / PR (Phase 2a);
   making them *blocking* still needs branch protection (opt-in).
-- **Failure loop under real failure** — ✅ proven (B4): an unsatisfiable gate
-  was escalated within budget without weakening a gate.
-  `stash-seed` `runs/eval/B4-escalation.md`.
+- **Failure loop under real failure** — ✅ proven twice. (B4) an unsatisfiable
+  gate was escalated within budget without weakening a gate
+  (`stash-seed` `runs/eval/B4-escalation.md`); and **first fired in a real
+  delivery run** 2026-07-26 — Security blocked the `http-layer` slice over a
+  wildcard bind that exposed user data to the LAN, the slice went *back* to
+  Implementation, was fixed with two regression tests, and the blocker was
+  re-verified (`streak-seed` `runs/http-layer/`). Six runs in, the fail-closed
+  loop had never actually stopped a slice before.
+- **Run cost is now controlled, not just measured** — ✅ `RUN_ECONOMICS.md`
+  (2026-07-26): budget checked *before* every spawn, explicit depth tiers
+  (smoke/standard/adversarial), incremental artefacts so an interrupted stage
+  leaves its work on disk. Motivated by the `http-layer` run: ~868k tokens with
+  18% lost to killed agents, `adversarial` depth on every stage of a
+  dependency-free seed, and no control that ever summed the spend.
 - **DORA aggregation** — ✅ built + live-validated (Phase 6):
   `execution/analyze.mjs` aggregates across `runs/*/trace.json` into
   `runs/ANALYTICS.md` + `runs/dashboard.html`. Live per-run emission proven by

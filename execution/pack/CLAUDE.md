@@ -30,6 +30,13 @@ subagents in `.claude/agents/` (generated from the playbook briefs).
 4. **State is durable.** Each slice tracks `runs/<slice-id>/STATE.md`
    (`.claude/protocols/SLICE_STATE.md`) so any session can resume cold.
 5. **Hand off through artefacts**, not conversation. Keep context thin.
+6. **Budget is checked before the spend, not after.** Before spawning any
+   stage, verify `spent + estimate ≤ budget` per
+   `.claude/protocols/RUN_ECONOMICS.md`. Over budget → degrade the stage's
+   depth, drop a non-load-bearing stage, or stop and ask the human with the
+   numbers. Never raise the budget to fit the spend. Set each stage's depth
+   (smoke / standard / adversarial) explicitly in its brief — `standard` is
+   the default and `adversarial` is earned by stakes, not habit.
 
 ## Project context
 
