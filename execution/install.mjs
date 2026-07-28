@@ -179,11 +179,36 @@ const claudeMd = readFileSync(join(packDir, "CLAUDE.md"), "utf8")
   .replaceAll("{{PLAYBOOK_PATH}}", playbookRel);
 writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
 
+// Pack version. Bump when a regeneration changes what agents *do* — new
+// frontmatter the harness acts on, a changed tool boundary, a protocol whose
+// absence would change a decision. Cosmetic edits do not earn a bump.
+const PACK_VERSION = 3;
+
+// Read the previous install back before overwriting it. Until now this field
+// was written and never read, so a product repo could drift arbitrarily far
+// from the playbook driving it with nothing to notice — the failure is silent
+// by construction, which is the kind that survives longest.
+const configPath = join(claudeDir, "agentic.config.json");
+let previous = null;
+if (existsSync(configPath)) {
+  try { previous = JSON.parse(readFileSync(configPath, "utf8")); } catch { previous = null; }
+}
+if (previous && Number.isFinite(previous.packVersion) && previous.packVersion !== PACK_VERSION) {
+  const dir = previous.packVersion < PACK_VERSION ? "upgraded" : "DOWNGRADED";
+  process.stdout.write(
+    `\n  pack ${dir}: v${previous.packVersion} -> v${PACK_VERSION}` +
+    (previous.generatedAt ? ` (previous install ${previous.generatedAt})` : "") + "\n" +
+    (previous.packVersion < PACK_VERSION
+      ? `  Agent definitions were regenerated. Re-read .claude/agents/ before the next run.\n`
+      : `  This playbook is OLDER than the installed pack. Check you are on the intended playbook revision.\n`),
+  );
+}
+
 writeFileSync(
-  join(claudeDir, "agentic.config.json"),
+  configPath,
   JSON.stringify(
     {
-      packVersion: 2,
+      packVersion: PACK_VERSION,
       playbookPath: playbookRel,
       generatedAt: new Date().toISOString(),
       agentCount: count,
