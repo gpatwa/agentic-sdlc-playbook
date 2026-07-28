@@ -1,0 +1,10 @@
+{
+  "name": "agentic-sdlc-execution",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Tests for the execution pack — the generator, the analyzer, and the budget hook.",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  }
+}

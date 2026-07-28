@@ -55,7 +55,11 @@ runs.sort((a, b2) => (a.started || a.slice).localeCompare(b2.started || b2.slice
 const stages = [];
 for (const run of runs) for (const s of run.stages) {
   const archetype = classify(s);
-  const density = Math.round(s.tokens / s.toolCalls);
+  // A stage with no tool calls has no density — dividing anyway yields
+  // Infinity, which then renders into the analytics and falsely trips the
+  // outlier flag. Most likely cause is a stage killed before it did any work,
+  // so the honest answer is "not measurable", not a very large number.
+  const density = s.toolCalls > 0 ? Math.round(s.tokens / s.toolCalls) : null;
   const densityCap = ARCHETYPES[archetype].cap;
   stages.push({
     run: run.slice, ...s, archetype, density, densityCap,
@@ -63,8 +67,8 @@ for (const run of runs) for (const s of run.stages) {
     // as not-recorded rather than inventing a level — their density figures
     // are not comparable with a run that sets effort per role.
     effort: s.effort ?? "—",
-    densityPct: density / densityCap,
-    densityOutlier: density > densityCap,
+    densityPct: density === null ? null : density / densityCap,
+    densityOutlier: density !== null && density > densityCap,
     overCap: s.tokens > B.perStageCapTokens,
   });
 }
@@ -74,7 +78,7 @@ const perRun = runs.map((run) => {
   const calls = run.stages.reduce((a, s) => a + s.toolCalls, 0);
   const n = run.stages.length, envelope = n * B.sliceEnvelopePerStageTokens;
   return { slice: run.slice, tier: run.tier, overlay: !!run.overlay, n, tokens, calls,
-    density: Math.round(tokens / calls), envelope, overBy: tokens - envelope, pass: tokens <= envelope };
+    density: calls > 0 ? Math.round(tokens / calls) : null, envelope, overBy: tokens - envelope, pass: tokens <= envelope };
 });
 
 const fleet = { stages: stages.length,
@@ -86,7 +90,7 @@ const outliers = stages.filter((s) => s.overCap || s.densityOutlier);
 // Observed density per archetype (excluding outliers) — the evidence the caps
 // are held against, recomputed every run so drift is visible.
 const byArchetype = Object.keys(ARCHETYPES).map((a) => {
-  const clean = stages.filter((s) => s.archetype === a && !s.densityOutlier && !s.overCap);
+  const clean = stages.filter((s) => s.archetype === a && !s.densityOutlier && !s.overCap && s.density !== null);
   const ds = clean.map((s) => s.density).sort((x, y) => x - y);
   return { archetype: a, cap: ARCHETYPES[a].cap, blurb: ARCHETYPES[a].blurb, n: ds.length,
     min: ds[0], max: ds[ds.length - 1],
@@ -124,9 +128,9 @@ const dora = {
 };
 
 // ── format helpers ──────────────────────────────────────────────────────────
-const ci = (n) => n.toLocaleString("en-US");
-const k = (n) => (n >= 1000 ? (n / 1000).toFixed(n < 10000 ? 1 : 0) + "k" : String(n));
-const pct = (x) => Math.round(x * 100) + "%";
+const ci = (n) => (n === null || n === undefined ? "—" : n.toLocaleString("en-US"));
+const k = (n) => (n === null || n === undefined ? "—" : n >= 1000 ? (n / 1000).toFixed(n < 10000 ? 1 : 0) + "k" : String(n));
+const pct = (x) => (x === null || x === undefined ? "—" : Math.round(x * 100) + "%");
 const ts = new Date().toISOString().replace(/\.\d+Z$/, "Z");
 const runColor = (slice) => (slice === runs[0].slice ? "a" : "b");
 const preNote = preTelemetry.length ? `Runs without \`trace.json\` (pre-telemetry / not instrumented): ${preTelemetry.sort().join(", ")}.` : "";
