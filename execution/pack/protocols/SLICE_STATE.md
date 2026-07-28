@@ -75,10 +75,14 @@ One row per stage attempt — this is the pipeline's telemetry. Fill Tokens /
 Tool calls from the harness's usage stats where available; wall-clock
 always. Totals row = the slice's run cost. Feeds `PIPELINE_SLOS.md`.
 
-| Stage | Model | Start (UTC) | End (UTC) | Wall | Tokens | Tool calls | Retry # |
-|-------|-------|-------------|-----------|------|--------|------------|---------|
-| <stage> | <model> | <ts> | <ts> | <m:ss> | <n> | <n> | 0 |
-| **Total** | | | | | <Σ> | <Σ> | |
+| Stage | Model | Effort | Start (UTC) | End (UTC) | Wall | Tokens | Tool calls | Retry # |
+|-------|-------|--------|-------------|-----------|------|--------|------------|---------|
+| <stage> | <model> | <effort> | <ts> | <ts> | <m:ss> | <n> | <n> | 0 |
+| **Total** | | | | | | <Σ> | <Σ> | |
+
+Record the effort the stage **actually ran at**, not the frontmatter
+default — tier and failure escalation both move it (`MODEL_ROUTING.md`).
+Without this column a routing change cannot be evaluated after the fact.
 
 ## Next action
 
@@ -95,7 +99,7 @@ neither is hand-parsed for numbers.
 ```json
 { "schema": "agentic-sdlc/trace@1", "slice": "<id>", "tier": 2,
   "overlay": false, "landed": true, "started": "<UTC>",
-  "stages": [ { "stage": "<name>", "model": "<model>",
+  "stages": [ { "stage": "<name>", "model": "<model>", "effort": "<level>",
                "tokens": 0, "toolCalls": 0, "retries": 0 } ] }
 ```
 

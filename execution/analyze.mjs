@@ -59,6 +59,10 @@ for (const run of runs) for (const s of run.stages) {
   const densityCap = ARCHETYPES[archetype].cap;
   stages.push({
     run: run.slice, ...s, archetype, density, densityCap,
+    // Traces predating the effort routing axis carry no `effort`. Render them
+    // as not-recorded rather than inventing a level — their density figures
+    // are not comparable with a run that sets effort per role.
+    effort: s.effort ?? "—",
     densityPct: density / densityCap,
     densityOutlier: density > densityCap,
     overCap: s.tokens > B.perStageCapTokens,
@@ -150,10 +154,10 @@ if (leadTimes.length) md += `\nPer-slice lead time: ${leadTimes.map((x) => `${x.
 md += `\n## Density by archetype\n\nTokens per tool call, measured against each archetype's own cap.\n\n`;
 md += `| Archetype | What it does | Cap | Observed (n) | Range | Avg |\n|-----------|--------------|-----|--------------|-------|-----|\n`;
 for (const a of byArchetype) md += `| **${a.archetype}** | ${a.blurb} | ${ci(a.cap)} | ${a.n} | ${ci(a.min)}–${ci(a.max)} | ${ci(a.avg)} |\n`;
-md += `\n## Per stage\n\n| Run | Stage | Type | Model | Tokens | Calls | Tok/call | % of cap | Flags |\n|-----|-------|------|-------|--------|-------|----------|----------|-------|\n`;
+md += `\n## Per stage\n\n| Run | Stage | Type | Model | Effort | Tokens | Calls | Tok/call | % of cap | Flags |\n|-----|-------|------|-------|--------|--------|-------|----------|----------|-------|\n`;
 for (const s of stages) {
   const flags = [s.overCap ? "⚠ over cap" : "", s.densityOutlier ? "⚠ density" : ""].filter(Boolean).join(", ") || "—";
-  md += `| ${s.run} | ${s.stage} | ${s.archetype} | ${s.model} | ${ci(s.tokens)} | ${s.toolCalls} | ${ci(s.density)} | ${pct(s.densityPct)} | ${flags} |\n`;
+  md += `| ${s.run} | ${s.stage} | ${s.archetype} | ${s.model} | ${s.effort} | ${ci(s.tokens)} | ${s.toolCalls} | ${ci(s.density)} | ${pct(s.densityPct)} | ${flags} |\n`;
 }
 md += `\n## Outliers\n\n`;
 if (outliers.length === 0) md += `None — every stage is within its token cap and its archetype's density cap.\n`;
@@ -192,7 +196,7 @@ const tile = (big, lab, sub, tone = "") => `<div class="tile ${tone}"><div class
 const chart1 = stages.map((s) => barRow(s, "tok")).join("");
 const chart2 = stages.map((s) => barRow(s, "den")).join("");
 const tableRows = stages.map((s) =>
-  `<tr><td>${s.run}</td><td>${s.stage}</td><td>${s.archetype}</td><td>${s.model}</td><td class="n">${ci(s.tokens)}</td><td class="n">${s.toolCalls}</td><td class="n">${ci(s.density)}</td><td class="n">${pct(s.densityPct)}</td><td>${s.overCap ? "over cap" : s.densityOutlier ? "density" : "—"}</td></tr>`).join("");
+  `<tr><td>${s.run}</td><td>${s.stage}</td><td>${s.archetype}</td><td>${s.model}</td><td>${s.effort}</td><td class="n">${ci(s.tokens)}</td><td class="n">${s.toolCalls}</td><td class="n">${ci(s.density)}</td><td class="n">${pct(s.densityPct)}</td><td>${s.overCap ? "over cap" : s.densityOutlier ? "density" : "—"}</td></tr>`).join("");
 const archRows = byArchetype.map((a) =>
   `<tr><td><b>${a.archetype}</b></td><td>${a.blurb}</td><td class="n">${ci(a.cap)}</td><td class="n">${a.n}</td><td class="n">${ci(a.min)}–${ci(a.max)}</td><td class="n">${ci(a.avg)}</td></tr>`).join("");
 const overRun = perRun.find((r) => !r.pass);
@@ -275,7 +279,7 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--ink2);font-size:12.5p
  <div class="tblwrap"><table><thead><tr><th>Archetype</th><th>What it does</th><th class="n">Cap</th><th class="n">n</th><th class="n">Range</th><th class="n">Avg</th></tr></thead><tbody>${archRows}</tbody></table></div>
 </div>
 <details><summary>Data table (${fleet.stages} stages)</summary>
-<div class="tblwrap"><table><thead><tr><th>Run</th><th>Stage</th><th>Type</th><th>Model</th><th class="n">Tokens</th><th class="n">Calls</th><th class="n">Tok/call</th><th class="n">% cap</th><th>Flag</th></tr></thead>
+<div class="tblwrap"><table><thead><tr><th>Run</th><th>Stage</th><th>Type</th><th>Model</th><th>Effort</th><th class="n">Tokens</th><th class="n">Calls</th><th class="n">Tok/call</th><th class="n">% cap</th><th>Flag</th></tr></thead>
 <tbody>${tableRows}</tbody></table></div></details>
 <p class="foot">Baselines: per-stage token cap ${ci(CAP)} · slice envelope stages×${ci(B.sliceEnvelopePerStageTokens)} · density caps by archetype.${preNote ? " " + preNote : ""}</p>
 </div></body></html>`;
