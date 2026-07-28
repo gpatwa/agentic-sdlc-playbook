@@ -94,6 +94,77 @@ greenfield 0→1), per the phase plan below.
   SAFETY_INVARIANTS would be trusted downstream); the guard still fails closed
   without the flag. Surfaced by the Phase-4 run.
 
+## Production-readiness audit (2026-07-28)
+
+Audited against the bar **"another team installs the pack on their repo and
+runs slices without us"** — not "the seed apps work". Findings are grouped by
+the dimension they threaten; each is fixed, or recorded as a known limit with
+the reason it is not being fixed now.
+
+### Fixed in this pass
+
+- **The pack had no tests at all** — ✅ closed. `execution/` now carries a
+  dependency-free `node:test` suite (`npm test` in `execution/`): 48 tests over
+  `install.mjs`, `analyze.mjs`, and `budget-guard.mjs`. This was the highest
+  gap on the list because `install.mjs` generates the least-privilege `tools:`
+  frontmatter — a silent regression there is a **security** regression in every
+  repo the pack is installed into, and nothing would have caught it. The suite
+  is **proven non-vacuous by mutation**: stripping `Bash` from a role that needs
+  it → 1 failure; demoting the QA gate to `medium` → 2; restoring the
+  divide-by-zero → 1; making the cost guard fail *closed* → 20.
+  It also **found a live defect on its first run**: a stage with zero tool
+  calls divided by zero, rendering `Infinity%` and `∞×` into `ANALYTICS.md`
+  and falsely flagging the stage as a density outlier. Density is now `null`
+  when unmeasurable and reads `—`, and no real trace's output changed.
+- **Truncated artefacts passed the handoff check** — ✅ closed
+  (`HANDOFF_CHECK.md` §1b). The check validated *non-empty*, while
+  `RUN_ECONOMICS.md` §4 deliberately makes partial artefacts the **expected
+  shape of a killed stage** by requiring incremental writes. Those two
+  protocols shipped separately and contradicted each other: presence stopped
+  being evidence of completeness the moment incremental writes landed, and a
+  truncated artefact is read as authoritative by the next agent. Completeness
+  failures now *resume* the producing stage rather than restarting it.
+- **`packVersion` was write-only** — ✅ closed. Written at install since v2 and
+  read by nothing, so a product repo could drift arbitrarily far from the
+  playbook driving it with no signal. `install.mjs` now reads the previous
+  install back and reports upgrade / **downgrade** (playbook older than the
+  installed pack) with the prior install date.
+
+### Known limits — recorded, not fixed
+
+- **Single-operator concurrency.** `budget-guard.mjs` takes the *first*
+  in-progress budgeted `STATE.md` in readdir order and stops. With two
+  concurrent slices in one repo it guards one of them silently. There is no
+  lock and no slice-level mutual exclusion anywhere in the pack. Asserted in
+  the test suite so the behaviour is visible rather than surprising. Fix when
+  a second operator shares a repo — until then the added machinery would be
+  speculative.
+- **Telemetry is self-reported, contradicting its own protocol.**
+  `RUN_ECONOMICS.md` §5 requires harness-sourced telemetry; in practice the
+  agent writes its own token and tool-call numbers into `trace.json`. **Every
+  cost figure in this repo rests on agents reporting their own usage**, and a
+  stage killed mid-run records nothing at all (the `http-layer` run's "18% lost
+  to killed agents" was reconstructed by hand). Not fixable from inside the
+  pack — it needs harness-level usage capture we do not control. The honest
+  status is *stated intent, not enforced*.
+- **No CI on the playbook itself.** The seed repos run gates-as-code on every
+  push; the repo that *defines* the gates runs nothing. `execution/npm test`
+  now makes this worth wiring — the tests exist to be run by something other
+  than a human remembering.
+- **No uninstall or revert for the pack.** `install.mjs` overwrites
+  `.claude/agents/`; recovery is git or nothing.
+- **Analytics flag but nothing acts.** Cap and density outliers are advisory;
+  no threshold fails a gate or blocks a release.
+- **Installed packs in both seed repos are stale** — pack v2, generated before
+  the effort routing axis, so their `.claude/agents/` carry no `effort:` field.
+  Regenerating is a per-repo action at the start of a slice, not a trailing
+  edit to an unrelated change.
+
+Checked and **clean**: cross-document reference integrity. All 38 `*.md`
+references across briefs and protocols resolve; the three with no file in the
+playbook (`ANALYTICS.md`, `INDEX.md`, `STATE.md`) are generated at runtime in
+the product repo.
+
 ## How to add a phase
 
 One row, one uniquely-validated mechanism, smallest app that exercises it.
