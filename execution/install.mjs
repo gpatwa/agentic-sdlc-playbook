@@ -66,6 +66,20 @@ const MODEL_FOR_ROLE = {
 };
 const DEFAULT_MODEL = "sonnet";
 
+// Static effort defaults — the second routing axis (MODEL_ROUTING.md layer 1b).
+// Same principle as the model axis: depth is bought where a wrong call is
+// expensive, not where the task is large. Gates keep `high`; producers work
+// against a spec that already exists and run one step down.
+const HIGH_EFFORT_ROLES = new Set([
+  "software-architect",   // design errors propagate into every later stage
+  "security-privacy",     // last gate before release; adversarial
+  "orchestrator",         // plan decomposition, budget and approval calls
+  "qa-evidence",          // a gate, and it has caught what green suites could not
+  "release-manager",      // walks the release gates
+  "compliance-reviewer", "ai-governance", "data-governance",
+]);
+const DEFAULT_EFFORT = "medium";
+
 const firstHeading = (md) => (md.match(/^#\s+(.+)$/m)?.[1] || "Agent").trim();
 const mission = (md) => {
   const m = md.match(/##\s+Mission\s*\n+([\s\S]*?)(?:\n##\s|\n#\s|$)/);
@@ -92,12 +106,14 @@ for (const file of readdirSync(join(playbookRoot, "agents")).filter((f) => f.end
     ? "Read, Write, Edit, Bash, Grep, Glob"
     : "Read, Write, Edit, Grep, Glob";
   const model = MODEL_FOR_ROLE[slug] ?? DEFAULT_MODEL;
+  const effort = HIGH_EFFORT_ROLES.has(slug) ? "high" : DEFAULT_EFFORT;
 
   const out = `---
 name: ${slug}
 description: ${desc.replace(/\n/g, " ")}
 tools: ${tools}
 model: ${model}
+effort: ${effort}
 ---
 
 You are the **${title}** in an autonomous Agentic SDLC run. Stay strictly in this role.
