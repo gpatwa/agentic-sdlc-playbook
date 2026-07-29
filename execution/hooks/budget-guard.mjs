@@ -24,19 +24,6 @@ try {
   const runsDir = join(process.cwd(), "runs");
   if (!existsSync(runsDir)) allow(); // not a slice-running repo
 
-  // Find the active slice: an in-progress STATE.md carrying a Budget block.
-  let active = null;
-  for (const d of readdirSync(runsDir)) {
-    const p = join(runsDir, d, "STATE.md");
-    if (!existsSync(p) || !statSync(join(runsDir, d)).isDirectory()) continue;
-    const text = readFileSync(p, "utf8");
-    if (!/^\s*-\s*\*\*Status:\*\*\s*in-progress/im.test(text)) continue;
-    if (!/\*\*Budget:\*\*/.test(text)) continue;
-    active = { slice: d, text };
-    break;
-  }
-  if (!active) allow(); // no active budgeted slice — nothing to guard
-
   // Accept "600k", "600,000", "0.6M".
   const num = (s) => {
     if (!s) return null;
@@ -48,9 +35,31 @@ try {
     return v * mult;
   };
 
-  const budget = num((active.text.match(/\*\*Budget:\*\*\s*([\d.,]+\s*[kKmM]?)/) || [])[1]);
-  const spent = num((active.text.match(/\*\*Spent:\*\*\s*([\d.,]+\s*[kKmM]?)/) || [])[1]);
-  if (!budget || spent === null) allow(); // can't read it -> don't block
+  // Collect EVERY in-progress budgeted slice, then guard the most constrained.
+  //
+  // This used to take the first match in readdir order and stop, which meant
+  // that with two concurrent slices the guard silently watched whichever sorted
+  // first — so an over-budget slice could be missed entirely because an
+  // unrelated under-budget one happened to be named earlier. Scanning all of
+  // them and picking the highest spent/budget ratio makes the guard correct
+  // under concurrency without needing a lock: the binding constraint is the
+  // one worth surfacing, whichever slice it belongs to.
+  let active = null;
+  for (const d of readdirSync(runsDir)) {
+    const p = join(runsDir, d, "STATE.md");
+    if (!existsSync(p) || !statSync(join(runsDir, d)).isDirectory()) continue;
+    const text = readFileSync(p, "utf8");
+    if (!/^\s*-\s*\*\*Status:\*\*\s*in-progress/im.test(text)) continue;
+    if (!/\*\*Budget:\*\*/.test(text)) continue;
+    const b = num((text.match(/\*\*Budget:\*\*\s*([\d.,]+\s*[kKmM]?)/) || [])[1]);
+    const s = num((text.match(/\*\*Spent:\*\*\s*([\d.,]+\s*[kKmM]?)/) || [])[1]);
+    if (!b || s === null) continue; // unreadable numbers -> not guardable
+    const ratio = s / b;
+    if (!active || ratio > active.ratio) active = { slice: d, budget: b, spent: s, ratio };
+  }
+  if (!active) allow(); // no active budgeted slice — nothing to guard
+
+  const { budget, spent } = active;
 
   const pct = spent / budget;
   const k = (n) => Math.round(n / 1000) + "k";
