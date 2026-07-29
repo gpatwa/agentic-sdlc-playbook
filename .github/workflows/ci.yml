@@ -1,0 +1,66 @@
+# The playbook's own gates. Until now the seed repos ran gates-as-code on every
+# push while the repo *defining* the gates ran nothing — the tooling that
+# generates every product repo's agent definitions was the least-checked code
+# in the system. Same shape as stash-seed/.github/workflows/ci.yml on purpose:
+# the playbook should be held to the discipline it prescribes.
+#
+# Dependency-free: no install step, node:test only.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pack:
+    name: Execution pack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # install.mjs generates the least-privilege `tools:` frontmatter for
+      # every product repo, so a regression here is a security regression
+      # everywhere the pack is installed. This is the gate that matters.
+      - name: Pack tests
+        working-directory: execution
+        run: npm test
+
+      # Reference integrity: a brief pointing at a protocol that no longer
+      # exists fails silently at run time, when an agent needs it most.
+      - name: Cross-document references resolve
+        run: |
+          missing=0
+          for r in $(grep -rhoE '\b[A-Z][A-Z_]+\.md\b' agents/ execution/pack/ | sort -u); do
+            # ANALYTICS.md / INDEX.md / STATE.md are generated at run time in the
+            # product repo, so their absence here is correct.
+            case "$r" in ANALYTICS.md|INDEX.md|STATE.md) continue ;; esac
+            if [ -z "$(find . -name "$r" -not -path './node_modules/*' -print -quit)" ]; then
+              echo "::error::dangling reference: $r"
+              missing=$((missing + 1))
+            fi
+          done
+          echo "dangling references: $missing"
+          [ "$missing" -eq 0 ]
+
+      # The generator must stay runnable against a real repo shape, not just
+      # against its own unit tests.
+      - name: Installer runs end to end
+        run: |
+          tmp="$(mktemp -d)"
+          mkdir -p "$tmp/.agentic"
+          for f in PROJECT_CONTEXT SAFETY_INVARIANTS LOCAL_COMMANDS CURRENT_MVP_STATUS; do
+            echo "# $f" > "$tmp/.agentic/$f.md"
+          done
+          node execution/install.mjs "$tmp"
+          test -s "$tmp/.claude/agents/security-privacy.md"
+          test -s "$tmp/.claude/protocols/MODEL_ROUTING.md"
+          grep -q '^effort: high$' "$tmp/.claude/agents/security-privacy.md"
