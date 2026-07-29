@@ -130,15 +130,32 @@ the reason it is not being fixed now.
   install back and reports upgrade / **downgrade** (playbook older than the
   installed pack) with the prior install date.
 
+### Fixed in the follow-up pass (same day)
+
+- **Budget guard was wrong under concurrency** — ✅ closed. It took the *first*
+  in-progress budgeted `STATE.md` in readdir order and stopped, so an
+  over-budget slice could be missed entirely because an unrelated under-budget
+  one happened to sort earlier. It now scans every in-progress budgeted slice
+  and guards the **most constrained** (highest spent/budget). Correct under
+  concurrency without needing a lock — the binding constraint is the one worth
+  surfacing, whichever slice owns it.
+- **CI on the playbook** — ✅ closed (`.github/workflows/ci.yml`). Runs the pack
+  tests, a dangling-reference check, and an end-to-end installer run against a
+  scratch repo. The repo defining the gates is now held to them.
+- **Analytics could not be acted on** — ✅ mechanism supplied.
+  `analyze.mjs --strict` exits non-zero on an envelope breach or stage
+  outlier, so a product CI *can* gate on cost. Deliberately **opt-in and not
+  the default**: release gates fail closed because shipping a defect is
+  expensive, but a density outlier means a stage cost more than expected, not
+  that the software is wrong — auto-blocking on it would stall correct work
+  for a budget reason, the same reasoning that makes `budget-guard` fail open.
+  Mechanism here, policy in the product.
+- **Stale installed packs** — ✅ closed. Both seed repos regenerated to pack v3;
+  all 24 agents in each now carry `effort:`. This also **live-validated the new
+  drift detection**, which reported the v2→v3 transition on both real repos.
+
 ### Known limits — recorded, not fixed
 
-- **Single-operator concurrency.** `budget-guard.mjs` takes the *first*
-  in-progress budgeted `STATE.md` in readdir order and stops. With two
-  concurrent slices in one repo it guards one of them silently. There is no
-  lock and no slice-level mutual exclusion anywhere in the pack. Asserted in
-  the test suite so the behaviour is visible rather than surprising. Fix when
-  a second operator shares a repo — until then the added machinery would be
-  speculative.
 - **Telemetry is self-reported, contradicting its own protocol.**
   `RUN_ECONOMICS.md` §5 requires harness-sourced telemetry; in practice the
   agent writes its own token and tool-call numbers into `trace.json`. **Every
@@ -147,18 +164,12 @@ the reason it is not being fixed now.
   to killed agents" was reconstructed by hand). Not fixable from inside the
   pack — it needs harness-level usage capture we do not control. The honest
   status is *stated intent, not enforced*.
-- **No CI on the playbook itself.** The seed repos run gates-as-code on every
-  push; the repo that *defines* the gates runs nothing. `execution/npm test`
-  now makes this worth wiring — the tests exist to be run by something other
-  than a human remembering.
-- **No uninstall or revert for the pack.** `install.mjs` overwrites
-  `.claude/agents/`; recovery is git or nothing.
-- **Analytics flag but nothing acts.** Cap and density outliers are advisory;
-  no threshold fails a gate or blocks a release.
-- **Installed packs in both seed repos are stale** — pack v2, generated before
-  the effort routing axis, so their `.claude/agents/` carry no `effort:` field.
-  Regenerating is a per-repo action at the start of a slice, not a trailing
-  edit to an unrelated change.
+- **No uninstall for the pack, and none planned.** `install.mjs` overwrites
+  `.claude/agents/`. The pack only ever writes into a git repo, so revert is
+  `git checkout` — building an uninstaller would duplicate version control and
+  add a second, less-tested way to remove files. Recorded as a decision, not a
+  backlog item. The real risk it appeared to cover — *install writes a bad
+  pack* — is now covered by the test suite and CI instead.
 
 Checked and **clean**: cross-document reference integrity. All 38 `*.md`
 references across briefs and protocols resolve; the three with no file in the
