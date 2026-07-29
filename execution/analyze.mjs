@@ -1,7 +1,10 @@
 // Pipeline analytics generator — dependency-free Node ESM. Sibling to
 // install.mjs: a reusable playbook tool run against a product repo.
 //
-//   node <playbook>/execution/analyze.mjs [productRepoRoot]
+//   node <playbook>/execution/analyze.mjs [productRepoRoot] [--strict]
+//
+// --strict exits non-zero on an envelope breach or stage outlier, so a
+// product CI can gate on cost signals. Off by default: cost is advisory.
 //
 // Reads every runs/<slice>/trace.json (the machine-readable source of truth a
 // run emits alongside STATE.md) and RENDERS the human views into runs/:
@@ -35,7 +38,10 @@ const ARCHETYPE_OF = {
 const classify = (s) =>
   s.archetype || ARCHETYPE_OF[String(s.stage).toLowerCase().trim()] || "review";
 
-const root = process.argv[2] || process.cwd();
+// Positional arg is the product repo root; flags must not be mistaken for it.
+const argv = process.argv.slice(2);
+const STRICT = argv.includes("--strict");
+const root = argv.find((a) => !a.startsWith("--")) || process.cwd();
 const runsDir = join(root, "runs");
 if (!existsSync(runsDir)) { console.error(`no runs/ dir at ${root}`); process.exit(1); }
 
@@ -290,3 +296,22 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--ink2);font-size:12.5p
 writeFileSync(join(runsDir, "dashboard.html"), html);
 
 console.log(`analytics: ${fleet.stages} stages, ${ci(fleet.tokens)} tokens, ${fleet.envelopeFails} envelope breach(es), ${outliers.length} outlier(s) → runs/ANALYTICS.md, runs/dashboard.html`);
+
+// --strict exits non-zero when the fleet has an envelope breach or a stage
+// outlier, so a product's CI *can* gate on cost signals.
+//
+// Deliberately opt-in, and deliberately not the default. RELEASE_GATES fail
+// closed because shipping a defect is the expensive outcome; cost signals are
+// the other kind — a density outlier means a stage was unusually expensive,
+// not that the software is wrong, and auto-blocking a release on it would
+// stall correct work for a budget reason. That is the same reasoning that
+// makes budget-guard fail open. This flag supplies the mechanism and leaves
+// the policy to the product, which is the only place that knows whether its
+// cost signals are load-bearing.
+if (STRICT && (fleet.envelopeFails > 0 || outliers.length > 0)) {
+  console.error(
+    `strict: ${fleet.envelopeFails} envelope breach(es), ${outliers.length} stage outlier(s). ` +
+    `See runs/ANALYTICS.md § Outliers.`,
+  );
+  process.exit(1);
+}

@@ -119,3 +119,44 @@ describe("analyze.mjs — degenerate input", () => {
     assert.doesNotMatch(md, /undefined|NaN/);
   });
 });
+
+// The mechanism, not the policy: cost signals should not auto-block a release
+// by default (that is why budget-guard fails open), but a product whose cost
+// signals ARE load-bearing needs a way to gate. --strict supplies it.
+describe("analyze.mjs — --strict exit code", () => {
+  const runStrict = (traces) => {
+    const dir = join(tmpdir(), `analyze-strict-${process.pid}-${n++}`);
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(join(dir, "runs"), { recursive: true });
+    for (const [slice, trace] of Object.entries(traces)) {
+      mkdirSync(join(dir, "runs", slice), { recursive: true });
+      writeFileSync(join(dir, "runs", slice, "trace.json"), JSON.stringify(trace));
+    }
+    let code = 0;
+    try {
+      execFileSync("node", [analyzer, "--strict"], { cwd: dir, encoding: "utf8", stdio: "pipe" });
+    } catch (e) { code = e.status ?? 1; }
+    rmSync(dir, { recursive: true, force: true });
+    return code;
+  };
+
+  const cleanTrace = trace([
+    { stage: "X", archetype: "build", model: "sonnet", effort: "medium", tokens: 10000, toolCalls: 10, retries: 0 },
+  ]);
+  const outlierTrace = trace([
+    { stage: "X", archetype: "build", model: "sonnet", effort: "medium", tokens: 90000, toolCalls: 10, retries: 0 },
+  ]);
+
+  test("exits 0 on a clean fleet", () => {
+    assert.equal(runStrict({ ok: cleanTrace }), 0);
+  });
+
+  test("exits non-zero when a stage is an outlier", () => {
+    assert.equal(runStrict({ bad: outlierTrace }), 1);
+  });
+
+  test("without --strict an outlier still exits 0 — advisory by default", () => {
+    const { stdout } = analyze({ bad: outlierTrace });
+    assert.match(stdout, /outlier/);
+  });
+});
