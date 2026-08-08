@@ -97,11 +97,29 @@ aggregate across runs without parsing markdown. STATE.md stays the human mirror;
 neither is hand-parsed for numbers.
 
 ```json
-{ "schema": "agentic-sdlc/trace@1", "slice": "<id>", "tier": 2,
+{ "schema": "agentic-sdlc/trace@2", "slice": "<id>", "tier": 2,
   "overlay": false, "landed": true, "started": "<UTC>",
-  "stages": [ { "stage": "<name>", "model": "<model>", "effort": "<level>",
+  "stages": [ { "stage": "<name>", "executor": "subagent",
+               "model": "<model>", "effort": "<level>",
                "tokens": 0, "toolCalls": 0, "retries": 0 } ] }
 ```
+
+**`stages` must list every stage that ran** — including ones the Orchestrator
+executed itself rather than spawning. Mark those `"executor": "orchestrator"`;
+`model`, `effort`, `tokens`, and `toolCalls` may be omitted when there is no
+telemetry to report.
+
+This is what `trace@2` fixes. Under `trace@1`, `stages` in practice meant
+"stages spawned as subagents", and self-executed stages were dropped — or
+recorded in an ad-hoc `notes.orchestratorExecuted` array that no tool read and
+no schema described. Three of the first eight runs are in that state, so every
+cost, density, and DORA figure for them was computed over a partial list with
+nothing saying so.
+
+`analyze.mjs` accepts both schemas and reports untraced stages either way — old
+traces are run records and are not rewritten. What changes going forward is
+that the omission is **structural and visible** instead of ad-hoc and silent:
+a slice cost that excludes untraced stages is now reported as a floor.
 
 The Post-Launch agent regenerates `runs/ANALYTICS.md` + `runs/dashboard.html`
 from all traces via `execution/analyze.mjs` at slice close.

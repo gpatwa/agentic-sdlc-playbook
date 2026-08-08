@@ -57,9 +57,35 @@ for (const d of dirs) {
 if (runs.length === 0) { console.error("no runs/*/trace.json found — nothing to analyze"); process.exit(1); }
 runs.sort((a, b2) => (a.started || a.slice).localeCompare(b2.started || b2.slice));
 
+// ── untraced stages ─────────────────────────────────────────────────────────
+// A stage the Orchestrator executed itself instead of spawning a subagent has
+// no telemetry: it never appeared in `stages`, so every fleet number was
+// computed over a partial list with nothing saying so. Three of the first
+// eight runs are in this position.
+//
+// trace@1 recorded these in an ad-hoc `notes.orchestratorExecuted` array that
+// nothing read. trace@2 puts them in `stages` with `executor: "orchestrator"`.
+// Both are honoured here — old traces are run records and are not rewritten —
+// and either way the COUNT is surfaced, so the numbers carry their own caveat
+// instead of quietly under-reporting.
+const untraced = [];
+for (const run of runs) {
+  for (const name of run.notes?.orchestratorExecuted ?? []) {
+    untraced.push({ run: run.slice, stage: name, source: "notes" });
+  }
+  for (const s of run.stages) {
+    if (s.executor === "orchestrator" && !(s.tokens > 0)) {
+      untraced.push({ run: run.slice, stage: s.stage, source: "executor" });
+    }
+  }
+}
+
 // ── derive (never stored — computed from raw facts) ─────────────────────────
 const stages = [];
 for (const run of runs) for (const s of run.stages) {
+  // An untraced stage carries no tokens or tool calls; including it would
+  // dilute every average with a zero that means "not measured", not "free".
+  if (s.executor === "orchestrator" && !(s.tokens > 0)) continue;
   const archetype = classify(s);
   // A stage with no tool calls has no density — dividing anyway yields
   // Infinity, which then renders into the analytics and falsely trips the
@@ -147,6 +173,10 @@ md += `_Generated ${ts}. **Do not edit by hand** — regenerate with \`node <pla
 md += `## Fleet\n\n`;
 md += `- Runs traced: **${perRun.length}**${preTelemetry.length ? ` (+ ${preTelemetry.length} pre-telemetry)` : ""}\n`;
 md += `- Stages: **${fleet.stages}** · Tokens: **${ci(fleet.tokens)}** · Tool calls: **${ci(fleet.calls)}**\n`;
+if (untraced.length) {
+  const byRun = [...new Set(untraced.map((u) => u.run))];
+  md += `- **Untraced stages: ${untraced.length}** across ${byRun.length} run(s) — executed by the Orchestrator rather than spawned, so they carry no tokens or tool calls\n`;
+}
 md += `- Envelope breaches: **${fleet.envelopeFails}/${perRun.length}** · Stage outliers: **${outliers.length}**\n\n`;
 md += `## Per run\n\n| Run | Tier | Stages | Tokens | Calls | Envelope | Status |\n|-----|------|--------|--------|-------|----------|--------|\n`;
 for (const r of perRun) md += `| ${r.slice} | ${r.tier}${r.overlay ? "+overlay" : ""} | ${r.n} | ${ci(r.tokens)} | ${r.calls} | ${ci(r.envelope)} | ${r.pass ? "✅ pass" : `❌ over ${k(r.overBy)}`} |\n`;
@@ -169,6 +199,16 @@ for (const s of stages) {
   const flags = [s.overCap ? "⚠ over cap" : "", s.densityOutlier ? "⚠ density" : ""].filter(Boolean).join(", ") || "—";
   md += `| ${s.run} | ${s.stage} | ${s.archetype} | ${s.model} | ${s.effort} | ${ci(s.tokens)} | ${s.toolCalls} | ${ci(s.density)} | ${pct(s.densityPct)} | ${flags} |\n`;
 }
+md += `\n## Untraced stages\n\n`;
+if (untraced.length === 0) md += `None — every stage in every run reported its own telemetry.\n`;
+else {
+  md += `Executed by the Orchestrator rather than spawned as a subagent, so they\n`;
+  md += `carry no tokens or tool calls. **Every fleet and per-run figure above\n`;
+  md += `excludes them** — treat slice costs as a floor, not a total.\n\n`;
+  md += `| Run | Stage | Recorded via |\n|-----|-------|-------------|\n`;
+  for (const u of untraced) md += `| ${u.run} | ${u.stage} | ${u.source === "notes" ? "`notes.orchestratorExecuted` (trace@1)" : "`executor` (trace@2)"} |\n`;
+}
+
 md += `\n## Outliers\n\n`;
 if (outliers.length === 0) md += `None — every stage is within its token cap and its archetype's density cap.\n`;
 for (const s of outliers) {

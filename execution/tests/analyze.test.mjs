@@ -160,3 +160,65 @@ describe("analyze.mjs — --strict exit code", () => {
     assert.match(stdout, /outlier/);
   });
 });
+
+// trace@1's `stages` array meant "stages spawned as subagents" — stages the
+// Orchestrator ran itself were dropped, or logged in an ad-hoc
+// notes.orchestratorExecuted array nothing read. Every figure for those runs
+// was computed over a partial list with nothing saying so.
+describe("analyze.mjs — untraced stages", () => {
+  test("says so plainly when every stage reported telemetry", () => {
+    const { md } = analyze({
+      ok: trace([{ stage: "QA", archetype: "build", model: "sonnet", effort: "high", tokens: 10000, toolCalls: 10, retries: 0 }]),
+    });
+    assert.match(md, /None — every stage in every run reported its own telemetry/);
+  });
+
+  test("surfaces trace@1 notes.orchestratorExecuted rather than ignoring it", () => {
+    const { md } = analyze({
+      old: trace(
+        [{ stage: "QA", archetype: "build", model: "sonnet", tokens: 10000, toolCalls: 10, retries: 0 }],
+        { notes: { orchestratorExecuted: ["Release", "Post-Launch"] } },
+      ),
+    });
+    assert.match(md, /Untraced stages: 2/);
+    assert.match(md, /\| s \| Release \|/);
+    assert.match(md, /\| s \| Post-Launch \|/);
+    assert.match(md, /trace@1/);
+  });
+
+  test("surfaces trace@2 executor: orchestrator stages", () => {
+    const { md } = analyze({
+      neu: trace([
+        { stage: "QA", archetype: "build", executor: "subagent", model: "sonnet", effort: "high", tokens: 10000, toolCalls: 10, retries: 0 },
+        { stage: "Release", executor: "orchestrator" },
+      ]),
+    });
+    assert.match(md, /Untraced stages: 1/);
+    assert.match(md, /\| s \| Release \|/);
+    assert.match(md, /trace@2/);
+  });
+
+  // A zero that means "not measured" is not the same as a zero that means
+  // "free" — averaging them together understates every density figure.
+  test("an untraced stage never dilutes the measured averages", () => {
+    const measured = analyze({
+      a: trace([{ stage: "QA", archetype: "build", executor: "subagent", model: "sonnet", effort: "high", tokens: 10000, toolCalls: 10, retries: 0 }]),
+    });
+    const withUntraced = analyze({
+      a: trace([
+        { stage: "QA", archetype: "build", executor: "subagent", model: "sonnet", effort: "high", tokens: 10000, toolCalls: 10, retries: 0 },
+        { stage: "Release", archetype: "review", executor: "orchestrator" },
+      ]),
+    });
+    assert.match(measured.stdout, /1 stages/);
+    assert.match(withUntraced.stdout, /1 stages/);
+  });
+
+  test("an orchestrator-executed stage WITH telemetry still counts as measured", () => {
+    const { md, stdout } = analyze({
+      a: trace([{ stage: "Release", archetype: "review", executor: "orchestrator", model: "opus", effort: "high", tokens: 5000, toolCalls: 5, retries: 0 }]),
+    });
+    assert.match(stdout, /1 stages/);
+    assert.match(md, /None — every stage in every run reported its own telemetry/);
+  });
+});
