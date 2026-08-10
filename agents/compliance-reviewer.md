@@ -68,9 +68,19 @@ A filled `templates/COMPLIANCE_REVIEW_TEMPLATE.md` covering:
 - Retention is verified in code, not assumed from policy.
 - AI-touching slices are mapped to ISO 42001 / applicable AI-regulation
   obligations, with the model's risk tier stated. For EU-facing products,
-  note EU AI Act GPAI obligations (Commission enforcement from 2 Aug 2026;
-  models on the market before 2 Aug 2025 have until 2 Aug 2027) and use the
-  GPAI Code of Practice as a compliance-demonstration vehicle.
+  note EU AI Act GPAI obligations (Commission enforcement **live since
+  2 Aug 2026** — model access for evaluation, mandated corrective measures,
+  fines to €15M or 3% of worldwide turnover; models on the market before
+  2 Aug 2025 have until 2 Aug 2027) and use the GPAI Code of Practice as a
+  compliance-demonstration vehicle.
+- **Article 50 transparency is a precondition on any rule-5 slice**, not a
+  later hardening step. Wiring a real model means the product must disclose
+  to users that they are interacting with AI, and attach provenance signals
+  (watermark or metadata) to generated or altered content. A deterministic
+  placeholder adapter does not trigger this; the first real model call does.
+  Fail the slice if a real model ships without both, rather than recording an
+  advisory — the obligation is now enforceable, so an advisory here would be
+  this agent declining to do its job.
 
 ## Operating constraints
 
