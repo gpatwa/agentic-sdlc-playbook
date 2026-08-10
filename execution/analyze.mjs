@@ -99,6 +99,8 @@ for (const run of runs) for (const s of run.stages) {
     // as not-recorded rather than inventing a level — their density figures
     // are not comparable with a run that sets effort per role.
     effort: s.effort ?? "—",
+    // A stage may name its own operator; otherwise it inherits the slice's.
+    operator: s.operator ?? run.operator ?? null,
     densityPct: density === null ? null : density / densityCap,
     densityOutlier: density !== null && density > densityCap,
     overCap: s.tokens > B.perStageCapTokens,
@@ -199,6 +201,20 @@ for (const s of stages) {
   const flags = [s.overCap ? "⚠ over cap" : "", s.densityOutlier ? "⚠ density" : ""].filter(Boolean).join(", ") || "—";
   md += `| ${s.run} | ${s.stage} | ${s.archetype} | ${s.model} | ${s.effort} | ${ci(s.tokens)} | ${s.toolCalls} | ${ci(s.density)} | ${pct(s.densityPct)} | ${flags} |\n`;
 }
+// Attribution is only information when there is more than one operator; on a
+// single-operator fleet a per-operator table is a column of the same name.
+const operators = [...new Set(stages.map((s) => s.operator).filter(Boolean))].sort();
+if (operators.length > 1) {
+  md += `\n## By operator\n\n`;
+  md += `| Operator | Stages | Tokens | Calls |\n|----------|--------|--------|-------|\n`;
+  for (const op of operators) {
+    const mine = stages.filter((s) => s.operator === op);
+    md += `| ${op} | ${mine.length} | ${ci(mine.reduce((a, s) => a + s.tokens, 0))} | ${ci(mine.reduce((a, s) => a + s.toolCalls, 0))} |\n`;
+  }
+  const unattributed = stages.filter((s) => !s.operator).length;
+  if (unattributed) md += `\n${unattributed} stage(s) carry no operator — traces predating the field.\n`;
+}
+
 md += `\n## Untraced stages\n\n`;
 if (untraced.length === 0) md += `None — every stage in every run reported its own telemetry.\n`;
 else {

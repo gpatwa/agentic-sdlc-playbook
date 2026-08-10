@@ -99,10 +99,22 @@ neither is hand-parsed for numbers.
 ```json
 { "schema": "agentic-sdlc/trace@2", "slice": "<id>", "tier": 2,
   "overlay": false, "landed": true, "started": "<UTC>",
+  "operator": "<who drove this run>",
   "stages": [ { "stage": "<name>", "executor": "subagent",
                "model": "<model>", "effort": "<level>",
                "tokens": 0, "toolCalls": 0, "retries": 0 } ] }
 ```
+
+**`operator`** names the human who drove the run. A stage may carry its own
+`operator` when a different person drove that stage; otherwise it inherits the
+slice's.
+
+Recorded now, while it is one field on a young corpus, because attribution is
+painful to retrofit and impossible to reconstruct. Every run to date was driven
+by one person, so the field costs nothing today and is the prerequisite for
+anything multi-operator later — per-person budgets, slice ownership, or knowing
+who to ask about a run. `analyze.mjs` stays silent about it while a fleet has a
+single operator, and breaks figures out per operator once it has more.
 
 **`stages` must list every stage that ran** — including ones the Orchestrator
 executed itself rather than spawning. Mark those `"executor": "orchestrator"`;

@@ -222,3 +222,51 @@ describe("analyze.mjs — untraced stages", () => {
     assert.match(md, /None — every stage in every run reported its own telemetry/);
   });
 });
+
+// Attribution is cheap to record now and impossible to reconstruct later. It is
+// also only *information* once a fleet has more than one operator — on a
+// single-operator fleet a per-operator table is a column of the same name.
+describe("analyze.mjs — operator attribution", () => {
+  const st = (stage, extra = {}) => ({
+    stage, archetype: "build", executor: "subagent", model: "sonnet",
+    effort: "medium", tokens: 10000, toolCalls: 10, retries: 0, ...extra,
+  });
+
+  test("stays silent on a single-operator fleet", () => {
+    const { md } = analyze({ a: trace([st("QA")], { operator: "alice" }) });
+    assert.doesNotMatch(md, /## By operator/);
+  });
+
+  test("stays silent when no trace names an operator at all", () => {
+    const { md } = analyze({ a: trace([st("QA")]) });
+    assert.doesNotMatch(md, /## By operator/);
+  });
+
+  test("breaks figures out once a fleet has two operators", () => {
+    const { md } = analyze({
+      a: trace([st("QA")], { operator: "alice" }),
+      b: trace([st("QA")], { operator: "bob" }),
+    });
+    assert.match(md, /## By operator/);
+    assert.match(md, /\| alice \| 1 \|/);
+    assert.match(md, /\| bob \| 1 \|/);
+  });
+
+  test("a stage-level operator overrides the slice's", () => {
+    const { md } = analyze({
+      a: trace([st("QA"), st("Security", { operator: "bob" })], { operator: "alice" }),
+    });
+    assert.match(md, /## By operator/);
+    assert.match(md, /\| alice \| 1 \|/);
+    assert.match(md, /\| bob \| 1 \|/);
+  });
+
+  test("counts stages that predate the field rather than dropping them", () => {
+    const { md } = analyze({
+      a: trace([st("QA")], { operator: "alice" }),
+      b: trace([st("QA")], { operator: "bob" }),
+      old: trace([st("QA")]),
+    });
+    assert.match(md, /1 stage\(s\) carry no operator/);
+  });
+});

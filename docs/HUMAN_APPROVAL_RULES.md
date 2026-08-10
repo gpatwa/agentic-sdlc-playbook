@@ -54,6 +54,14 @@ This includes:
 The Release Manager confirms the human sign-off, records who approved,
 and records the time.
 
+**"Who approved" is an identity, not a role.** Record the person — the same
+handle used as the run's `operator` in `trace.json` — not "the human" or "the
+user". An approval that cannot be attributed to a named person is not an audit
+record; it is a note saying one was made. This costs nothing while one person
+approves everything, and is the field every later control depends on: RBAC
+Tier 3 named approvers, separation of duties, and any answer to "who signed
+off on this" that outlives the session it happened in.
+
 ### 4. Changes to safety controls
 
 This includes:
