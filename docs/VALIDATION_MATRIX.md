@@ -153,6 +153,20 @@ the reason it is not being fixed now.
 - **Stale installed packs** — ✅ closed. Both seed repos regenerated to pack v3;
   all 24 agents in each now carry `effort:`. This also **live-validated the new
   drift detection**, which reported the v2→v3 transition on both real repos.
+- **We measured cost, never code quality** — ✅ the measurement half is closed,
+  the gate half is deferred by design. Four external write-ups (Google's
+  New-SDLC paper, Monaco, DoorDash, Anthropic's AI-native-org talk) plus our own
+  "no quality metric" finding all pointed at the same hole: `analyze.mjs`
+  measured the pipeline's *cost*, and nothing measured the *code's shape*.
+  `execution/quality.mjs` now computes module size, an approximate per-file
+  complexity, and a test-presence signal (explicitly **not** coverage), rendered
+  to `QUALITY.md`. **Measure-only — it never gates**; whether any metric earns a
+  gate waits on a real slice where a reviewer looked, per the plan and Google's
+  own "an eval without a rubric measures nothing". Run against real seed code it
+  earned its keep immediately: the `large` flag landed on the exact
+  `streak-seed/src/server.js` that once shipped the wildcard-bind defect, and it
+  exposed one false positive of its own (density on a 2-line file), fixed with a
+  size floor calibrated from that data — measure, then decide, not assert.
 
 ### Known limits — recorded, not fixed
 
