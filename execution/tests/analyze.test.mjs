@@ -270,3 +270,42 @@ describe("analyze.mjs — operator attribution", () => {
     assert.match(md, /1 stage\(s\) carry no operator/);
   });
 });
+
+// Gate catches are the closest thing to an impact number: a defect a gate
+// stopped before it shipped. Structured `gateCatches` (trace@2) is counted;
+// legacy notes.gatesThatFired is surfaced but not counted; the total is a floor.
+describe("analyze.mjs — gate catches", () => {
+  test("counts and renders a structured catch", () => {
+    const { md } = analyze({
+      s: trace([{ stage: "QA", archetype: "build", executor: "subagent", model: "sonnet", effort: "high", tokens: 1000, toolCalls: 5, retries: 1 }],
+        { gateCatches: [{ gate: "QA", verdict: "fail", severity: "blocker", finding: "a11y focus lost" }] }),
+    });
+    assert.match(md, /Structured catches: 1/);
+    assert.match(md, /\| s \| QA \| fail \| blocker \| a11y focus lost \|/);
+  });
+
+  test("surfaces legacy notes.gatesThatFired but does not count it as structured", () => {
+    const { md } = analyze({
+      s: trace([{ stage: "QA", archetype: "build", executor: "subagent", model: "sonnet", effort: "high", tokens: 1000, toolCalls: 5, retries: 0 }],
+        { notes: { gatesThatFired: ["QA round 1: FAIL"] } }),
+    });
+    assert.match(md, /surfaced, not counted/);
+    assert.match(md, /QA round 1: FAIL/);
+    assert.doesNotMatch(md, /Structured catches:/);
+  });
+
+  test("a run with no gateCatches array is called a floor", () => {
+    // trace() helper omits gateCatches → predates the field.
+    const { md } = analyze({ s: trace([{ stage: "QA", archetype: "build", model: "sonnet", effort: "high", tokens: 1000, toolCalls: 5, retries: 0 }]) });
+    assert.match(md, /A floor, not a total/);
+  });
+
+  test("a clean slice that recorded [] is not called a floor", () => {
+    const { md } = analyze({
+      s: trace([{ stage: "QA", archetype: "build", executor: "subagent", model: "sonnet", effort: "high", tokens: 1000, toolCalls: 5, retries: 0 }],
+        { gateCatches: [] }),
+    });
+    assert.doesNotMatch(md, /A floor, not a total/);
+    assert.match(md, /None structurally recorded yet/);
+  });
+});

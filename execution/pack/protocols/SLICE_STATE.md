@@ -100,10 +100,27 @@ neither is hand-parsed for numbers.
 { "schema": "agentic-sdlc/trace@2", "slice": "<id>", "tier": 2,
   "overlay": false, "landed": true, "started": "<UTC>",
   "operator": "<who drove this run>",
+  "gateCatches": [ { "gate": "<QA|Security|...>", "verdict": "fail",
+                     "severity": "<blocker|required-fix|advisory>",
+                     "finding": "<one line: what it caught>" } ],
   "stages": [ { "stage": "<name>", "executor": "subagent",
                "model": "<model>", "effort": "<level>",
                "tokens": 0, "toolCalls": 0, "retries": 0 } ] }
 ```
+
+**`gateCatches`** records every defect a gate caught before it shipped — the
+closest thing this system can honestly produce to an *impact* number. A gate
+that fails a slice and sends it back is the pipeline earning its keep; counting
+those catches, by gate and severity, is how the qualitative evidence ("QA
+failed browser-client on a live a11y defect", "Security blocked the http-layer
+bind") becomes a metric. Omit the array when nothing was caught; a genuinely
+clean slice recording `[]` is different from an old run that never recorded it.
+
+Pre-schema runs logged gate activity only in prose or an ad-hoc
+`notes.gatesThatFired` array. `analyze.mjs` surfaces that legacy array too, so
+existing catches aren't lost, but it labels the total a **floor** — a run whose
+Security block lives only in its write-up cannot be counted structurally, so the
+number under-reports until every run emits `gateCatches`.
 
 **`operator`** names the human who drove the run. A stage may carry its own
 `operator` when a different person drove that stage; otherwise it inherits the

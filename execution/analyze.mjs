@@ -80,6 +80,28 @@ for (const run of runs) {
   }
 }
 
+// ── gate catches ─────────────────────────────────────────────────────────────
+// A defect a gate caught before it shipped is the pipeline earning its keep —
+// the closest thing to an impact number this system can honestly produce. The
+// structured `gateCatches` field (trace@2) is authoritative; the legacy
+// `notes.gatesThatFired` string array is surfaced too so existing catches
+// aren't lost, but only structured entries are counted. Pre-schema runs recorded
+// catches only in prose, so the total is a FLOOR that under-reports — stated,
+// not hidden, exactly like change-failure rate and untraced stages.
+const gateCatches = [];
+const legacyGateActivity = [];
+for (const run of runs) {
+  for (const c of run.gateCatches ?? []) {
+    gateCatches.push({ run: run.slice, ...c });
+  }
+  for (const s of run.notes?.gatesThatFired ?? []) {
+    legacyGateActivity.push({ run: run.slice, text: s });
+  }
+}
+// A run predates the field if it has no structured gateCatches array at all;
+// its catches (if any) can only be the legacy strings, which we do not count.
+const preGateSchema = runs.filter((r) => r.gateCatches === undefined).map((r) => r.slice);
+
 // ── derive (never stored — computed from raw facts) ─────────────────────────
 const stages = [];
 for (const run of runs) for (const s of run.stages) {
@@ -223,6 +245,29 @@ else {
   md += `excludes them** — treat slice costs as a floor, not a total.\n\n`;
   md += `| Run | Stage | Recorded via |\n|-----|-------|-------------|\n`;
   for (const u of untraced) md += `| ${u.run} | ${u.stage} | ${u.source === "notes" ? "`notes.orchestratorExecuted` (trace@1)" : "`executor` (trace@2)"} |\n`;
+}
+
+// ── gate catches — the impact signal ─────────────────────────────────────────
+md += `\n## Gate catches\n\n`;
+md += `Defects the gates caught before they shipped — the pipeline earning its keep.\n`;
+if (preGateSchema.length) {
+  md += `**A floor, not a total:** ${preGateSchema.length} run(s) predate the \`gateCatches\` field `;
+  md += `(${preGateSchema.sort().join(", ")}) and recorded catches only in prose, so a real block — e.g. Security stopping the http-layer bind — is not counted here.\n`;
+}
+md += `\n`;
+if (gateCatches.length === 0 && legacyGateActivity.length === 0) {
+  md += `None structurally recorded yet.\n`;
+} else {
+  if (gateCatches.length) {
+    md += `**Structured catches: ${gateCatches.length}**\n\n`;
+    md += `| Run | Gate | Verdict | Severity | Finding |\n|-----|------|---------|----------|--------|\n`;
+    for (const c of gateCatches) md += `| ${c.run} | ${c.gate} | ${c.verdict ?? "—"} | ${c.severity ?? "—"} | ${c.finding ?? "—"} |\n`;
+    md += `\n`;
+  }
+  if (legacyGateActivity.length) {
+    md += `**Legacy gate activity (unstructured, \`notes.gatesThatFired\`) — surfaced, not counted:**\n\n`;
+    for (const g of legacyGateActivity) md += `- ${g.run}: ${g.text}\n`;
+  }
 }
 
 md += `\n## Outliers\n\n`;
