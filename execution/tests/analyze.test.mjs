@@ -198,6 +198,24 @@ describe("analyze.mjs — untraced stages", () => {
     assert.match(md, /trace@2/);
   });
 
+  // The per-run summary row used to sum `run.stages` directly, unfiltered.
+  // trace@1 never exposed this: untraced stages lived only in `notes`, never
+  // in `stages`. trace@2 puts them in `stages` with no tokens/toolCalls, so
+  // `undefined + number` produced NaN the first time a real run mixed a
+  // traced and an untraced stage — found on streak-seed's security-hardening
+  // run (2026-08-22): 8 stages, 3 orchestrator-executed, tokens rendered NaN.
+  test("a run mixing traced and untraced stages sums real numbers, not NaN", () => {
+    const { md } = analyze({
+      s: trace([
+        { stage: "Intake", executor: "orchestrator" },
+        { stage: "QA", archetype: "build", executor: "subagent", model: "sonnet", effort: "high", tokens: 10000, toolCalls: 10, retries: 0 },
+        { stage: "Release", executor: "orchestrator" },
+      ]),
+    });
+    assert.doesNotMatch(md, /NaN/);
+    assert.match(md, /\| s \| 2 \| 3 \| 10,000 \| 10 \|/);
+  });
+
   // A zero that means "not measured" is not the same as a zero that means
   // "free" — averaging them together understates every density figure.
   test("an untraced stage never dilutes the measured averages", () => {

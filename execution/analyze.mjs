@@ -130,9 +130,19 @@ for (const run of runs) for (const s of run.stages) {
 }
 
 const perRun = runs.map((run) => {
-  const tokens = run.stages.reduce((a, s) => a + s.tokens, 0);
-  const calls = run.stages.reduce((a, s) => a + s.toolCalls, 0);
-  const n = run.stages.length, envelope = n * B.sliceEnvelopePerStageTokens;
+  // Same filter as the fleet `stages` list: an orchestrator-executed stage
+  // (trace@2) carries no tokens/toolCalls, and summing over it directly
+  // yields NaN the moment a run mixes traced and untraced stages — which
+  // trace@1 never did (untraced stages lived only in `notes`, never in
+  // `stages`), so this went unnoticed until the first trace@2 run.
+  const traced = run.stages.filter((s) => !(s.executor === "orchestrator" && !(s.tokens > 0)));
+  const tokens = traced.reduce((a, s) => a + s.tokens, 0);
+  const calls = traced.reduce((a, s) => a + s.toolCalls, 0);
+  // `n` (displayed "Stages" count) is the full workflow shape, untraced
+  // stages included — but the envelope is an allowance per *spawn*, so an
+  // orchestrator-executed stage that cost nothing must not buy the run extra
+  // headroom. Envelope uses traced.length, same reasoning as `tokens`/`calls`.
+  const n = run.stages.length, envelope = traced.length * B.sliceEnvelopePerStageTokens;
   return { slice: run.slice, tier: run.tier, overlay: !!run.overlay, n, tokens, calls,
     density: calls > 0 ? Math.round(tokens / calls) : null, envelope, overBy: tokens - envelope, pass: tokens <= envelope };
 });
