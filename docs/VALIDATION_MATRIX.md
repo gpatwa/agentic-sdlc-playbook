@@ -42,15 +42,15 @@ greenfield 0→1), per the phase plan below.
   a cost control must never block legitimate work on a parse bug; release gates
   fail closed, convenience guards fail open. Verified on all paths incl. corrupt
   state and garbage input.
-- **Least-privilege: diagnosed, partially closed** — the generated
-  `.claude/agents/*.md` carry correct restrictive `tools:` frontmatter, but it is
-  only enforced when the Orchestrator session is **rooted in the product repo**,
-  where those agents are discoverable. Orchestrating from the playbook (as every
-  run so far did) falls back to general-purpose agents with inlined briefs and
-  full tools — so least-privilege was **not in force** for runs 0.5–5. Now:
-  the constraint is documented loudly in the pack `CLAUDE.md`, and each generated
-  brief states its own tool boundary as a second, honor-system layer. Full
-  enforcement still requires running the Orchestrator from the product repo.
+- **Least-privilege — ✅ closed, live-validated.** Diagnosed as enforced only
+  when the Orchestrator session is rooted in the product repo (runs 0.5–5 all
+  ran from the playbook and fell back to general-purpose agents with full
+  tools). Closed 2026-08-22 by `streak-seed` `runs/security-hardening/`, the
+  first run with the Orchestrator rooted in the product repo: all five
+  spawned stages used the generated `.claude/agents/*.md` with `tools:`
+  frontmatter in force (`Read, Write, Edit, Bash, Grep, Glob`, nothing else).
+  The boundary sharpened the work rather than obstructing it — see the
+  security-hardening entry below.
 - **Run cost is now controlled, not just measured** — ✅ `RUN_ECONOMICS.md`
   (2026-07-26): budget checked *before* every spawn, explicit depth tiers
   (smoke/standard/adversarial), incremental artefacts so an interrupted stage
@@ -167,6 +167,53 @@ the reason it is not being fixed now.
   `streak-seed/src/server.js` that once shipped the wildcard-bind defect, and it
   exposed one false positive of its own (density on a 2-line file), fixed with a
   size floor calibrated from that data — measure, then decide, not assert.
+
+### Live-validated by streak-seed `security-hardening` (2026-08-22)
+
+The T1 slice from `docs/BACKLOG.md` — the first run with the Orchestrator
+rooted in a product repo. It closed four open validation gaps at once and
+found one real defect in the tooling that was measuring it.
+
+- **Least-privilege — closed.** See the matching bullet above.
+- **trace@2 populated by a real run for the first time** — `operator`,
+  per-stage `effort`, and `executor` all recorded. Effort routing held: the
+  two gate stages (Security re-gate, re-verify) ran `high`; the two build
+  stages (Implementation, rework) ran `medium`.
+- **First structured `gateCatches` entry.** Security's re-gate returned a
+  `required-fix` on F-5: the F-2 tag-allowlist fix reproduced the F-1 defect
+  it sat beside — `create()` read `vnode.tag` three times, so a stateful
+  getter/Proxy could pass validation on one read and construct from another.
+  Not reachable in this build; sent back so the precondition could be struck
+  honestly rather than recorded as a guarantee the code didn't provide. First
+  entry in `analyze.mjs`'s "Gate catches" table that isn't a floor.
+- **`analyze.mjs` found a real defect in itself.** The per-run summary row
+  summed `run.stages` unfiltered. trace@1 never exposed this — orchestrator-
+  executed stages lived only in `notes`, never in `stages`. This run's
+  `stages` array mixed three untraced entries (Intake, Release, Post-Launch)
+  with five traced ones for the first time, and `undefined + number` rendered
+  `NaN` across the whole `security-hardening` row — tokens, calls, and
+  envelope-pass all unreadable. Fixed by filtering `perRun`'s reduce the same
+  way the fleet `stages` list already was; the envelope's stage count now
+  also excludes untraced stages, so an orchestrator-executed stage no longer
+  buys the run free headroom for free. Non-vacuous regression test added
+  (confirmed failing before the fix, passing after).
+- **Budget overrun, recorded honestly.** 520,139 tokens against a 490k budget
+  (106%) — not authorized, not raised to fit. Root cause: two of five spawn
+  estimates were invented rather than drawn from `RUN_ECONOMICS.md` §1 (a
+  resumed re-verify priced at 40k actually cost 115k — resumption saves
+  re-derivation, not tokens). Three amendments proposed to `RUN_ECONOMICS.md`
+  in the run's Post-Launch review; not yet applied to the playbook.
+- **T2 (quality-gate decision) — early signal, not conclusive.**
+  `quality.mjs` run against the same code flags `src/client/dom.js` as
+  "dense" — the exact file that held F-5. A proximity signal, not a catch:
+  density measures decision count, not property-read count, so it would not
+  have caught the specific defect (the run's own Post-Launch review is
+  explicit that only a mechanism-level assertion — reads counted, not
+  outcomes asserted — can). One data point; insufficient alone to decide T2.
+
+Evidence: `streak-seed/runs/security-hardening/{STATE.md,trace.json,
+03-security.md,05-post-launch.md}`. Left uncommitted in `streak-seed`
+pending human review — deliberate, per rule-3/rule-4 scope.
 
 ### Known limits — recorded, not fixed
 

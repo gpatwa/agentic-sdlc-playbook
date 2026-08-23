@@ -11,18 +11,18 @@ what is *proven*; this records what is *next*.
 
 ## Tier 0 — the one action that unblocks everything
 
-- **T1 · Run the F-1…F-4 security slice on `streak-seed`.** Highest leverage,
-  owed regardless of any external doc. It validates the six changes shipped this
-  session that are unit-tested but never run in anger (effort routing, trace@2,
-  handoff completeness, `--strict`, budget-guard concurrency, drift detection);
-  **binds least-privilege for the first time** (never enforced in any run — 0.5–5
-  all orchestrated from the playbook); emits the **first trace@2**; re-baselines
-  the stale density figures; **measures the ~11% effort saving** (currently an
-  estimate); and is the **test-bed** for whether the quality flags (T2) and a
-  plan-review gate (T3) catch anything real.
-  **Requires a session rooted in `streak-seed`, not the playbook** — otherwise
-  least-privilege does not bind and T1's whole point is lost. Everything in
-  Tier 1 depends on it.
+- **T1 · Run the F-1…F-4 security slice on `streak-seed`.** ✅ **Done
+  2026-08-22.** `streak-seed/runs/security-hardening/`. Least-privilege bound
+  for the first time (Orchestrator rooted in the product repo); first trace@2
+  emitted with `operator`/`effort`/`executor` populated; first structured
+  `gateCatches` entry (Security caught F-5, a real defect the F-2 fix
+  reintroduced); budget overrun recorded honestly (106%, root-caused, not
+  authorized). It also found and fixed a real bug in `analyze.mjs` itself
+  (per-run totals went `NaN` on the first run mixing traced and untraced
+  trace@2 stages). Full writeup: `docs/VALIDATION_MATRIX.md` § "Live-validated
+  by streak-seed security-hardening". T2's quality-flag question got a first
+  data point (proximity signal on `dom.js`, not a catch) but not a conclusive
+  answer — see T2 below.
 
 ## Tier 1 — genuine, cheap, close a real hole (after T1)
 
@@ -31,21 +31,27 @@ built or buildable now, and populates when T1 runs — the same "field first, da
 from the run" pattern as effort / operator / executor / gateCatches.
 
 - **T2 · Decide the quality-metric gate.** `quality.mjs` exists measure-only.
-  On the T1 slice, ask: did a flag catch what the reviewers didn't? If yes → a
-  "Quality" dimension in `PLATFORM_EVAL.md` + a `--strict`-style gate. If no →
-  record it. Evidence decides.
+  T1's first data point: `dom.js` (the file holding F-5) was flagged "dense" —
+  a proximity signal, not a catch. Density counts decisions, not property
+  reads, so it would not have caught F-5 itself; the run's own Post-Launch
+  review says only a mechanism-level assertion can. **Inconclusive — one run
+  is not enough to decide a gate.** Re-evaluate after 2–3 more runs.
 - **T3 · Plan-review gate (Monaco).** Gate on the Architecture/plan artefact
-  *before* Implementation spends tokens. Trial on T1; enshrine in
-  `HANDOFF_CHECK` only if it catches a real design problem.
+  *before* Implementation spends tokens. T1 dropped the Architecture stage
+  entirely (the prior security review already was the design doc) — no data
+  either way. Still open; needs a slice where Architecture actually runs.
 - **T4 · Branch protection.** Gates run in CI but are not *blocking*. One
   GitHub setting makes "gates as code" true.
-- **T5 · Capture FDRT.** Blocked→unblocked timestamps in `STATE.md` — the one
-  "not captured" DORA cell. Schema addition now; data from T1's failure loop.
-- **T6 · Gate-catch metric.** ✅ *mechanism built this session* — `gateCatches`
-  in trace@2 + the analytics "Gate catches" section. It is the closest thing to
-  an honest **impact** number (a defect a gate stopped before it shipped). Today
-  it surfaces only the one run with legacy data and labels the rest a floor;
-  T1+ populate it structurally.
+- **T5 · Capture FDRT.** T1 has the raw material but not the field: Security
+  re-gate's `required-fix` verdict landed ~22:03Z, the rework re-verified pass
+  landed ~22:24Z — a ~21min blocked→unblocked window, reconstructable from
+  stage timestamps but not captured in a dedicated schema field `analyze.mjs`
+  reads. Confirms the schema addition is worth doing, not yet done.
+- **T6 · Gate-catch metric.** ✅ *mechanism built this session, first real
+  data 2026-08-22* — `gateCatches` in trace@2 + the analytics "Gate catches"
+  section. It is the closest thing to an honest **impact** number (a defect a
+  gate stopped before it shipped). T1 populated it structurally for the first
+  time (F-5, Security); the three pre-schema runs are still labeled a floor.
 
 ## Tier 2 — real, but deferred (bigger, or need run volume)
 
