@@ -327,3 +327,47 @@ describe("analyze.mjs — gate catches", () => {
     assert.match(md, /None structurally recorded yet/);
   });
 });
+
+// FDRT (Failed-Deployment Recovery Time, DORA's 2025 MTTR rename): blocked→
+// unblocked on a gate catch. Only a `gateCatches` entry with both
+// `detectedAt` and `resolvedAt` is a sample; everything else stays "not
+// captured" rather than guessed from stage Start/End (the wrong span — a
+// stage's own runtime, not how long the slice sat blocked).
+describe("analyze.mjs — FDRT", () => {
+  test("a catch with detectedAt/resolvedAt reports the recovery window, not 'not captured'", () => {
+    const { md, html } = analyze({
+      s: trace([{ stage: "Security", archetype: "review", executor: "subagent", model: "opus", effort: "high", tokens: 1000, toolCalls: 5, retries: 1 }],
+        { gateCatches: [{ gate: "Security", verdict: "fail", severity: "required-fix", finding: "F-5",
+          detectedAt: "2026-08-22T22:03:00Z", resolvedAt: "2026-08-22T22:24:00Z" }] }),
+    });
+    assert.match(md, /Failed-deployment recovery time \| \*\*21m\*\* \|/);
+    assert.match(md, /median across 1 recorded gate-catch recovery window/);
+    assert.match(html, /Failed-deploy recovery<\/td><td class="n">21m<\/td>/);
+    // The per-catch table gets its own Recovery column.
+    assert.match(md, /\| Security \| fail \| required-fix \| F-5 \| 21m \|/);
+  });
+
+  test("a catch without detectedAt/resolvedAt still reports not captured", () => {
+    const { md } = analyze({
+      s: trace([{ stage: "Security", archetype: "review", executor: "subagent", model: "opus", effort: "high", tokens: 1000, toolCalls: 5, retries: 1 }],
+        { gateCatches: [{ gate: "Security", verdict: "fail", severity: "required-fix", finding: "F-5" }] }),
+    });
+    assert.match(md, /Failed-deployment recovery time \| \*\*not captured\*\* \|/);
+    // The per-catch row still renders; just no recovery figure for this one.
+    assert.match(md, /\| Security \| fail \| required-fix \| F-5 \| — \|/);
+  });
+
+  test("median is taken across multiple recorded catches, not just the first", () => {
+    const { md } = analyze({
+      a: trace([{ stage: "Security", archetype: "review", model: "opus", effort: "high", tokens: 1000, toolCalls: 5, retries: 1 }],
+        { gateCatches: [{ gate: "Security", verdict: "fail", finding: "x",
+          detectedAt: "2026-08-01T00:00:00Z", resolvedAt: "2026-08-01T00:10:00Z" }] }),
+      b: trace([{ stage: "QA", archetype: "build", model: "sonnet", effort: "high", tokens: 1000, toolCalls: 5, retries: 1 }],
+        { gateCatches: [{ gate: "QA", verdict: "fail", finding: "y",
+          detectedAt: "2026-08-01T00:00:00Z", resolvedAt: "2026-08-01T00:30:00Z" }] }),
+    });
+    // Sorted mins: [10, 30] → median index floor(2/2)=1 → 30m.
+    assert.match(md, /Failed-deployment recovery time \| \*\*30m\*\* \|/);
+    assert.match(md, /median across 2 recorded gate-catch recovery window/);
+  });
+});

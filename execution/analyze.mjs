@@ -177,6 +177,22 @@ const totalRetries = stages.reduce((a, s) => a + (s.retries || 0), 0);
 const postFixes = runs.reduce((a, r) => a + (r.postLandingFixes || 0), 0);
 const reverted = runs.filter((r) => r.reverted).length;
 
+// Failed-deployment recovery time: DORA's 2025 MTTR rename, mapped here to
+// blocked→unblocked on a gate catch. A `gateCatches` entry may carry
+// `detectedAt` (the failing verdict) and `resolvedAt` (the re-verified pass);
+// only entries with both are samples — most catches still won't have them,
+// same honesty rule as everything else in this section.
+const fdrtSamples = [];
+for (const run of runs) {
+  for (const c of run.gateCatches ?? []) {
+    if (!c.detectedAt || !c.resolvedAt) continue;
+    const mins = (new Date(c.resolvedAt) - new Date(c.detectedAt)) / 60000;
+    if (Number.isFinite(mins) && mins >= 0) fdrtSamples.push({ run: run.slice, gate: c.gate, mins });
+  }
+}
+fdrtSamples.sort((a, b) => a.mins - b.mins);
+const fdrtMedianMin = fdrtSamples.length ? fdrtSamples[Math.floor(fdrtSamples.length / 2)].mins : null;
+
 let spanWeeks = null;
 if (withDates.length > 1) {
   const ts = withDates.map((r) => new Date(r.landedAt).getTime()).sort((a, b) => a - b);
@@ -191,6 +207,7 @@ const dora = {
   reworkRate: landed.length ? (totalRetries + postFixes) / landed.length : null,
   totalRetries, postFixes, reverted, landedCount: landed.length,
   undated: landed.length - withDates.length,
+  fdrtMedianMin, fdrtSamples,
 };
 
 // ── format helpers ──────────────────────────────────────────────────────────
@@ -215,13 +232,14 @@ md += `- Envelope breaches: **${fleet.envelopeFails}/${perRun.length}** · Stage
 md += `## Per run\n\n| Run | Tier | Stages | Tokens | Calls | Envelope | Status |\n|-----|------|--------|--------|-------|----------|--------|\n`;
 for (const r of perRun) md += `| ${r.slice} | ${r.tier}${r.overlay ? "+overlay" : ""} | ${r.n} | ${ci(r.tokens)} | ${r.calls} | ${ci(r.envelope)} | ${r.pass ? "✅ pass" : `❌ over ${k(r.overBy)}`} |\n`;
 const hfmt = (h) => (h == null ? "—" : h < 24 ? `${h.toFixed(1)}h` : `${(h / 24).toFixed(1)}d`);
+const mfmt = (m) => (m == null ? "—" : m < 60 ? `${Math.round(m)}m` : `${(m / 60).toFixed(1)}h`);
 md += `\n## DORA\n\nPer \`PIPELINE_SLOS.md\` § DORA mapping. **Only metrics the traces ground are reported** — anything without data says so.\n\n`;
 md += `| Metric | Value | Basis |\n|--------|-------|-------|\n`;
 md += `| Lead time (median) | ${hfmt(dora.leadTimeMedianH)} | intake → landed, ${withDates.length}/${dora.landedCount} slices dated |\n`;
 md += `| Deployment frequency | ${dora.deployFreqPerWeek ? dora.deployFreqPerWeek.toFixed(1) + " slices/week" : "—"} | ${dora.landedCount} landed over the traced span |\n`;
 md += `| Change failure rate | ${dora.changeFailureRate == null ? "—" : Math.round(dora.changeFailureRate * 100) + "%"} | ${dora.postFixes} post-landing fixes + ${dora.reverted} reverts ÷ ${dora.landedCount} landed |\n`;
 md += `| Rework rate | ${dora.reworkRate == null ? "—" : dora.reworkRate.toFixed(2) + " / slice"} | ${dora.totalRetries} stage retries + ${dora.postFixes} post-landing fixes ÷ ${dora.landedCount} landed |\n`;
-md += `| Failed-deployment recovery time | **not captured** | needs blocked→unblocked timestamps in \`STATE.md\`; no run has recorded them |\n`;
+md += `| Failed-deployment recovery time | ${dora.fdrtMedianMin == null ? "**not captured**" : `**${mfmt(dora.fdrtMedianMin)}**`} | ${dora.fdrtMedianMin == null ? "needs `detectedAt`/`resolvedAt` on a `gateCatches` entry; no run has recorded them" : `median across ${dora.fdrtSamples.length} recorded gate-catch recovery window(s)`} |\n`;
 if (dora.undated > 0) md += `\n> ${dora.undated} landed slice(s) lack \`landedAt\` and are excluded from lead time.\n`;
 if (preTelemetry.length) md += `\n> **Change failure and rework cover traced slices only.** ${preTelemetry.length} pre-telemetry run(s) are invisible here, so a defect shipped by one of them — and fixed later — is not counted. These rates are a floor, not a ceiling.\n`;
 if (leadTimes.length) md += `\nPer-slice lead time: ${leadTimes.map((x) => `${x.slice} ${hfmt(x.h)}`).join(" · ")}\n`;
@@ -270,8 +288,13 @@ if (gateCatches.length === 0 && legacyGateActivity.length === 0) {
 } else {
   if (gateCatches.length) {
     md += `**Structured catches: ${gateCatches.length}**\n\n`;
-    md += `| Run | Gate | Verdict | Severity | Finding |\n|-----|------|---------|----------|--------|\n`;
-    for (const c of gateCatches) md += `| ${c.run} | ${c.gate} | ${c.verdict ?? "—"} | ${c.severity ?? "—"} | ${c.finding ?? "—"} |\n`;
+    md += `| Run | Gate | Verdict | Severity | Finding | Recovery |\n|-----|------|---------|----------|--------|----------|\n`;
+    for (const c of gateCatches) {
+      const recovery = c.detectedAt && c.resolvedAt
+        ? mfmt((new Date(c.resolvedAt) - new Date(c.detectedAt)) / 60000)
+        : "—";
+      md += `| ${c.run} | ${c.gate} | ${c.verdict ?? "—"} | ${c.severity ?? "—"} | ${c.finding ?? "—"} | ${recovery} |\n`;
+    }
     md += `\n`;
   }
   if (legacyGateActivity.length) {
@@ -391,7 +414,7 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--ink2);font-size:12.5p
  <tr><td>Deployment frequency</td><td class="n">${dora.deployFreqPerWeek ? dora.deployFreqPerWeek.toFixed(1) + "/wk" : "—"}</td><td>${dora.landedCount} landed over the traced span</td></tr>
  <tr><td>Change failure rate</td><td class="n">${dora.changeFailureRate == null ? "—" : Math.round(dora.changeFailureRate * 100) + "%"}</td><td>${dora.postFixes} post-landing fixes + ${dora.reverted} reverts</td></tr>
  <tr><td>Rework rate</td><td class="n">${dora.reworkRate == null ? "—" : dora.reworkRate.toFixed(2)}</td><td>${dora.totalRetries} retries + ${dora.postFixes} fixes ÷ ${dora.landedCount} landed</td></tr>
- <tr><td>Failed-deploy recovery</td><td class="n">n/a</td><td><b>not captured</b> — needs blocked→unblocked timestamps</td></tr>
+ <tr><td>Failed-deploy recovery</td><td class="n">${dora.fdrtMedianMin == null ? "n/a" : mfmt(dora.fdrtMedianMin)}</td><td>${dora.fdrtMedianMin == null ? "<b>not captured</b> — needs blocked→unblocked timestamps" : `median across ${dora.fdrtSamples.length} recorded window(s)`}</td></tr>
  </tbody></table></div>
 </div>
 <div class="card">

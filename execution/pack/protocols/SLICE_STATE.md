@@ -102,7 +102,9 @@ neither is hand-parsed for numbers.
   "operator": "<who drove this run>",
   "gateCatches": [ { "gate": "<QA|Security|...>", "verdict": "fail",
                      "severity": "<blocker|required-fix|advisory>",
-                     "finding": "<one line: what it caught>" } ],
+                     "finding": "<one line: what it caught>",
+                     "detectedAt": "<UTC, optional>",
+                     "resolvedAt": "<UTC, optional>" } ],
   "stages": [ { "stage": "<name>", "executor": "subagent",
                "model": "<model>", "effort": "<level>",
                "tokens": 0, "toolCalls": 0, "retries": 0 } ] }
@@ -121,6 +123,16 @@ Pre-schema runs logged gate activity only in prose or an ad-hoc
 existing catches aren't lost, but it labels the total a **floor** — a run whose
 Security block lives only in its write-up cannot be counted structurally, so the
 number under-reports until every run emits `gateCatches`.
+
+**`detectedAt` / `resolvedAt`** (optional, per catch) are the failing verdict's
+timestamp and the re-verified pass's timestamp — the blocked→unblocked window
+`PIPELINE_SLOS.md`'s DORA mapping calls Failed-Deployment Recovery Time. Fill
+them when both are known (the agent that raised the failing verdict records
+`detectedAt`; whichever stage re-verifies the fix records `resolvedAt`); omit
+both when the run predates this or the timestamps weren't captured live —
+`analyze.mjs` reports FDRT as "not captured" rather than estimating it from
+stage Start/End times, which span the wrong thing (a stage's own runtime, not
+how long the *slice* sat blocked across possibly several stages).
 
 **`operator`** names the human who drove the run. A stage may carry its own
 `operator` when a different person drove that stage; otherwise it inherits the

@@ -111,7 +111,7 @@ budget change.
 | Lead time | Intake row start → slice landed |
 | Deployment frequency | Slices landed per week |
 | Change failure rate | Slices reverted or hotfixed ÷ slices landed |
-| Failed Deployment Recovery Time | `blocked-on-failure` set → unblocked (DORA's 2025 rename of MTTR) |
+| Failed Deployment Recovery Time | `blocked-on-failure` set → unblocked (DORA's 2025 rename of MTTR). Measured from a `gateCatches` entry's `detectedAt`/`resolvedAt` (`SLICE_STATE.md`); `analyze.mjs` reports "not captured" rather than estimate when a run doesn't have them. |
 | Rework Rate | Reactive vs. planned work: stage retries (Trace `Retry #`) + post-landing hotfixes ÷ slices landed (DORA's 2025 fifth metric) |
 
 The Post-Launch Learning agent aggregates these across `runs/*/STATE.md`
