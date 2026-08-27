@@ -371,3 +371,65 @@ describe("analyze.mjs — FDRT", () => {
     assert.match(md, /median across 2 recorded gate-catch recovery window/);
   });
 });
+
+// T9: pipeline topology as data. "always" nodes (Intake, Scope Review,
+// Implementation, Release Gate) are required; "conditional" nodes may be a
+// legitimate compression — listed, never flagged. Stage names vary in real
+// traces (retries, output-name-as-stage-name), so matching is alias-based.
+const stage = (name, extra = {}) => ({ stage: name, archetype: "build", executor: "subagent", model: "sonnet", effort: "medium", tokens: 1000, toolCalls: 5, retries: 0, ...extra });
+
+describe("analyze.mjs — pipeline completeness (T9)", () => {
+  test("a run with every always-node present (by alias) has no gap", () => {
+    const { md } = analyze({
+      s: trace([stage("Intake"), stage("Scope"), stage("Implementation"), stage("Release")]),
+    });
+    assert.match(md, /No run is missing an \*\*always\*\* node/);
+    assert.match(md, /\| s \| — \|/);
+  });
+
+  test("a missing always-node is flagged with a warning marker", () => {
+    const { md } = analyze({
+      s: trace([stage("Intake"), stage("Scope"), stage("Release")]), // no Implementation
+    });
+    assert.match(md, /\| s \| ⚠ Implementation \|/);
+    assert.doesNotMatch(md, /No run is missing an \*\*always\*\* node/);
+  });
+
+  test("a missing conditional node is listed, not flagged", () => {
+    const { md } = analyze({
+      s: trace([stage("Intake"), stage("Scope"), stage("Implementation"), stage("Release")]),
+    });
+    const section = md.split("## Pipeline completeness")[1].split("## DORA")[0];
+    // Architecture is conditional and absent here — must appear in the
+    // Skipped column, and must NOT trigger the always-node warning marker.
+    assert.match(section, /\| s \| — \| [^|]*Architecture[^|]* \| — \|\n/);
+  });
+
+  test("trace@1's notes.orchestratorExecuted counts as present, not missing", () => {
+    // Release recorded only in the legacy array, never in `stages` — this is
+    // exactly the shape of the real browser-client / http-layer traces.
+    const { md } = analyze({
+      s: trace([stage("Implementation")], { notes: { orchestratorExecuted: ["Intake", "Scope", "Release"] } }),
+    });
+    assert.match(md, /\| s \| — \|/);
+  });
+
+  test("an unrecognized stage name is surfaced, not silently dropped", () => {
+    const { md } = analyze({
+      s: trace([stage("Intake"), stage("Scope"), stage("Implementation"), stage("Release"), stage("Mystery Stage")]),
+    });
+    assert.match(md, /Mystery Stage/);
+  });
+
+  test("an overlay role (e.g. FinOps) is recognized and never flagged unrecognized", () => {
+    const { md } = analyze({
+      s: trace([stage("Intake"), stage("Scope"), stage("Implementation"), stage("Release"), stage("FinOps")]),
+    });
+    const section = md.split("## Pipeline completeness")[1].split("## DORA")[0];
+    // The Unrecognized column (last cell of the completeness row) is "—" —
+    // FinOps matched an overlay alias, so it never reaches that column, even
+    // though it legitimately appears elsewhere (the Per-stage table).
+    assert.match(section, /\| s \| — \| [^|]+ \| — \|\n/);
+    assert.doesNotMatch(section, /FinOps/);
+  });
+});

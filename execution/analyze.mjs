@@ -102,6 +102,70 @@ for (const run of runs) {
 // its catches (if any) can only be the legacy strings, which we do not count.
 const preGateSchema = runs.filter((r) => r.gateCatches === undefined).map((r) => r.slice);
 
+// ── T9: pipeline topology as data — declared vs actual completeness ─────────
+// The 12-stage canonical lifecycle (AGENTIC_SDLC.md), declared once so a run
+// can be checked against it instead of eyeballed. "always" nodes are required
+// on every slice regardless of compression; "conditional" nodes may be
+// legitimately skipped per AGENTIC_SDLC.md § "When to compress stages" — a
+// missing conditional node is not itself a defect, so only "always" gaps are
+// flagged. Real stage names vary (retries add "re-gate" / "rework" / "round
+// N"; some runs use the output name — "PRD", "Scope" — instead of the stage
+// name), so matching is by substring alias, ordered longest-first so a more
+// specific alias never loses to a shorter one contained inside it.
+const TOPOLOGY = [
+  { id: "Intake", required: "always" },
+  { id: "Market Research", required: "conditional" },
+  { id: "Scope Review", required: "always" },
+  { id: "Discovery", required: "conditional" },
+  { id: "UX Research", required: "conditional" },
+  { id: "UI Design", required: "conditional" },
+  { id: "Architecture", required: "conditional" },
+  { id: "Implementation", required: "always" },
+  { id: "QA Evidence", required: "conditional" },
+  { id: "Security Review", required: "conditional" },
+  { id: "Release Gate", required: "always" },
+  { id: "Post-Launch", required: "conditional" },
+];
+const NODE_ALIASES = [
+  ["market research", "Market Research"], ["scope", "Scope Review"],
+  ["discovery", "Discovery"], ["prd", "Discovery"],
+  ["ux research", "UX Research"], ["ux", "UX Research"],
+  ["ui design", "UI Design"], ["ui", "UI Design"],
+  ["architecture", "Architecture"],
+  ["ai engineer", "Implementation"], ["ml engineer", "Implementation"],
+  ["implementation", "Implementation"],
+  ["qa", "QA Evidence"], ["security", "Security Review"],
+  ["release", "Release Gate"], ["post-launch", "Post-Launch"],
+  ["intake", "Intake"],
+].sort((a, b) => b[0].length - a[0].length);
+// Enterprise/governance overlay roles (docs/AGENTIC_SDLC.md § overlay) are
+// additive, not part of the core 12 — recognised so they don't render as
+// unrecognized, but never required and never counted toward completeness.
+const OVERLAY_ALIASES = ["compliance", "reliability", "sre", "customer signal",
+  "customer success", "data governance", "ai governance", "cost", "finops", "tech writer", "documentation"];
+const canonicalNode = (stageName) => {
+  const s = String(stageName).toLowerCase();
+  const hit = NODE_ALIASES.find(([alias]) => s.includes(alias));
+  return hit ? hit[1] : null;
+};
+const isOverlay = (stageName) => {
+  const s = String(stageName).toLowerCase();
+  return OVERLAY_ALIASES.some((alias) => s.includes(alias));
+};
+
+const completeness = runs.map((run) => {
+  // A stage counts as present whether it was spawned (`stages`) or executed
+  // by the Orchestrator and recorded only in trace@1's legacy
+  // `notes.orchestratorExecuted` — same union `untraced` above already uses,
+  // so a trace@1 run's Release/Post-Launch isn't falsely flagged missing.
+  const names = [...run.stages.map((s) => s.stage), ...(run.notes?.orchestratorExecuted ?? [])];
+  const present = new Set(names.map(canonicalNode).filter(Boolean));
+  const unrecognized = [...new Set(names.filter((n) => !canonicalNode(n) && !isOverlay(n)))];
+  const missingAlways = TOPOLOGY.filter((n) => n.required === "always" && !present.has(n.id)).map((n) => n.id);
+  const skippedConditional = TOPOLOGY.filter((n) => n.required === "conditional" && !present.has(n.id)).map((n) => n.id);
+  return { slice: run.slice, missingAlways, skippedConditional, unrecognized };
+});
+
 // ── derive (never stored — computed from raw facts) ─────────────────────────
 const stages = [];
 for (const run of runs) for (const s of run.stages) {
@@ -231,6 +295,19 @@ if (untraced.length) {
 md += `- Envelope breaches: **${fleet.envelopeFails}/${perRun.length}** · Stage outliers: **${outliers.length}**\n\n`;
 md += `## Per run\n\n| Run | Tier | Stages | Tokens | Calls | Envelope | Status |\n|-----|------|--------|--------|-------|----------|--------|\n`;
 for (const r of perRun) md += `| ${r.slice} | ${r.tier}${r.overlay ? "+overlay" : ""} | ${r.n} | ${ci(r.tokens)} | ${r.calls} | ${ci(r.envelope)} | ${r.pass ? "✅ pass" : `❌ over ${k(r.overBy)}`} |\n`;
+
+md += `\n## Pipeline completeness\n\n`;
+md += `Declared-vs-actual against the 12-stage lifecycle (\`AGENTIC_SDLC.md\`). An\n`;
+md += `**always** node missing is a real gap; a **conditional** node missing may be a\n`;
+md += `legitimate compression (\`AGENTIC_SDLC.md\` § "When to compress stages") — not\n`;
+md += `flagged either way, just listed, since only the EM's recorded rationale (not\n`;
+md += `this table) can say whether a given skip was earned.\n\n`;
+const anyGap = completeness.some((c) => c.missingAlways.length);
+if (!anyGap) md += `No run is missing an **always** node.\n\n`;
+md += `| Run | Missing (always) | Skipped (conditional) | Unrecognized stage name |\n|-----|-------------------|------------------------|--------------------------|\n`;
+for (const c of completeness) {
+  md += `| ${c.slice} | ${c.missingAlways.length ? `⚠ ${c.missingAlways.join(", ")}` : "—"} | ${c.skippedConditional.join(", ") || "—"} | ${c.unrecognized.join(", ") || "—"} |\n`;
+}
 const hfmt = (h) => (h == null ? "—" : h < 24 ? `${h.toFixed(1)}h` : `${(h / 24).toFixed(1)}d`);
 const mfmt = (m) => (m == null ? "—" : m < 60 ? `${Math.round(m)}m` : `${(m / 60).toFixed(1)}h`);
 md += `\n## DORA\n\nPer \`PIPELINE_SLOS.md\` § DORA mapping. **Only metrics the traces ground are reported** — anything without data says so.\n\n`;
