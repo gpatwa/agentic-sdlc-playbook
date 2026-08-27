@@ -65,16 +65,49 @@ from the run" pattern as effort / operator / executor / gateCatches.
 
 ## Tier 2 — real, but deferred (bigger, or need run volume)
 
-- **T7 · Map the 24 briefs against the ~18 engineering skills** (read-only).
-  Decides whether a skills layer adds capability or just repackages craft the
-  briefs already carry.
+- **T7 · Map the 24 briefs against the ~18 engineering skills.** ✅ *Done
+  2026-08-27, read-only.* Mapped `aihero.dev/skills`' 18 named skills against
+  `agents/*.md` by grepping each skill's core concept across all 24 briefs
+  (not assumed — checked). Three buckets, not one verdict:
+  - **Already covered, often more rigorously:** `to-prd`/`to-spec`/`to-tickets`
+    (PM/Architect/EM own these via templates), `handoff` (`AGENT_HANDOFF_TEMPLATE.md`
+    + `OPERATING_MODEL.md`'s enforced artefact-handoff rule — stronger than a
+    generic skill, since it's tied to durable `STATE.md`), `research`
+    (Market Researcher), `review` (this repo's own `/code-review` +
+    QA/Security gates). A skills layer here would be pure duplication.
+  - **Real gap, already suspected — now confirmed:** TDD / fail-first
+    discipline. Zero brief mentions "TDD", "red-green", or "fail-first" —
+    despite this session using exactly that discipline repeatedly and
+    successfully (T4/T5/T9's own tests). The practice is proven; it just
+    isn't written into `frontend-developer.md` / `backend-architect.md` /
+    `ai-engineer.md` / `ml-engineer.md`, so it depends on the operator
+    remembering rather than the brief requiring it. Confirms T8's candidate.
+  - **Genuinely new, not present anywhere in the 24 briefs:** `triage` (a
+    named issue state-machine — `STATE.md` has statuses but no triage flow),
+    `resolving-merge-conflicts` (by-intent, hunk-by-hunk — unmentioned),
+    `prototype` (disposable throwaway-HTML exploration as a distinct step
+    before UI Design commits), `wayfinder` (sequential decision-ticket
+    planning for genuinely ambiguous large work — EM's scope review assumes
+    the slice is already sizeable, not that the *shape* is unknown).
+
+  **Verdict for T8:** narrow and additive, not wholesale. Best candidates in
+  priority order: TDD/fail-first (highest — proven practice, just uncodified),
+  then triage and merge-conflict-resolution (real gaps, lower stakes to pilot).
 - **T8 · Skills pilot.** If T7 warrants: extract one duplicated craft
-  (non-vacuous testing is the candidate) as a shared skill; measure whether it
-  improves consistency. Wholesale conversion stays deferred. *Five sources point
-  here: Google, Monaco, Claude Code, Matt Pocock's skills, DeepSeek Harness.*
-- **T9 · Declare pipeline topology as data.** Nodes/edges/required-per-tier →
-  declared-vs-actual completeness checking. Unblocked now that trace@2 records
-  executors.
+  (non-vacuous testing / TDD-fail-first is the candidate — confirmed by T7,
+  not just guessed) as a shared skill; measure whether it improves
+  consistency. Wholesale conversion stays deferred. *Five sources point here:
+  Google, Monaco, Claude Code, Matt Pocock's skills, DeepSeek Harness.*
+- **T9 · Declare pipeline topology as data.** ✅ *mechanism built 2026-08-27* —
+  `analyze.mjs` declares the 12-stage lifecycle as `always`/`conditional`
+  nodes and checks every run's actual stages (`stages[]` + trace@1's
+  `notes.orchestratorExecuted`) against it, alias-matched since real stage
+  names vary ("QA" / "Security re-gate" / "PRD" for Discovery). New
+  "Pipeline completeness" section in `ANALYTICS.md`. Real finding on first
+  run against both product repos: **Scope Review is distinctly traced in only
+  1 of 6 historical runs** — not a bug in the checker, the declared-vs-actual
+  gap the mechanism exists to surface. Mutation-tested (6 new tests, fail
+  without the fix, pass with it).
 - **T10 · Eval-with-rubrics / trajectory eval (Google).** **Deferred — at 8
   runs it is ceremony, and trajectory data is self-reported.** Revisit at volume.
 - **T11 · Cross-slice memory.** Real gap, not urgent at single-operator scale.
