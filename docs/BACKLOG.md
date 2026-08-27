@@ -42,11 +42,16 @@ from the run" pattern as effort / operator / executor / gateCatches.
   either way. Still open; needs a slice where Architecture actually runs.
 - **T4 · Branch protection.** Gates run in CI but are not *blocking*. One
   GitHub setting makes "gates as code" true.
-- **T5 · Capture FDRT.** T1 has the raw material but not the field: Security
-  re-gate's `required-fix` verdict landed ~22:03Z, the rework re-verified pass
-  landed ~22:24Z — a ~21min blocked→unblocked window, reconstructable from
-  stage timestamps but not captured in a dedicated schema field `analyze.mjs`
-  reads. Confirms the schema addition is worth doing, not yet done.
+- **T5 · Capture FDRT.** ✅ *mechanism built 2026-08-25* — `gateCatches[]`
+  entries now carry optional `detectedAt`/`resolvedAt` (`SLICE_STATE.md`);
+  `analyze.mjs` computes the recovery window per catch, a fleet median, and a
+  Recovery column on the Gate catches table, reporting "not captured" rather
+  than estimating when a run doesn't have the timestamps. Verified against
+  both product repos' real trace data (no regression) and mutation-tested
+  (new tests fail without the fix, pass with it). T1's own Security
+  re-gate → re-verify window (~22:03Z → ~22:24Z, ~21min) is the first real
+  candidate — not yet backfilled into `streak-seed`'s `trace.json`, since
+  that repo's run artefacts are left for human review, same as T1.
 - **T6 · Gate-catch metric.** ✅ *mechanism built this session, first real
   data 2026-08-22* — `gateCatches` in trace@2 + the analytics "Gate catches"
   section. It is the closest thing to an honest **impact** number (a defect a
