@@ -40,8 +40,13 @@ from the run" pattern as effort / operator / executor / gateCatches.
   *before* Implementation spends tokens. T1 dropped the Architecture stage
   entirely (the prior security review already was the design doc) — no data
   either way. Still open; needs a slice where Architecture actually runs.
-- **T4 · Branch protection.** Gates run in CI but are not *blocking*. One
-  GitHub setting makes "gates as code" true.
+- **T4 · Branch protection.** ✅ *Done 2026-08-25 for `stash-seed`.* `main`
+  now requires a PR + the "Release gates" check passing, enforced for admins
+  too (`enforce_admins: true`), force-push and deletion both blocked. Closes
+  the literal gap `stash-seed`'s own CI comment named ("a red step blocks the
+  merge, once branch protection requires this check"). Verified live via the
+  GitHub API, not assumed. Not yet applied to `agentic-sdlc-playbook` itself
+  or `streak-seed` (which has no CI workflow yet, so nothing to require).
 - **T5 · Capture FDRT.** ✅ *mechanism built 2026-08-25* — `gateCatches[]`
   entries now carry optional `detectedAt`/`resolvedAt` (`SLICE_STATE.md`);
   `analyze.mjs` computes the recovery window per catch, a fleet median, and a
