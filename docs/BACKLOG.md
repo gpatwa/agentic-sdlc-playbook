@@ -93,7 +93,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
   **Verdict for T8:** narrow and additive, not wholesale. Best candidates in
   priority order: TDD/fail-first (highest — proven practice, just uncodified),
   then triage and merge-conflict-resolution (real gaps, lower stakes to pilot).
-- **T8 · Skills pilot.** ✅ *mechanism identified 2026-08-27, not yet built* —
+- **T8 · Skills pilot.** ✅ *first skill written 2026-08-27* —
   checked `agentskills.io`: not a third-party format to evaluate, it's
   Anthropic's own **Agent Skills** spec ("originally developed by Anthropic,
   released as an open standard"), already natively supported in this Claude
@@ -101,12 +101,15 @@ from the run" pattern as effort / operator / executor / gateCatches.
   assumed — Cursor (`cursor.com/docs/context/skills`), Gemini CLI, GitHub
   Copilot, VS Code, OpenCode, Goose, OpenHands, and Codex
   (`developers.openai.com/codex/skills/`) each document it from **their own**
-  docs, 40+ independently-listed integrations. T8 no longer means "invent a
-  shared-skill mechanism" — it means writing `tdd-fail-first/SKILL.md`
-  against the real spec (`agentskills.io/specification`). Candidate unchanged
-  from T7: TDD/fail-first first, then triage and merge-conflict-resolution.
-  Wholesale conversion stays deferred — this is one skill, piloted, not a
-  rewrite of the 24 role briefs into skills.
+  docs, 40+ independently-listed integrations. `skills/tdd-fail-first/SKILL.md`
+  is written against the real spec and passes the official `skills-ref`
+  validator (`npx skills-ref validate`) — not eyeballed. Candidate unchanged
+  from T7: TDD/fail-first first; triage and merge-conflict-resolution remain
+  queued if this pilot holds up. **Not yet measured**: nothing has invoked
+  this skill in a real run yet, so "does it improve consistency" is still
+  open — the pilot's actual point, per its own name, isn't done at "the file
+  exists." Wholesale conversion stays deferred — this is one skill, piloted,
+  not a rewrite of the 24 role briefs into skills.
 - **T9 · Declare pipeline topology as data.** ✅ *mechanism built 2026-08-27* —
   `analyze.mjs` declares the 12-stage lifecycle as `always`/`conditional`
   nodes and checks every run's actual stages (`stages[]` + trace@1's
