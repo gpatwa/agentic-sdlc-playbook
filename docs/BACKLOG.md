@@ -93,11 +93,20 @@ from the run" pattern as effort / operator / executor / gateCatches.
   **Verdict for T8:** narrow and additive, not wholesale. Best candidates in
   priority order: TDD/fail-first (highest — proven practice, just uncodified),
   then triage and merge-conflict-resolution (real gaps, lower stakes to pilot).
-- **T8 · Skills pilot.** If T7 warrants: extract one duplicated craft
-  (non-vacuous testing / TDD-fail-first is the candidate — confirmed by T7,
-  not just guessed) as a shared skill; measure whether it improves
-  consistency. Wholesale conversion stays deferred. *Five sources point here:
-  Google, Monaco, Claude Code, Matt Pocock's skills, DeepSeek Harness.*
+- **T8 · Skills pilot.** ✅ *mechanism identified 2026-08-27, not yet built* —
+  checked `agentskills.io`: not a third-party format to evaluate, it's
+  Anthropic's own **Agent Skills** spec ("originally developed by Anthropic,
+  released as an open standard"), already natively supported in this Claude
+  Code session (the `Skill` tool). Real reciprocal adoption confirmed, not
+  assumed — Cursor (`cursor.com/docs/context/skills`), Gemini CLI, GitHub
+  Copilot, VS Code, OpenCode, Goose, OpenHands, and Codex
+  (`developers.openai.com/codex/skills/`) each document it from **their own**
+  docs, 40+ independently-listed integrations. T8 no longer means "invent a
+  shared-skill mechanism" — it means writing `tdd-fail-first/SKILL.md`
+  against the real spec (`agentskills.io/specification`). Candidate unchanged
+  from T7: TDD/fail-first first, then triage and merge-conflict-resolution.
+  Wholesale conversion stays deferred — this is one skill, piloted, not a
+  rewrite of the 24 role briefs into skills.
 - **T9 · Declare pipeline topology as data.** ✅ *mechanism built 2026-08-27* —
   `analyze.mjs` declares the 12-stage lifecycle as `always`/`conditional`
   nodes and checks every run's actual stages (`stages[]` + trace@1's
@@ -119,7 +128,15 @@ from the run" pattern as effort / operator / executor / gateCatches.
 - **A second harness adapter** (DeepSeek `dsh`, etc.) — the adapter *pattern* is
   validated by their existence, but we have one unproven adapter (Claude Code)
   and `dsh` is developer-preview with breaking changes. Revisit only when the
-  first adapter is proven and a real need appears.
+  first adapter is proven and a real need appears. *Checked 2026-08-27:* `dsh`
+  is still `0.1.0-rc.6`, zero commits since 2026-08-13 — this holds unchanged.
+  Also checked whether Anthropic's **Agent Skills** open format (`agentskills.io`,
+  see T8) is a shortcut around writing a second adapter — it isn't: Skills load
+  instructions into an *existing* agent's context on demand; this adapter's job
+  is generating **subagents** (separate context, `tools:` restrictions) plus a
+  pre-spawn hook (`budget-guard.mjs`) and durable resumable state. Different
+  primitive, not a competing one — the parked reasoning here is unaffected. What
+  it *did* sharpen is T8, which is a genuinely separate question.
 - **Graph orchestration engine** (LangGraph) — no; we do not own a runtime.
 - **Non-engineer contributors** (Monaco thesis) — not our problem; single
   engineer operator.
