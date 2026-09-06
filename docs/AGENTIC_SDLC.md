@@ -265,6 +265,22 @@ project pack; the EM records which overlay roles apply in the slice plan.
   by the ML Engineer (stage 8). Turns incidents into blameless postmortems
   (`templates/INCIDENT_REVIEW_TEMPLATE.md`) whose action items feed the
   Orchestrator as new slices. See `agents/sre.md`.
+- **Live Issue Resolution — On-Call Engineer + Customer Support.** Handles
+  a live production incident or an inbound customer issue, together, with
+  a human as the final gate — not a new pipeline, a new *trigger* into
+  this one. On-Call Engineer diagnoses read-only (observability, deploy
+  history, source), executes pre-authorized infra-level fixes directly,
+  and for anything needing a code change becomes the Intake for a new
+  slice — the fix runs the normal lifecycle and ships through the same
+  gates as any other change, never a direct commit. After a merge, it
+  monitors under real traffic and auto-executes the tech spec's own
+  rollback plan (`templates/TECH_SPEC_TEMPLATE.md` § Rollback plan) if
+  the fix regresses. Customer Support triages the inbound issue,
+  resolves what's answerable directly, escalates the rest to On-Call,
+  and drafts — never sends — the customer reply once a resolution is
+  known; sending is gated by `docs/HUMAN_APPROVAL_RULES.md` rule 1 with
+  no exception. Output: `templates/CUSTOMER_ISSUE_RESOLUTION_TEMPLATE.md`.
+  See `agents/on-call-engineer.md`, `agents/customer-support.md`.
 - **Customer Signal — Customer Success.** Feeds Post-Launch (stage 12) with
   account-level qualitative signal — support themes, health scores, renewal
   risk — triangulated against the Data Analyst's quantitative readout.

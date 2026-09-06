@@ -144,6 +144,20 @@ The human's response is the audit record. The agent should reference
 the approval (e.g. "approved by user at 14:02 UTC") in the resulting
 audit event.
 
+### The combined verify-and-send gate
+
+Some requests bundle two things the human must confirm together, not
+as separate back-and-forths: that a resolution is *correct*, and that
+the resulting communication is *authorized to send*. `agents/customer-
+support.md` uses this shape — surface the diagnosis or fix alongside
+the exact drafted reply, in one ask, so the human verifies and
+authorizes in a single response rather than approving a fix and then
+being asked again to approve the message about it. This is still one
+rule-1 gate, not two; it's a presentation choice, not a relaxation —
+"approved" here means both the resolution and the exact text sent are
+correct, and an edit before sending is recorded as a distinct decision,
+not folded silently into the approval.
+
 ---
 
 ## What "explicit approval" means

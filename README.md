@@ -51,9 +51,11 @@ agentic-sdlc/
     tech-writer.md                 ← overlay
     release-manager.md
     sre.md                         ← enterprise overlay
+    on-call-engineer.md            ← enterprise overlay
     data-analyst.md
     post-launch-learning.md
     customer-success.md            ← enterprise overlay
+    customer-support.md            ← enterprise overlay
   templates/                       ← fill-in-the-blank artefacts
     DISCOVERY_BRIEF_TEMPLATE.md
     PRD_TEMPLATE.md
@@ -78,6 +80,7 @@ agentic-sdlc/
     POST_LAUNCH_REVIEW_TEMPLATE.md
     CUSTOMER_SIGNAL_REVIEW_TEMPLATE.md
     AGENT_HANDOFF_TEMPLATE.md
+    CUSTOMER_ISSUE_RESOLUTION_TEMPLATE.md
   prompts/                         ← copy-paste prompts to invoke each agent
     orchestrator.md
     market-research.md
