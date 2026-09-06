@@ -1,0 +1,215 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Release Gates",
+    "output": "release-gates.html",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "A slice that passes",
+        "focus": [
+          "impl_gates",
+          "qa_gates",
+          "security_gates",
+          "release_gate",
+          "ci_check",
+          "merge"
+        ],
+        "note": "Every gate is a real command, not a self-report \u2014 typecheck, test, build, qa:mvp, then the CI check on the actual PR."
+      },
+      {
+        "id": "fail-closed",
+        "label": "A gate fails closed",
+        "focus": [
+          "qa_gates",
+          "security_gates",
+          "owning_stage"
+        ],
+        "note": "Sent back to the owning stage, never forward. Real case: Security found two test-coverage gaps, closed in one rework cycle."
+      },
+      {
+        "id": "wall-not-convention",
+        "label": "The check is a wall, not a convention",
+        "focus": [
+          "release_gate",
+          "ci_check",
+          "merge"
+        ],
+        "note": "A real PR sat mergeStateStatus=BLOCKED until the required check went green \u2014 confirmed live, not assumed from the setting existing."
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "id": "gates",
+      "label": "Release Gates"
+    },
+    {
+      "id": "exceptions",
+      "label": "Fail Closed",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "build_phase",
+      "label": "Prove it locally",
+      "fromCol": 0,
+      "toCol": 2
+    },
+    {
+      "id": "ship_phase",
+      "label": "Prove it in CI",
+      "fromCol": 3,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "impl_gates",
+    "qa_gates",
+    "security_gates",
+    "release_gate",
+    "ci_check",
+    "merge"
+  ],
+  "nodes": [
+    {
+      "id": "impl_gates",
+      "lane": "gates",
+      "col": 0,
+      "type": "backend",
+      "label": "Implementation Gates",
+      "sublabel": "typecheck, tests, build",
+      "width": 150
+    },
+    {
+      "id": "qa_gates",
+      "lane": "gates",
+      "col": 1,
+      "type": "database",
+      "label": "QA Gates",
+      "sublabel": "local regression"
+    },
+    {
+      "id": "security_gates",
+      "lane": "gates",
+      "col": 2,
+      "type": "security",
+      "label": "Security Gates",
+      "sublabel": "secrets, PII, audit"
+    },
+    {
+      "id": "owning_stage",
+      "lane": "exceptions",
+      "col": 1,
+      "width": 120,
+      "type": "backend",
+      "label": "Owning Stage",
+      "sublabel": "fixes it, never the reviewer",
+      "tag": "fail closed"
+    },
+    {
+      "id": "release_gate",
+      "lane": "gates",
+      "col": 3,
+      "type": "cloud",
+      "label": "Release Gate",
+      "sublabel": "checklist + tier"
+    },
+    {
+      "id": "ci_check",
+      "lane": "gates",
+      "col": 4,
+      "type": "messagebus",
+      "label": "Required CI Check",
+      "sublabel": "\"Release gates\" status",
+      "width": 130
+    },
+    {
+      "id": "merge",
+      "lane": "gates",
+      "col": 5,
+      "type": "external",
+      "label": "Merge to main",
+      "sublabel": "branch protection enforced",
+      "width": 110
+    }
+  ],
+  "edges": [
+    {
+      "from": "impl_gates",
+      "to": "qa_gates",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "qa_gates",
+      "to": "security_gates",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "security_gates",
+      "to": "release_gate",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "release_gate",
+      "to": "ci_check",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "ci_check",
+      "to": "merge",
+      "role": "main",
+      "variant": "emphasis",
+      "label": "green only"
+    },
+    {
+      "from": "qa_gates",
+      "to": "owning_stage",
+      "label": "fail",
+      "role": "error",
+      "variant": "security"
+    },
+    {
+      "from": "security_gates",
+      "to": "owning_stage",
+      "label": "fail",
+      "role": "error",
+      "variant": "security"
+    },
+    {
+      "from": "owning_stage",
+      "to": "impl_gates",
+      "label": "rework",
+      "role": "return",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Fail closed, always",
+      "items": [
+        "A failed gate sends the slice back, never forward",
+        "The owning stage fixes it \u2014 the reviewer doesn't patch it themselves",
+        "Bounded: 2 retries per stage before it escalates to a human"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "The wall is real, confirmed live",
+      "items": [
+        "mergeStateStatus was BLOCKED until \"Release gates\" went pass",
+        "enforce_admins: true \u2014 applies to the repo owner too",
+        "Verified via the GitHub API on a real PR, not assumed from the setting"
+      ]
+    }
+  ]
+}

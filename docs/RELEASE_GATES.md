@@ -7,6 +7,10 @@ all of them have passed before approving a release.
 Gates are deliberately strict. If a gate fails, the failure is the signal
 — do not "work around" it.
 
+**[Interactive diagram](diagrams/release-gates.html)** — the gate sequence,
+the fail-closed rework loop, and the CI wall confirmed live on a real PR
+(`mergeStateStatus` was `BLOCKED` until the required check went green).
+
 ---
 
 ## Gate map by stage
