@@ -1,0 +1,330 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Agentic SDLC Lifecycle",
+    "output": "agentic-sdlc.html",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "core-path",
+        "label": "Ask to shipped",
+        "focus": [
+          "intake",
+          "scope_review",
+          "discovery",
+          "ux_ui_design",
+          "architecture",
+          "implementation",
+          "qa",
+          "security",
+          "release_gate",
+          "post_launch"
+        ],
+        "note": "The stages that always run, in sequence, for a slice with no user-facing surface skipped."
+      },
+      {
+        "id": "gate-rework",
+        "label": "A gate sends work back",
+        "focus": [
+          "qa",
+          "security",
+          "rework",
+          "implementation"
+        ],
+        "note": "A failed gate returns the slice to the owning stage, never forward \u2014 the real Security-to-rework path this pipeline has produced twice."
+      },
+      {
+        "id": "close-the-loop",
+        "label": "Post-Launch closes the loop",
+        "focus": [
+          "post_launch",
+          "intake"
+        ],
+        "note": "Learnings become the next slice's plan, not a filed report nobody reads."
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "id": "core",
+      "label": "Orchestrator & Planning"
+    },
+    {
+      "id": "discovery_track",
+      "label": "Discovery & Design"
+    },
+    {
+      "id": "delivery_track",
+      "label": "Delivery"
+    },
+    {
+      "id": "exceptions",
+      "label": "Gate Rework",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "frame",
+      "label": "Frame the ask",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "design",
+      "label": "Design & Plan",
+      "fromCol": 2,
+      "toCol": 2
+    },
+    {
+      "id": "build",
+      "label": "Build & Verify",
+      "fromCol": 3,
+      "toCol": 4
+    },
+    {
+      "id": "ship",
+      "label": "Ship & Learn",
+      "fromCol": 5,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "intake",
+    "scope_review",
+    "discovery",
+    "ux_ui_design",
+    "architecture",
+    "implementation",
+    "qa",
+    "security",
+    "release_gate",
+    "post_launch"
+  ],
+  "nodes": [
+    {
+      "id": "intake",
+      "lane": "core",
+      "col": 0,
+      "type": "external",
+      "label": "Intake",
+      "sublabel": "one-line ask"
+    },
+    {
+      "id": "market_research",
+      "lane": "discovery_track",
+      "col": 0,
+      "type": "external",
+      "label": "Market Research",
+      "sublabel": "optional",
+      "width": 112
+    },
+    {
+      "id": "scope_review",
+      "lane": "core",
+      "col": 1,
+      "type": "backend",
+      "label": "Scope Review",
+      "sublabel": "EM sizes the slice"
+    },
+    {
+      "id": "discovery",
+      "lane": "discovery_track",
+      "col": 1,
+      "type": "external",
+      "label": "Discovery",
+      "sublabel": "PRD"
+    },
+    {
+      "id": "ux_ui_design",
+      "lane": "discovery_track",
+      "col": 2,
+      "type": "frontend",
+      "label": "UX & UI Design",
+      "sublabel": "feature + UX spec"
+    },
+    {
+      "id": "architecture",
+      "lane": "core",
+      "col": 2,
+      "type": "backend",
+      "label": "Architecture",
+      "sublabel": "tech spec"
+    },
+    {
+      "id": "implementation",
+      "lane": "delivery_track",
+      "col": 3,
+      "type": "backend",
+      "label": "Implementation",
+      "sublabel": "code + tests"
+    },
+    {
+      "id": "qa",
+      "lane": "delivery_track",
+      "col": 4,
+      "width": 92,
+      "type": "database",
+      "label": "QA",
+      "sublabel": "independent verify"
+    },
+    {
+      "id": "security",
+      "lane": "delivery_track",
+      "col": 4,
+      "width": 60,
+      "type": "security",
+      "label": "Security",
+      "sublabel": "last reviewer",
+      "yOffset": 70
+    },
+    {
+      "id": "rework",
+      "lane": "exceptions",
+      "col": 3,
+      "type": "backend",
+      "label": "Rework",
+      "sublabel": "owning stage fixes it",
+      "tag": "gate fail"
+    },
+    {
+      "id": "release_gate",
+      "lane": "core",
+      "col": 5,
+      "type": "cloud",
+      "label": "Release Gate",
+      "sublabel": "go / no-go"
+    },
+    {
+      "id": "post_launch",
+      "lane": "core",
+      "col": 5,
+      "type": "external",
+      "label": "Post-Launch",
+      "sublabel": "what we learned",
+      "yOffset": 70
+    }
+  ],
+  "edges": [
+    {
+      "from": "intake",
+      "to": "market_research",
+      "variant": "dashed"
+    },
+    {
+      "from": "market_research",
+      "to": "scope_review",
+      "variant": "dashed"
+    },
+    {
+      "from": "intake",
+      "to": "scope_review",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "scope_review",
+      "to": "discovery",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "discovery",
+      "to": "ux_ui_design",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "scope_review",
+      "to": "architecture",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "ux_ui_design",
+      "to": "architecture"
+    },
+    {
+      "from": "architecture",
+      "to": "implementation",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "implementation",
+      "to": "qa",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "qa",
+      "to": "security",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "security",
+      "to": "release_gate",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "release_gate",
+      "to": "post_launch",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "security",
+      "to": "rework",
+      "label": "required-fix",
+      "role": "error",
+      "variant": "security"
+    },
+    {
+      "from": "rework",
+      "to": "implementation",
+      "label": "re-verify",
+      "role": "return",
+      "variant": "security"
+    },
+    {
+      "from": "post_launch",
+      "to": "intake",
+      "label": "closes the loop",
+      "role": "return",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Narrow roles, not one big agent",
+      "items": [
+        "Each stage owns one input, one output, one decision",
+        "Handoff is a written artefact, never a shared context window",
+        "24 roles in the full spec; this shows the always-run path"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "A failed gate sends work back",
+      "items": [
+        "Never forward \u2014 the owning stage fixes it, not the reviewer",
+        "Real case: Security found two test-coverage gaps, closed in 8 minutes",
+        "Bounded: 2 retries per stage before it escalates to a human"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Post-Launch closes the loop",
+      "items": [
+        "Carry-forward items feed the next slice's plan directly",
+        "Not a retro filed and forgotten",
+        "Pipeline telemetry (trace.json) refreshes here too"
+      ]
+    }
+  ]
+}

@@ -7,6 +7,11 @@ agent, an input artefact, an output artefact, and an explicit handoff.
 The lifecycle is the same whether the unit of work is a phase, a feature, or
 a single bug. Skip stages only when the project pack explicitly allows it.
 
+**[Interactive diagram](diagrams/agentic-sdlc-lifecycle.html)** — the main
+path, the optional Market Research branch, and the real Security→Rework→
+Implementation gate-fail path this pipeline has actually produced (twice).
+Three guided views; click through rather than reading top to bottom.
+
 ---
 
 ## Stages
