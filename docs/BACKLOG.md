@@ -31,15 +31,33 @@ built or buildable now, and populates when T1 runs — the same "field first, da
 from the run" pattern as effort / operator / executor / gateCatches.
 
 - **T2 · Decide the quality-metric gate.** `quality.mjs` exists measure-only.
-  T1's first data point: `dom.js` (the file holding F-5) was flagged "dense" —
-  a proximity signal, not a catch. Density counts decisions, not property
-  reads, so it would not have caught F-5 itself; the run's own Post-Launch
-  review says only a mechanism-level assertion can. **Inconclusive — one run
-  is not enough to decide a gate.** Re-evaluate after 2–3 more runs.
+  T1's data point: `dom.js` (the file holding F-5) was flagged "dense" — a
+  proximity signal, not a catch. **A second data point (2026-09-06,
+  `stash-seed` `saved-item-folders`) contradicts it**: this run's two real
+  gate-catches (SEC-1/SEC-2) both lived in `folders.js`, which quality.mjs
+  does **not** flag dense (0.229, under the 0.3 threshold); the only file it
+  did flag, `src/server.js` (0.309), wasn't touched by the slice and holds no
+  known defect. One hit, one miss — density isn't tracking defect location
+  consistently across the two runs it's been checked against. **Still
+  inconclusive, now with a real disconfirming case, not just an unconfirmed
+  one.** Re-evaluate after 2–3 more runs; if the miss rate holds, the honest
+  next step is dropping density as a candidate signal, not re-evaluating it
+  forever.
 - **T3 · Plan-review gate (Monaco).** Gate on the Architecture/plan artefact
   *before* Implementation spends tokens. T1 dropped the Architecture stage
-  entirely (the prior security review already was the design doc) — no data
-  either way. Still open; needs a slice where Architecture actually runs.
+  entirely — no data either way. **Closed the data gap (2026-09-06,
+  `stash-seed` `saved-item-folders`)**: Architecture ran in full and found
+  real value before Implementation spent a token — a genuine circular-import
+  risk in the ownership design, and 2 more `listItems` call sites than the
+  Engineering Manager's own count. Both went into the spec, not discovered
+  later at higher cost. **But this isn't quite T3's proposal proven**: the
+  spec was good, so nothing was actually *rejected* at a gate — Architecture
+  ran, Implementation proceeded straight from it, no separate approval
+  checkpoint sat between them. What's shown is that running Architecture has
+  real value; what's still unshown is that *gating* on it (vs. just running
+  it) catches anything a straight handoff wouldn't have. Needs a slice where
+  a plan-review step actually sends a spec back before this is fully
+  answered.
 - **T4 · Branch protection.** ✅ *Done 2026-08-25 for `stash-seed`.* `main`
   now requires a PR + the "Release gates" check passing, enforced for admins
   too (`enforce_admins: true`), force-push and deletion both blocked. Closes
