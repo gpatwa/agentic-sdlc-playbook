@@ -98,6 +98,10 @@ Views 1–2 describe the *methodology*. This is the part that actually runs, and
 it closes a loop: the playbook compiles into a product repo, runs there produce
 telemetry, and the telemetry changes the playbook.
 
+**[Interactive diagram](diagrams/architecture-feedback-loop.html)** — the same
+loop, explorable, with the real T5/T9 findings that closed it cited directly
+on the diagram. The static chart below is the GitHub-renderable fallback.
+
 ```mermaid
 flowchart TB
     subgraph PB["Playbook (source of truth)"]

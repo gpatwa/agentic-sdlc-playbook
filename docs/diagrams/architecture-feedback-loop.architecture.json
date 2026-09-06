@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Playbook Feedback Loop",
+    "output": "architecture-feedback-loop.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "compile",
+        "label": "Spec compiles into a product repo",
+        "focus": [
+          "playbook",
+          "install_mjs",
+          "product_repo_agents",
+          "orchestrator"
+        ],
+        "note": "The playbook is provider-neutral spec; install.mjs generates least-privilege subagents into the product repo."
+      },
+      {
+        "id": "run-produces-telemetry",
+        "label": "A run produces telemetry",
+        "focus": [
+          "orchestrator",
+          "product_repo_agents",
+          "runs_telemetry"
+        ],
+        "note": "Every stage attempt writes to STATE.md and trace.json \u2014 the machine-readable source of truth, never hand-parsed."
+      },
+      {
+        "id": "telemetry-changes-playbook",
+        "label": "Telemetry changes the playbook",
+        "focus": [
+          "runs_telemetry",
+          "analyze_mjs",
+          "analytics_output",
+          "playbook"
+        ],
+        "note": "Real findings (T5 FDRT, T9 completeness) came from reading real trace.json files \u2014 the loop actually closes."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "playbook",
+      "type": "external",
+      "label": "Agentic SDLC Playbook",
+      "sublabel": "agents/, templates/, docs/",
+      "pos": [
+        40,
+        260
+      ],
+      "size": [
+        170,
+        70
+      ],
+      "tag": "provider-neutral spec"
+    },
+    {
+      "id": "install_mjs",
+      "type": "backend",
+      "label": "install.mjs",
+      "sublabel": "the Claude Code adapter",
+      "pos": [
+        280,
+        260
+      ],
+      "size": [
+        160,
+        70
+      ]
+    },
+    {
+      "id": "orchestrator",
+      "type": "backend",
+      "label": "Orchestrator",
+      "sublabel": "drives a real slice",
+      "pos": [
+        560,
+        100
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "product_repo_agents",
+      "type": "backend",
+      "label": ".claude/agents/",
+      "sublabel": "least-privilege subagents",
+      "pos": [
+        560,
+        260
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "runs_telemetry",
+      "type": "database",
+      "label": "runs/<slice-id>/",
+      "sublabel": "STATE.md + trace.json",
+      "pos": [
+        560,
+        420
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "analyze_mjs",
+      "type": "backend",
+      "label": "analyze.mjs",
+      "sublabel": "reads every trace.json",
+      "pos": [
+        800,
+        420
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "analytics_output",
+      "type": "external",
+      "label": "ANALYTICS.md + dashboard",
+      "sublabel": "gate-catches, FDRT, completeness",
+      "pos": [
+        1030,
+        420
+      ],
+      "size": [
+        180,
+        70
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Product repo (e.g. stash-seed)",
+      "wraps": [
+        "orchestrator",
+        "product_repo_agents",
+        "runs_telemetry"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "compile",
+      "from": "playbook",
+      "to": "install_mjs",
+      "label": "compiles",
+      "variant": "emphasis"
+    },
+    {
+      "id": "generate",
+      "from": "install_mjs",
+      "to": "product_repo_agents",
+      "label": "generates",
+      "variant": "emphasis"
+    },
+    {
+      "id": "drive",
+      "from": "orchestrator",
+      "to": "product_repo_agents",
+      "label": "spawns",
+      "labelDy": 24
+    },
+    {
+      "id": "write-telemetry",
+      "from": "product_repo_agents",
+      "to": "runs_telemetry",
+      "label": "writes every stage",
+      "labelDy": 24
+    },
+    {
+      "id": "read-trace",
+      "from": "runs_telemetry",
+      "to": "analyze_mjs",
+      "label": "trace.json"
+    },
+    {
+      "id": "render",
+      "from": "analyze_mjs",
+      "to": "analytics_output",
+      "label": "renders"
+    },
+    {
+      "id": "closes-loop",
+      "from": "analytics_output",
+      "to": "playbook",
+      "label": "real findings become playbook changes",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "top",
+      "via": [
+        [
+          1120,
+          260
+        ],
+        [
+          1120,
+          60
+        ],
+        [
+          125,
+          60
+        ]
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Author once, render many",
+      "items": [
+        "A run emits trace.json; nothing hand-maintains ANALYTICS.md",
+        "Post-Launch regenerates it at slice close",
+        "The dashboard is the same data, a different view"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "The loop is real, not aspirational",
+      "items": [
+        "T5's FDRT field came from reading a real gate-catch's timestamps",
+        "T9's completeness check came from real stage-name variance across runs",
+        "This diagram itself: found via archify, a real skill, not illustrated from imagination"
+      ]
+    }
+  ]
+}
