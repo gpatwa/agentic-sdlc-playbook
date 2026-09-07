@@ -265,6 +265,19 @@ project pack; the EM records which overlay roles apply in the slice plan.
   by the ML Engineer (stage 8). Turns incidents into blameless postmortems
   (`templates/INCIDENT_REVIEW_TEMPLATE.md`) whose action items feed the
   Orchestrator as new slices. See `agents/sre.md`.
+- **Cloud Deployment + Production Verification.** Wraps a real, officially
+  maintained skill chain (`microsoft/azure-skills`) rather than a
+  hand-authored deployment procedure — Azure first, AWS a named future
+  adapter. Cloud Deployment runs `azure-prepare` → `azure-validate` →
+  `azure-deploy`; only `azure-validate` may set the plan `Validated`, and
+  this playbook's own `docs/HUMAN_APPROVAL_RULES.md` rule 3 approval sits
+  at the seam between `Validated` and executing the deploy. Production
+  Verification then checks the *live* result against the tech spec's
+  safety invariants using `azure-diagnostics` / `azure-reliability`
+  (read-only), and on a no-go executes the tech spec's own rollback plan
+  immediately rather than waiting on a second approval round-trip — the
+  same rollback mechanism `agents/on-call-engineer.md` uses post-merge.
+  See `agents/cloud-deployment.md`, `agents/production-verification.md`.
 - **Live Issue Resolution — On-Call Engineer + Customer Support.** Handles
   a live production incident or an inbound customer issue, together, with
   a human as the final gate — not a new pipeline, a new *trigger* into

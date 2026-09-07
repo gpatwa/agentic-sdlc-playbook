@@ -51,6 +51,8 @@ agentic-sdlc/
     tech-writer.md                 ← overlay
     release-manager.md
     sre.md                         ← enterprise overlay
+    cloud-deployment.md            ← enterprise overlay
+    production-verification.md     ← enterprise overlay
     on-call-engineer.md            ← enterprise overlay
     data-analyst.md
     post-launch-learning.md
