@@ -141,6 +141,36 @@ from the run" pattern as effort / operator / executor / gateCatches.
 - **T10 · Eval-with-rubrics / trajectory eval (Google).** **Deferred — at 8
   runs it is ceremony, and trajectory data is self-reported.** Revisit at volume.
 - **T11 · Cross-slice memory.** Real gap, not urgent at single-operator scale.
+- **T12 · Restate the adapter invariants as outcomes, then target ACP.**
+  *Raised 2026-09-09 from competitive research — this overturns the parked
+  "second harness adapter" bullet below; read them together.*
+  `ADAPTERS.md` claims provider-neutrality but two of its four invariants are
+  written as **mechanism** requirements, not outcomes: least-privilege tool
+  scoping (`tools:` frontmatter) and a pre-spawn abort hook
+  (`hooks/budget-guard.mjs`). Both are Claude-Code-shaped. A runtime that
+  records an attributable approval by other means currently fails our contract
+  for the wrong reason — we are testing *how* it was enforced rather than
+  *whether the evidence exists*.
+  - **Why now, and not before:** the parked bullet's reasoning was "no mature
+    second runtime exists." That expired. **ACP (Agent Client Protocol)** —
+    Zed-created, Apache-licensed, JSON-RPC over stdio — is documented as
+    adopted by JetBrains, Google, GitHub and 25+ agents, and Devin Desktop
+    (June 2026, on Windsurf) drives Claude Code and Codex through it. There is
+    now a real, adopted standard to write against instead of inventing one.
+  - **Two pieces, in order.** (a) Rewrite invariants 1 and 2 as outcome
+    requirements — *the approval exists, is attributable to a named person, and
+    is durable* — keeping the current hook and `tools:` frontmatter as the
+    Claude Code adapter's *implementation*, not as the contract. (b) Only then
+    assess an ACP adapter.
+  - **Not assumed — still to check.** Whether ACP exposes any pre-spawn
+    interception that can *abort* (the `budget-guard.mjs` equivalent, per
+    `RUN_ECONOMICS.md`'s "checked before every spawn, never reconciled after"),
+    and whether it carries per-agent tool restriction at all. Both are read
+    from ACP's own spec, not from summaries. If neither exists, (a) still
+    stands on its own merit and (b) is dropped.
+  - **Cost of not doing it:** the provider-neutral claim in `ADAPTERS.md` stays
+    aspirational with one adapter and no test, which is the single weakest load-
+    bearing claim in the repo.
 
 ## Decided NO / parked — recorded so they don't return
 
@@ -158,6 +188,14 @@ from the run" pattern as effort / operator / executor / gateCatches.
   pre-spawn hook (`budget-guard.mjs`) and durable resumable state. Different
   primitive, not a competing one — the parked reasoning here is unaffected. What
   it *did* sharpen is T8, which is a genuinely separate question.
+  **Superseded 2026-09-09 — see T12.** The park rested on "no mature second
+  runtime exists," and that premise expired: ACP is an adopted, Apache-licensed
+  interop standard, and a shipped agent-neutral surface (Devin Desktop) already
+  drives Claude Code and Codex through it. The *conclusion* still holds for now —
+  do not write a second adapter yet — but for a different reason. The blocker is
+  no longer the absence of a target; it is that our own contract is written
+  against Claude Code's mechanisms rather than against outcomes. Fix that first
+  (T12a); a second adapter is only assessable afterwards.
 - **Graph orchestration engine** (LangGraph) — no; we do not own a runtime.
 - **Non-engineer contributors** (Monaco thesis) — not our problem; single
   engineer operator.
