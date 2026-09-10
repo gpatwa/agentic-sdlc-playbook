@@ -171,6 +171,70 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - **Cost of not doing it:** the provider-neutral claim in `ADAPTERS.md` stays
     aspirational with one adapter and no test, which is the single weakest load-
     bearing claim in the repo.
+- **T13 · Put `trace@2` on OpenTelemetry GenAI semantic conventions.**
+  *Raised 2026-09-10.* The point is not tidiness — it is the **standing caveat
+  at the bottom of this file**. Telemetry is self-reported today: agents report
+  their own `tokens` / `toolCalls` / `retries`, and a self-report has already
+  been observed wrong. That is not fixable inside a bespoke schema, because the
+  schema is filled in by the party being measured.
+  - **The standard:** OpenTelemetry **GenAI semantic conventions** define agent,
+    workflow, tool and model spans plus latency and token-usage metrics
+    (v1.41 at time of writing — note the spec is still marked *Development*,
+    so pin a version and expect churn). Emission comes from the
+    instrumentation layer, not from the agent's own narration.
+  - **Three wins from one change:** kills the self-report caveat; makes traces
+    portable across harnesses (the same problem as T12); and lets existing
+    tools — MLflow, Langfuse, Arize Phoenix, LangSmith, Laminar all accept
+    OTLP — render our runs without us building a viewer.
+  - **Keep `trace@2` as a projection, not a replacement.** `gateCatches`,
+    FDRT and `landed` are governance facts with no OTel equivalent. Emit OTel
+    spans for telemetry; keep our own record for the things OTel does not model.
+    Do **not** rename the `agentic-sdlc/trace@N` schema id — existing runs in
+    `stash-seed` and `streak-seed` depend on it.
+  - **Unverified:** whether Claude Code exposes hooks that can emit OTel spans
+    for subagent spawns without agent cooperation. If it cannot, this reduces
+    to a schema-shape change and the caveat survives — which is worth knowing
+    before starting.
+
+- **T14 · Emit the approval record as signed in-toto attestations.**
+  *Raised 2026-09-10 — the most load-bearing of the three.* Every approval,
+  gate verdict and `approvedBy` in `trace.json` is **plain unsigned JSON**. For
+  a system whose entire claim is attributable evidence, an auditor's first
+  question — *"how do I know this file wasn't edited afterwards?"* — currently
+  has no answer. Self-asserted provenance is exactly the weakness we criticise
+  in agent self-reported telemetry (T13), one layer up.
+  - **The standard:** the **in-toto Attestation Framework** — a signed
+    `Statement` about supply-chain execution (including *whether source was
+    reviewed*), carried as typed predicates; **SLSA** uses in-toto as its
+    delivery medium, and signing is built in.
+  - **Why it fits unusually well:** in-toto's **Layout** records *which actors
+    are authorized to perform each step*, cryptographically signed by the
+    supply-chain owner. That is `HUMAN_APPROVAL_RULES.md` rule 3 and our
+    separation-of-duties claim, expressed in a format third-party tooling can
+    already verify — rather than a claim a reader has to take on trust.
+  - **Scope, if taken:** a custom predicate type for a slice's gate record;
+    `approvedBy` becomes a signed attestation rather than a string. Verifiable
+    by existing tooling instead of by reading our docs.
+  - **Unverified:** key management for a single operator (sigstore/keyless vs.
+    a held key), and whether a predicate type this bespoke is worth publishing
+    or stays internal. Neither blocks a spike.
+
+- **T15 · Write `AGENTS.md`, keep `CLAUDE.md` as a bridge.**
+  *Raised 2026-09-10.* `execution/pack/CLAUDE.md` is the pack's run guide and
+  is **Claude-Code-only** — a per-tool file in a repo that claims to be
+  provider-neutral (`ADAPTERS.md`), which is the same contradiction T12 names.
+  - **The standard:** **AGENTS.md**, stewarded by the Agentic AI Foundation, a
+    **Linux Foundation** project — so the spec is not vendor-owned. Read
+    natively by Codex, Cursor, GitHub Copilot's coding agent, Windsurf, Amp,
+    Aider, Gemini CLI, Zed, Jules, Devin and Junie, among 20+ tools.
+  - **The catch, stated honestly:** Claude Code is the notable holdout and
+    still reads `CLAUDE.md`; Anthropic's own guidance is to import
+    `@AGENTS.md` or symlink. So this is *additive* — `install.mjs` writes
+    `AGENTS.md` as the source of truth and a thin `CLAUDE.md` that imports it.
+    Nothing breaks for existing product repos.
+  - **Cheapest of the three**, and it is the first concrete step toward the
+    portability `ADAPTERS.md` asserts but has never demonstrated.
+
 
 ## Decided NO / parked — recorded so they don't return
 
@@ -208,3 +272,10 @@ from the run" pattern as effort / operator / executor / gateCatches.
 from one, rests on agents reporting their own usage — not fixable from inside
 the pack. It is why T1's *measured* numbers matter: they are the first
 independently checkable against a real run's outcome.
+
+*Update 2026-09-10:* **T13** is the first proposal that could actually retire
+this caveat rather than work around it — by taking telemetry from the
+instrumentation layer (OpenTelemetry GenAI conventions) instead of from the
+agent being measured. **T14** applies the same reasoning one layer up: the
+approval record is currently self-asserted unsigned JSON, which is the same
+trust problem wearing different clothes.
