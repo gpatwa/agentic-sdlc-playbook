@@ -69,11 +69,23 @@ for (const file of htmlFiles(root)) {
     if (html.toLowerCase().includes(bad.toLowerCase())) fail(file, `placeholder text present: ${bad}`);
   }
 
-  // 6. External origins. The page must stay self-contained apart from fonts —
-  //    an unnoticed third-party script is both a privacy and an uptime problem.
+  // 6. External *resources*. The page must stay self-contained apart from
+  //    fonts — an unnoticed third-party script is both a privacy and an uptime
+  //    problem, and it silently breaks under the CSP in site/_headers.
+  //    Navigation links (<a href>) are deliberately NOT restricted: linking to
+  //    GitHub is normal, loading a script from it is not.
   const allowed = ["fonts.googleapis.com", "fonts.gstatic.com"];
-  for (const m of html.matchAll(/(?:src|href)="https?:\/\/([^/"]+)/g)) {
-    if (!allowed.includes(m[1])) fail(file, `unexpected external origin: ${m[1]}`);
+  const resources = [
+    ...html.matchAll(/<(?:script|img|iframe|video|audio|source)\b[^>]*\ssrc="https?:\/\/([^/"]+)/gi),
+    ...html.matchAll(/<link\b[^>]*\shref="https?:\/\/([^/"]+)/gi),
+  ];
+  for (const m of resources) {
+    if (!allowed.includes(m[1])) fail(file, `unexpected external resource origin: ${m[1]}`);
+  }
+
+  // 6b. Outbound links should at least be https and not obviously broken.
+  for (const m of html.matchAll(/<a\b[^>]*\shref="(http:\/\/[^"]+)"/gi)) {
+    fail(file, `insecure outbound link: ${m[1]}`);
   }
 }
 

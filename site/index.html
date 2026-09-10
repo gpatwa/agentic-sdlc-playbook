@@ -21,15 +21,15 @@
     --sunk: #F2F0EB;
     --ink: #14161A;
     --ink-soft: #3A4048;
-    --muted: #6B7480;
-    --faint: #676F7B;
+    --muted: #626B77;
+    --faint: #616974;
     --rule: #E2DFD8;
     --rule-strong: #CBC7BE;
     --gold: #A87515;
     --gold-text: #85590C;
     --gold-bright: #C68D22;
     --gold-wash: #FAF2DF;
-    --pass: #2E7D5B;
+    --pass: #27684B;
     --pass-wash: #E7F2EC;
     --block: #B0453D;
     --block-wash: #FAEAE8;
@@ -48,7 +48,7 @@
       --ink: #E8ECF2;
       --ink-soft: #C2CAD5;
       --muted: #8B95A3;
-      --faint: #656F7D;
+      --faint: #7E8898;
       --rule: #232A34;
       --rule-strong: #333C48;
       --gold: #E0AC4E;
@@ -71,7 +71,7 @@
     --ink: #E8ECF2;
     --ink-soft: #C2CAD5;
     --muted: #8B95A3;
-    --faint: #656F7D;
+    --faint: #7E8898;
     --rule: #232A34;
     --rule-strong: #333C48;
     --gold: #E0AC4E;
@@ -90,7 +90,7 @@
 
   body {
     margin: 0;
-    background: var(--ground);
+    background-color: var(--ground);
     color: var(--ink);
     font-family: var(--f-body);
     font-size: 16px;
@@ -136,7 +136,7 @@
     inset: 3px 3px auto auto;
     width: 5px; height: 5px;
     border-radius: 50%;
-    background: var(--gold);
+    background-color: var(--gold);
     top: 3px; right: 3px;
   }
 
@@ -160,8 +160,8 @@
     transition: transform .12s ease, background .12s ease;
   }
   .btn:hover { transform: translateY(-1px); }
-  .btn-primary { background: var(--ink); color: var(--ground); }
-  .btn-primary:hover { background: var(--gold); color: #14161A; }
+  .btn-primary { background-color: var(--ink); color: var(--ground); }
+  .btn-primary:hover { background-color: var(--gold); color: #14161A; }
   .btn-ghost { border-color: var(--rule-strong); color: var(--ink); }
   .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
   a:focus-visible, .btn:focus-visible, details summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
@@ -184,7 +184,7 @@
   .brandline::before {
     content: "";
     width: 26px; height: 2px;
-    background: var(--gold);
+    background-color: var(--gold);
     flex: none;
   }
 
@@ -238,11 +238,11 @@
     border: 1px solid var(--rule);
     border-radius: 8px;
     overflow: hidden;
-    background: var(--rule);
+    background-color: var(--rule);
   }
 
   .phase {
-    background: var(--surface);
+    background-color: var(--surface);
     padding: 20px 22px 22px;
     display: flex;
     flex-direction: column;
@@ -250,7 +250,7 @@
     position: relative;
   }
 
-  .phase.covered { background: var(--gold-wash); }
+  .phase.covered { background-color: var(--gold-wash); }
 
   .phase-top {
     display: flex;
@@ -260,7 +260,7 @@
 
   .phase-dot {
     width: 8px; height: 8px; border-radius: 50%;
-    background: var(--gold);
+    background-color: var(--gold);
     flex: none;
   }
 
@@ -326,7 +326,7 @@
     font-weight: 600;
     letter-spacing: .14em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--gold-text);
     margin: 0 0 14px;
   }
 
@@ -355,13 +355,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 3px;
-    background: var(--rule);
+    background-color: var(--rule);
     border: 1px solid var(--rule);
     border-radius: 8px;
     overflow: hidden;
   }
 
-  .stat { background: var(--surface); padding: 24px 22px; }
+  .stat { background-color: var(--surface); padding: 24px 22px; }
 
   .stat .fig {
     font-family: var(--f-display);
@@ -405,7 +405,7 @@
     font-family: var(--f-mono);
     font-size: 11px;
     font-weight: 600;
-    color: var(--gold);
+    color: var(--gold-text);
     letter-spacing: .1em;
     margin-bottom: 12px;
   }
@@ -427,7 +427,7 @@
   /* ---------- artifact panes ---------- */
 
   .pane {
-    background: var(--surface);
+    background-color: var(--surface);
     border: 1px solid var(--rule);
     border-radius: 8px;
     overflow: hidden;
@@ -440,7 +440,7 @@
     justify-content: space-between;
     gap: 12px;
     padding: 10px 14px;
-    background: var(--sunk);
+    background-color: var(--sunk);
     border-bottom: 1px solid var(--rule);
     font-family: var(--f-mono);
     font-size: 10px;
@@ -461,14 +461,14 @@
     border-radius: 3px;
     white-space: nowrap;
   }
-  .pill.block { background: var(--block-wash); color: var(--block); }
-  .pill.pass { background: var(--pass-wash); color: var(--pass); }
-  .pill.hold { background: var(--gold-wash); color: var(--gold); }
+  .pill.block { background-color: var(--block-wash); color: var(--block); }
+  .pill.pass { background-color: var(--pass-wash); color: var(--pass); }
+  .pill.hold { background-color: var(--gold-wash); color: var(--gold-text); }
 
   .ln { display: block; white-space: pre-wrap; word-break: break-word; }
   .k { color: var(--muted); }
   .v { color: var(--ink); }
-  .g { color: var(--gold); }
+  .g { color: var(--gold-text); }
   .r { color: var(--block); }
   .p { color: var(--pass); }
   .c { color: var(--faint); }
@@ -484,14 +484,14 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 3px;
-    background: var(--rule);
+    background-color: var(--rule);
     border: 1px solid var(--rule);
     border-radius: 8px;
     overflow: hidden;
   }
 
   .fw {
-    background: var(--surface);
+    background-color: var(--surface);
     padding: 18px;
     display: flex;
     flex-direction: column;
@@ -499,6 +499,9 @@
   }
 
   .fw .name { font-family: var(--f-display); font-weight: 600; font-size: .97rem; }
+  a.fw { text-decoration: none; color: inherit; transition: background .12s ease; }
+  a.fw:hover { background-color: var(--gold-wash); }
+  a.fw:hover .name { color: var(--gold-text); }
   .fw .role { font-size: .8rem; color: var(--muted); line-height: 1.45; }
 
   /* ---------- audience ---------- */
@@ -510,7 +513,7 @@
   }
 
   .aud {
-    background: var(--surface);
+    background-color: var(--surface);
     border: 1px solid var(--rule);
     border-radius: 8px;
     padding: 24px;
@@ -529,7 +532,7 @@
     font-size: 10px;
     letter-spacing: .06em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--gold-text);
   }
 
   /* ---------- faq ---------- */
@@ -564,7 +567,7 @@
   /* ---------- closing ---------- */
 
   .closer {
-    background: var(--surface);
+    background-color: var(--surface);
     border: 1px solid var(--rule);
     border-radius: 10px;
     padding: 54px 44px;
@@ -608,7 +611,9 @@
       <a href="#how">How it works</a>
       <a href="#span">Build · Deploy · Run</a>
       <a href="#evidence">The record</a>
-      <a href="#who">Who it's for</a>
+      <a href="#evidence-runs">Evidence</a>
+      <a href="#limits">Limits</a>
+      <a href="#source">Docs</a>
     </div>
     <a class="btn btn-ghost" href="#closer">Request access</a>
   </nav>
@@ -768,6 +773,30 @@
     </div>
   </section>
 
+  <section id="evidence-runs">
+    <p class="sec-eyebrow">Evidence</p>
+    <h2>Validated on live runs, not a slide.</h2>
+    <p class="sec-lede">The pipeline has carried slices to merged pull requests on a reference app, then built a second app from a one-paragraph brief &mdash; market research through to a shipped, tested service. Tiers 2 and 3, deterministic-first AI, a greenfield 0&rarr;1, and a security gate that stopped its own release.</p>
+    <div class="stats">
+      <div class="stat"><span class="fig">0&rarr;1</span><p>A second app built greenfield from one paragraph &mdash; discovery through to shipped.</p></div>
+      <div class="stat"><span class="fig">6</span><p>Slices shipped across two apps, Tiers 2&ndash;3, including deterministic-first AI.</p></div>
+      <div class="stat"><span class="fig">3</span><p>Approval rules fired live &mdash; send, deploy, real-model. Each recorded, each scope-enforced.</p></div>
+      <div class="stat"><span class="fig">0</span><p>Retries across every stage of every run.</p></div>
+    </div>
+    <div class="cap" style="border-bottom:none;padding-bottom:0">
+      <div>
+        <div class="cap-num">What that looked like</div>
+        <h3>The runs correct themselves &mdash; and sometimes their author.</h3>
+        <p>Security review caught a finished slice quietly listening on <em>every network interface</em> instead of loopback, reached a user's data across the LAN to prove it, and sent the work back. The same flaw was then found and fixed in the older app it came from.</p>
+      </div>
+      <div>
+        <div class="cap-num">And the hard cases</div>
+        <h3>Refusal and bounded failure, both tested neutrally.</h3>
+        <p>Shown an unsafe ask, it refused at intake. Shown an impossible one, it bounded the failure and escalated &mdash; without weakening a gate. Earlier, discovery caught a correctness trap before a line of code existed, and QA found a bug whose proposed fix Security then proved insufficient.</p>
+      </div>
+    </div>
+  </section>
+
   <section id="evidence">
     <p class="sec-eyebrow">The record</p>
     <h2>Built to be handed to someone who wasn't there.</h2>
@@ -805,6 +834,42 @@
     </div>
   </section>
 
+  <section id="limits">
+    <p class="sec-eyebrow">Honest limits</p>
+    <h2>Where it costs you, and where it isn't proven.</h2>
+    <p class="sec-lede">The validation matrix in the repo lists what isn't proven, so this page does too. A governance product that oversells itself has already failed its own test.</p>
+    <div class="holds">
+      <div class="hold">
+        <div class="hold-mark">01</div>
+        <div>
+          <h4>It spends real tokens.</h4>
+          <p>A slice runs four to ten stages at roughly 70k&ndash;130k tokens each; a full greenfield build measured 947k. That is the price of every stage forming its own independent judgement &mdash; and exactly why the pipeline checks a budget <em>before</em> each step rather than reporting the damage after.</p>
+        </div>
+      </div>
+      <div class="hold">
+        <div class="hold-mark">02</div>
+        <div>
+          <h4>Small changes do not need this.</h4>
+          <p>Running a one-line fix through nine gated stages is theatre. The Engineering Manager compresses the pipeline for small slices and records why. Reach for the full chain where being wrong is expensive, not by default.</p>
+        </div>
+      </div>
+      <div class="hold">
+        <div class="hold-mark">03</div>
+        <div>
+          <h4>Least-privilege binds conditionally.</h4>
+          <p>Per-role tool restrictions are generated correctly, but only take effect when the orchestrator session runs inside the product repo. Run it from elsewhere and you get capable agents with unrestricted tools. Documented rather than buried.</p>
+        </div>
+      </div>
+      <div class="hold">
+        <div class="hold-mark">04</div>
+        <div>
+          <h4>Not yet proven.</h4>
+          <p>Real-cloud deploy against a live subscription and production SLOs, enterprise multi-tenancy, and a real model wired into a shipped feature. The deployment and production-verification roles exist and are specified; they have not been run against live infrastructure. Each is listed as open in the validation matrix &mdash; none are claimed here.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="faq">
     <p class="sec-eyebrow">Common questions</p>
     <h2>Straight answers.</h2>
@@ -838,6 +903,20 @@
     </div>
   </section>
 
+  <section id="source">
+    <p class="sec-eyebrow">The documents</p>
+    <h2>The methodology is the source.</h2>
+    <p class="sec-lede">There is no hidden implementation. The specs below <em>are</em> the system &mdash; agents are generated from these files and the gates are enforced from them. Read the rules before trusting the claims.</p>
+    <div class="fw-grid">
+      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/ARCHITECTURE.md"><span class="name">Architecture &amp; data flow &rarr;</span><span class="role">Agent topology, how the repo realizes it, and the execution loop</span></a>
+      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_ROLES.md"><span class="name">Agent roles &rarr;</span><span class="role">Who does what, who hands off to whom</span></a>
+      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md"><span class="name">Human approval rules &rarr;</span><span class="role">The six categories a human must approve, always</span></a>
+      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/RELEASE_GATES.md"><span class="name">Release gates &rarr;</span><span class="role">What must be true before anything merges or ships</span></a>
+      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md"><span class="name">Validation matrix &rarr;</span><span class="role">What is proven, and what is still open</span></a>
+      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook"><span class="name">Source on GitHub &rarr;</span><span class="role">Everything above, plus the execution pack</span></a>
+    </div>
+  </section>
+
   <section id="closer" class="flush">
     <div class="closer">
       <h2>Let the agents do more.</h2>
@@ -852,6 +931,7 @@
   <footer>
     <div class="brand"><span class="mark"></span>Aveto</div>
     <span class="tag">Move at agent speed. Prove every decision.</span>
+    <a href="https://github.com/gpatwa/agentic-sdlc-playbook" style="color:var(--muted);text-decoration:none">Source on GitHub &#8599;</a>
   </footer>
 
 </div>
