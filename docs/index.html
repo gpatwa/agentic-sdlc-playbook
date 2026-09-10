@@ -4,25 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aveto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 </head>
 <body>
 <style>
   :root{
     color-scheme:dark;
     --ground:#14130f; --surface:#1c1b18; --raise:#242320;
-    --ink:#f5f4ef; --muted:#a8a29a; --faint:#78736c;
+    --ink:#f5f4ef; --muted:#a8a29a; --faint:#8d887f;
     --line:#2c2a26; --line-strong:#3d3a34;
-    --signal:#d97757; --signal-ink:#e8926f; --signal-soft:#2b1d16;
+    --signal:#e0ac4e; --signal-ink:#ebbe72; --signal-soft:#221a0c;
     --pass:#5fa87e; --fail:#e0755a;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 20px 44px -18px rgba(0,0,0,.6);
-    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
-    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    --display:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   }
   :root[data-theme="light"]{
     --ground:#faf9f5; --surface:#ffffff; --raise:#f5f3ee;
-    --ink:#141413; --muted:#6b6862; --faint:#918d85;
+    --ink:#141413; --muted:#6b6862; --faint:#7b7770;
     --line:#e6e2d9; --line-strong:#d3cec2;
-    --signal:#c15f3c; --signal-ink:#9a4526; --signal-soft:#f6e7e0;
+    --signal:#a87515; --signal-ink:#85590c; --signal-soft:#faf2df;
     --pass:#3d7a55; --fail:#b0472f;
     --shadow:0 1px 2px rgba(20,20,19,.05),0 14px 34px -14px rgba(20,20,19,.16);
   }
@@ -42,13 +46,13 @@
     font-family:var(--mono);font-size:12px;letter-spacing:.16em;
     text-transform:uppercase;color:var(--muted);margin:0;
   }
-  h1,h2,h3{text-wrap:balance;letter-spacing:-.02em;line-height:1.06;margin:0}
+  h1,h2,h3{font-family:var(--display);text-wrap:balance;letter-spacing:-.025em;line-height:1.06;margin:0}
 
   /* ---- top bar ---- */
   header.top{border-bottom:1px solid var(--line);position:sticky;top:0;
     background:color-mix(in srgb,var(--ground) 86%,transparent);backdrop-filter:blur(8px);z-index:5}
   .top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
-  .brand{font-family:var(--mono);font-weight:600;font-size:15px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;text-decoration:none}
+  .brand{font-family:var(--display);font-weight:700;font-size:1.22rem;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;text-decoration:none}
   .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 4px var(--signal-soft)}
   .top nav{display:flex;gap:22px;font-family:var(--mono);font-size:13px}
   .top nav a{color:var(--muted);text-decoration:none}
@@ -57,7 +61,10 @@
 
   /* ---- hero ---- */
   .hero{padding:76px 0 34px}
-  .hero h1{font-size:clamp(2.35rem,6.2vw,4rem);font-weight:800;margin:18px 0 0;max-width:16ch}
+  .brandline{font-family:var(--display);font-size:clamp(.95rem,1.5vw,1.08rem);font-weight:600;
+    color:var(--signal-ink);margin:0;display:flex;align-items:center;gap:11px}
+  .brandline::before{content:"";width:26px;height:2px;background:var(--signal);flex:none}
+  .hero h1{font-size:clamp(2.35rem,6.2vw,4rem);font-weight:700;letter-spacing:-.033em;margin:18px 0 0;max-width:17ch}
   .hero .lede{font-size:clamp(1.05rem,2.4vw,1.28rem);color:var(--muted);max-width:58ch;margin:22px 0 0;line-height:1.55}
   .hero .lede b{color:var(--ink);font-weight:600}
 
@@ -194,7 +201,7 @@
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#top"><span class="dot"></span>agentic&#8209;sdlc</a>
+    <a class="brand" href="#top"><span class="dot"></span>Aveto</a>
     <nav>
       <a href="#what">What it does</a>
       <a href="#use" class="hide-sm">How to use</a>
@@ -212,7 +219,7 @@
   <div class="wrap">
 
     <div class="hero">
-      <p class="eyebrow">Open source &middot; accountable autonomy</p>
+      <p class="brandline">Move at agent speed. Prove every decision.</p>
       <h1>Move beyond agentic engineering to accountable autonomy.</h1>
       <p class="lede">Aveto is the system of record for software your agents <b>build, deploy and run</b>. Narrow roles hand off through <b>artefacts</b>, every gate <b>fails closed</b>, and the run <b>pauses for a named human</b> at the actions that can&rsquo;t be undone&mdash;so every consequential decision can be attributed to a person afterwards.</p>
 
