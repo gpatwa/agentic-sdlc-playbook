@@ -1,5 +1,5 @@
 ---
-description: Resume an in-flight Agentic SDLC slice from its STATE.md.
+description: Resume an in-flight Aveto slice from its STATE.md.
 argument-hint: <slice-id>
 ---
 

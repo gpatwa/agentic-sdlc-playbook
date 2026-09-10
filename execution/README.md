@@ -1,7 +1,7 @@
 # Execution Pack
 
 The playbook's `docs/`, `agents/`, `templates/`, and `prompts/` describe
-*how* the Agentic SDLC works. This pack makes it **run**: it turns the
+*how* Aveto works. This pack makes it **run**: it turns the
 markdown briefs into Claude Code subagents, adds the orchestration commands,
 and supplies the protocols that were missing for an autonomous run —
 resumable state, the human-approval interrupt, and bounded failure loops.

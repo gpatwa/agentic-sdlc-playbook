@@ -1,13 +1,20 @@
-# Agentic SDLC
+# Aveto
 
-A reusable, multi-agent software development lifecycle for AI-built SaaS products.
+**Move at agent speed. Prove every decision.**
 
-This playbook is the source of truth for how a team of specialised agents — orchestrator,
+The system of record for software your agents build, deploy and run.
+
+Aveto is a lifecycle for building software with specialised agents — orchestrator,
 engineering manager, product manager, designers, architects, developers, QA, security,
-release, and post-launch — collaborate to ship safe, high-quality software with a small
-human in the loop.
+release, and post-launch. Narrow roles hand off through artefacts, every gate fails
+closed, and the run pauses for a **named human** at the actions that can't be undone.
+The record continues past the merge, through deploy and production, so every
+consequential decision can be attributed to a person afterwards.
 
-> **This repository is the reusable source of truth for Agentic SDLC.**
+> **This repository is the reusable source of truth for Aveto.**
+> *(Formerly "Agentic SDLC". The `.agentic/` directory, `/agentic-*` commands and
+> the `agentic-sdlc/trace@N` schema keep their names — renaming them would break
+> every installed pack and invalidate existing run traces.)*
 > Everything here is intentionally project-agnostic so it can be consumed by
 > multiple products. Each product repo should keep its own `.agentic/` folder
 > with project-specific context — never add product-specific files here.

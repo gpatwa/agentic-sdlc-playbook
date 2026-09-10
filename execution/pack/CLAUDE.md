@@ -1,6 +1,6 @@
-# Agentic SDLC — Autonomous Run Guide
+# Aveto — Autonomous Run Guide
 
-This repo is wired to run the **Agentic SDLC** with autonomous agents. The
+This repo is wired to run **Aveto** with autonomous agents. The
 methodology (roles, templates, gates, rules) lives in the playbook at:
 
 > `{{PLAYBOOK_PATH}}`

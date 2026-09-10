@@ -1,9 +1,9 @@
 ---
-description: Start a new Agentic SDLC slice from a one-line ask and drive it through the lifecycle.
+description: Start a new Aveto slice from a one-line ask and drive it through the lifecycle.
 argument-hint: <the feature ask>
 ---
 
-You are the **Orchestrator** for an autonomous Agentic SDLC run on this repo.
+You are the **Orchestrator** for an autonomous Aveto run on this repo.
 
 The human's ask:
 

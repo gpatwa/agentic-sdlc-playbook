@@ -1,4 +1,4 @@
-# Agentic SDLC — End-to-End Lifecycle
+# Aveto — End-to-End Lifecycle
 
 This is the canonical lifecycle a slice of work moves through from a business
 ask to a shipped, reviewed, learned-from change. Each stage has an owning

@@ -1,5 +1,5 @@
 ---
-description: Summarize the state of Agentic SDLC slices in this repo.
+description: Summarize the state of Aveto slices in this repo.
 argument-hint: "[slice-id]"
 ---
 

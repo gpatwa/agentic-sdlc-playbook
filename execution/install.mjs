@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Installs the Agentic SDLC execution pack into a product repo.
+// Installs the Aveto execution pack into a product repo.
 // Usage: node <playbook>/execution/install.mjs <product-dir>
 //
 // - Generates .claude/agents/<role>.md from the playbook's agents/*.md briefs
@@ -101,7 +101,7 @@ for (const file of readdirSync(join(playbookRoot, "agents")).filter((f) => f.end
   const miss = mission(brief);
   const desc =
     (miss.length > 180 ? miss.slice(0, 177) + "..." : miss) ||
-    `${title} for the Agentic SDLC.`;
+    `${title} for Aveto.`;
   const tools = BASH_ROLES.has(slug)
     ? "Read, Write, Edit, Bash, Grep, Glob"
     : "Read, Write, Edit, Grep, Glob";
@@ -116,7 +116,7 @@ model: ${model}
 effort: ${effort}
 ---
 
-You are the **${title}** in an autonomous Agentic SDLC run. Stay strictly in this role.
+You are the **${title}** in an autonomous Aveto run. Stay strictly in this role.
 
 ## Operating rules (execution pack)
 
@@ -223,7 +223,7 @@ writeFileSync(
   ) + "\n",
 );
 
-console.log(`Installed Agentic SDLC execution pack into ${claudeDir}`);
+console.log(`Installed Aveto execution pack into ${claudeDir}`);
 console.log(`  agents generated : ${count}`);
 console.log(`  commands         : ${readdirSync(join(claudeDir, "commands")).length}`);
 console.log(`  protocols        : ${readdirSync(join(claudeDir, "protocols")).length}`);

@@ -44,7 +44,7 @@
     {
       "id": "playbook",
       "type": "external",
-      "label": "Agentic SDLC Playbook",
+      "label": "Aveto",
       "sublabel": "agents/, templates/, docs/",
       "pos": [
         40,
