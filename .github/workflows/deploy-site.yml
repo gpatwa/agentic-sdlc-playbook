@@ -1,0 +1,89 @@
+# Deploys the public site to Cloudflare Pages.
+#
+# This workflow is written to be driven by an agent with a human as approver,
+# not by a human clicking through a dashboard. Everything that can be
+# automated is; the two things that are not are deliberate:
+#
+#   1. Creating the Cloudflare API token. That is a credential, and this
+#      playbook's own HUMAN_APPROVAL_RULES.md treats credential handling as
+#      something an agent must never do. See docs/DEPLOYMENT.md.
+#   2. Approving the deploy itself. Promoting to a live domain is a rule-3
+#      external-effect change. The `production` environment below is that gate
+#      expressed in CI: the job pauses, a named human approves, GitHub records
+#      who and when. That record is the point — it is the same evidence the
+#      product itself is built to produce.
+#
+# Everything else — validation, build, deploy, rollback — runs unattended.
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", ".github/workflows/deploy-site.yml", "scripts/check-site.mjs"]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why this deploy is being run (recorded in the run log)"
+        required: false
+        default: "manual dispatch"
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: deploy-site
+  cancel-in-progress: false
+
+jobs:
+  # Gate first. A deploy that fails validation should never reach the human —
+  # asking someone to approve a broken build wastes the one scarce resource
+  # in the loop.
+  verify:
+    name: Site gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Structure, themes, anchors, origins
+        run: node scripts/check-site.mjs site
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: verify
+    runs-on: ubuntu-latest
+    # The human gate. Configure required reviewers on this environment once
+    # (scripts/setup-deploy.sh does it via the API) and every deploy from then
+    # on pauses here for a named approval that GitHub records.
+    environment:
+      name: production
+      url: https://aveto.dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=aveto --branch=main
+
+      # Post-deploy verification, in the same spirit as
+      # agents/production-verification.md: a deploy is not "done" because the
+      # command exited 0. Check the live origin actually serves the page.
+      - name: Verify live
+        run: |
+          for i in 1 2 3 4 5; do
+            code=$(curl -s -o /tmp/live.html -w "%{http_code}" -m 15 https://aveto.dev/ || echo 000)
+            if [ "$code" = "200" ] && grep -q "accountable autonomy" /tmp/live.html; then
+              echo "live check passed (HTTP $code, expected content present)"
+              exit 0
+            fi
+            echo "attempt $i: HTTP $code — retrying in 10s"
+            sleep 10
+          done
+          echo "::error::site did not serve expected content after deploy"
+          exit 1

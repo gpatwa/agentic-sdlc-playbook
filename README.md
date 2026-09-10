@@ -118,6 +118,12 @@ agentic-sdlc/
     enterprise-saas-future.md
   examples/                        ← end-to-end worked examples
     saved-items-bulk-delete/       ← one slice traced through every stage
+  site/                            ← the public site, deployed to aveto.dev
+    index.html
+    _headers                       ← CSP + security headers for Cloudflare Pages
+  scripts/
+    check-site.mjs                 ← site gates: structure, theme tokens, anchors, origins
+    setup-deploy.sh                ← one-time Cloudflare + GitHub setup, idempotent
   execution/                       ← makes the playbook self-running (.claude/ pack)
     install.mjs                    ← generates subagents from briefs; installs the pack
     pack/                          ← commands, protocols, CLAUDE template

@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Aveto is the system of record for software your agents build, deploy and run. Every consequential decision carries a named human and an unbroken record.">
+<meta property="og:title" content="Aveto">
+<meta property="og:description" content="Move at agent speed. Prove every decision.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://aveto.dev/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23A87515' stroke-width='4'/%3E%3Ccircle cx='22' cy='10' r='4' fill='%23A87515'/%3E%3C/svg%3E">
+<title>Aveto</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+</head>
+<body>
+<style>
+  :root {
+    --ground: #FBFAF7;
+    --surface: #FFFFFF;
+    --sunk: #F2F0EB;
+    --ink: #14161A;
+    --ink-soft: #3A4048;
+    --muted: #6B7480;
+    --faint: #676F7B;
+    --rule: #E2DFD8;
+    --rule-strong: #CBC7BE;
+    --gold: #A87515;
+    --gold-text: #85590C;
+    --gold-bright: #C68D22;
+    --gold-wash: #FAF2DF;
+    --pass: #2E7D5B;
+    --pass-wash: #E7F2EC;
+    --block: #B0453D;
+    --block-wash: #FAEAE8;
+    --shadow-sm: 0 1px 2px rgba(20, 22, 26, .05);
+    --shadow: 0 2px 4px rgba(20, 22, 26, .05), 0 12px 32px -16px rgba(20, 22, 26, .22);
+    --f-display: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --f-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0B0E13;
+      --surface: #12161D;
+      --sunk: #171C25;
+      --ink: #E8ECF2;
+      --ink-soft: #C2CAD5;
+      --muted: #8B95A3;
+      --faint: #656F7D;
+      --rule: #232A34;
+      --rule-strong: #333C48;
+      --gold: #E0AC4E;
+      --gold-text: #EBBE72;
+      --gold-bright: #F0C169;
+      --gold-wash: #221A0C;
+      --pass: #5FBE92;
+      --pass-wash: #10231A;
+      --block: #E27C74;
+      --block-wash: #26100E;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+      --shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 12px 32px -16px rgba(0, 0, 0, .8);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0B0E13;
+    --surface: #12161D;
+    --sunk: #171C25;
+    --ink: #E8ECF2;
+    --ink-soft: #C2CAD5;
+    --muted: #8B95A3;
+    --faint: #656F7D;
+    --rule: #232A34;
+    --rule-strong: #333C48;
+    --gold: #E0AC4E;
+    --gold-text: #EBBE72;
+    --gold-bright: #F0C169;
+    --gold-wash: #221A0C;
+    --pass: #5FBE92;
+    --pass-wash: #10231A;
+    --block: #E27C74;
+    --block-wash: #26100E;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+    --shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 12px 32px -16px rgba(0, 0, 0, .8);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  .narrow { max-width: 720px; }
+
+  /* ---------- nav ---------- */
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--rule);
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 1.22rem;
+    letter-spacing: -.02em;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .brand .mark {
+    width: 15px; height: 15px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    position: relative;
+    flex: none;
+  }
+  .brand .mark::after {
+    content: "";
+    position: absolute;
+    inset: 3px 3px auto auto;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    top: 3px; right: 3px;
+  }
+
+  .nav-links { display: flex; gap: 26px; font-size: .9rem; color: var(--muted); flex-wrap: wrap; }
+  .nav-links a { color: inherit; text-decoration: none; }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ---------- buttons ---------- */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--f-body);
+    font-size: .92rem;
+    font-weight: 600;
+    padding: 11px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: transform .12s ease, background .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--ink); color: var(--ground); }
+  .btn-primary:hover { background: var(--gold); color: #14161A; }
+  .btn-ghost { border-color: var(--rule-strong); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+  a:focus-visible, .btn:focus-visible, details summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  /* ---------- hero ---------- */
+
+  .hero { padding: 78px 0 20px; }
+
+  .brandline {
+    font-family: var(--f-display);
+    font-size: clamp(.95rem, 1.5vw, 1.08rem);
+    font-weight: 600;
+    letter-spacing: .01em;
+    color: var(--gold-text);
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+  .brandline::before {
+    content: "";
+    width: 26px; height: 2px;
+    background: var(--gold);
+    flex: none;
+  }
+
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6.2vw, 4.25rem);
+    line-height: 1.03;
+    letter-spacing: -.033em;
+    margin: 0 0 24px;
+    max-width: 17ch;
+    text-wrap: balance;
+  }
+
+  h1 .em { color: var(--gold); }
+
+  .hero-sub {
+    font-size: clamp(1.04rem, 1.9vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 32px;
+  }
+
+  .hero-sub strong { color: var(--ink); font-weight: 600; }
+
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* ---------- lifecycle rail ---------- */
+
+  .rail-block { margin: 66px 0 14px; }
+
+  .rail-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 12px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .rail {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--rule);
+  }
+
+  .phase {
+    background: var(--surface);
+    padding: 20px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+
+  .phase.covered { background: var(--gold-wash); }
+
+  .phase-top {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .phase-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold);
+    flex: none;
+  }
+
+  .phase h3 {
+    font-family: var(--f-display);
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    margin: 0;
+  }
+
+  .phase p {
+    margin: 0;
+    font-size: .87rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .gates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 4px;
+  }
+
+  .gate {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .02em;
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    padding: 2px 6px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .stop-marker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--block);
+    letter-spacing: .03em;
+  }
+  .stop-marker::before {
+    content: "";
+    width: 33%;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--block) 0 5px, transparent 5px 10px);
+    flex: none;
+  }
+
+  /* ---------- sections ---------- */
+
+  section { padding: 84px 0; border-top: 1px solid var(--rule); }
+  section.flush { border-top: none; }
+
+  .sec-eyebrow {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 14px;
+  }
+
+  h2 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+    line-height: 1.12;
+    letter-spacing: -.025em;
+    margin: 0 0 18px;
+    max-width: 20ch;
+    text-wrap: balance;
+  }
+
+  .sec-lede {
+    font-size: 1.04rem;
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: 0 0 34px;
+    line-height: 1.6;
+  }
+
+  /* ---------- stat band ---------- */
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 3px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .stat { background: var(--surface); padding: 24px 22px; }
+
+  .stat .fig {
+    font-family: var(--f-display);
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+    display: block;
+    margin-bottom: 9px;
+  }
+
+  .stat .fig-sub {
+    display: block;
+    font-family: var(--f-mono);
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .08em;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .stat p { margin: 0; font-size: .87rem; line-height: 1.5; color: var(--muted); }
+  .stat cite { display: block; margin-top: 8px; font-family: var(--f-mono); font-size: 10px; color: var(--faint); font-style: normal; letter-spacing: .04em; }
+
+  /* ---------- capability ---------- */
+
+  .cap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 52px;
+    align-items: center;
+    padding: 52px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .cap:last-of-type { border-bottom: none; padding-bottom: 0; }
+  .cap:first-of-type { padding-top: 0; }
+
+  .cap-num {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: .1em;
+    margin-bottom: 12px;
+  }
+
+  .cap h3 {
+    font-family: var(--f-display);
+    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+    font-weight: 600;
+    letter-spacing: -.02em;
+    line-height: 1.2;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+
+  .cap p { margin: 0 0 14px; color: var(--ink-soft); font-size: .98rem; }
+  .cap p:last-child { margin-bottom: 0; }
+  .cap .aside { font-size: .87rem; color: var(--muted); }
+
+  /* ---------- artifact panes ---------- */
+
+  .pane {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .pane-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--sunk);
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .pane-body { padding: 18px; font-family: var(--f-mono); font-size: 12.5px; line-height: 1.75; overflow-x: auto; }
+
+  .pill {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .pill.block { background: var(--block-wash); color: var(--block); }
+  .pill.pass { background: var(--pass-wash); color: var(--pass); }
+  .pill.hold { background: var(--gold-wash); color: var(--gold); }
+
+  .ln { display: block; white-space: pre-wrap; word-break: break-word; }
+  .k { color: var(--muted); }
+  .v { color: var(--ink); }
+  .g { color: var(--gold); }
+  .r { color: var(--block); }
+  .p { color: var(--pass); }
+  .c { color: var(--faint); }
+
+  .refusal { font-family: var(--f-body); font-size: .93rem; line-height: 1.62; }
+  .refusal p { margin: 0 0 11px; color: var(--ink-soft); }
+  .refusal p:last-child { margin-bottom: 0; }
+  .refusal .named { color: var(--block); font-weight: 600; }
+
+  /* ---------- frameworks ---------- */
+
+  .fw-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 3px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .fw {
+    background: var(--surface);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .fw .name { font-family: var(--f-display); font-weight: 600; font-size: .97rem; }
+  .fw .role { font-size: .8rem; color: var(--muted); line-height: 1.45; }
+
+  /* ---------- audience ---------- */
+
+  .aud-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+    gap: 16px;
+  }
+
+  .aud {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .aud h3 { font-family: var(--f-display); font-size: 1.05rem; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+  .aud p { margin: 0; font-size: .89rem; color: var(--muted); line-height: 1.55; }
+  .aud .trigger {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ---------- faq ---------- */
+
+  details {
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 0;
+  }
+  details summary {
+    cursor: pointer;
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -.01em;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: center;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: "+";
+    font-family: var(--f-mono);
+    font-size: 1.1rem;
+    color: var(--gold);
+    flex: none;
+  }
+  details[open] summary::after { content: "\2212"; }
+  details p { margin: 12px 0 0; color: var(--ink-soft); font-size: .95rem; max-width: 68ch; }
+
+  /* ---------- closing ---------- */
+
+  .closer {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 54px 44px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .closer h2 { margin: 0 auto 16px; max-width: 18ch; }
+  .closer p { color: var(--ink-soft); max-width: 52ch; margin: 0 auto 28px; }
+  .closer .cta-row { justify-content: center; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    margin-top: 84px;
+    padding: 34px 0 56px;
+    display: flex;
+    justify-content: space-between;
+    gap: 22px;
+    flex-wrap: wrap;
+    font-size: .85rem;
+    color: var(--muted);
+  }
+  footer .tag { font-family: var(--f-mono); font-size: 11px; letter-spacing: .05em; color: var(--faint); }
+
+  @media (max-width: 860px) {
+    .cap { grid-template-columns: 1fr; gap: 28px; }
+    .rail { grid-template-columns: 1fr; }
+    .stop-marker::before { width: 20%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    .btn:hover { transform: none; }
+  }
+</style>
+
+<div class="shell">
+
+  <nav>
+    <div class="brand"><span class="mark"></span>Aveto</div>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#span">Build · Deploy · Run</a>
+      <a href="#evidence">The record</a>
+      <a href="#who">Who it's for</a>
+    </div>
+    <a class="btn btn-ghost" href="#closer">Request access</a>
+  </nav>
+
+  <header class="hero">
+    <p class="brandline">Move at agent speed. Prove every decision.</p>
+    <h1>Move beyond agentic engineering to <span class="em">accountable autonomy</span>.</h1>
+    <p class="hero-sub">Aveto helps teams turn agent autonomy <strong>up</strong>, not down: a lifecycle that refuses unsafe work before it's built, verification that's structurally independent of the agent that wrote the code, and deploys to Azure, AWS or GCP with a named human on every gate.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#closer">Request access</a>
+      <a class="btn btn-ghost" href="#evidence">See a run record</a>
+    </div>
+
+    <div class="rail-block">
+      <div class="rail-label">
+        <span>One record, three phases</span>
+        <span>Every seam carries a named human</span>
+      </div>
+      <div class="rail">
+        <div class="phase covered">
+          <div class="phase-top"><span class="phase-dot"></span><h3>Build</h3></div>
+          <p>Intake, scope, architecture, implementation, independent QA and security review.</p>
+          <div class="gates"><span class="gate">refusal at intake</span><span class="gate">independent verify</span></div>
+        </div>
+        <div class="phase covered">
+          <div class="phase-top"><span class="phase-dot"></span><h3>Deploy</h3></div>
+          <p>Plan, validate, then deploy to Azure, AWS or GCP — validation never self-certified.</p>
+          <div class="gates"><span class="gate">separation of duties</span><span class="gate">named sign-off</span></div>
+        </div>
+        <div class="phase covered">
+          <div class="phase-top"><span class="phase-dot"></span><h3>Run</h3></div>
+          <p>Production verification, auto-rollback on regression, on-call and customer response.</p>
+          <div class="gates"><span class="gate">rollback pre-approved</span><span class="gate">draft, never send</span></div>
+        </div>
+      </div>
+      <div class="stop-marker">Most agentic tools stop at the merge — one third of the way along</div>
+    </div>
+  </header>
+
+  <section id="why">
+    <p class="sec-eyebrow">Why now</p>
+    <h2>Autonomy is outrunning the ability to account for it.</h2>
+    <p class="sec-lede">Agents already write, review and deploy production code. What no team can currently produce is the record of who authorized any of it — and as of last month, that record is a legal requirement in the EU.</p>
+    <div class="stats">
+      <div class="stat">
+        <span class="fig">82%</span>
+        <p>of enterprises already have AI agents or workflows their own security teams did not know existed.</p>
+        <cite>Industry survey, 2026</cite>
+      </div>
+      <div class="stat">
+        <span class="fig">40%</span>
+        <p>of agentic AI projects are forecast to be cancelled by 2027 — attributed to governance structures never built for autonomous agents.</p>
+        <cite>Gartner</cite>
+      </div>
+      <div class="stat">
+        <span class="fig">30%</span>
+        <p>of organizations have reached governance maturity level three or above. The other seven in ten are scaling agents on an older foundation.</p>
+        <cite>Industry survey, 2026</cite>
+      </div>
+      <div class="stat">
+        <span class="fig">Aug 2<span class="fig-sub">2026</span></span>
+        <p>EU AI Act high-risk provisions entered into force in 2026, carrying obligations for human oversight, auditability and conformity assessment.</p>
+        <cite>European Commission</cite>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <p class="sec-eyebrow">How it works</p>
+    <h2>Three things nothing else in the category does.</h2>
+    <p class="sec-lede">Not guardrail text an agent is asked politely to follow. Structural properties of the lifecycle, each producing an artifact you can hand to someone who wasn't there.</p>
+
+    <div class="cap">
+      <div>
+        <div class="cap-num">01</div>
+        <h3>It refuses work it shouldn't build.</h3>
+        <p>Every other tool's guardrails are advisory — steering text the agent may or may not honor. Aveto evaluates an incoming request against your safety invariants <em>at intake</em> and blocks the ones that conflict, naming the conflict and offering a safe reframe instead.</p>
+        <p class="aside">Proven neutrally: the agents weren't told it was a test. Given a request to auto-purge user data with no confirmation, the run stopped before a line was written.</p>
+      </div>
+      <div class="pane">
+        <div class="pane-bar"><span>intake · slice-b3</span><span class="pill block">Blocked</span></div>
+        <div class="pane-body refusal">
+          <p><span class="named">Cannot proceed.</span> This request conflicts with four recorded invariants:</p>
+          <p><span class="c">01</span> &nbsp;Items are soft-deleted — "purge" is destructive and irreversible.<br>
+             <span class="c">02</span> &nbsp;Deletion requires confirmation — "no prompt" removes it.<br>
+             <span class="c">03</span> &nbsp;Broad-filter delete is explicitly forbidden.<br>
+             <span class="c">04</span> &nbsp;A cross-user scheduler exceeds the current data boundary.</p>
+          <p>Weakening an invariant requires human approval and is beyond this role's authority. No slice opened.</p>
+          <p class="c">Safe reframe available — archive with per-user opt-in and a reversible window.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cap">
+      <div>
+        <div class="cap-num">02</div>
+        <h3>The verifier is never the implementer.</h3>
+        <p>Parallel agents make a codebase faster. They don't make it <em>accountable</em> — an agent reviewing its own work is the same agent. In Aveto, QA and security verification are performed by roles structurally separated from the one that wrote the code, and a deployment agent is forbidden from marking its own plan validated.</p>
+        <p class="aside">This is the property an auditor looks for and a throughput-optimized agent swarm cannot offer by construction.</p>
+      </div>
+      <div class="pane">
+        <div class="pane-bar"><span>deploy · validation chain</span><span class="pill hold">Held</span></div>
+        <div class="pane-body">
+          <span class="ln"><span class="k">prepare</span>   <span class="v">plan drafted, IaC generated</span>   <span class="p">done</span></span>
+          <span class="ln"><span class="k">validate</span>  <span class="v">config · IaC · RBAC · identity</span>  <span class="p">done</span></span>
+          <span class="ln"><span class="k">status</span>    <span class="g">Validated</span></span>
+          <span class="ln"><span class="c">          set by validate — deploy cannot set this</span></span>
+          <span class="ln"> </span>
+          <span class="ln"><span class="k">deploy</span>    <span class="r">awaiting named human sign-off</span></span>
+          <span class="ln"><span class="c">          rule 3 · external-effect change</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cap">
+      <div>
+        <div class="cap-num">03</div>
+        <h3>Every gate has a name on it.</h3>
+        <p>Logs record that something happened. A record of accountability names <em>who decided</em>. Aveto treats the approver as an identity, never a role — no "approved by the operator," no silent timeout, no consent inferred from silence.</p>
+        <p class="aside">That single field is what conformity assessment, separation-of-duties review and every "who signed off on this" question a year later all depend on.</p>
+      </div>
+      <div class="pane">
+        <div class="pane-bar"><span>trace · schema v2</span><span class="pill pass">Landed</span></div>
+        <div class="pane-body">
+          <span class="ln"><span class="k">"approvedBy"</span>: <span class="g">"a.rivera"</span>,</span>
+          <span class="ln"><span class="k">"approvedAt"</span>: <span class="v">"2026-09-08T14:02:11Z"</span>,</span>
+          <span class="ln"><span class="k">"rule"</span>: <span class="v">"external-effect / deploy"</span>,</span>
+          <span class="ln"><span class="k">"gateCatches"</span>: [</span>
+          <span class="ln">  { <span class="k">"id"</span>: <span class="v">"SEC-1"</span>, <span class="k">"caughtBy"</span>: <span class="v">"security"</span>,</span>
+          <span class="ln">    <span class="k">"detectedAt"</span>: <span class="v">"…T11:20Z"</span>,</span>
+          <span class="ln">    <span class="k">"resolvedAt"</span>: <span class="v">"…T12:04Z"</span> }</span>
+          <span class="ln">],</span>
+          <span class="ln"><span class="k">"rollbackPlan"</span>: <span class="p">"pre-approved, executable"</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="span">
+    <p class="sec-eyebrow">The span</p>
+    <h2>The record doesn't stop at the merge.</h2>
+    <p class="sec-lede">Spec frameworks end when code lands. Deployment platforms begin when an artifact appears, and never learn why the code was written or who asked for it. Aveto carries one identity-attributed record across all three seams — which is what makes the chain worth anything.</p>
+
+    <div class="cap">
+      <div>
+        <div class="cap-num">Deploy</div>
+        <h3>Cloud-agnostic by gate, not by rewrite.</h3>
+        <p>Aveto doesn't rebuild your deployment engine — it wraps the one you already trust. Azure first, then AWS and GCP, each through the same prepare → validate → deploy chain with the same human gate at the same seam.</p>
+        <p class="aside">What travels between clouds isn't the infrastructure code. It's that the deploy was gated, attributed and evidenced identically no matter which engine executed it.</p>
+      </div>
+      <div>
+        <div class="cap-num">Run</div>
+        <h3>After the deploy is still on the record.</h3>
+        <p>Production verification checks the live service against the safety invariants the spec actually named — not just a health ping — and on a bad signal executes the rollback plan that was approved when the spec was reviewed.</p>
+        <p class="aside">On-call diagnoses read-only and returns code fixes as new slices through the same gates. Customer replies are drafted, never sent: a human verifies the resolution and authorizes the message in one decision.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="evidence">
+    <p class="sec-eyebrow">The record</p>
+    <h2>Built to be handed to someone who wasn't there.</h2>
+    <p class="sec-lede">Every framework below asks a version of the same question — who authorized this, what did the system decide, and was that consistent with policy. Aveto's artifacts answer it by construction, because they were produced at the moment the decision was made rather than reconstructed afterwards.</p>
+    <div class="fw-grid">
+      <div class="fw"><span class="name">EU AI Act</span><span class="role">Human oversight, auditability, conformity assessment</span></div>
+      <div class="fw"><span class="name">ISO 42001</span><span class="role">AI management system controls</span></div>
+      <div class="fw"><span class="name">NIST AI RMF</span><span class="role">Risk tiering and documented mitigation</span></div>
+      <div class="fw"><span class="name">SOC 2</span><span class="role">Change management and access control evidence</span></div>
+      <div class="fw"><span class="name">ISO 27001</span><span class="role">Separation of duties, secure change</span></div>
+      <div class="fw"><span class="name">GDPR</span><span class="role">Data classification, residency, retention at design time</span></div>
+    </div>
+  </section>
+
+  <section id="who">
+    <p class="sec-eyebrow">Who it's for</p>
+    <h2>Teams whose build process just entered audit scope.</h2>
+    <p class="sec-lede">Not everyone needs this. The teams that do have one thing in common: the software was built by agents, and someone external is going to ask how.</p>
+    <div class="aud-grid">
+      <div class="aud">
+        <h3>Regulated product teams</h3>
+        <p>Fintech, health-tech and gov-tech shipping AI-built software into markets where the build process itself is now examinable.</p>
+        <span class="trigger">Trigger · first audit cycle</span>
+      </div>
+      <div class="aud">
+        <h3>Platform teams scaling agents</h3>
+        <p>Groups that have proven agents work on a pilot and now have to justify raising the autonomy ceiling across an org.</p>
+        <span class="trigger">Trigger · pilot to production</span>
+      </div>
+      <div class="aud">
+        <h3>Engineering leaders after an incident</h3>
+        <p>Where an agent-authored change reached production and the reconstruction afterwards took days it shouldn't have.</p>
+        <span class="trigger">Trigger · post-incident review</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <p class="sec-eyebrow">Common questions</p>
+    <h2>Straight answers.</h2>
+    <div class="narrow">
+      <details open>
+        <summary>Is this a coding agent?</summary>
+        <p>No. Aveto governs the agents you already use rather than replacing them. It sits a layer above the worker, which is why the record survives you changing models, harnesses or cloud providers underneath it.</p>
+      </details>
+      <details>
+        <summary>Our agents already run under scoped credentials &mdash; isn't that enough?</summary>
+        <p>Scoped credentials answer a different question. They decide <em>what an agent is able to touch</em>. They say nothing about whether a particular action was authorized, or leave anything behind afterwards.</p>
+        <p>Give an agent a senior engineer's permissions and it can do everything that engineer can do &mdash; autonomously, at machine speed, without anyone sanctioning any individual action. In an access log, a deploy a named human approved and a deploy nobody saw look identical: both were permitted. Permission is a <strong>capability</strong> boundary; accountability is a <strong>record</strong> of who decided, when, and against which rule.</p>
+        <p>Aveto assumes your credential scoping is already correct and adds the layer above it &mdash; the one an auditor asks for when scoping alone turns out not to have been the question.</p>
+      </details>
+      <details>
+        <summary>How is this different from spec-driven development?</summary>
+        <p>Spec-driven tools structure how software gets written, and several good ones exist. All of them end at the merge. Aveto's record continues through deployment, production verification and customer response — and attributes every gate along the way to a named person.</p>
+      </details>
+      <details>
+        <summary>Doesn't adding gates slow teams down?</summary>
+        <p>It's the opposite trade. The reason most organizations cap agent autonomy is that they can't account for what agents did. Removing that uncertainty is what makes raising the ceiling defensible — the gates are how you go faster, not the tax you pay for it.</p>
+      </details>
+      <details>
+        <summary>Which clouds are supported?</summary>
+        <p>Azure today, AWS and GCP next, each wrapping the deployment engine you already use rather than replacing it. The gate, the attribution and the evidence format are identical across all three.</p>
+      </details>
+      <details>
+        <summary>What happens when a deployment goes wrong?</summary>
+        <p>Production verification checks the live service against the invariants the spec named and executes the rollback plan that was approved at spec review — no second approval round-trip, because that decision was already made deliberately. The executed rollback is itself surfaced as an audit event.</p>
+      </details>
+    </div>
+  </section>
+
+  <section id="closer" class="flush">
+    <div class="closer">
+      <h2>Let the agents do more.</h2>
+      <p>Aveto is in private development. If your team is scaling agent autonomy into regulated or production-critical work, we'd like to hear what you're running into.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#closer">Request access</a>
+        <a class="btn btn-ghost" href="#how">See how it works</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="brand"><span class="mark"></span>Aveto</div>
+    <span class="tag">Move at agent speed. Prove every decision.</span>
+  </footer>
+
+</div>
+
+</body>
+</html>
