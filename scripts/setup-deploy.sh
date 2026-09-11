@@ -1,72 +1,115 @@
 #!/usr/bin/env bash
-# One-time setup for the site deployment pipeline.
+# One-time setup for the aveto.dev deployment pipeline.
 #
-# Designed to be run by an agent. Every step that CAN be automated is; the one
-# that cannot is the credential itself, which this playbook's own rules say an
-# agent must never handle (HUMAN_APPROVAL_RULES.md — "Prohibited: entering API
-# keys or tokens"). The script therefore reads the token from the environment
-# and never prints, logs or stores it.
+# Human input required: ONE value, once, ever — a Cloudflare API token.
+# Everything else is discovered or derived: account id, zone id, repo,
+# reviewer, project, domain, secrets, environment protection.
+#
+# Why that one value cannot be automated away:
+#   Creating a credential requires an already-authenticated caller, so the
+#   first credential has to come from a human — the same bootstrap every
+#   CI system has. It is also the one thing docs/HUMAN_APPROVAL_RULES.md
+#   prohibits an agent from handling. The script reads it from the
+#   environment, pipes it to `gh secret set` on stdin so it never reaches
+#   argv or shell history, and never prints it.
 #
 # Usage:
-#   export CLOUDFLARE_API_TOKEN=...      # human creates + exports; see docs/DEPLOYMENT.md
-#   export CLOUDFLARE_ACCOUNT_ID=...
-#   ./scripts/setup-deploy.sh [github-reviewer-login]
+#   export CLOUDFLARE_API_TOKEN=...
+#   ./scripts/setup-deploy.sh              # idempotent; safe to re-run
 #
-# Idempotent: safe to re-run.
+# Optional overrides: PROJECT, DOMAIN, REVIEWER
 
 set -euo pipefail
 
-PROJECT="aveto"
-DOMAIN="aveto.dev"
-REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
-REVIEWER="${1:-$(gh api user -q .login)}"
+PROJECT="${PROJECT:-aveto}"
+DOMAIN="${DOMAIN:-aveto.dev}"
 
-need() { command -v "$1" >/dev/null || { echo "missing required tool: $1" >&2; exit 1; }; }
-need gh; need curl; need jq
+for t in gh curl jq; do command -v "$t" >/dev/null || { echo "missing required tool: $t" >&2; exit 1; }; done
+: "${CLOUDFLARE_API_TOKEN:?export CLOUDFLARE_API_TOKEN first — see docs/DEPLOYMENT.md}"
 
-: "${CLOUDFLARE_API_TOKEN:?set CLOUDFLARE_API_TOKEN (see docs/DEPLOYMENT.md)}"
-: "${CLOUDFLARE_ACCOUNT_ID:?set CLOUDFLARE_ACCOUNT_ID}"
-
-cf() {
-  curl -sS -X "$1" \
-    "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}${2}" \
+api() { # api METHOD PATH [BODY]
+  curl -sS -X "$1" "https://api.cloudflare.com/client/v4$2" \
     -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
     -H "Content-Type: application/json" \
     ${3:+--data "$3"}
 }
+ok() { jq -e '.success == true' >/dev/null 2>&1; }
+step() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 
-echo "1/4  Cloudflare Pages project '${PROJECT}'"
-if cf GET "/pages/projects/${PROJECT}" | jq -e '.success' >/dev/null 2>&1; then
-  echo "     already exists — leaving as is"
+step "1/6  Verify the token"
+if ! api GET /user/tokens/verify | ok; then
+  cat >&2 <<'ERR'
+   The token was rejected. Create one at:
+     Cloudflare → My Profile → API Tokens → Create Token → Custom token
+   with these permissions:
+     Account → Cloudflare Pages → Edit
+     Zone    → DNS             → Edit   (on the target zone)
+ERR
+  exit 1
+fi
+echo "      token valid"
+
+step "2/6  Discover account and zone"
+ACCOUNT_ID="$(api GET /accounts | jq -r '.result[0].id // empty')"
+[ -n "$ACCOUNT_ID" ] || { echo "   token cannot list accounts — it is missing Account scope" >&2; exit 1; }
+ACCOUNT_NAME="$(api GET /accounts | jq -r '.result[0].name // "?"')"
+echo "      account: ${ACCOUNT_NAME} (${ACCOUNT_ID:0:8}…)"
+
+ZONE_ID="$(api GET "/zones?name=${DOMAIN}" | jq -r '.result[0].id // empty')"
+if [ -n "$ZONE_ID" ]; then
+  echo "      zone:    ${DOMAIN} (${ZONE_ID:0:8}…)"
 else
-  cf POST "/pages/projects" \
-    "$(jq -nc --arg n "$PROJECT" '{name:$n, production_branch:"main"}')" \
-    | jq -e '.success' >/dev/null && echo "     created"
+  echo "      zone:    ${DOMAIN} not found on this account — custom domain step will be skipped"
 fi
 
-echo "2/4  Custom domain ${DOMAIN}"
-if cf GET "/pages/projects/${PROJECT}/domains" | jq -e --arg d "$DOMAIN" '.result[]?|select(.name==$d)' >/dev/null 2>&1; then
-  echo "     already attached"
+step "3/6  Cloudflare Pages project '${PROJECT}'"
+if api GET "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}" | ok; then
+  echo "      exists already"
 else
-  cf POST "/pages/projects/${PROJECT}/domains" \
-    "$(jq -nc --arg n "$DOMAIN" '{name:$n}')" \
-    | jq -e '.success' >/dev/null && echo "     attached (Cloudflare provisions the CNAME + TLS)"
+  api POST "/accounts/${ACCOUNT_ID}/pages/projects" \
+     "$(jq -nc --arg n "$PROJECT" '{name:$n, production_branch:"main"}')" | ok \
+     && echo "      created" || { echo "   failed to create project" >&2; exit 1; }
 fi
 
-echo "3/4  GitHub secrets on ${REPO}"
-# gh reads from stdin so the value never appears in argv or shell history.
-printf '%s' "$CLOUDFLARE_API_TOKEN"  | gh secret set CLOUDFLARE_API_TOKEN  --repo "$REPO"
-printf '%s' "$CLOUDFLARE_ACCOUNT_ID" | gh secret set CLOUDFLARE_ACCOUNT_ID --repo "$REPO"
-echo "     set (values not echoed)"
+step "4/6  Custom domain ${DOMAIN}"
+if [ -z "$ZONE_ID" ]; then
+  echo "      skipped (zone not on this account)"
+elif api GET "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/domains" \
+     | jq -e --arg d "$DOMAIN" '.result[]? | select(.name == $d)' >/dev/null 2>&1; then
+  echo "      already attached"
+else
+  api POST "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/domains" \
+     "$(jq -nc --arg n "$DOMAIN" '{name:$n}')" | ok \
+     && echo "      attached — Cloudflare provisions the CNAME and certificate" \
+     || echo "      could not attach (needs Zone → DNS → Edit); DNS can be pointed manually later"
+fi
 
-echo "4/4  'production' environment with ${REVIEWER} as required approver"
+step "5/6  GitHub secrets and the approval gate"
+REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+REVIEWER="${REVIEWER:-$(gh api user -q .login)}"
 REVIEWER_ID="$(gh api "users/${REVIEWER}" -q .id)"
+
+printf '%s' "$CLOUDFLARE_API_TOKEN" | gh secret set CLOUDFLARE_API_TOKEN  --repo "$REPO"
+printf '%s' "$ACCOUNT_ID"           | gh secret set CLOUDFLARE_ACCOUNT_ID --repo "$REPO"
+echo "      secrets set on ${REPO} (values never echoed)"
+
 gh api -X PUT "repos/${REPO}/environments/production" \
   -F "wait_timer=0" \
   -F "reviewers[][type]=User" \
-  -F "reviewers[][id]=${REVIEWER_ID}" \
-  --silent
-echo "     deploys now pause for ${REVIEWER} and GitHub records who approved"
+  -F "reviewers[][id]=${REVIEWER_ID}" --silent
+echo "      'production' now requires approval from ${REVIEWER}"
 
-echo
-echo "Done. Push to main touching site/** to trigger a gated deploy."
+step "6/6  Prove it works"
+echo "      triggering a run (it will pause for ${REVIEWER} to approve)"
+gh workflow run deploy-site.yml --repo "$REPO" -f reason="setup verification" >/dev/null 2>&1 \
+  && echo "      dispatched — watch: gh run watch --repo ${REPO}" \
+  || echo "      could not dispatch (the workflow must exist on the default branch first)"
+
+cat <<DONE
+
+Setup complete. From here the pipeline is unattended except the approval:
+
+  push to main touching site/**  →  gates  →  ${REVIEWER} approves  →  deploy  →  live check
+
+Nothing above needs repeating. Re-run this script any time; it is idempotent.
+DONE

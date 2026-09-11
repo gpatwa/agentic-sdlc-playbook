@@ -1,19 +1,20 @@
 # Deploys the public site to Cloudflare Pages.
 #
-# This workflow is written to be driven by an agent with a human as approver,
-# not by a human clicking through a dashboard. Everything that can be
-# automated is; the two things that are not are deliberate:
+# Driven by an agent, approved by a human. No dashboard clicking.
 #
-#   1. Creating the Cloudflare API token. That is a credential, and this
-#      playbook's own HUMAN_APPROVAL_RULES.md treats credential handling as
-#      something an agent must never do. See docs/DEPLOYMENT.md.
-#   2. Approving the deploy itself. Promoting to a live domain is a rule-3
-#      external-effect change. The `production` environment below is that gate
-#      expressed in CI: the job pauses, a named human approves, GitHub records
-#      who and when. That record is the point — it is the same evidence the
-#      product itself is built to produce.
+# Setup takes exactly one human-supplied value, once, ever: a Cloudflare API
+# token. Creating a credential needs an already-authenticated caller, so the
+# first one has to come from a person — and HUMAN_APPROVAL_RULES.md forbids an
+# agent handling tokens regardless. scripts/setup-deploy.sh discovers
+# everything else (account id, zone id, repo, reviewer) from that token.
 #
-# Everything else — validation, build, deploy, rollback — runs unattended.
+# The approval below is not a gap in the automation; it is the requirement.
+# Promoting to a live domain is a rule-3 external-effect change, and the
+# `production` environment is that rule expressed in CI — the job pauses, a
+# named human approves, GitHub records who and when. That record is the same
+# evidence this product exists to produce, applied to itself.
+#
+# Everything else — validation, deploy, live verification — runs unattended.
 name: Deploy site
 
 on:
