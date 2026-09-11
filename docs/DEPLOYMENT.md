@@ -32,15 +32,26 @@ and cannot be scripted away. It is also the one thing
 `gh secret set` on stdin so it never reaches argv or shell history, and never
 prints it.
 
-**You do not configure anything.** Open this link — the permissions, scope and
-token name are already filled in. Click *Create Token*, copy the value, done:
+**Use an account-owned token, not a user one.** Cloudflare recommends it for
+credentials that should not be tied to a person, and it matters more than
+usual here: a user token attributes every deploy to one individual even on
+deploys they did not approve, blurring the exact distinction this pipeline
+exists to record. The account owns the credential; a named human owns the
+decision.
 
-[**Create the Aveto deploy token →**](https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22page%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Aveto%20deploy)
+**You do not configure anything.** Open this link — permissions, scope and
+name are already filled in. Click *Create Token*, copy the value:
 
-It pre-selects exactly `Account → Cloudflare Pages → Edit` and
-`Zone → DNS → Edit`, and nothing else. `scripts/setup-deploy.sh` prints the
-same link if you run it without a token, if the token is rejected, or if it
-turns out to be under-scoped — so the error message is always the fix.
+[**Create the Aveto deploy token (account-owned) →**](https://dash.cloudflare.com/?to=/:account/api-tokens&permissionGroupKeys=%5B%7B%22key%22%3A%22page%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%5D&name=Aveto%20deploy)
+
+It pre-selects exactly `Cloudflare Pages → Edit` and `DNS → Edit`, nothing
+else. If your plan cannot create account-owned tokens, the
+[user-owned equivalent](https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22page%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Aveto%20deploy) works identically for deploys — you just
+inherit the attribution caveat above.
+
+`scripts/setup-deploy.sh` prints the same link if you run it without a token,
+if the token is rejected, or if it is under-scoped, so the error message is
+always the fix.
 
 Everything else the setup previously asked for — account id, zone id, repo,
 reviewer — is now discovered from that token or from `gh`. If the token is

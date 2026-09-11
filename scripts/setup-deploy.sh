@@ -28,7 +28,14 @@ PROJECT="${PROJECT:-aveto}"
 DOMAIN="${DOMAIN:-aveto.dev}"
 
 for t in gh curl jq; do command -v "$t" >/dev/null || { echo "missing required tool: $t" >&2; exit 1; }; done
-TOKEN_URL="https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22page%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Aveto%20deploy"
+# Account-owned token, per Cloudflare's own recommendation: a credential that
+# is not tied to a person. It survives someone leaving, and — more to the
+# point here — it keeps the *service* identity separate from the *approving*
+# identity. A user token would attribute every deploy to one person even when
+# they were not the approver, which is precisely the confusion this pipeline
+# exists to avoid.
+TOKEN_URL="https://dash.cloudflare.com/?to=/:account/api-tokens&permissionGroupKeys=%5B%7B%22key%22%3A%22page%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%5D&name=Aveto%20deploy"
+TOKEN_URL_USER="https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22page%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Aveto%20deploy"
 
 token_help() {
   cat >&2 <<HELP
@@ -38,9 +45,13 @@ token_help() {
 
     ${TOKEN_URL}
 
-  It pre-selects exactly:
+  That creates an ACCOUNT-owned token — Cloudflare's recommendation for
+  credentials that should not belong to a person. It pre-selects exactly:
     Account → Cloudflare Pages → Edit
     Zone    → DNS              → Edit
+
+  (If your account cannot create account-owned tokens, the user-owned
+  equivalent is: ${TOKEN_URL_USER})
 
   Then:
     export CLOUDFLARE_API_TOKEN=<the value you copied>
