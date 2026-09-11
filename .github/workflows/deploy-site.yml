@@ -74,17 +74,41 @@ jobs:
 
       # Post-deploy verification, in the same spirit as
       # agents/production-verification.md: a deploy is not "done" because the
-      # command exited 0. Check the live origin actually serves the page.
-      - name: Verify live
+      # command exited 0. Two distinct checks, because they fail for different
+      # reasons and conflating them produced a red run over a healthy deploy.
+      - name: Verify the deployment itself
+        env:
+          URL: ${{ steps.deploy.outputs.deployment-url }}
         run: |
+          test -n "$URL" || { echo "::error::wrangler reported no deployment URL"; exit 1; }
           for i in 1 2 3 4 5; do
-            code=$(curl -s -o /tmp/live.html -w "%{http_code}" -m 15 https://aveto.dev/ || echo 000)
+            code=$(curl -s -o /tmp/live.html -w "%{http_code}" -m 15 -L "$URL" || echo 000)
             if [ "$code" = "200" ] && grep -q "accountable autonomy" /tmp/live.html; then
-              echo "live check passed (HTTP $code, expected content present)"
+              echo "deployment healthy: $URL (HTTP $code, expected content present)"
               exit 0
             fi
             echo "attempt $i: HTTP $code — retrying in 10s"
             sleep 10
           done
-          echo "::error::site did not serve expected content after deploy"
+          echo "::error::deployment at $URL did not serve expected content"
           exit 1
+
+      # The custom domain is a separate concern: DNS and certificate issuance
+      # are asynchronous and outside this workflow's control. A domain that is
+      # still propagating must not mark a healthy deploy as failed — it warns.
+      - name: Verify the custom domain
+        continue-on-error: true
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -s -o /tmp/dom.html -w "%{http_code}" -m 15 -L https://aveto.dev/ || echo 000)
+            if [ "$code" = "200" ] && grep -q "accountable autonomy" /tmp/dom.html; then
+              echo "custom domain healthy: https://aveto.dev/"
+              exit 0
+            fi
+            echo "attempt $i: HTTP $code — retrying in 20s"
+            sleep 20
+          done
+          echo "::warning::https://aveto.dev/ is not serving yet. The deploy is \
+          healthy on *.pages.dev. If this persists, the custom domain is not \
+          attached — re-run scripts/setup-deploy.sh, which reports Cloudflare's \
+          own error if the attach fails."

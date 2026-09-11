@@ -140,16 +140,25 @@ else
 fi
 
 step "4/6  Custom domain ${DOMAIN}"
-if [ -z "$ZONE_ID" ]; then
-  echo "      skipped (zone not on this account)"
-elif api GET "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/domains" \
-     | jq -e --arg d "$DOMAIN" '.result[]? | select(.name == $d)' >/dev/null 2>&1; then
+# Attaching needs only the account id and the domain name. An earlier version
+# gated this on the zone lookup succeeding, which skipped it silently whenever
+# the token could not LIST zones — leaving a working deploy on *.pages.dev and
+# nothing on the custom domain. Always attempt it; report what Cloudflare says.
+if api GET "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/domains" \
+   | jq -e --arg d "$DOMAIN" '.result[]? | select(.name == $d)' >/dev/null 2>&1; then
   echo "      already attached"
 else
-  api POST "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/domains" \
-     "$(jq -nc --arg n "$DOMAIN" '{name:$n}')" | ok \
-     && echo "      attached — Cloudflare provisions the CNAME and certificate" \
-     || echo "      could not attach (needs Zone → DNS → Edit); DNS can be pointed manually later"
+  ATTACH="$(api POST "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/domains" \
+            "$(jq -nc --arg n "$DOMAIN" '{name:$n}')")"
+  if echo "$ATTACH" | ok; then
+    echo "      attached — Cloudflare provisions the CNAME and certificate"
+    echo "      (first issuance can take a few minutes)"
+  else
+    echo "      could not attach. Cloudflare said:" >&2
+    echo "$ATTACH" | jq -r '.errors[]? | "        [\(.code)] \(.message)"' >&2
+    echo "        The domain must be on this Cloudflare account, and the token" >&2
+    echo "        needs Zone → DNS → Edit covering it." >&2
+  fi
 fi
 
 step "5/6  GitHub secrets and the approval gate"
