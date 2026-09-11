@@ -64,8 +64,11 @@ not a universal convention every tool sharing this file follows.
   **Run the Orchestrator from THIS repo, not from the playbook** — the
   subagents are only discoverable from *this* project's `.claude/agents/`.
   A session rooted elsewhere falls back to inlined briefs with **full
-  tools**, silently losing the per-role restriction. If that happens,
-  record in `STATE.md` that least-privilege was not enforced for the run.
+  tools**, silently losing the per-role restriction. If that happens, set
+  `Least-privilege: declared` in `STATE.md` and `leastPrivilegeEnforced:
+  false` + a `leastPrivilegeNote` in `trace.json` (`SLICE_STATE.md`
+  "Machine-readable trace") — the **declared** tier `ADAPTERS.md` invariant
+  4 names. Recording nothing is what's forbidden, not the gap itself.
 - **Budget enforcement:** a pre-spawn hook (`.claude/hooks/`) checks the
   budget before every subagent spawn — see `RUN_ECONOMICS.md`.
 

@@ -141,36 +141,73 @@ from the run" pattern as effort / operator / executor / gateCatches.
 - **T10 · Eval-with-rubrics / trajectory eval (Google).** **Deferred — at 8
   runs it is ceremony, and trajectory data is self-reported.** Revisit at volume.
 - **T11 · Cross-slice memory.** Real gap, not urgent at single-operator scale.
-- **T12 · Restate the adapter invariants as outcomes, then target ACP.**
-  *Raised 2026-09-09 from competitive research — this overturns the parked
-  "second harness adapter" bullet below; read them together.*
-  `ADAPTERS.md` claims provider-neutrality but two of its four invariants are
-  written as **mechanism** requirements, not outcomes: least-privilege tool
-  scoping (`tools:` frontmatter) and a pre-spawn abort hook
-  (`hooks/budget-guard.mjs`). Both are Claude-Code-shaped. A runtime that
-  records an attributable approval by other means currently fails our contract
-  for the wrong reason — we are testing *how* it was enforced rather than
-  *whether the evidence exists*.
-  - **Why now, and not before:** the parked bullet's reasoning was "no mature
-    second runtime exists." That expired. **ACP (Agent Client Protocol)** —
-    Zed-created, Apache-licensed, JSON-RPC over stdio — is documented as
-    adopted by JetBrains, Google, GitHub and 25+ agents, and Devin Desktop
-    (June 2026, on Windsurf) drives Claude Code and Codex through it. There is
-    now a real, adopted standard to write against instead of inventing one.
-  - **Two pieces, in order.** (a) Rewrite invariants 1 and 2 as outcome
-    requirements — *the approval exists, is attributable to a named person, and
-    is durable* — keeping the current hook and `tools:` frontmatter as the
-    Claude Code adapter's *implementation*, not as the contract. (b) Only then
-    assess an ACP adapter.
-  - **Not assumed — still to check.** Whether ACP exposes any pre-spawn
-    interception that can *abort* (the `budget-guard.mjs` equivalent, per
-    `RUN_ECONOMICS.md`'s "checked before every spawn, never reconciled after"),
-    and whether it carries per-agent tool restriction at all. Both are read
-    from ACP's own spec, not from summaries. If neither exists, (a) still
-    stands on its own merit and (b) is dropped.
-  - **Cost of not doing it:** the provider-neutral claim in `ADAPTERS.md` stays
-    aspirational with one adapter and no test, which is the single weakest load-
-    bearing claim in the repo.
+- **T12 · Restate the adapter invariants as outcomes, then target ACP.** ✅
+  *Done 2026-09-11* — (a) executed in full; (b) assessed against ACP's own
+  spec and **dropped**, per the decision rule this ticket pre-committed to
+  before the answer was known.
+  - **(a) Invariants rewritten as outcomes** — `ADAPTERS.md` "Invariants no
+    adapter may weaken" now states 6 items, each checkable from a run's own
+    artefacts rather than from which mechanism produced them:
+    - **Approval attribution** made explicit in invariant 1 — a durable
+      record must be attributable to a *named person*, matching
+      `HUMAN_APPROVAL_RULES.md`'s existing bar. Turned out to already be
+      real practice, not a gap: `APPROVAL_PROTOCOL.md` step 5 has recorded
+      the approver in every run since it was written. The gap was that
+      `ADAPTERS.md` never said so was required.
+    - **Pre-spawn cost check** is now its own invariant (3), separated out
+      from "failure budgets": spend must be checked against budget *before*
+      a stage's cost is incurred, with a spawn that would exceed it never
+      silently allowed. `hooks/budget-guard.mjs` is named as the Claude Code
+      adapter's mechanism for this, not the requirement itself; an adapter
+      without hook-level interception satisfies it via a mandatory
+      Orchestrator-side check written to `STATE.md`'s Budget block before
+      the spawn it gates.
+    - **Least-privilege tool scoping** (4) now names two legitimate
+      satisfaction tiers — **Enforced** (runtime restricts tools
+      mechanically) and **Declared** (the role's brief states its boundary
+      and the run records that enforcement wasn't verified) — promoted from
+      an undocumented fallback (`install.mjs`'s own comment: *"honor it
+      yourself — the boundary is the role's, not the harness's"*) into a
+      named, checkable contract. **Checked, not invented:** three real runs
+      across both product repos (`stash-seed` `saved-item-folders`,
+      `streak-seed` `browser-client` and `security-hardening`) had already
+      recorded this on their own initiative as an ad-hoc
+      `notes.leastPrivilegeEnforced` / `notes.leastPrivilegeNote` pair,
+      exactly the promotion `gateCatches` got from `notes.gatesThatFired`.
+      `leastPrivilegeEnforced` / `leastPrivilegeNote` are now top-level
+      `trace@2` fields (`SLICE_STATE.md`), and `STATE.md`'s header template
+      carries a matching `Least-privilege:` line.
+    - **What's now forbidden is silence, not the gap.** A run at the
+      Declared tier is a weaker adapter than one at Enforced but is spec-
+      compliant, provided it says which tier it got. A run that says
+      neither is what actually fails invariant 4 — previously indistinguishable
+      from an Enforced run on paper.
+    - Verified before landing: 91/91 unit tests unaffected (no test
+      referenced this content), zero dangling `.md` references, `npm test`
+      re-run clean.
+  - **(b) ACP assessed against its own spec — three URLs fetched directly,
+    not summarized from search results:**
+    | Question | Source | Finding |
+    |---|---|---|
+    | Can the client abort a tool call before it executes? | [`protocol/v2/tool-calls.md`](https://agentclientprotocol.com/protocol/v2/tool-calls.md) | **No — cooperative only.** The Agent *"MAY request permission... before proceeding"*; nothing requires it to. An ACP-compliant agent that never calls `session/request_permission` is fully spec-compliant while bypassing all client oversight. Unlike a Claude Code `PreToolUse` hook (fires regardless of the agent's cooperation), this is opt-in by the party being overseen. |
+    | Can the client restrict which tools a session may use? | [`protocol/v2/session-config-options.md`](https://agentclientprotocol.com/protocol/v2/session-config-options.md), [`rfds/v2/client-filesystem-terminal-capabilities.md`](https://agentclientprotocol.com/rfds/v2/client-filesystem-terminal-capabilities.md) | **No.** Capability advertisement is declarative — the client states what it supports, *"Agents then use those fields to decide"* whether to use it. Not client-enforced. The v2 RFD trends further away from this (proposes *removing* filesystem/terminal methods from the core spec entirely). |
+    | Does ACP model one orchestrator spawning many role-scoped agents? | [`protocol/v2/session-setup.md`](https://agentclientprotocol.com/protocol/v2/session-setup.md) | **No — a structural mismatch beyond the two questions above.** *"A session represents a conversation between one client and one agent."* No native multi-agent orchestration concept exists; MCP servers give an agent *tools*, not sub-agents with distinct roles. ACP's shape matches "an editor talks to one coding agent" — closer to how a human talks to Claude Code than to how Claude Code's own Task tool spawns 24 role-scoped subagents underneath. Adopting ACP would mean inventing a mapping (e.g. the Orchestrator becomes an ACP client opening N sessions, one per role) that is a novel architecture, not an adoption of a standard — and the abort/tool-restriction gaps above would apply to each of those N sessions individually. |
+  - **Verdict: neither of the two originally-asked questions holds, and a
+    third, more basic mismatch showed up besides. Per the decision rule this
+    ticket set for itself before checking — "if neither exists, (a) still
+    stands on its own merit and (b) is dropped" — (b) is dropped.** Not
+    because ACP is a bad standard (its adoption and licensing terms are real
+    and unchanged), but because it solves a different problem — bring-your-
+    own-agent inside an editor — than the one this adapter contract needs
+    solved, which is one runtime spawning many narrowly-scoped role agents
+    with client-enforced boundaries. A future ACP integration is plausible
+    on its own separate merits (T08's "ride surfaces you did not build"
+    idea from the positioning work) but is not a second Aveto *adapter* and
+    is not this ticket's concern.
+  - **Cost of not doing (a) before this ticket:** the provider-neutral claim
+    in `ADAPTERS.md` stayed aspirational with one adapter and no test. It
+    is now a precise, checkable contract with one adapter passing it — a
+    smaller but real claim, and an honest one.
 - **T13 · Put `trace@2` on OpenTelemetry GenAI semantic conventions.**
   *Raised 2026-09-10.* The point is not tidiness — it is the **standing caveat
   at the bottom of this file**. Telemetry is self-reported today: agents report
@@ -265,14 +302,20 @@ from the run" pattern as effort / operator / executor / gateCatches.
   pre-spawn hook (`budget-guard.mjs`) and durable resumable state. Different
   primitive, not a competing one — the parked reasoning here is unaffected. What
   it *did* sharpen is T8, which is a genuinely separate question.
-  **Superseded 2026-09-09 — see T12.** The park rested on "no mature second
-  runtime exists," and that premise expired: ACP is an adopted, Apache-licensed
-  interop standard, and a shipped agent-neutral surface (Devin Desktop) already
-  drives Claude Code and Codex through it. The *conclusion* still holds for now —
-  do not write a second adapter yet — but for a different reason. The blocker is
-  no longer the absence of a target; it is that our own contract is written
-  against Claude Code's mechanisms rather than against outcomes. Fix that first
-  (T12a); a second adapter is only assessable afterwards.
+  **Reopened 2026-09-09, re-closed 2026-09-11 — see T12.** The original park
+  rested on "no mature second runtime exists," which had expired: ACP is a
+  real, adopted, Apache-licensed standard. That reopened the question, but
+  checking ACP's own spec (T12, not summaries) closed it again on firmer,
+  more specific ground: ACP's permission model is cooperative, not
+  client-enforced (an agent can simply not ask); it has no client-side tool
+  restriction; and — the deciding fact, not anticipated when this was
+  reopened — it has **no concept of one orchestrator spawning many
+  role-scoped sub-agents at all**, describing a one-client-one-agent
+  conversation instead. The park holds, now for a reason specific to this
+  standard rather than "nothing mature exists yet." T12(a) still stands on
+  its own regardless of any second runtime: the adapter contract is now
+  outcome-checkable, which is the part of this bullet's old reasoning that
+  was actually fixable without one.
 - **Graph orchestration engine** (LangGraph) — no; we do not own a runtime.
 - **Non-engineer contributors** (Monaco thesis) — not our problem; single
   engineer operator.

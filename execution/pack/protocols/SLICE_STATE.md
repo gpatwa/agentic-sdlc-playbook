@@ -26,6 +26,7 @@ the originating conversation.
 - **Release tier:** <1 / 2 / 3 / TBD>
 - **Current stage:** <stage name>
 - **Status:** <in-progress / blocked-on-approval / blocked-on-failure / done>
+- **Least-privilege:** <enforced / declared> — see "Least-privilege tier" below
 - **Started:** <UTC>  ·  **Updated:** <UTC>
 
 ## Stages
@@ -100,6 +101,8 @@ neither is hand-parsed for numbers.
 { "schema": "agentic-sdlc/trace@2", "slice": "<id>", "tier": 2,
   "overlay": false, "landed": true, "started": "<UTC>",
   "operator": "<who drove this run>",
+  "leastPrivilegeEnforced": true,
+  "leastPrivilegeNote": "<why — which tier, and what made it so>",
   "gateCatches": [ { "gate": "<QA|Security|...>", "verdict": "fail",
                      "severity": "<blocker|required-fix|advisory>",
                      "finding": "<one line: what it caught>",
@@ -133,6 +136,28 @@ both when the run predates this or the timestamps weren't captured live —
 `analyze.mjs` reports FDRT as "not captured" rather than estimating it from
 stage Start/End times, which span the wrong thing (a stage's own runtime, not
 how long the *slice* sat blocked across possibly several stages).
+
+**`leastPrivilegeEnforced` / `leastPrivilegeNote`** record which of
+`ADAPTERS.md`'s two tool-scoping satisfaction tiers held for the run
+(mirrored in prose by the STATE.md header line above). `true` (**enforced**)
+means every stage ran as a subagent generated into `.claude/agents/`, with
+the harness mechanically restricting its tools. `false` (**declared**) means
+at least one stage ran with its brief inlined into a general-purpose agent —
+no runtime tool restriction was in force, and the agent was relying on its
+own brief's stated boundary. `leastPrivilegeNote` is free text: which stages,
+and why (usually: which repo the Orchestrator session was rooted in).
+Neither value is a defect by itself; an **omitted** field is.
+
+Both fields were already real practice before they were a documented part of
+this schema — three runs across both product repos (`stash-seed`
+`saved-item-folders`, `streak-seed` `browser-client` and `security-hardening`)
+recorded them under `notes.leastPrivilegeEnforced` /
+`notes.leastPrivilegeNote`, on their own initiative, per the pack's `AGENTS.md`
+instruction to record the gap rather than let it pass silently. This section
+promotes them to top-level fields — the same move `gateCatches` made from
+`notes.gatesThatFired` — because a convention three-for-three runs already
+followed voluntarily belongs in the schema they were approximating, not
+in `notes` pretending to be undiscovered.
 
 **`operator`** names the human who drove the run. A stage may carry its own
 `operator` when a different person drove that stage; otherwise it inherits the

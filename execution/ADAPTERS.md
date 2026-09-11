@@ -41,19 +41,68 @@ reinvent.
 
 ## Invariants no adapter may weaken
 
-These are spec, not adapter preference:
+These are spec, not adapter preference. Each is stated as an **outcome** —
+something checkable from the run's own artefacts — not as a mechanism, so
+an adapter satisfies it however its runtime allows. Where the reference
+(Claude Code) adapter's mechanism is named, that is documentation of one
+implementation, not the requirement itself.
 
-1. **Approval interrupt semantics** — pause on gated actions, explicit
-   human yes, durable record, no timeout-approve, silence ≠ consent.
+*Revised 2026-09-11 (T12a).* Three of these were previously stated loosely
+enough that a runtime honestly reporting a gap and a runtime silently
+lacking the property looked the same on paper. Each is now precise about
+what a second adapter must actually produce.
+
+1. **Approval interrupt semantics** — pause on gated actions; an explicit
+   human yes; a durable record **attributable to a named person, not a
+   role** (`docs/HUMAN_APPROVAL_RULES.md`: *"who approved" is an identity*);
+   no timeout-approve; silence ≠ consent. The identity requirement was
+   implicit before this revision — an adapter recording `"approved": true`
+   with no named approver did not visibly fail this invariant. It does now.
 2. **Failure budgets** — bounded retries, bounded wall-clock, escalate to
    the human when spent.
-3. **Artefact handoffs** — agents communicate through files in
+3. **Pre-spawn cost check** — before a stage's cost is incurred, spend is
+   checked against the declared budget, and a spawn that would exceed it
+   is not silently allowed (`RUN_ECONOMICS.md` §2). This used to exist only
+   as the Claude Code adapter's `hooks/budget-guard.mjs` — a real
+   interception point, but Claude-Code-specific and never stated as a
+   contract a second adapter had to meet on its own terms. It is fatal to
+   this product's own thesis to have a budget control that only the
+   reference adapter enforces: *"checked before every spawn, never
+   reconciled after"* has to mean something on every adapter, not just this
+   one. An adapter without hook-level interception satisfies this by making
+   the check a mandatory Orchestrator step whose result is written to the
+   slice's `STATE.md` Budget block before the spawn it gates — verifiable
+   from the artefact, not merely asserted in a brief. `budget-guard.mjs`
+   remains what it always was: a mechanical backstop for a discipline the
+   Orchestrator role already owns, not the source of the guarantee.
+4. **Per-role least-privilege tool scoping** — an agent acting in a role
+   must not exercise tool access broader than that role's declared
+   boundary. Two ways to satisfy this, both legitimate, neither silent:
+   - **Enforced** — the runtime mechanically restricts the tools an agent
+     can invoke (Claude Code: generated `tools:` frontmatter on a spawned
+     subagent). Unbypassable by the agent itself.
+   - **Declared** — the runtime cannot enforce this, so the role's own
+     brief states its tool boundary as an instruction the agent is asked to
+     honor, **and the run's `STATE.md` records that enforcement was not
+     runtime-verified for that run.** This adapter already documents this
+     exact fallback for inlined briefs (`install.mjs`: *"the harness
+     enforces this; when it is inlined... honor it yourself — the boundary
+     is the role's, not the harness's"*) — T12a promotes it from an
+     undocumented degradation to a named, checkable satisfaction tier.
+   A run that exercises neither tier — no runtime restriction, and no
+   record that there wasn't one — fails this invariant. It was previously
+   possible to fail it invisibly; it no longer is.
+5. **Artefact handoffs** — agents communicate through files in
    `runs/<slice-id>/`, not shared context.
-4. **Durable slice state** — a cold session can resume from `STATE.md`.
+6. **Durable slice state** — a cold session can resume from `STATE.md`.
 
 An adapter that can't implement one of these on its runtime isn't an
 adapter with a limitation — it's a runtime that can't safely host the
-SDLC yet.
+SDLC yet. An adapter that implements 4 only at the Declared tier, on every
+run, with no path to Enforced, is a weaker adapter than one that reaches
+Enforced — but it is not in violation, provided every run says which tier
+it got. Silence about which tier is what's forbidden, not the Declared
+tier itself.
 
 ## Model naming
 
