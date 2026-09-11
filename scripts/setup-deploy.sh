@@ -14,8 +14,11 @@
 #   argv or shell history, and never prints it.
 #
 # Usage:
-#   export CLOUDFLARE_API_TOKEN=...
 #   ./scripts/setup-deploy.sh              # idempotent; safe to re-run
+#
+# With no token set it prints a pre-configured Cloudflare link — the
+# permissions, scope and name are already filled in, so the human clicks
+# "Create Token", copies the value, and re-runs. No configuration decisions.
 #
 # Optional overrides: PROJECT, DOMAIN, REVIEWER
 
@@ -25,7 +28,32 @@ PROJECT="${PROJECT:-aveto}"
 DOMAIN="${DOMAIN:-aveto.dev}"
 
 for t in gh curl jq; do command -v "$t" >/dev/null || { echo "missing required tool: $t" >&2; exit 1; }; done
-: "${CLOUDFLARE_API_TOKEN:?export CLOUDFLARE_API_TOKEN first — see docs/DEPLOYMENT.md}"
+TOKEN_URL="https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22page%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Aveto%20deploy"
+
+token_help() {
+  cat >&2 <<HELP
+
+  Create the token with this link — permissions, scope and name are already
+  filled in. Click "Create Token", copy the value, then re-run this script:
+
+    ${TOKEN_URL}
+
+  It pre-selects exactly:
+    Account → Cloudflare Pages → Edit
+    Zone    → DNS              → Edit
+
+  Then:
+    export CLOUDFLARE_API_TOKEN=<the value you copied>
+    ./scripts/setup-deploy.sh
+
+HELP
+}
+
+if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+  echo "No CLOUDFLARE_API_TOKEN set." >&2
+  token_help
+  exit 1
+fi
 
 api() { # api METHOD PATH [BODY]
   curl -sS -X "$1" "https://api.cloudflare.com/client/v4$2" \
@@ -38,20 +66,19 @@ step() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 
 step "1/6  Verify the token"
 if ! api GET /user/tokens/verify | ok; then
-  cat >&2 <<'ERR'
-   The token was rejected. Create one at:
-     Cloudflare → My Profile → API Tokens → Create Token → Custom token
-   with these permissions:
-     Account → Cloudflare Pages → Edit
-     Zone    → DNS             → Edit   (on the target zone)
-ERR
+  echo "  The token was rejected by Cloudflare." >&2
+  token_help
   exit 1
 fi
 echo "      token valid"
 
 step "2/6  Discover account and zone"
 ACCOUNT_ID="$(api GET /accounts | jq -r '.result[0].id // empty')"
-[ -n "$ACCOUNT_ID" ] || { echo "   token cannot list accounts — it is missing Account scope" >&2; exit 1; }
+if [ -z "$ACCOUNT_ID" ]; then
+  echo "  Token is valid but cannot list accounts — it is missing Account scope." >&2
+  token_help
+  exit 1
+fi
 ACCOUNT_NAME="$(api GET /accounts | jq -r '.result[0].name // "?"')"
 echo "      account: ${ACCOUNT_NAME} (${ACCOUNT_ID:0:8}…)"
 
