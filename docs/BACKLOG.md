@@ -219,21 +219,34 @@ from the run" pattern as effort / operator / executor / gateCatches.
     a held key), and whether a predicate type this bespoke is worth publishing
     or stays internal. Neither blocks a spike.
 
-- **T15 · Write `AGENTS.md`, keep `CLAUDE.md` as a bridge.**
-  *Raised 2026-09-10.* `execution/pack/CLAUDE.md` is the pack's run guide and
-  is **Claude-Code-only** — a per-tool file in a repo that claims to be
-  provider-neutral (`ADAPTERS.md`), which is the same contradiction T12 names.
-  - **The standard:** **AGENTS.md**, stewarded by the Agentic AI Foundation, a
-    **Linux Foundation** project — so the spec is not vendor-owned. Read
-    natively by Codex, Cursor, GitHub Copilot's coding agent, Windsurf, Amp,
-    Aider, Gemini CLI, Zed, Jules, Devin and Junie, among 20+ tools.
-  - **The catch, stated honestly:** Claude Code is the notable holdout and
-    still reads `CLAUDE.md`; Anthropic's own guidance is to import
-    `@AGENTS.md` or symlink. So this is *additive* — `install.mjs` writes
-    `AGENTS.md` as the source of truth and a thin `CLAUDE.md` that imports it.
-    Nothing breaks for existing product repos.
-  - **Cheapest of the three**, and it is the first concrete step toward the
-    portability `ADAPTERS.md` asserts but has never demonstrated.
+- **T15 · Write `AGENTS.md`, keep `CLAUDE.md` as a bridge.** ✅ *Done
+  2026-09-11* — `execution/pack/AGENTS.md` is now the source of truth: the
+  six non-negotiable rules, project-context read order, and the how-to-run
+  section, all tool-agnostic. Tool-specific mechanics that genuinely are not
+  portable today (subagent dispatch, the pre-spawn budget hook, `.claude/`
+  paths, the `/agentic-*` slash commands) were **not** folded into the
+  universal rules — they sit in a clearly labeled "Claude Code specifics"
+  section inside `AGENTS.md`, so a reader on Cursor or Codex knows exactly
+  which parts apply to them and which don't. `execution/pack/CLAUDE.md` is
+  now a one-line `@AGENTS.md` import, verified to work via Claude Code's
+  own documented import convention (not assumed).
+  - `install.mjs` writes both files into the product repo; verified
+    end-to-end against a scratch repo — `AGENTS.md` generated with the
+    `{{PLAYBOOK_PATH}}` placeholder correctly resolved, `CLAUDE.md` reduced
+    to the import line, and every existing CI assertion (`security-
+    privacy.md` exists, `MODEL_ROUTING.md` exists, `effort: high` present)
+    still holds. 91/91 unit tests unaffected — none referenced `CLAUDE.md`'s
+    content directly.
+  - `ADAPTERS.md`'s own adapter contract table updated to name `AGENTS.md`,
+    not `pack/CLAUDE.md`, as the required run-guide output — the exact
+    contradiction this item existed to fix.
+  - **What this does not claim:** existing product repos (`stash-seed`,
+    `streak-seed`) don't have `AGENTS.md` until they re-run `install.mjs` —
+    normal, since regenerating the pack after a playbook change is already
+    the documented practice, not a new burden. And this is portability of
+    the *run guide*, not of the *mechanism* — T12's invariants-as-outcomes
+    question is untouched by this change and still gates any real second
+    adapter.
 
 
 ## Decided NO / parked — recorded so they don't return

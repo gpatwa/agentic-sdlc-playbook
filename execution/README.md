@@ -13,7 +13,8 @@ execution/
   install.mjs              ← generates .claude/agents/ from briefs, installs the pack
   ADAPTERS.md              ← provider-adapter contract (this pack = the Claude Code adapter)
   pack/
-    CLAUDE.md              ← autonomous-run guide (installed to product root)
+    AGENTS.md              ← autonomous-run guide, the source of truth (installed to product root)
+    CLAUDE.md              ← one-line @AGENTS.md import for Claude Code (installed to product root)
     commands/              ← /agentic-slice, /agentic-resume, /agentic-status
     protocols/
       SLICE_STATE.md       ← resumable per-slice state + Trace table (pipeline telemetry)
@@ -45,7 +46,10 @@ This writes, into the product repo:
 - `.claude/protocols/` — the three protocols above.
 - `.claude/agentic.config.json` — records the playbook path + generation
   time.
-- `CLAUDE.md` — the autonomous-run guide.
+- `AGENTS.md` — the autonomous-run guide, the source of truth. Read by any
+  AGENTS.md-aware tool, not only Claude Code.
+- `CLAUDE.md` — a one-line `@AGENTS.md` import. Claude Code does not read
+  `AGENTS.md` on its own, so this file exists purely to point it there.
 
 Re-run after the playbook changes to refresh the generated agents.
 

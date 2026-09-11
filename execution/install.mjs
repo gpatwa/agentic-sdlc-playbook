@@ -5,7 +5,9 @@
 // - Generates .claude/agents/<role>.md from the playbook's agents/*.md briefs
 //   (Claude Code subagent format: frontmatter + inlined brief + protocol pointers).
 // - Copies commands + protocols into .claude/.
-// - Writes CLAUDE.md (autonomous-run guide) and .claude/agentic.config.json.
+// - Writes AGENTS.md (provider-neutral run guide, the source of truth),
+//   CLAUDE.md (a one-line @AGENTS.md import — Claude Code does not read
+//   AGENTS.md natively), and .claude/agentic.config.json.
 // Dependency-free; Node 18+.
 
 import {
@@ -175,6 +177,14 @@ if (settings) {
   }
 }
 
+// AGENTS.md is the source of truth (see execution/pack/AGENTS.md's own
+// header) — write it first. CLAUDE.md is a one-line @AGENTS.md import;
+// Claude Code does not read AGENTS.md on its own, so without this file a
+// Claude Code session would silently run with no guide at all.
+const agentsMd = readFileSync(join(packDir, "AGENTS.md"), "utf8")
+  .replaceAll("{{PLAYBOOK_PATH}}", playbookRel);
+writeFileSync(join(productDir, "AGENTS.md"), agentsMd);
+
 const claudeMd = readFileSync(join(packDir, "CLAUDE.md"), "utf8")
   .replaceAll("{{PLAYBOOK_PATH}}", playbookRel);
 writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
@@ -227,4 +237,5 @@ console.log(`Installed Aveto execution pack into ${claudeDir}`);
 console.log(`  agents generated : ${count}`);
 console.log(`  commands         : ${readdirSync(join(claudeDir, "commands")).length}`);
 console.log(`  protocols        : ${readdirSync(join(claudeDir, "protocols")).length}`);
+console.log(`  run guide        : AGENTS.md (source of truth) + CLAUDE.md (imports it)`);
 console.log(`  playbook (rel)   : ${playbookRel}`);
