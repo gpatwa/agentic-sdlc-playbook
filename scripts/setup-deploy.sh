@@ -20,7 +20,7 @@
 # permissions, scope and name are already filled in, so the human clicks
 # "Create Token", copies the value, and re-runs. No configuration decisions.
 #
-# Optional overrides: PROJECT, DOMAIN, REVIEWER
+# Optional overrides: PROJECT, DOMAIN, REVIEWER, CLOUDFLARE_ACCOUNT_ID
 
 set -euo pipefail
 
@@ -73,20 +73,50 @@ fi
 echo "      token valid"
 
 step "2/6  Discover account and zone"
-ACCOUNT_ID="$(api GET /accounts | jq -r '.result[0].id // empty')"
+# Order matters. GET /accounts needs "Account Settings: Read", which a
+# correctly-minimal Pages token does NOT have — a token can operate inside an
+# account without being able to enumerate accounts. The zone record carries
+# .account.id and only needs the DNS permission we already require, so ask
+# the zone first and treat /accounts as the fallback, not the source of truth.
+ZONE_JSON="$(api GET "/zones?name=${DOMAIN}")"
+ZONE_ID="$(echo "$ZONE_JSON"   | jq -r '.result[0].id // empty')"
+ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-$(echo "$ZONE_JSON" | jq -r '.result[0].account.id // empty')}"
+ACCOUNT_NAME="$(echo "$ZONE_JSON" | jq -r '.result[0].account.name // empty')"
+
 if [ -z "$ACCOUNT_ID" ]; then
-  echo "  Token is valid but cannot list accounts — it is missing Account scope." >&2
-  token_help
+  ACCT_JSON="$(api GET /accounts)"
+  ACCOUNT_ID="$(echo "$ACCT_JSON"   | jq -r '.result[0].id // empty')"
+  ACCOUNT_NAME="$(echo "$ACCT_JSON" | jq -r '.result[0].name // empty')"
+fi
+
+if [ -z "$ACCOUNT_ID" ]; then
+  cat >&2 <<EOF
+
+  Could not determine the account id.
+
+  The token is valid, but neither route worked:
+    - zone lookup for ${DOMAIN} returned no zone (is the domain on this account,
+      and does the token's Zone scope include it?)
+    - /accounts is unavailable without "Account Settings: Read"
+
+  Cloudflare says:
+    $(echo "$ZONE_JSON" | jq -rc '.errors // [] | .[0] // "no error reported"')
+
+  Fastest fix — set it explicitly and re-run. It is on the Cloudflare
+  dashboard overview page for the domain, right-hand sidebar:
+
+    export CLOUDFLARE_ACCOUNT_ID=<account id>
+    ./scripts/setup-deploy.sh
+
+EOF
   exit 1
 fi
-ACCOUNT_NAME="$(api GET /accounts | jq -r '.result[0].name // "?"')"
-echo "      account: ${ACCOUNT_NAME} (${ACCOUNT_ID:0:8}…)"
 
-ZONE_ID="$(api GET "/zones?name=${DOMAIN}" | jq -r '.result[0].id // empty')"
+echo "      account: ${ACCOUNT_NAME:-unnamed} (${ACCOUNT_ID:0:8}…)"
 if [ -n "$ZONE_ID" ]; then
   echo "      zone:    ${DOMAIN} (${ZONE_ID:0:8}…)"
 else
-  echo "      zone:    ${DOMAIN} not found on this account — custom domain step will be skipped"
+  echo "      zone:    ${DOMAIN} not visible to this token — custom domain step will be skipped"
 fi
 
 step "3/6  Cloudflare Pages project '${PROJECT}'"
