@@ -140,24 +140,59 @@ else
 fi
 
 step "4/6  Custom domain ${DOMAIN}"
-# Attaching needs only the account id and the domain name. An earlier version
-# gated this on the zone lookup succeeding, which skipped it silently whenever
-# the token could not LIST zones — leaving a working deploy on *.pages.dev and
-# nothing on the custom domain. Always attempt it; report what Cloudflare says.
-if api GET "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/domains" \
-   | jq -e --arg d "$DOMAIN" '.result[]? | select(.name == $d)' >/dev/null 2>&1; then
-  echo "      already attached"
+# Two parts, and the second is the one that actually makes the domain resolve.
+#
+#   (a) attach the domain to the Pages project, and
+#   (b) ensure a DNS record points the domain at <project>.pages.dev.
+#
+# Cloudflare is supposed to do (b) automatically when it does (a), but via the
+# API that provisioning frequently stalls: the domain shows "attached" while
+# the zone has no record, so the domain never resolves. When we hold the zone
+# id and a DNS:Edit token we do not depend on that — we create the record
+# ourselves. A proxied CNAME at the apex is flattened by Cloudflare, so it is
+# valid even though the name is the zone root.
+PAGES_HOST="${PROJECT}.pages.dev"
+
+DOMAINS="$(api GET "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/domains")"
+if echo "$DOMAINS" | jq -e --arg d "$DOMAIN" '.result[]? | select(.name == $d)' >/dev/null 2>&1; then
+  echo "      attached to Pages project"
 else
   ATTACH="$(api POST "/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/domains" \
             "$(jq -nc --arg n "$DOMAIN" '{name:$n}')")"
   if echo "$ATTACH" | ok; then
-    echo "      attached — Cloudflare provisions the CNAME and certificate"
-    echo "      (first issuance can take a few minutes)"
+    echo "      attached to Pages project"
   else
-    echo "      could not attach. Cloudflare said:" >&2
+    echo "      could not attach to Pages project. Cloudflare said:" >&2
     echo "$ATTACH" | jq -r '.errors[]? | "        [\(.code)] \(.message)"' >&2
-    echo "        The domain must be on this Cloudflare account, and the token" >&2
-    echo "        needs Zone → DNS → Edit covering it." >&2
+    echo "        The domain must be on this Cloudflare account." >&2
+  fi
+fi
+
+if [ -z "$ZONE_ID" ]; then
+  echo "      DNS: zone not visible to this token — cannot create the record"
+  echo "           automatically. Point ${DOMAIN} at ${PAGES_HOST} (proxied CNAME)."
+else
+  EXISTING="$(api GET "/zones/${ZONE_ID}/dns_records?name=${DOMAIN}")"
+  REC_ID="$(echo "$EXISTING" | jq -r --arg h "$PAGES_HOST" \
+            '.result[]? | select(.type=="CNAME" and .content==$h) | .id' | head -1)"
+  CONFLICT="$(echo "$EXISTING" | jq -r --arg h "$PAGES_HOST" \
+            '.result[]? | select((.type=="A" or .type=="AAAA" or .type=="CNAME") and .content!=$h) | "\(.type) \(.content)"' | head -1)"
+
+  if [ -n "$REC_ID" ]; then
+    echo "      DNS: proxied CNAME -> ${PAGES_HOST} already present"
+  elif [ -n "$CONFLICT" ]; then
+    echo "      DNS: an apex record already exists and points elsewhere (${CONFLICT})." >&2
+    echo "           Not overwriting it. Remove it or repoint it at ${PAGES_HOST}." >&2
+  else
+    REC="$(api POST "/zones/${ZONE_ID}/dns_records" \
+           "$(jq -nc --arg n "$DOMAIN" --arg c "$PAGES_HOST" \
+              '{type:"CNAME", name:$n, content:$c, proxied:true, comment:"Aveto site (aveto.pages.dev)"}')")"
+    if echo "$REC" | ok; then
+      echo "      DNS: created proxied CNAME ${DOMAIN} -> ${PAGES_HOST}"
+    else
+      echo "      DNS: could not create record. Cloudflare said:" >&2
+      echo "$REC" | jq -r '.errors[]? | "        [\(.code)] \(.message)"' >&2
+    fi
   fi
 fi
 
