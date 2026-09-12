@@ -345,12 +345,31 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - **Also out of scope, per the spec:** collusion between two functionaries
     (*"we assume there will not be two colluding developers"*), and replay of
     old-but-unexpired layouts, for which in-toto recommends pairing with TUF.
-  - **The decision this now rests on**, before any code: does signing target a
-    **private Rekor instance** (keeps the OIDC identity benefit, adds
-    infrastructure), or a **held key with no transparency log** (no
-    infrastructure, weaker identity binding, back to key management)? The
-    constraint in (1) applies either way — whoever signs must not be the agent
-    that did the work.
+  - **Decided 2026-09-12 — bind to GitHub, don't sign (yet).** The two options
+    first offered (private Rekor vs. a held key) were *both wrong, for the same
+    reason*. A private Rekor needs a private **Fulcio** alongside it, and a
+    certificate authority you run yourself has no independent trust value: the
+    auditor's *"how do you know a human approved?"* is answered with *"because
+    I operate the CA that says so."* A held key has the identical flaw. Both
+    prove only that a file has not changed since **we** signed it — not that a
+    person authorized anything.
+    - **What actually carries weight is independence, not cryptography.**
+      GitHub PR approvals are accepted CC8.1 evidence because GitHub is a
+      **third party** attesting that an authenticated user approved at a
+      timestamp — not because they are signed. `saved-item-folders` already
+      has this: PR #6, merge commit `3e8ede5`, with branch protection
+      confirmed blocking until checks passed.
+    - **Scope:** record the PR review, actor and merge commit in `approvals[]`
+      (`record`), so the run's own claim *points at* evidence someone else can
+      verify. Zero infrastructure, no key management.
+    - **Public Sigstore stays off the table** on the metadata-leak finding
+      above, regardless of this decision.
+    - **What signing is still for, later and smaller:** approvals that happen
+      *inside* a run and never surface as a git event. That is exactly the
+      seam the strategy doc says GRC platforms cannot reach — they collect
+      from systems of record, and an in-run approval never reaches one. A
+      much narrower target than "sign everything", and worth revisiting once
+      there is a second operator or a buyer who asks.
 
 - **T15 · Write `AGENTS.md`, keep `CLAUDE.md` as a bridge.** ✅ *Done
   2026-09-11* — `execution/pack/AGENTS.md` is now the source of truth: the
@@ -380,6 +399,33 @@ from the run" pattern as effort / operator / executor / gateCatches.
     the *run guide*, not of the *mechanism* — T12's invariants-as-outcomes
     question is untouched by this change and still gates any real second
     adapter.
+
+- **T16 · Ship the conformity export.** ✅ *Done 2026-09-12.*
+  `execution/conformity.mjs` renders `runs/CONFORMITY.md` — the register an
+  auditor is handed, mapped to the SOC 2 criteria that apply to agent-written
+  code (CC8.1, CC6.1, evidence sampling, review records, CC3.2). Sibling to
+  `analyze.mjs`: same dependency-free house style, same read-from-`trace.json`
+  discipline, different question. `analyze.mjs` answers *what did this cost*;
+  this answers *who authorized it*.
+  - **It found a real hole while being built.** `approvals` did not exist in
+    `trace@2` at all — the named-approver claim, which is the centre of the
+    entire positioning, lived only in STATE.md prose where no tool could read
+    it. Added to the schema; `conformity.mjs` falls back to parsing STATE.md
+    for older runs and labels those rows unstructured.
+  - **Built deliberately pessimistic.** Missing evidence prints as missing and
+    the offending slices are named. An export that silently drops runs it
+    cannot evidence is worse than none, because it reads as complete.
+    `--strict` exits non-zero when a landed run has no approval evidence.
+  - **Real output, both seed repos.** `stash-seed`: CC8.1 covered 3/3 on 4
+    named approvals, CC6.1 not covered (0 enforced / 1 declared / 2
+    unrecorded). `streak-seed`: CC8.1 covered 4/4, CC6.1 partial 1/4. CC3.2
+    reports as not instrumented in both, which is true.
+  - **Three defects the tests now pin**, each hit against real data: the
+    STATE.md section parser returned empty (splitting a string that begins
+    with the delimiter), `**APPROVED**` did not match `/^approved/i` so real
+    approvals went uncounted, and `deferred` rows were counted as approvals
+    and then flagged for having no approver — inflating coverage and
+    inventing a finding from one conflation. 18 tests, 109 in the pack.
 
 
 ## Decided NO / parked — recorded so they don't return
