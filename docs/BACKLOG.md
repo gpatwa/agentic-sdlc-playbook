@@ -209,7 +209,8 @@ from the run" pattern as effort / operator / executor / gateCatches.
     is now a precise, checkable contract with one adapter passing it — a
     smaller but real claim, and an honest one.
 - **T13 · Put `trace@2` on OpenTelemetry GenAI semantic conventions.**
-  *Raised 2026-09-10.* The point is not tidiness — it is the **standing caveat
+  ◐ *Raised 2026-09-10; precondition answered and protocol written 2026-09-12;
+  **not verified live**.* The point is not tidiness — it is the **standing caveat
   at the bottom of this file**. Telemetry is self-reported today: agents report
   their own `tokens` / `toolCalls` / `retries`, and a self-report has already
   been observed wrong. That is not fixable inside a bespoke schema, because the
@@ -228,10 +229,48 @@ from the run" pattern as effort / operator / executor / gateCatches.
     spans for telemetry; keep our own record for the things OTel does not model.
     Do **not** rename the `agentic-sdlc/trace@N` schema id — existing runs in
     `stash-seed` and `streak-seed` depend on it.
-  - **Unverified:** whether Claude Code exposes hooks that can emit OTel spans
-    for subagent spawns without agent cooperation. If it cannot, this reduces
-    to a schema-shape change and the caveat survives — which is worth knowing
-    before starting.
+  - **Precondition answered 2026-09-12 — and the premise was wrong in our
+    favour.** The open question was whether *hooks* could emit spans for
+    subagent spawns without agent cooperation. They are not needed: **Claude
+    Code emits OpenTelemetry natively** — metrics, events, and spans (beta) —
+    enabled by environment variables alone. `claude_code.api_request` carries
+    `input_tokens`, `output_tokens`, `cost_usd`, `duration_ms`, `model` and
+    `effort` per call; `claude_code.tool_result` carries every tool call; and
+    `query_source` (`main` / `subagent` / `auxiliary`) is the same split
+    `trace@2`'s `executor` records. No agent narrates any of it. **The
+    self-report caveat is retirable for telemetry fields.** Written up as
+    `execution/pack/protocols/TELEMETRY.md`, with `telemetrySource`
+    (`otel` / `self-reported`) added to `trace@2` per run — the same
+    two-tier, never-silent pattern as `leastPrivilegeEnforced`.
+  - **Three findings that revise the ticket's own claims:**
+    1. **"Portable across harnesses" was overstated.** Claude Code emits
+       `claude_code.*` names; the GenAI conventions are a separate vocabulary
+       (`gen_ai.operation.name`, `invoke_agent`, `execute_tool`) and only
+       `gen_ai.request.attempt` appears in its span tree. What OTel actually
+       buys is **transport** portability — any OTLP backend ingests it — not
+       **semantic** portability. A second adapter emitting proper `gen_ai.*`
+       would still need a translation layer.
+    2. **"Pin a version" is not executable.** The GenAI conventions moved to
+       `open-telemetry/semantic-conventions-genai`, which has **no releases
+       and no tags**, and every `gen_ai.*` attribute is still *Development*.
+       The churn this ticket predicted has already happened — the spec moved
+       repos in the two days since it was raised. Do not adopt its names as
+       the schema; map at the reporting edge if ever needed.
+    3. **Per-role attribution is lost on metrics.** `agent.name` reports
+       built-in agent types verbatim but collapses **user-defined agents to
+       `"custom"`** — and all 24 roles here are user-defined. Per-role cost
+       needs spans (`subagent_type`, beta) or the `agent_type` hook field.
+       Wiring per-role analysis to metrics alone yields one bucket, silently.
+  - **Still open:** none of this has been observed live. The protocol is
+    written from Claude Code's and OpenTelemetry's own documentation; the first
+    run with a collector attached is the actual test, and should be treated as
+    such rather than as confirmation. Until then every run stays
+    `telemetrySource: self-reported` and the standing caveat holds in full.
+  - **Bearing on CC3.2.** `claude_code.api_request` records `model` per call,
+    which is a real component of the "prove confidential data did not reach a
+    third-party model" evidence the strategy doc flags as the one auditor ask
+    this system cannot currently answer. It is not the whole answer — nothing
+    classifies the payload — but the gap is narrower than it looked.
 
 - **T14 · Emit the approval record as signed in-toto attestations.**
   *Raised 2026-09-10 — the most load-bearing of the three.* Every approval,
@@ -335,3 +374,13 @@ instrumentation layer (OpenTelemetry GenAI conventions) instead of from the
 agent being measured. **T14** applies the same reasoning one layer up: the
 approval record is currently self-asserted unsigned JSON, which is the same
 trust problem wearing different clothes.
+
+*Update 2026-09-12:* T13's precondition is answered and the mechanism exists —
+Claude Code emits OTel natively, so telemetry can come from the runtime rather
+than the agent (`execution/pack/protocols/TELEMETRY.md`). **The caveat is not
+yet retired**, and saying so would be exactly the self-report error it warns
+about: nothing has been run against a collector, and every run to date remains
+`telemetrySource: self-reported`. What changed is that the caveat is now
+*scoped* rather than total — it applies to telemetry fields, and never applied
+to `gateCatches`, `landed`, `operator` or the approval record, which are
+judgements with no instrumentation equivalent. Those stay under T14.
