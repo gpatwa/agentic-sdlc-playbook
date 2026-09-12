@@ -27,6 +27,10 @@ information-processing system:
 Edges are artefacts (the data); dotted edges are optional/parallel paths or
 context reads. The control plane gates the transitions.
 
+**[Interactive diagram](diagrams/agentic-sdlc-lifecycle.html)** — the same
+lifecycle, explorable, with the rework loop and the approval stop traceable
+stage by stage. The static chart below is the GitHub-renderable fallback.
+
 ```mermaid
 flowchart TB
     H(["Human"]) -->|ask| O["Orchestrator"]
