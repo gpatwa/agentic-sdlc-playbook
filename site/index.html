@@ -698,6 +698,67 @@
   .dgm-axis-mid { text-anchor: middle; }
   .dgm-axis-end { text-anchor: end; }
 
+
+  /* ---------- workflow diagram ---------- */
+
+  .wf .dgm-scroll svg { min-width: 700px; }
+
+  .wf-box { fill: var(--surface); stroke: var(--rule-strong); stroke-width: 1; }
+  .wf-box-own { stroke: var(--gold); stroke-width: 1.5; fill: var(--gold-wash); }
+
+  .wf-label {
+    font-family: var(--f-body);
+    font-size: 13.5px;
+    font-weight: 600;
+    fill: var(--ink);
+    text-anchor: middle;
+  }
+  .wf-label-own { fill: var(--gold-text); }
+
+  .wf-sub {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    fill: var(--muted);
+    text-anchor: middle;
+  }
+  .wf-sub-own { fill: var(--gold-text); }
+
+  .wf-arrow { fill: none; stroke: var(--rule-strong); stroke-width: 1.5; }
+  .wf-head { fill: var(--rule-strong); }
+
+  .wf-arrow-fail { fill: none; stroke: var(--block); stroke-width: 1.5; }
+  .wf-head-fail { fill: var(--block); }
+
+  .wf-arrow-loop { fill: none; stroke: var(--faint); stroke-width: 1.25; stroke-dasharray: 4 4; }
+  .wf-head-loop { fill: var(--faint); }
+
+  .wf-human { fill: none; stroke: var(--gold); stroke-width: 1.25; stroke-dasharray: 4 3; }
+  .wf-human-label {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    fill: var(--gold-text);
+    text-anchor: middle;
+  }
+
+  .wf-blocked { fill: var(--block-wash); stroke: var(--block); stroke-width: 1; }
+  .wf-blocked-label {
+    font-family: var(--f-body);
+    font-size: 12px;
+    font-weight: 600;
+    fill: var(--block);
+    text-anchor: middle;
+  }
+
+  .wf-note {
+    font-family: var(--f-body);
+    font-size: 11.5px;
+    font-style: italic;
+    fill: var(--muted);
+    text-anchor: start;
+  }
+  .wf-note-mid { text-anchor: middle; }
+
 </style>
 
 <div class="shell">
@@ -782,6 +843,83 @@
     <p class="sec-eyebrow">How it works</p>
     <h2>Three things nothing else in the category does.</h2>
     <p class="sec-lede">Not guardrail text an agent is asked politely to follow. Structural properties of the lifecycle, each producing an artifact you can hand to someone who wasn't there.</p>
+
+    <figure class="dgm wf">
+      <div class="dgm-scroll">
+        <svg viewBox="0 0 980 330" role="img" aria-labelledby="wf-t wf-d">
+          <title id="wf-t">How one slice runs</title>
+          <desc id="wf-d">A human ask enters intake, where a request conflicting with a safety invariant is blocked and no slice is opened. Accepted work moves through build, then verification by agents independent of the one that wrote the code. A failed gate returns the slice to build, never forward. A named human approves at the release gate before anything ships, and post-launch findings carry forward into the next ask.</desc>
+
+          <defs>
+            <marker id="wf-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="wf-head" d="M0,1 L7,4 L0,7 z"/>
+            </marker>
+            <marker id="wf-af" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="wf-head-fail" d="M0,1 L7,4 L0,7 z"/>
+            </marker>
+            <marker id="wf-al" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="wf-head-loop" d="M0,1 L7,4 L0,7 z"/>
+            </marker>
+          </defs>
+
+          <!-- human approval, above the gate it belongs to -->
+          <rect class="wf-human" x="626" y="26" width="132" height="30" rx="5"/>
+          <text class="wf-human-label" x="692" y="45">a named human</text>
+          <path class="wf-arrow" d="M692,56 L692,86" marker-end="url(#wf-a)"/>
+
+          <!-- main spine -->
+          <g>
+            <rect class="wf-box" x="26" y="88" width="112" height="46" rx="6"/>
+            <text class="wf-label" x="82" y="110">Human ask</text>
+            <text class="wf-sub" x="82" y="126">free-form</text>
+
+            <rect class="wf-box" x="166" y="88" width="112" height="46" rx="6"/>
+            <text class="wf-label" x="222" y="110">Intake</text>
+            <text class="wf-sub" x="222" y="126">invariant scan</text>
+
+            <rect class="wf-box" x="306" y="88" width="132" height="46" rx="6"/>
+            <text class="wf-label" x="372" y="110">Build</text>
+            <text class="wf-sub" x="372" y="126">scope · spec · code</text>
+
+            <rect class="wf-box" x="466" y="88" width="132" height="46" rx="6"/>
+            <text class="wf-label" x="532" y="110">Verify</text>
+            <text class="wf-sub" x="532" y="126">QA · security</text>
+
+            <rect class="wf-box wf-box-own" x="626" y="88" width="132" height="46" rx="6"/>
+            <text class="wf-label wf-label-own" x="692" y="110">Release gate</text>
+            <text class="wf-sub wf-sub-own" x="692" y="126">hard stop</text>
+
+            <rect class="wf-box" x="786" y="88" width="112" height="46" rx="6"/>
+            <text class="wf-label" x="842" y="110">Shipped</text>
+            <text class="wf-sub" x="842" y="126">on the record</text>
+          </g>
+
+          <!-- spine arrows -->
+          <g class="wf-arrow">
+            <path d="M138,111 L162,111" marker-end="url(#wf-a)"/>
+            <path d="M278,111 L302,111" marker-end="url(#wf-a)"/>
+            <path d="M438,111 L462,111" marker-end="url(#wf-a)"/>
+            <path d="M598,111 L622,111" marker-end="url(#wf-a)"/>
+            <path d="M758,111 L782,111" marker-end="url(#wf-a)"/>
+          </g>
+
+          <!-- refusal branch -->
+          <path class="wf-arrow-fail" d="M222,134 L222,196" marker-end="url(#wf-af)"/>
+          <rect class="wf-blocked" x="150" y="198" width="150" height="34" rx="5"/>
+          <text class="wf-blocked-label" x="225" y="219">Blocked · no slice opened</text>
+          <text class="wf-note" x="312" y="219">a conflicting ask never reaches an engineer</text>
+
+          <!-- rework loop: verify back to build -->
+          <path class="wf-arrow-fail" d="M532,134 L532,164 Q532,172 524,172 L380,172 Q372,172 372,164 L372,140" marker-end="url(#wf-af)"/>
+          <text class="wf-note wf-note-mid" x="452" y="188">a failed gate goes back, never forward</text>
+
+          <!-- post-launch loop -->
+          <path class="wf-arrow-loop" d="M842,134 L842,272 Q842,282 832,282 L92,282 Q82,282 82,272 L82,140" marker-end="url(#wf-al)"/>
+          <text class="wf-note wf-note-mid" x="462" y="300">post-launch findings carry forward into the next ask</text>
+        </svg>
+      </div>
+      <figcaption>Each stage is a separate agent with its own tool scope. The one that verifies is never the one that wrote the code — that separation is what makes the record worth reading.</figcaption>
+    </figure>
 
     <div class="cap">
       <div>
