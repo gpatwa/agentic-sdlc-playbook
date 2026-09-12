@@ -22,6 +22,7 @@ execution/
       FAILURE_LOOP.md      ← retry budget + wall-clock budget + escalation (anti-runaway)
       MODEL_ROUTING.md     ← per-role model defaults, tier + failure escalation
       PIPELINE_SLOS.md     ← SLOs + DORA metrics for the SDLC itself
+      TELEMETRY.md         ← OTel enablement + which trace fields the runtime supplies
   README.md                ← you are here
 ```
 

@@ -27,6 +27,7 @@ the originating conversation.
 - **Current stage:** <stage name>
 - **Status:** <in-progress / blocked-on-approval / blocked-on-failure / done>
 - **Least-privilege:** <enforced / declared> — see "Least-privilege tier" below
+- **Telemetry:** <otel / self-reported> — see `TELEMETRY.md`
 - **Started:** <UTC>  ·  **Updated:** <UTC>
 
 ## Stages
@@ -103,6 +104,7 @@ neither is hand-parsed for numbers.
   "operator": "<who drove this run>",
   "leastPrivilegeEnforced": true,
   "leastPrivilegeNote": "<why — which tier, and what made it so>",
+  "telemetrySource": "<otel | self-reported>",
   "gateCatches": [ { "gate": "<QA|Security|...>", "verdict": "fail",
                      "severity": "<blocker|required-fix|advisory>",
                      "finding": "<one line: what it caught>",
@@ -158,6 +160,18 @@ promotes them to top-level fields — the same move `gateCatches` made from
 `notes.gatesThatFired` — because a convention three-for-three runs already
 followed voluntarily belongs in the schema they were approximating, not
 in `notes` pretending to be undiscovered.
+
+**`telemetrySource`** records where this run's numbers came from — `otel` when
+the harness emitted them from the instrumentation layer, `self-reported` when
+the agent narrated its own `tokens` / `toolCalls` and those figures were used.
+The distinction matters because the schema is otherwise filled in by the party
+being measured, and a self-report in this repo has already been observed wrong.
+`TELEMETRY.md` carries the enablement config and the per-field provenance map;
+what belongs here is only which source held. Governance fields are unaffected —
+`gateCatches`, `landed`, `operator` and the approval records have no
+instrumentation equivalent, because a gate verdict is a judgement rather than a
+measurement. As with `leastPrivilegeEnforced`, neither value is a defect by
+itself; an omitted field is.
 
 **`operator`** names the human who drove the run. A stage may carry its own
 `operator` when a different person drove that stage; otherwise it inherits the
