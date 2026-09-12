@@ -83,6 +83,27 @@ This mirrors `leastPrivilegeEnforced`'s two tiers. A run that says which source
 it used can be audited. A run that says nothing cannot, and the standing caveat
 in `docs/BACKLOG.md` applies to it in full.
 
+## Verifying this document
+
+Everything above is read from Claude Code's and OpenTelemetry's documentation.
+Documentation is a claim; this repo's argument is that the difference from
+evidence matters, so the claim has a checker:
+
+```
+node <playbook>/execution/otlp-probe.mjs --timeout 120
+```
+
+It stands in as the OTLP endpoint, records what actually arrives, and reports
+which of the signals listed above were present — writing `report.md` alongside
+the raw payloads. It exits non-zero when nothing arrives, so a session that was
+started before telemetry was enabled fails loudly instead of producing an empty
+report that reads like a pass. Claude Code reads its environment at process
+start: **the session must be restarted after setting the variables**, or nothing
+is emitted no matter what the config says.
+
+Until a run of this probe says otherwise, treat the table above as unverified
+and keep `telemetrySource: self-reported`.
+
 ## Honest limits
 
 These are real and were checked, not assumed. None of them has been observed
