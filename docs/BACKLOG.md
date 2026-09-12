@@ -273,7 +273,8 @@ from the run" pattern as effort / operator / executor / gateCatches.
     classifies the payload — but the gap is narrower than it looked.
 
 - **T14 · Emit the approval record as signed in-toto attestations.**
-  *Raised 2026-09-10 — the most load-bearing of the three.* Every approval,
+  ◐ *Raised 2026-09-10 — the most load-bearing of the three; spike done
+  2026-09-12, **nothing implemented**, blocked on one decision (below).* Every approval,
   gate verdict and `approvedBy` in `trace.json` is **plain unsigned JSON**. For
   a system whose entire claim is attributable evidence, an auditor's first
   question — *"how do I know this file wasn't edited afterwards?"* — currently
@@ -291,9 +292,65 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - **Scope, if taken:** a custom predicate type for a slice's gate record;
     `approvedBy` becomes a signed attestation rather than a string. Verifiable
     by existing tooling instead of by reading our docs.
-  - **Unverified:** key management for a single operator (sigstore/keyless vs.
-    a held key), and whether a predicate type this bespoke is worth publishing
-    or stays internal. Neither blocks a spike.
+  - **Spike done 2026-09-12 — read from in-toto's and Sigstore's own specs, not
+    summaries.** Both unverified items are answered, and three constraints
+    surfaced that the ticket did not anticipate. Nothing is implemented.
+  - **Both open questions resolved, favourably:**
+    - **Key management is solved, and better than "sigstore vs. a held key"
+      framed it.** Sigstore's Fulcio issues short-lived (10-minute)
+      certificates bound to an **OIDC identity** — a Google/GitHub/Microsoft
+      login — with no long-lived key for anyone to manage. The signer's
+      identity lands *in the certificate*. That makes
+      `HUMAN_APPROVAL_RULES.md`'s *"who approved is an identity"*
+      cryptographically true rather than a documented convention. It is the
+      single best available answer to an auditor's *"how do you know a person
+      approved this?"*
+    - **No bespoke predicate is needed.** The **Link** predicate
+      (`https://in-toto.io/attestation/link/v0.3`) already models exactly one
+      step execution per attestation, and the Layout may require **more than
+      one signed link per step, by threshold** — which is separation of duties
+      expressed in the format's own primitives. Nothing to invent, nothing to
+      publish.
+  - **The verified mapping.** in-toto **Layout** — a file signed by the project
+    owner naming *who is authorized to carry out each step* — is
+    `HUMAN_APPROVAL_RULES.md` plus `RELEASE_GATES.md`. A **functionary** is a
+    role or a human approver. A **Link** is a stage's completion record, signed
+    by whoever performed it. The ticket's "fits unusually well" claim holds up
+    against the spec.
+  - **Three constraints that shape any implementation:**
+    1. **The crux, and it is in-toto's own words.** The spec's non-goals
+       recommend *"separating the mechanisms responsible for in-toto metadata
+       generation from those executing the steps themselves."* If the agent
+       that ran a stage also signs its record, the result is **tamper-evidence
+       over a self-report** — the same trust problem relocated, not fixed. Any
+       design where the pipeline holds the signing key fails the thing this
+       ticket exists to achieve. The human approver must sign, or the signature
+       proves only that the file has not changed since the agent wrote it.
+    2. **in-toto does not judge a bad layout.** *"in-toto's role is not to
+       judge or block layouts that are insecure."* A Layout authorizing an
+       agent to approve its own work is valid in-toto and worthless as
+       governance. The cryptography is only ever as good as the layout, which
+       is a governance artefact we would still own.
+    3. **The public transparency log leaks metadata — verified empirically,
+       not assumed.** Decoding a live entry from `rekor.sigstore.dev` (no
+       authentication required): the artifact appears only as a sha256 hash,
+       but the certificate's SAN exposed a **private** repository's name
+       (`chainguard-images/images-private`), its workflow path, branch, commit
+       SHA and trigger event. For a *human* signer the SAN is their **email
+       address**. Signing approvals to the public instance would publish the
+       approver's identity and a timeline of every approval — plainly
+       disqualifying for the fintech / health-tech / gov-tech buyers the
+       strategy doc names. A **private Rekor instance** is supported and is
+       the likely answer, but it is infrastructure, not a flag.
+  - **Also out of scope, per the spec:** collusion between two functionaries
+    (*"we assume there will not be two colluding developers"*), and replay of
+    old-but-unexpired layouts, for which in-toto recommends pairing with TUF.
+  - **The decision this now rests on**, before any code: does signing target a
+    **private Rekor instance** (keeps the OIDC identity benefit, adds
+    infrastructure), or a **held key with no transparency log** (no
+    infrastructure, weaker identity binding, back to key management)? The
+    constraint in (1) applies either way — whoever signs must not be the agent
+    that did the work.
 
 - **T15 · Write `AGENTS.md`, keep `CLAUDE.md` as a bridge.** ✅ *Done
   2026-09-11* — `execution/pack/AGENTS.md` is now the source of truth: the
@@ -384,3 +441,9 @@ about: nothing has been run against a collector, and every run to date remains
 *scoped* rather than total — it applies to telemetry fields, and never applied
 to `gateCatches`, `landed`, `operator` or the approval record, which are
 judgements with no instrumentation equivalent. Those stay under T14.
+
+T14's spike (same day) found its mechanism sound but landed on a sharper
+version of this same caveat: signing only helps if the signer is **not** the
+agent that did the work — in-toto's own non-goals say so. A pipeline signing
+its own approval records would produce tamper-evident self-reports, which is
+this caveat with a signature attached rather than this caveat removed.
