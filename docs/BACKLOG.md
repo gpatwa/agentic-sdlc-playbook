@@ -266,6 +266,16 @@ from the run" pattern as effort / operator / executor / gateCatches.
     run with a collector attached is the actual test, and should be treated as
     such rather than as confirmation. Until then every run stays
     `telemetrySource: self-reported` and the standing caveat holds in full.
+  - **The checker exists — `execution/otlp-probe.mjs` (added 2026-09-12).** A
+    dependency-free stand-in OTLP endpoint that records what actually arrives
+    and reports which documented signals were present. It decodes nothing:
+    protobuf stores string values verbatim, so scanning for printable runs
+    answers the only question being asked. It **exits non-zero when nothing
+    arrives**, because the likeliest failure here is a session started before
+    the environment was set — which would otherwise produce an empty report
+    that reads like a pass. Blocked only on a restarted session: Claude Code
+    reads its environment at process start, so no amount of in-session config
+    enables it. Run: `node execution/otlp-probe.mjs --timeout 120`.
   - **Bearing on CC3.2.** `claude_code.api_request` records `model` per call,
     which is a real component of the "prove confidential data did not reach a
     third-party model" evidence the strategy doc flags as the one auditor ask
