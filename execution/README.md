@@ -11,6 +11,8 @@ resumable state, the human-approval interrupt, and bounded failure loops.
 ```
 execution/
   install.mjs              ← generates .claude/agents/ from briefs, installs the pack
+  analyze.mjs              ← renders ANALYTICS.md + dashboard.html from runs/*/trace.json
+  conformity.mjs           ← renders CONFORMITY.md — who authorized what, mapped to SOC 2
   ADAPTERS.md              ← provider-adapter contract (this pack = the Claude Code adapter)
   pack/
     AGENTS.md              ← autonomous-run guide, the source of truth (installed to product root)

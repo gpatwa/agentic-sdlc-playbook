@@ -105,6 +105,12 @@ neither is hand-parsed for numbers.
   "leastPrivilegeEnforced": true,
   "leastPrivilegeNote": "<why — which tier, and what made it so>",
   "telemetrySource": "<otel | self-reported>",
+  "approvals": [ { "action": "<what was approved>",
+                   "rule": "<HUMAN_APPROVAL_RULES rule #, or why it was gated>",
+                   "decision": "<approved|denied>",
+                   "approver": "<the named person — never a role>",
+                   "requestedAt": "<UTC>", "decidedAt": "<UTC>",
+                   "record": "<path or URL to the durable record>" } ],
   "gateCatches": [ { "gate": "<QA|Security|...>", "verdict": "fail",
                      "severity": "<blocker|required-fix|advisory>",
                      "finding": "<one line: what it caught>",
@@ -160,6 +166,21 @@ promotes them to top-level fields — the same move `gateCatches` made from
 `notes.gatesThatFired` — because a convention three-for-three runs already
 followed voluntarily belongs in the schema they were approximating, not
 in `notes` pretending to be undiscovered.
+
+**`approvals`** mirrors the STATE.md Approvals table in machine-readable form.
+It was the single most load-bearing thing in this system that existed *only* as
+prose: the named-approver claim is the centre of the whole accountability
+argument, and until now no tool could read it. `conformity.mjs` falls back to
+parsing STATE.md for runs written before this field, and labels those rows as
+unstructured — a fallback, not a substitute, because a markdown table cannot be
+checked for completeness. Record the **decision** verbatim (`approved`,
+`denied`, `deferred`) rather than collapsing everything to a boolean: a deferred
+item is evidence that scope was bounded deliberately, and is not an approval.
+`approver` is a person. A role there fails `HUMAN_APPROVAL_RULES.md` and is
+reported as a finding, because CC8.1 asks *who* and a team does not answer it.
+Where the approval also produced an independently verifiable event — a pull
+request review, a merge commit — put that in `record`: a reference someone else
+can check is worth more than anything this repository asserts about itself.
 
 **`telemetrySource`** records where this run's numbers came from — `otel` when
 the harness emitted them from the instrumentation layer, `self-reported` when
