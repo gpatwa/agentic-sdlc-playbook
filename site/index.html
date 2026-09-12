@@ -601,6 +601,103 @@
     * { animation: none !important; transition: none !important; }
     .btn:hover { transform: none; }
   }
+
+  /* ---------- span diagram ---------- */
+
+  .dgm { margin: 34px 0 8px; }
+
+  /* The page must never scroll horizontally; the diagram scrolls inside itself. */
+  .dgm-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  .dgm svg { display: block; width: 100%; min-width: 640px; height: auto; }
+
+  .dgm figcaption {
+    font-size: .84rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 14px;
+    max-width: 62ch;
+  }
+
+  .dgm-seam rect { fill: var(--sunk); }
+
+  .dgm-seam-label {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    fill: var(--faint);
+    text-anchor: middle;
+  }
+
+  .dgm-row {
+    font-family: var(--f-body);
+    font-size: 13px;
+    font-weight: 600;
+    fill: var(--ink);
+    text-anchor: end;
+  }
+
+  .dgm-row-own { fill: var(--gold-text); }
+
+  .dgm-sub {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    fill: var(--faint);
+    text-anchor: end;
+  }
+
+  /* A competitor's coverage: real, and deliberately quiet. */
+  .dgm-band { fill: var(--rule-strong); }
+
+  /* Absence of coverage, drawn rather than left blank — the blank is the point. */
+  .dgm-void {
+    fill: none;
+    stroke: var(--rule-strong);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+  }
+
+  .dgm-own { fill: var(--gold); }
+
+  /* Fixed, not var(--ground): the band is --gold in both themes, and --ground
+     inverts with them — it measures 3.85:1 light and 1.98:1 dark, i.e. nearly
+     invisible exactly where it matters. Same fixed ink .btn-primary:hover uses
+     on the same gold. 4.50:1 light, 8.78:1 dark. */
+  .dgm-own-label {
+    font-family: var(--f-body);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    fill: #14161A;
+    text-anchor: middle;
+  }
+
+  .dgm-stop { stroke: var(--ink-soft); stroke-width: 2; stroke-linecap: round; }
+
+  .dgm-note {
+    font-family: var(--f-body);
+    font-size: 11.5px;
+    font-style: italic;
+    fill: var(--muted);
+    text-anchor: start;
+  }
+
+  .dgm-note-end { text-anchor: end; }
+
+  .dgm-rule { stroke: var(--rule); stroke-width: 1; }
+
+  .dgm-axis {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: .04em;
+    fill: var(--faint);
+    text-anchor: start;
+  }
+
+  .dgm-axis-mid { text-anchor: middle; }
+  .dgm-axis-end { text-anchor: end; }
+
 </style>
 
 <div class="shell">
@@ -756,6 +853,55 @@
     <p class="sec-eyebrow">The span</p>
     <h2>The record doesn't stop at the merge.</h2>
     <p class="sec-lede">Spec frameworks end when code lands. Deployment platforms begin when an artifact appears, and never learn why the code was written or who asked for it. Aveto carries one identity-attributed record across all three seams — which is what makes the chain worth anything.</p>
+
+    <figure class="dgm">
+      <div class="dgm-scroll">
+        <svg viewBox="0 0 980 306" role="img" aria-labelledby="dgm-span-t dgm-span-d">
+          <title id="dgm-span-t">Coverage across the build, deploy and run seams</title>
+          <desc id="dgm-span-d">Spec frameworks cover only the build seam and stop at the merge. Deployment platforms start only once an artifact exists, covering deploy and run, and never learn why the code was written or who approved it. Aveto carries one identity-attributed record continuously across all three seams.</desc>
+
+          <!-- seam columns -->
+          <g class="dgm-seam">
+            <rect x="200" y="52" width="252" height="206" rx="3"/>
+            <rect x="465" y="52" width="222" height="206" rx="3"/>
+            <rect x="700" y="52" width="250" height="206" rx="3"/>
+          </g>
+          <g class="dgm-seam-label">
+            <text x="326" y="38">BUILD</text>
+            <text x="576" y="38">DEPLOY</text>
+            <text x="825" y="38">RUN</text>
+          </g>
+
+          <!-- spec frameworks: build only -->
+          <text class="dgm-row" x="186" y="100">Spec frameworks</text>
+          <text class="dgm-sub" x="186" y="116">Spec Kit · BMAD · Kiro</text>
+          <rect class="dgm-band" x="200" y="84" width="252" height="30" rx="4"/>
+          <rect class="dgm-void" x="465" y="84" width="485" height="30" rx="4"/>
+          <line class="dgm-stop" x1="455" y1="80" x2="455" y2="118"/>
+          <text class="dgm-note" x="478" y="104">stops at “merged” — no record of the deploy, or the incident</text>
+
+          <!-- deployment platforms: deploy + run -->
+          <text class="dgm-row" x="186" y="160">Deployment platforms</text>
+          <text class="dgm-sub" x="186" y="176">Harness · Pulumi Neo</text>
+          <rect class="dgm-void" x="200" y="144" width="252" height="30" rx="4"/>
+          <rect class="dgm-band" x="465" y="144" width="485" height="30" rx="4"/>
+          <line class="dgm-stop" x1="462" y1="140" x2="462" y2="178"/>
+          <text class="dgm-note dgm-note-end" x="438" y="164">never learns why, or who approved it</text>
+
+          <!-- aveto: unbroken -->
+          <text class="dgm-row dgm-row-own" x="186" y="226">Aveto</text>
+          <text class="dgm-sub" x="186" y="242">one continuous record</text>
+          <rect class="dgm-own" x="200" y="208" width="750" height="34" rx="4"/>
+          <text class="dgm-own-label" x="575" y="230">unbroken · every gate, every approver, every seam</text>
+
+          <line class="dgm-rule" x1="200" y1="272" x2="950" y2="272"/>
+          <text class="dgm-axis" x="200" y="290">a human asks</text>
+          <text class="dgm-axis dgm-axis-mid" x="575" y="290">an artifact exists</text>
+          <text class="dgm-axis dgm-axis-end" x="950" y="290">it is serving traffic</text>
+        </svg>
+      </div>
+      <figcaption>The two gaps are the product. Everything else in the category owns one end of this line.</figcaption>
+    </figure>
 
     <div class="cap">
       <div>
