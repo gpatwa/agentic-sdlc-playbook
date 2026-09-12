@@ -94,8 +94,14 @@
     background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
   .fig-head{padding:12px 18px;border-bottom:1px solid var(--line);
     font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--muted)}
-  .fig-body{padding:22px 14px;overflow-x:auto}
-  .fig-body pre.mermaid{margin:0;text-align:center;background:none;border:0;min-width:min-content}
+  .fig-body{padding:0}
+  /* Heights are per-diagram, measured from each one's own rendered size:
+     an iframe cannot size to its content without script, and a short frame
+     silently crops the diagram rather than failing. */
+  .fig-frame{display:block;width:100%;height:420px;border:0;background:transparent}
+  .fig-frame-tall{height:1140px}
+  .fig-note{padding:10px 18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+  .fig-note a{color:inherit}
 
   .tblwrap{overflow-x:auto;margin:24px 0 0;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
   table{width:100%;border-collapse:collapse;font-size:14px}
@@ -122,7 +128,7 @@
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="index.html"><span class="dot"></span>agentic&#8209;sdlc</a>
+    <a class="brand" href="index.html"><span class="dot"></span>Aveto</a>
     <nav>
       <a href="index.html">Overview</a>
       <a href="#loop" class="hide-sm">The loop</a>
@@ -169,29 +175,9 @@
       <div class="fig">
         <div class="fig-head">human ask &rarr; shipped, reviewed, learned-from change</div>
         <div class="fig-body">
-<pre class="mermaid">
-flowchart TB
-    H(["Human"]) -->|ask| O["Orchestrator"]
-    O -. "fuzzy / novel ask" .-> MR["Market Researcher"]
-    MR -. "discovery brief" .-> EM["Engineering Manager"]
-    O -->|"slice plan"| EM
-    EM -->|"scoped work"| PM["Product Manager"]
-    PM -->|"PRD"| UX["UX Researcher"]
-    UX -->|"feature spec"| UI["UI Designer"]
-    UI -->|"UX spec"| AR["Software Architect"]
-    AR -->|"tech spec"| ENG["Engineers - FE/BE/AI/ML"]
-    ENG -->|"diff + tests"| QA["QA Evidence"]
-    QA -->|"QA evidence"| SEC["Security and Privacy"]
-    SEC -->|"findings"| REL["Release Manager"]
-    REL -->|"ship"| PL["Post-Launch Learning"]
-    PL -. "carry-forward" .-> O
-    AG[(".agentic context + project pack")] -. "read first by every stage" .-> PM
-    GATES{{"Release Gates + Human Approval Rules"}}
-    ENG -. "impl gates" .-> GATES
-    SEC -. "security gates" .-> GATES
-    REL -. "confirms all gates" .-> GATES
-</pre>
+<iframe class="fig-frame fig-frame-tall" src="diagrams/agentic-sdlc-lifecycle.html?theme=dark&amp;embed=1" loading="lazy" title="Aveto lifecycle — interactive diagram"></iframe>
         </div>
+        <div class="fig-note"><a href="diagrams/agentic-sdlc-lifecycle.html">Open the lifecycle diagram full-page &rarr;</a></div>
       </div>
       <ul class="notes">
         <li>A slice enters as a free-form <b>human ask</b> and leaves as a <b>shipped, reviewed, learned-from change</b>. The loop back from Post-Launch is what makes it a lifecycle rather than a line.</li>
@@ -230,40 +216,9 @@ flowchart TB
       <div class="fig">
         <div class="fig-head">playbook &rarr; product repo &rarr; telemetry &rarr; back to the playbook</div>
         <div class="fig-body">
-<pre class="mermaid">
-flowchart TB
-    subgraph PB["Playbook - source of truth"]
-        BR["agents/ - 24 briefs"]
-        PR["protocols/"]
-        INS["install.mjs"]
-        ANA["analyze.mjs"]
-    end
-    subgraph PROD["Product repo"]
-        CL[".claude/ - generated agents, protocols, hooks"]
-        AGC[".agentic/ - product context"]
-        ORCH["Orchestrator session"]
-        STG["Role subagent"]
-        ST["runs/SLICE/STATE.md + artefacts"]
-        TR["runs/SLICE/trace.json"]
-        OUT["ANALYTICS.md + dashboard.html"]
-    end
-    BR --> INS
-    PR --> INS
-    INS -->|"generates, least-privilege per role"| CL
-    CL --> ORCH
-    AGC -. "read first" .-> ORCH
-    GUARD{{"budget-guard hook - PreToolUse on Agent"}}
-    ORCH -. "every spawn checked" .-> GUARD
-    GUARD -. "over budget: ask, degrade, or stop" .-> ORCH
-    ORCH -->|"spawns each stage"| STG
-    STG -->|"writes artefact incrementally"| ST
-    ST -->|"at close"| TR
-    TR --> ANA
-    ANA -->|"renders"| OUT
-    OUT -.->|"outliers become carry-forwards"| BR
-    OUT -.->|"re-baselined budgets and SLOs"| PR
-</pre>
+<iframe class="fig-frame" src="diagrams/architecture-feedback-loop.html?theme=dark&amp;embed=1" loading="lazy" title="Playbook feedback loop — interactive diagram"></iframe>
         </div>
+        <div class="fig-note"><a href="diagrams/architecture-feedback-loop.html">Open the feedback-loop diagram full-page &rarr;</a></div>
       </div>
       <ul class="notes">
         <li><b>The playbook compiles.</b> The installer turns briefs and protocols into a runnable pack inside the product repo, with per-role least-privilege tools. <em>Caveat:</em> those restrictions only bind when the Orchestrator session is rooted <b>in the product repo</b>, where the generated agents are discoverable.</li>
@@ -301,15 +256,6 @@ flowchart TB
   </footer>
 </main>
 
-<style>.mermaid svg{max-width:100%;height:auto;display:block;margin:0 auto}</style>
-<script type="module">
-  // Mermaid from CDN — this is a docs page, not shipped product code. The
-  // repo's dependency-free rule governs the seed apps' runtime, not this.
-  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-  mermaid.initialize({ startOnLoad: true, securityLevel: "strict",
-    theme: dark ? "dark" : "neutral", flowchart: { curve: "basis" } });
-</script>
 
 </body>
 </html>
