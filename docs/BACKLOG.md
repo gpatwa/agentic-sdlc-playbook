@@ -438,6 +438,49 @@ from the run" pattern as effort / operator / executor / gateCatches.
     inventing a finding from one conflation. 18 tests, 109 in the pack.
 
 
+- **T17 · Give the agent a credential that cannot approve its own deploy.**
+  *Raised 2026-09-13, from a live observation during a real deploy.* The
+  `production` environment gate is the product's own thesis applied to itself:
+  a named human authorises an external-effect change and GitHub records who and
+  when. During the deploy of that day's site work, the API answered
+  `current_user_can_approve: true` for the session driving it. The gate held —
+  but it held because the agent declined, not because anything stopped it.
+  - **The framing "the deploy token can approve itself" is wrong**, and worth
+    correcting before anyone acts on it. Three credentials are in play and only
+    one is the problem:
+
+    | Credential | Can approve? | Why |
+    |---|---|---|
+    | `CLOUDFLARE_API_TOKEN` | No | Cloudflare-only; carries no GitHub authority |
+    | Workflow `GITHUB_TOKEN` | No | Not a user, so not on the reviewer list; holds only `contents: read` + `deployments: write` |
+    | The agent's session `gh` token | **Yes** | A `gho_` OAuth token with `repo` scope acting **as `gpatwa`** — who *is* the required reviewer |
+
+    Narrowing the deploy token fixes nothing, because the deploy token was
+    never able to do this. What can approve is the **human credential the agent
+    is driving**, which is also the credential it pushes with.
+  - **Do not set `prevent_self_review`.** It is the obvious fix and it would
+    recreate the deadlock T-fix of 2026-09-13 just removed. The repo has
+    exactly one collaborator and one reviewer (`gpatwa`), who is also the only
+    pusher; blocking the triggering actor from approving would leave nobody
+    able to approve anything, ever.
+  - **The actual fix is a second, narrower credential for the agent** — a
+    fine-grained PAT with `Contents: write` (enough to push, which is what
+    triggers a deploy) and **no** `Deployments` permission. The approve
+    endpoint requires *"read access to the repository contents and
+    deployments"*, so a token lacking the latter should be refused. Minting it
+    needs an authenticated human, the same reason `setup-deploy.sh` takes one
+    human-supplied value: an agent must not create its own credentials.
+  - **Unverified, and cheap to verify:** that `Deployments: none` actually
+    blocks the approve call, rather than the endpoint falling back to the
+    user's underlying repo access. Test by minting the PAT, attempting one
+    approval with it, and confirming a 403. Do not adopt it as the agent's
+    credential until that call has been seen to fail — an assumed boundary is
+    worth less than the honest note that there isn't one.
+  - **Until then the gate rests on agent restraint, and the record should say
+    so.** This is exactly the distinction `docs/ARCHITECTURE.md` draws between
+    permission and authorisation, found in our own pipeline: the token was
+    permitted to approve, and no one had authorised it to.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
