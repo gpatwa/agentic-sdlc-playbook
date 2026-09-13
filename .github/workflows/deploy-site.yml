@@ -32,9 +32,25 @@ permissions:
   contents: read
   deployments: write
 
+# One deploy at a time, newest wins.
+#
+# This was `cancel-in-progress: false`, to protect an upload already in flight.
+# That traded a rare, self-correcting problem for a silent, permanent one: a run
+# parked at the approval gate below still holds this lock. Between 2026-09-11
+# and 2026-09-13 one unapproved run held it for two days, and every push behind
+# it queued as `pending` with zero jobs and was eventually cancelled. Nothing
+# failed and nothing was reported — `pending` looks exactly like normal
+# queueing, so the pipeline was dead without appearing to be.
+#
+# Superseding is also the correct semantics, not merely the safe default. A
+# newer commit *should* replace an older unapproved deploy: approving the stale
+# one would have shipped the site eight commits behind. And cancelling mid-
+# upload is recoverable in a way the deadlock is not — Pages serves a deploy
+# only once it is complete, and the run that superseded it ships the newer code
+# seconds later.
 concurrency:
   group: deploy-site
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # Gate first. A deploy that fails validation should never reach the human —
