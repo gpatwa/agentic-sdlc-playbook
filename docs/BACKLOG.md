@@ -284,7 +284,8 @@ from the run" pattern as effort / operator / executor / gateCatches.
 
 - **T14 · Emit the approval record as signed in-toto attestations.**
   ◐ *Raised 2026-09-10 — the most load-bearing of the three; spike done
-  2026-09-12, **nothing implemented**, blocked on one decision (below).* Every approval,
+  2026-09-12 (decided: bind to GitHub, don't sign); the binding half **built
+  and tested 2026-09-14** (below). Signing itself remains not started.* Every approval,
   gate verdict and `approvedBy` in `trace.json` is **plain unsigned JSON**. For
   a system whose entire claim is attributable evidence, an auditor's first
   question — *"how do I know this file wasn't edited afterwards?"* — currently
@@ -380,6 +381,56 @@ from the run" pattern as effort / operator / executor / gateCatches.
       from systems of record, and an in-run approval never reaches one. A
       much narrower target than "sign everything", and worth revisiting once
       there is a second operator or a buyer who asks.
+  - **Built and tested 2026-09-14 — `execution/verify-approvals.mjs`.**
+    Binding was only half the design: `conformity.mjs` had been displaying
+    whatever GitHub URL a record claimed, unchecked — a self-authored link is
+    still a self-report, just a more convincing-looking one. This fetches each
+    claimed PR from GitHub's own API and reports whether it holds, rather than
+    trusting the string.
+    - **Run against real data, not just fixtures.** `saved-item-folders`' PR
+      #6 is the only run in either product repo whose record names a GitHub
+      PR. Checked directly against the live GitHub API before any test was
+      written: merged, merge commit `3e8ede5...` confirmed exact, required
+      check `Release gates` present with `conclusion: success` — the claim
+      holds.
+    - **That same check surfaced a finding the design didn't anticipate:
+      `merged_by` equals the PR's own author.** Single-operator repo, no
+      distinct reviewer — GitHub's merge event corroborates *that a merge
+      happened*, not that anyone besides the author looked at it. Reported
+      per claim as **self-merged**, not silently passed as equivalent to a
+      reviewed merge. This is the expected shape for this repo's actual
+      operating pattern, not a defect — but conflating it with a
+      distinct-reviewer approval would have been exactly the overclaim T14
+      exists to avoid, one level further in.
+    - **What it can and cannot prove, stated in the tool's own output, not
+      just here:** can verify a PR exists, who merged it, the real merge
+      commit, and whether GitHub's required checks ran and passed before
+      merge. Cannot verify a human distinct from the author reviewed it —
+      that evidence, where it exists, lives in the driving session's own
+      `APPROVAL_RECORD`, not in GitHub's review history.
+    - **Honest about its own dependency.** `gh` is the one external binary
+      this repo's tools rely on. Checked once per run (`gh auth status`), not
+      per claim; unavailable or unauthenticated is reported as a **reason**
+      per row (`unverified — gh CLI is not installed` vs. `— gh is not
+      authenticated`), not silently skipped or conflated with a PR that
+      genuinely doesn't check out.
+    - **12 tests**, covering the two ways this could fail silently and matter:
+      reporting *verified* when GitHub disagrees (a mismatched merge commit
+      must show `**MISMATCH**` and fail `--strict`), and reporting *self-merge*
+      as a plain pass instead of a flagged one. One test bug caught along the
+      way: simulating "`gh` not installed" by omitting it from a fixture
+      directory still inherited the real system `PATH`, so the actual `gh` on
+      this machine answered instead of proving absence — Node resolves
+      `execFileSync`'s command against the *provided* `env.PATH`, not the
+      caller's, so the fix was constructing a `PATH` that could reach `node`
+      but nothing else, not just omitting a fixture.
+    - **`conformity.mjs`'s own disclaimer updated** to stop implying a shown
+      GitHub link is checked evidence — it names this tool for the check it
+      does not itself perform. 130 tests pass across the pack.
+    - **Still not started:** signing. The narrower target identified above —
+      an approval that happens inside a run and never surfaces as a git
+      event — has no code yet. `verify-approvals.mjs` closes the binding half
+      of this ticket; it is not a substitute for the other half.
 
 - **T15 · Write `AGENTS.md`, keep `CLAUDE.md` as a bridge.** ✅ *Done
   2026-09-11* — `execution/pack/AGENTS.md` is now the source of truth: the
