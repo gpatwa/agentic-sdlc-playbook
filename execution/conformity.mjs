@@ -137,7 +137,7 @@ L.push(`Generated ${ts} by \`conformity.mjs\` from \`runs/*/trace.json\`. Covers
 L.push(``);
 L.push(`**What this is.** A register of changes made by autonomous agents in this repository, and the human authorization behind each one. It maps to the SOC 2 criteria an auditor applies to agent-written code.`);
 L.push(``);
-L.push(`**What this is not.** Nothing here is cryptographically signed. Every record below is plain JSON and markdown in this repository, and anyone with write access could have edited it after the fact. Where a record points at an independently verifiable event — a GitHub pull request, a merge commit — that reference is the stronger evidence and is shown. Treat the rest as this organization's own assertion.`);
+L.push(`**What this is not.** Nothing here is cryptographically signed. Every record below is plain JSON and markdown in this repository, and anyone with write access could have edited it after the fact. Where a record points at an independently verifiable event — a GitHub pull request, a merge commit — that reference is the stronger evidence and is shown, but this tool displays the claim; it does not check it. Run \`verify-approvals.mjs\` for that — it fetches each named PR from GitHub itself and reports whether the claim holds, including whether the merge was self-merged (the same identity as the author, so no distinct reviewer) rather than treating any GitHub link as equally strong evidence. Treat everything without a checked reference as this organization's own assertion.`);
 L.push(``);
 
 // ── control coverage ────────────────────────────────────────────────────────

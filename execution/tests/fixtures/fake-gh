@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+// Stand-in for the `gh` CLI, for tests only. Reads canned responses from
+// $FAKE_GH_FIXTURES/<slug>.json, where <slug> is the request path with `/`
+// replaced by `_`. `gh auth status` and `gh api <path>` are the only two
+// invocation shapes verify-approvals.mjs uses.
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
+
+const [, , cmd, ...rest] = process.argv;
+const dir = process.env.FAKE_GH_FIXTURES;
+
+if (cmd === "auth" && rest[0] === "status") {
+  process.exit(process.env.FAKE_GH_UNAUTHENTICATED ? 1 : 0);
+}
+
+if (cmd === "api") {
+  const path = rest[0];
+  const slug = path.replace(/\//g, "_") + ".json";
+  const file = join(dir, slug);
+  if (!existsSync(file)) {
+    process.stderr.write(`fake-gh: no fixture for ${path}\n`);
+    process.exit(1);
+  }
+  process.stdout.write(readFileSync(file, "utf8"));
+  process.exit(0);
+}
+
+process.stderr.write(`fake-gh: unhandled invocation: ${process.argv.slice(2).join(" ")}\n`);
+process.exit(1);

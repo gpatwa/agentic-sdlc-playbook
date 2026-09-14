@@ -63,3 +63,20 @@ The `APPROVAL_RECORD` artefact is what makes the approval auditable after
 the fact — the Release Manager reads it, and it survives the conversation.
 A verbal "yes" that isn't written down didn't happen, as far as the audit
 trail is concerned.
+
+## When the record can point at GitHub
+
+An `APPROVAL_RECORD` for a rule 1–3 action (send/submit, destructive
+shared-state, deploy/release) is usually the human approving a PR the
+Orchestrator is about to open or merge. When it is, **put the real PR URL
+in the record** — `https://github.com/<owner>/<repo>/pull/<n>` — not a
+paraphrase. `verify-approvals.mjs` fetches that URL from GitHub itself and
+reports whether the claim holds, including the real merge commit and
+whether GitHub's required checks actually ran and passed. A record that
+just says "opened a PR" gives that tool nothing to check; a record with the
+URL turns an assertion into a claim someone else can verify.
+
+This does not apply to rules 4–6 (safety-control change, real model/client,
+new data processor) — those are approved at Intake/Scope, before a PR
+exists, so there is nothing yet to point at. Record those as always; there
+is no stronger evidence available at that point in the lifecycle.

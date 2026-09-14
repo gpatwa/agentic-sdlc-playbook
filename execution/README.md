@@ -13,6 +13,7 @@ execution/
   install.mjs              ← generates .claude/agents/ from briefs, installs the pack
   analyze.mjs              ← renders ANALYTICS.md + dashboard.html from runs/*/trace.json
   conformity.mjs           ← renders CONFORMITY.md — who authorized what, mapped to SOC 2
+  verify-approvals.mjs     ← checks a conformity claim's GitHub PR references against GitHub itself
   otlp-probe.mjs           ← stands in as an OTLP endpoint to check TELEMETRY.md against reality
   ADAPTERS.md              ← provider-adapter contract (this pack = the Claude Code adapter)
   pack/
