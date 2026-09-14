@@ -481,6 +481,38 @@ from the run" pattern as effort / operator / executor / gateCatches.
     permission and authorisation, found in our own pipeline: the token was
     permitted to approve, and no one had authorised it to.
 
+- **T18 · Run the falsification test: five conversations with regulated
+  buyers.** *Raised 2026-09-13.* The strategy doc names one thing that would
+  collapse the whole position and nothing here tracked it, so it stayed
+  invisible by being the only item that is not engineering work.
+  - **The test.** *If regulated buyers accept platform-level SOC 2 attestation
+    as sufficient evidence for AI-built software — rather than demanding
+    per-change authorisation records — the wedge collapses into a feature of
+    someone else's platform.* Everything in Tier 2 assumes the opposite. None
+    of it has been checked against a buyer.
+  - **The decision rule, fixed before the answers are known** — the same
+    pre-registration T12 used to stop the result being reinterpreted after the
+    fact. If **4+ of 5** say platform-level attestation has satisfied their
+    auditor for agent-assisted change: the position is wrong, and T13/T14 stop
+    being load-bearing. If **3+ of 5** report being asked for per-commit
+    attribution or named reviewer identity: it holds, and the conformity export
+    becomes the lead artefact. Anything between is inconclusive and buys
+    another five, not a reinterpretation of these.
+  - **Ask the right person.** The buyer is the CISO or compliance owner, not
+    the engineering lead — different people, different budgets. An engineering
+    lead's enthusiasm is not evidence about this question and should not be
+    recorded as though it were.
+  - **Ask about the past, not the product.** *"What did your auditor ask for
+    last cycle on change management?"* and *"how do you evidence who approved a
+    change an agent wrote?"* — questions about what already happened. "Would
+    you buy this" produces agreement, not information.
+  - **Now cheap, because there is finally something to show.** T16 produces the
+    artefact (`runs/CONFORMITY.md`), including its honest CC3.2 blank. Before
+    it existed there was nothing to put in front of anyone.
+  - **Record disconfirming answers in full**, per this file's own habit (T2
+    keeps its miss, T10 refuses to round trajectory data up). A falsification
+    test whose failures go unwritten is not a test.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
