@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Aveto is the system of record for software your agents build, deploy and run. Every consequential decision carries a named human and an unbroken record.">
+<meta name="description" content="Aveto is the sign-off record for what your agents build, deploy and run — which named human authorized every gate, kept as an unbroken record.">
 <meta property="og:title" content="Aveto">
-<meta property="og:description" content="Move at agent speed. Prove every decision.">
+<meta property="og:description" content="Every approval your agents needed — with a name on it.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://aveto.dev/">
 <meta name="twitter:card" content="summary_large_image">
@@ -199,7 +199,10 @@
     text-wrap: balance;
   }
 
-  h1 .em { color: var(--gold); }
+  /* --gold-text, not --gold: plain --gold as *text* on --ground measures
+     3.85:1 (light) — below AA. --gold-text exists precisely for gold used as
+     small/text color rather than as a fill; .brandline already uses it. */
+  h1 .em { color: var(--gold-text); }
 
   .hero-sub {
     font-size: clamp(1.04rem, 1.9vw, 1.2rem);
@@ -777,9 +780,9 @@
   </nav>
 
   <header class="hero">
-    <p class="brandline">Move at agent speed. Prove every decision.</p>
-    <h1>Move beyond agentic engineering to <span class="em">accountable autonomy</span>.</h1>
-    <p class="hero-sub">Aveto helps teams turn agent autonomy <strong>up</strong>, not down: a lifecycle that refuses unsafe work before it's built, verification that's structurally independent of the agent that wrote the code, and deploys to Azure, AWS or GCP with a named human on every gate.</p>
+    <p class="brandline">Every approval your agents needed — with a name on it.</p>
+    <h1>Who approved that? Now there's <span class="em">an answer</span>.</h1>
+    <p class="hero-sub">Aveto is the sign-off record for what your agents build, deploy and run: a lifecycle that refuses unsafe work before it's built, verification that's structurally independent of the agent that wrote the code, and a named approver on every gate — Azure today, AWS and GCP through the same gate next.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#closer">Request access</a>
       <a class="btn btn-ghost" href="#evidence">See a run record</a>
@@ -1214,7 +1217,7 @@
 
   <footer>
     <div class="brand"><span class="mark"></span>Aveto</div>
-    <span class="tag">Move at agent speed. Prove every decision.</span>
+    <span class="tag">Every approval your agents needed — with a name on it.</span>
     <a href="https://github.com/gpatwa/agentic-sdlc-playbook" style="color:var(--muted);text-decoration:none">Source on GitHub &#8599;</a>
   </footer>
 
