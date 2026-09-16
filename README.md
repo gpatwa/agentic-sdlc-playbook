@@ -19,7 +19,8 @@ consequential decision can be attributed to a person afterwards.
 > multiple products. Each product repo should keep its own `.agentic/` folder
 > with project-specific context — never add product-specific files here.
 
-Agentic Job Ops is the first reference implementation.
+`stash-seed` and `streak-seed` are where it has actually been run end to
+end — see "Real runs, not just a worked example" below.
 
 ## What's here
 
@@ -27,7 +28,8 @@ Agentic Job Ops is the first reference implementation.
 agentic-sdlc/
   README.md                        ← you are here
   docs/                            ← how the system works
-    ARCHITECTURE.md                ← system design + data flow (start here)
+    GETTING_STARTED.md             ← start here — what you get, exact commands
+    ARCHITECTURE.md                ← system design + data flow
     VALIDATION_MATRIX.md           ← how the playbook is proven, phase by phase
     PLATFORM_EVAL.md               ← the platform success scorecard + benchmark
     STANDARDS_WATCH.md             ← external standards/ecosystem tracker
@@ -141,6 +143,12 @@ And in the product repo (`/.agentic/`):
 
 ## How to use
 
+**[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** — start here. What
+you actually get, what it costs (real numbers from real runs), and the
+exact commands for both the autonomous (Claude Code) and manual paths.
+
+The model, briefly:
+
 1. **Pick the project pack.** Read `project-packs/<archetype>.md` and identify
    which invariants and gates apply.
 2. **Stage the project's `.agentic/` folder.** It tells every agent what's
@@ -185,8 +193,21 @@ delegating each stage to a generated subagent, tracking resumable state, and
 - **Small tasks, one commit each.** Token budgets and reviewer cognition
   both prefer narrow, well-scoped changes.
 
-## First example project
+## Real runs, not just a worked example
 
-[Agentic Job Ops](../) is the first product built with this playbook. See
-`/.agentic/` in the same repo for its concrete adapter files. Use it as a
-worked example of how the templates fill in for a real product.
+[`examples/saved-items-bulk-delete/`](examples/saved-items-bulk-delete/) is
+a *fictional* worked example — every template filled in, but no agent
+actually ran it.
+
+`stash-seed` and `streak-seed`, two sibling product repos, are where the
+playbook has actually been driven end to end: seven traced slices between
+them, real PRs, real merges, real gate catches (a security gap the test
+suite missed, caught before it shipped — `saved-item-folders`), real
+budget overruns recorded honestly rather than smoothed over. `docs/VALIDATION_MATRIX.md`
+is the narrative account; `runs/*/trace.json` in either repo is the
+primary evidence.
+
+*(An earlier pointer here named `agentic-job-ops` as "the first reference
+implementation." That repo has a `.agentic/` folder and zero runs — it was
+never actually exercised. Corrected 2026-09-15 rather than left to mislead
+the next reader.)*
