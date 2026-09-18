@@ -92,14 +92,26 @@ jobs:
       # agents/production-verification.md: a deploy is not "done" because the
       # command exited 0. Two distinct checks, because they fail for different
       # reasons and conflating them produced a red run over a healthy deploy.
+      #
+      # The content sentinel is READ FROM the checked-out site/index.html, not
+      # hardcoded. It used to be the literal string "accountable autonomy" —
+      # that was the hero headline the day this workflow was written, and it
+      # went stale the first time the headline copy changed: the 2026-09-18
+      # hero rewrite deployed correctly (confirmed live on both *.pages.dev
+      # and the custom domain) while this step failed the run, because it was
+      # searching the new page for old marketing copy. Deriving the sentinel
+      # from the page's own <title> ties the check to something a routine copy
+      # edit won't touch, so this can't recur the same way.
       - name: Verify the deployment itself
         env:
           URL: ${{ steps.deploy.outputs.deployment-url }}
         run: |
           test -n "$URL" || { echo "::error::wrangler reported no deployment URL"; exit 1; }
+          sentinel=$(grep -o '<title>[^<]*</title>' site/index.html | head -1 | sed -E 's/<\/?title>//g')
+          test -n "$sentinel" || { echo "::error::site/index.html has no <title> to check against"; exit 1; }
           for i in 1 2 3 4 5; do
             code=$(curl -s -o /tmp/live.html -w "%{http_code}" -m 15 -L "$URL" || echo 000)
-            if [ "$code" = "200" ] && grep -q "accountable autonomy" /tmp/live.html; then
+            if [ "$code" = "200" ] && grep -qF "$sentinel" /tmp/live.html; then
               echo "deployment healthy: $URL (HTTP $code, expected content present)"
               exit 0
             fi
@@ -115,9 +127,10 @@ jobs:
       - name: Verify the custom domain
         continue-on-error: true
         run: |
+          sentinel=$(grep -o '<title>[^<]*</title>' site/index.html | head -1 | sed -E 's/<\/?title>//g')
           for i in 1 2 3; do
             code=$(curl -s -o /tmp/dom.html -w "%{http_code}" -m 15 -L https://aveto.dev/ || echo 000)
-            if [ "$code" = "200" ] && grep -q "accountable autonomy" /tmp/dom.html; then
+            if [ "$code" = "200" ] && grep -qF "$sentinel" /tmp/dom.html; then
               echo "custom domain healthy: https://aveto.dev/"
               exit 0
             fi
