@@ -835,18 +835,18 @@
 
   <section id="why">
     <p class="sec-eyebrow">Why now</p>
-    <h2>Agents made writing free. They made shipping harder.</h2>
-    <p class="sec-lede">The bottleneck moved. Code arrives faster than anyone can check it, so the expensive part is no longer writing the change — it's knowing the change is safe to ship. The common answer is a second agent bolted onto the pull request, which is the same agent-checking-agent problem one step later.</p>
+    <h2>The code was never the hard part.</h2>
+    <p class="sec-lede">An agent writes the feature in minutes. What it cannot do alone is everything that makes the feature safe to ship — the architecture review, the verification by someone who didn't write it, the security pass, the release gate. That process is what separates a demo from production, it lives inside large engineering orgs, and it never shipped with the models.</p>
     <div class="stats">
       <div class="stat">
-        <span class="fig">61%</span>
-        <p>of engineering leaders shipped a production incident caused by AI-written code in the previous 90 days.</p>
-        <cite>Survey of 100 engineering directors and VPs, 2026</cite>
+        <span class="fig">96%</span>
+        <p>of developers say they do not fully trust AI-generated code to be functionally correct.</p>
+        <cite>Developer survey, 2026</cite>
       </div>
       <div class="stat">
-        <span class="fig">441%</span>
-        <p>median increase in code review time across 22,000 developers — while task throughput rose just 33.7%.</p>
-        <cite>Faros AI telemetry, 2026</cite>
+        <span class="fig">33%</span>
+        <p>of AI-written code clears review unmodified &mdash; against 84% for the code a person wrote.</p>
+        <cite>Industry analysis, 2026</cite>
       </div>
       <div class="stat">
         <span class="fig">43%</span>
@@ -1076,13 +1076,13 @@
   <section id="span">
     <p class="sec-eyebrow">The span</p>
     <h2>The record doesn't stop at the merge.</h2>
-    <p class="sec-lede">Spec frameworks end when code lands. Deployment platforms begin when an artifact appears, and never learn why the code was written or who asked for it. Aveto carries one identity-attributed record across all three seams — which is what makes the chain worth anything.</p>
+    <p class="sec-lede">Spec-driven tools end when code lands. Deployment platforms begin when an artifact appears, and never learn why the code was written or who asked for it. Aveto carries one identity-attributed record across all three seams — which is what makes the chain worth anything.</p>
 
     <figure class="dgm">
       <div class="dgm-scroll">
         <svg viewBox="0 0 980 306" role="img" aria-labelledby="dgm-span-t dgm-span-d">
           <title id="dgm-span-t">Coverage across the build, deploy and run seams</title>
-          <desc id="dgm-span-d">Spec frameworks cover only the build seam and stop at the merge. Deployment platforms start only once an artifact exists, covering deploy and run, and never learn why the code was written or who approved it. Aveto carries one identity-attributed record continuously across all three seams.</desc>
+          <desc id="dgm-span-d">Spec-driven tools cover only the build seam and stop at the merge. Deployment platforms start only once an artifact exists, covering deploy and run, and never learn why the code was written or who approved it. Aveto carries one identity-attributed record continuously across all three seams.</desc>
 
           <!-- seam columns -->
           <g class="dgm-seam">
@@ -1096,8 +1096,8 @@
             <text x="825" y="38">RUN</text>
           </g>
 
-          <!-- spec frameworks: build only -->
-          <text class="dgm-row" x="186" y="100">Spec frameworks</text>
+          <!-- spec-driven tools: build only -->
+          <text class="dgm-row" x="186" y="100">Spec-driven tools</text>
           <text class="dgm-sub" x="186" y="116">Spec Kit · BMAD · Kiro</text>
           <rect class="dgm-band" x="200" y="84" width="252" height="30" rx="4"/>
           <rect class="dgm-void" x="465" y="84" width="485" height="30" rx="4"/>
@@ -1170,7 +1170,7 @@
   <section id="evidence">
     <p class="sec-eyebrow">The record</p>
     <h2>Built to be handed to someone who wasn't there.</h2>
-    <p class="sec-lede">Every framework below asks a version of the same question — who authorized this, what did the system decide, and was that consistent with policy. Aveto's artifacts answer it by construction, because they were produced at the moment the decision was made rather than reconstructed afterwards.</p>
+    <p class="sec-lede">Every standard below asks a version of the same question — who authorized this, what did the system decide, and was that consistent with policy. Aveto's artifacts answer it by construction, because they were produced at the moment the decision was made rather than reconstructed afterwards.</p>
     <div class="fw-grid">
       <div class="fw"><span class="name">EU AI Act</span><span class="role">Human oversight, auditability, conformity assessment</span></div>
       <div class="fw"><span class="name">ISO 42001</span><span class="role">AI management system controls</span></div>
@@ -1183,23 +1183,23 @@
 
   <section id="who">
     <p class="sec-eyebrow">Who it's for</p>
-    <h2>Teams whose build process just entered audit scope.</h2>
-    <p class="sec-lede">Not everyone needs this. The teams that do have one thing in common: the software was built by agents, and someone external is going to ask how.</p>
+    <h2>For everyone shipping without a safety net.</h2>
+    <p class="sec-lede">Not everyone needs this. The people who do have one thing in common: the software matters, and there is nobody else standing between a mistake and production.</p>
     <div class="aud-grid">
       <div class="aud">
-        <h3>Regulated product teams</h3>
-        <p>Fintech, health-tech and gov-tech shipping AI-built software into markets where the build process itself is now examinable.</p>
-        <span class="trigger">Trigger · first audit cycle</span>
+        <h3>Solo founders and small teams</h3>
+        <p>You are the architect, the reviewer and the on-call. Aveto is the colleagues you would have had at a company ten times the size.</p>
+        <span class="trigger">Trigger · the first paying customer</span>
       </div>
       <div class="aud">
-        <h3>Platform teams scaling agents</h3>
-        <p>Groups that have proven agents work on a pilot and now have to justify raising the autonomy ceiling across an org.</p>
-        <span class="trigger">Trigger · pilot to production</span>
+        <h3>Engineers outside big tech</h3>
+        <p>You know exactly what a real review process looks like. You just don't work somewhere that runs one.</p>
+        <span class="trigger">Trigger · the change you can't get wrong</span>
       </div>
       <div class="aud">
-        <h3>Engineering leaders after an incident</h3>
-        <p>Where an agent-authored change reached production and the reconstruction afterwards took days it shouldn't have.</p>
-        <span class="trigger">Trigger · post-incident review</span>
+        <h3>Teams outgrowing what they can hold</h3>
+        <p>Shipping faster than anyone can still keep the whole system in their head, and feeling the first things slip through.</p>
+        <span class="trigger">Trigger · the first production incident</span>
       </div>
     </div>
   </section>
@@ -1207,7 +1207,7 @@
   <section id="limits">
     <p class="sec-eyebrow">Honest limits</p>
     <h2>Where it costs you, and where it isn't proven.</h2>
-    <p class="sec-lede">The validation matrix in the repo lists what isn't proven, so this page does too. A governance product that oversells itself has already failed its own test.</p>
+    <p class="sec-lede">The validation matrix in the repo lists what isn't proven, so this page does too. A product built on refusing unsound work cannot oversell itself and still mean it.</p>
     <div class="holds">
       <div class="hold">
         <div class="hold-mark">01</div>
@@ -1246,7 +1246,7 @@
     <div class="narrow">
       <details open>
         <summary>Is this a coding agent?</summary>
-        <p>No. Aveto governs the agents you already use rather than replacing them. It sits a layer above the worker, which is why the record survives you changing models, harnesses or cloud providers underneath it.</p>
+        <p>No. Aveto directs the agents you already use rather than replacing them. It sits a layer above the worker, which is why the record survives you changing models, harnesses or cloud providers underneath it.</p>
       </details>
       <details>
         <summary>Our agents already run under scoped credentials &mdash; isn't that enough?</summary>
@@ -1275,7 +1275,7 @@
 
   <section id="source">
     <p class="sec-eyebrow">The documents</p>
-    <h2>The methodology is the source.</h2>
+    <h2>The specs are the product.</h2>
     <p class="sec-lede">There is no hidden implementation. The specs below <em>are</em> the system &mdash; agents are generated from these files and the gates are enforced from them. Read the rules before trusting the claims.</p>
     <div class="fw-grid">
       <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/ARCHITECTURE.md"><span class="name">Architecture &amp; data flow &rarr;</span><span class="role">Agent topology, how the repo realizes it, and the execution loop</span></a>
