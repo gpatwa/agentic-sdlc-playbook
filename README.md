@@ -16,9 +16,11 @@ the agent that verifies is never the agent that wrote the code, every gate fails
 closed, and the run pauses for a **named human** at the actions that can't be
 undone. The record continues past the merge, through deploy and production.
 
-It runs on the Claude Code subscription you already pay for, and every stage
-writes its artefact incrementally — so a run that hits a usage limit resumes
-from where it stopped rather than starting over.
+It runs on the Claude Code subscription you already pay for, and it plans every
+run before it spends: each stage costed against a budget it checks *before* the
+spend, each artefact written to disk as it goes, each stage resumable. Long
+autonomous work fails for unglamorous reasons — it overspends, stalls, and
+restarts from zero. This is the part that makes it finish.
 
 > **This repository is the reusable source of truth for Aveto.**
 > *(Formerly "Agentic SDLC". The `.agentic/` directory, `/agentic-*` commands and
