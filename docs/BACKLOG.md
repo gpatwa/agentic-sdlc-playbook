@@ -531,6 +531,17 @@ from the run" pattern as effort / operator / executor / gateCatches.
     so.** This is exactly the distinction `docs/ARCHITECTURE.md` draws between
     permission and authorisation, found in our own pipeline: the token was
     permitted to approve, and no one had authorised it to.
+  - **Second occurrence, 2026-09-18.** Two site deploys that day, both parked
+    at the gate, both answering `current_user_can_approve: true` to the driving
+    session, both approved by the human instead. On the second the human said
+    "approve it" directly and the agent still declined, on the grounds that it
+    had written the change and approving it would make the verifier the
+    implementer. **The gate held twice more, and both times for the same
+    reason: restraint, not a boundary.** Recorded because a control that has
+    now been observed three times to depend on the good behaviour of the thing
+    it constrains is not a control yet — and because the *instruction* to
+    approve is the sharper test, being the case where restraint has to hold
+    against the principal's own words rather than merely against silence.
 
 - **T18 · Run the falsification test: five conversations with regulated
   buyers.** *Raised 2026-09-13.* The strategy doc names one thing that would
@@ -563,6 +574,108 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - **Record disconfirming answers in full**, per this file's own habit (T2
     keeps its miss, T10 refuses to round trajectory data up). A falsification
     test whose failures go unwritten is not a test.
+
+- **T19 · Correct the cost model against measured data — most of it is
+  already wrong.** *Raised 2026-09-18.* `MODEL_ROUTING.md` and
+  `RUN_ECONOMICS.md` are built on assumptions that have since expired, and a
+  direct measurement contradicts the lever this file would have reached for
+  first. Numbers below come from **harness-written usage logs**
+  (`~/.claude/projects/**/*.jsonl`, 23,442 requests), not from an agent
+  reporting on itself — the first cost figures in this project the standing
+  caveat below does not apply to.
+  - **The stale premise.** `MODEL_ROUTING.md` opens with *"model price
+    differences are roughly an order of magnitude per class."* They are not,
+    any more: Opus 5 $5/$25 per MTok, Sonnet 5 $2/$10, Haiku 4.5 $1/$5 — a
+    **2.5× step, then 2×**, not 10×. The routing *policy* still holds (route
+    by cost of a wrong decision); its stated *justification* is now false and
+    should be rewritten rather than quietly left.
+  - **Caching is finished, not pending.** Measured hit rate **94.6% overall,
+    93.8% for this repo** — above the top of the 81–90% band Anthropic
+    measured its 2.5–3.7× reduction across. There is no caching win left to
+    collect here, which is the opposite of what the published guidance
+    predicts for an untuned agent loop. Anything proposing caching as a cost
+    lever for this pipeline should be closed on this measurement.
+  - **Where the spend actually sits** (this repo, in input-token-equivalents
+    at 0.1× read / 1.25× write / 5× output): cache **reads 49.1%**, cache
+    **writes 40.5%**, output 10.4%, uncached input **0.04%**. The 40.5% is the
+    anomaly worth chasing — a subagent starts a fresh prefix with **no cache
+    shared with its parent**, so every stage pays to re-establish context
+    cold. Read-per-write ratios across the fleet make it visible:
+    `autonomous-assurance` 34×, `career-ops` 23×, **this repo 15×**,
+    `system-design` 11.5×.
+  - **Dead levers — measured, do not re-propose.** *Context editing*: every
+    clearing pass rewrites the cached conversation and fights the cache; in
+    Anthropic's measured run it **cost more than it saved**. It is a
+    context-window tool, not a savings lever. *1-hour cache TTL*: writes go
+    1.25× → 2.0×, roughly **+24% on the total bill**, to chase a miss rate
+    that is already 5.4% — a clear loss at our hit rate, though it would be
+    correct advice at a lower one. *Semantic caching*: wrong workload shape
+    (no two slices repeat, and serving a cached code change would be a
+    defect), and `zilliztech/GPTCache` has had no commit since 2025-07.
+    *Router-style model routing for cost*: `lm-sys/RouteLLM` dead since
+    2024-08, and the price spread it arbitrages has collapsed.
+  - **Live levers, in order of this repo's actual bill.** (1) Cut cache
+    writes — fewer, larger stages; resume rather than re-spawn; lean briefs,
+    since every byte is re-written per subagent. (2) Lower effort: cost grows
+    with roughly the **square of turn count**, so fewer, more-consolidated
+    tool calls compound. (3) Prompt-audit the briefs — Anthropic measured
+    prompts written for an older model costing **36% more for no accuracy
+    gain**, and 14% cheaper *and* more accurate once audited; we have already
+    documented our own instance of this (`RUN_ECONOMICS.md` §3, the
+    "attack/probe" wording that put every `http-layer` stage at adversarial).
+    (4) Ignore output at 10.4%.
+  - **Batch is not available to us.** 50% off every token including cache
+    reads would be the second-largest lever — but it is an API-key feature.
+    On a Claude Code subscription it does not exist. Recorded so it is not
+    proposed again from a blog post.
+  - **The currency is the usage window, not the dollar.** Anthropic split
+    interactive and programmatic billing on 2026-06-15 (Agent SDK, `claude -p`,
+    GitHub Actions bill at full API rates), but this product is explicitly for
+    people on their own subscription, so a budget overrun is not a surprise
+    bill — **it is a run that does not finish**. That makes `RUN_ECONOMICS`
+    §4 (incremental artefacts) and §6 (stage resume) the core *reliability*
+    mechanism rather than cost hygiene, and it means the budget gate should
+    stay denominated in tokens. Do not "fix" it to dollars.
+  - **The architecture will never be the cheap option, and that is the
+    point.** Multi-agent runs use ~15× the tokens of a chat turn (Anthropic's
+    own production measurement; token usage explained 80% of their
+    performance variance), and the orchestrator-with-workers pattern only pays
+    when work exceeds a context window — *"when the work is one dependent
+    chain… the coordinator's model alone at lower effort came out ahead, in
+    every such case measured."* A slice is a dependent chain. So the role
+    separation is a **quality purchase, not a cost optimisation**. State the
+    premium honestly rather than trying to engineer it away; it is what buys
+    the independence the product sells.
+
+- **T20 · Plan a run against capacity it can actually see.** *Raised
+  2026-09-18.* Today the budget gate costs each stage against a **declared**
+  budget (`RUN_ECONOMICS.md` §2) and checks before spawning. It has no idea
+  how much of the subscription window is actually left. That gap is why the
+  site's copy says "each stage costed against a budget" and deliberately does
+  **not** say the pipeline identifies remaining capacity — claiming that today
+  would be exactly the overclaim the limits section exists to prevent.
+  - **The feature.** Read remaining capacity before planning, then size the
+    plan to fit: fewer stages, lower depth, or an explicit "this will not
+    finish in the current window — start now and resume after reset, or cut
+    scope" put to the human *before* the first token is spent, rather than
+    discovering it at 80%.
+  - **The mechanism probably already exists locally.** Claude Code writes
+    per-request usage to `~/.claude/projects/**/*.jsonl`; `ccusage` (18.6k
+    stars) reads exactly these files across 18 agent CLIs. Consumption within
+    the rolling window is therefore derivable on disk without any API. Confirm
+    that before designing anything — this is a precondition, not an
+    assumption.
+  - **Why it is worth more than the cost levers above.** Every agentic tool
+    assumes unlimited API access; the actual population lives inside a rolling
+    5-hour window and a weekly cap. Nobody builds for it. Combined with §4 and
+    §6, this is the difference between "long runs sometimes die" and "long
+    runs finish," which is the reliability claim the hero now makes.
+  - **Do not confuse this with multi-account rotation.** That was raised and
+    rejected the same day — Anthropic introduced these caps specifically to
+    stop account sharing and resold access, so rotation is the targeted
+    behaviour, not a grey area, and a system of record for accountable
+    development cannot ship a circumvention feature. See the parked entry
+    below.
 
 ## Decided NO / parked — recorded so they don't return
 
@@ -599,6 +712,21 @@ from the run" pattern as effort / operator / executor / gateCatches.
   engineer operator.
 - **Phase 5 multi-tenancy** — parked.
 - **Pack uninstaller** — decided against; `git checkout` is the revert.
+- **Multi-account rotation to extend the usage window** — raised 2026-09-18,
+  rejected the same day, on three independent grounds. **Policy:** Anthropic
+  introduced the 5-hour and weekly caps *specifically* to stop "account
+  sharing and reselling access to Claude Code", so rotation is the behaviour
+  the mechanism exists to catch, not a gap around it. **Positioning:** a
+  system of record for accountable software development cannot ship a feature
+  that circumvents its own vendor's usage terms — the first buyer who asks
+  how we handle rate limits ends the conversation, and it would void T18
+  before the test is run. **It may not even work:** several reports on
+  `anthropics/claude-code` (#54464, #41886, #34888) describe usage on one
+  account appearing in another's usage panel when parallel sessions run on
+  the same machine; all closed as inactive, none refuted. The clean versions
+  of the same wish are one developer with checkpoint → wait for reset →
+  auto-resume (**T20**), or a team where each developer runs their own slices
+  on their own subscription.
 
 ## Standing caveat — a constraint on all of it
 
@@ -629,3 +757,13 @@ version of this same caveat: signing only helps if the signer is **not** the
 agent that did the work — in-toto's own non-goals say so. A pipeline signing
 its own approval records would produce tamper-evident self-reports, which is
 this caveat with a signature attached rather than this caveat removed.
+
+*Update 2026-09-18:* **T19's figures are the first cost numbers in this
+project the caveat does not cover.** They were read from the harness's own
+per-request usage logs (`~/.claude/projects/**/*.jsonl`, 23,442 requests) —
+written by Claude Code, not reported by the agent being measured. This does
+not retire the caveat: it still applies to every `telemetrySource:
+self-reported` figure in existing run traces, and T13's collector work is
+still what closes it for *run* telemetry. What it shows is that the local
+usage logs are a second, already-available instrumentation source that nobody
+had thought to read.
