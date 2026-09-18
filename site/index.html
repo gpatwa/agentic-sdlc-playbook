@@ -507,6 +507,25 @@
   a.fw:hover .name { color: var(--gold-text); }
   .fw .role { font-size: .8rem; color: var(--muted); line-height: 1.45; }
 
+  /* ---------- roles ---------- */
+
+  .role-group { margin-bottom: 26px; }
+  .role-group:last-child { margin-bottom: 0; }
+  .role-label {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 9px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .role-label .count { color: var(--faint); letter-spacing: .06em; }
+
   /* ---------- audience ---------- */
 
   .aud-grid {
@@ -769,14 +788,14 @@
   <nav>
     <div class="brand"><span class="mark"></span>Aveto</div>
     <div class="nav-links">
+      <a href="#roles">The team</a>
       <a href="#how">How it works</a>
       <a href="#span">Build · Deploy · Run</a>
-      <a href="#evidence">The record</a>
       <a href="#evidence-runs">Evidence</a>
       <a href="#limits">Limits</a>
       <a href="#source">Docs</a>
     </div>
-    <a class="btn btn-ghost" href="#closer">Request access</a>
+    <a class="btn btn-ghost" href="https://github.com/gpatwa/agentic-sdlc-playbook">Get started</a>
   </nav>
 
   <header class="hero">
@@ -784,8 +803,8 @@
     <h1>Ship like <span class="em">FAANG</span>. Staffed like you.</h1>
     <p class="hero-sub">At FAANG scale, nothing reaches production until an architect, an independent reviewer, security and a release gate have all signed off. Aveto encodes that org as 28 specialist agents, running on the Claude Code subscription you already pay for. The agent that verifies never wrote the code. Gates fail closed. And every stage checkpoints — so hitting the 5-hour limit costs you minutes, not the run.</p>
     <div class="cta-row">
-      <a class="btn btn-primary" href="#closer">Request access</a>
-      <a class="btn btn-ghost" href="#how">See how a slice runs</a>
+      <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
+      <a class="btn btn-ghost" href="#roles">Meet the 28</a>
     </div>
 
     <div class="rail-block">
@@ -838,6 +857,70 @@
         <span class="fig">88%</span>
         <p>of agent pilots never reach production at all. The gap is rarely the model — it is everything between a working demo and a change someone will sign.</p>
         <cite>Industry analysis, 2026</cite>
+      </div>
+    </div>
+  </section>
+
+  <section id="roles">
+    <p class="sec-eyebrow">The team</p>
+    <h2>Twenty-eight specialists, not one generalist.</h2>
+    <p class="sec-lede">One agent asked to build a product makes every decision from the same context, with the same blind spots. Aveto splits the work the way a large engineering org does — every role is a written brief with its own scope, its own tools, and one artefact it must hand to the next. This is the org chart, and it ships in the repo.</p>
+
+    <div class="role-group">
+      <p class="role-label"><span>Shape the work</span><span class="count">6 roles</span></p>
+      <div class="fw-grid">
+        <div class="fw"><span class="name">Orchestrator</span><span class="role">Plans the slice, routes every stage, owns the record</span></div>
+        <div class="fw"><span class="name">Market Researcher</span><span class="role">Turns a raw ask into a discovery brief</span></div>
+        <div class="fw"><span class="name">Engineering Manager</span><span class="role">Scopes the slice and refuses work that is too big for one pass</span></div>
+        <div class="fw"><span class="name">Product Manager</span><span class="role">Scoped work item into a PRD</span></div>
+        <div class="fw"><span class="name">UX Researcher</span><span class="role">PRD into a feature spec</span></div>
+        <div class="fw"><span class="name">UI Designer</span><span class="role">Feature spec into a UX spec</span></div>
+      </div>
+    </div>
+
+    <div class="role-group">
+      <p class="role-label"><span>Design and build</span><span class="count">7 roles</span></p>
+      <div class="fw-grid">
+        <div class="fw"><span class="name">Software Architect</span><span class="role">Feature and UX specs into a tech spec</span></div>
+        <div class="fw"><span class="name">Backend Architect</span><span class="role">Server-side code with targeted tests</span></div>
+        <div class="fw"><span class="name">Frontend Developer</span><span class="role">Client-side code with targeted tests</span></div>
+        <div class="fw"><span class="name">AI Engineer</span><span class="role">Model-backed features, shipped with evals</span></div>
+        <div class="fw"><span class="name">ML Engineer</span><span class="role">Model, dataset, model card, monitoring contract</span></div>
+        <div class="fw"><span class="name">Analytics Engineer</span><span class="role">Event contract and metric definitions</span></div>
+        <div class="fw"><span class="name">Data Analyst</span><span class="role">Experiment and post-launch readouts</span></div>
+      </div>
+    </div>
+
+    <div class="role-group">
+      <p class="role-label"><span>Verify &mdash; none of these wrote the code</span><span class="count">5 roles</span></p>
+      <div class="fw-grid">
+        <div class="fw"><span class="name">QA Evidence</span><span class="role">An evidence document, never a green tick on its own</span></div>
+        <div class="fw"><span class="name">Security &amp; Privacy</span><span class="role">Adversarial pass over the diff; pass or fail, with findings</span></div>
+        <div class="fw"><span class="name">Compliance Reviewer</span><span class="role">Maps the change to controls, and the evidence for each</span></div>
+        <div class="fw"><span class="name">AI Governance</span><span class="role">Risk tier and eval coverage for model-backed work</span></div>
+        <div class="fw"><span class="name">Data Governance</span><span class="role">Classification, retention and catalog for data changes</span></div>
+      </div>
+    </div>
+
+    <div class="role-group">
+      <p class="role-label"><span>Ship it</span><span class="count">3 roles</span></p>
+      <div class="fw-grid">
+        <div class="fw"><span class="name">Release Manager</span><span class="role">Go or no-go, read against every artefact the slice produced</span></div>
+        <div class="fw"><span class="name">Cloud Deployment</span><span class="role">Plans and runs the deploy; validation is never self-certified</span></div>
+        <div class="fw"><span class="name">Tech Writer</span><span class="role">Doc delta and release notes</span></div>
+      </div>
+    </div>
+
+    <div class="role-group">
+      <p class="role-label"><span>Run it &mdash; the part most tools skip</span><span class="count">7 roles</span></p>
+      <div class="fw-grid">
+        <div class="fw"><span class="name">Production Verification</span><span class="role">Checks the live service against the invariants the spec named</span></div>
+        <div class="fw"><span class="name">Site Reliability Engineer</span><span class="role">SLOs, runbooks, incident reviews</span></div>
+        <div class="fw"><span class="name">On-call Engineer</span><span class="role">First response when production misbehaves</span></div>
+        <div class="fw"><span class="name">FinOps</span><span class="role">Cost model, budget and kill-switch before the bill arrives</span></div>
+        <div class="fw"><span class="name">Post-Launch Learning</span><span class="role">Turns what shipped into what changes next</span></div>
+        <div class="fw"><span class="name">Customer Success</span><span class="role">Live customer signal into a review</span></div>
+        <div class="fw"><span class="name">Customer Support</span><span class="role">Drafts the response &mdash; a human sends it</span></div>
       </div>
     </div>
   </section>
@@ -1207,10 +1290,10 @@
   <section id="closer" class="flush">
     <div class="closer">
       <h2>Let the agents do more.</h2>
-      <p>Aveto is in private development. If your team is scaling agent autonomy into regulated or production-critical work, we'd like to hear what you're running into.</p>
+      <p>Aveto is open. Point the installer at a repo and it writes one least-privilege agent per role, the gates, and the commands to run a slice — on the Claude Code subscription you already have.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#closer">Request access</a>
-        <a class="btn btn-ghost" href="#how">See how it works</a>
+        <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
+        <a class="btn btn-ghost" href="https://github.com/gpatwa/agentic-sdlc-playbook">Source on GitHub</a>
       </div>
     </div>
   </section>
