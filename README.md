@@ -1,15 +1,24 @@
 # Aveto
 
-**Move at agent speed. Prove every decision.**
+**Great software shouldn't need a big company.**
 
-The system of record for software your agents build, deploy and run.
+Ship like FAANG. Staffed like you.
 
-Aveto is a lifecycle for building software with specialised agents — orchestrator,
-engineering manager, product manager, designers, architects, developers, QA, security,
-release, and post-launch. Narrow roles hand off through artefacts, every gate fails
-closed, and the run pauses for a **named human** at the actions that can't be undone.
-The record continues past the merge, through deploy and production, so every
-consequential decision can be attributed to a person afterwards.
+At FAANG scale, nothing reaches production until an architect, an independent
+reviewer, security and a release gate have all signed off. That process — not
+the headcount — is what separates a demo from production software, and almost
+nobody outside those companies can run it.
+
+Aveto encodes it as **28 specialist agents**: orchestrator, engineering manager,
+product manager, designers, architects, developers, QA, security, release,
+deployment, on-call and post-launch. Narrow roles hand off through artefacts,
+the agent that verifies is never the agent that wrote the code, every gate fails
+closed, and the run pauses for a **named human** at the actions that can't be
+undone. The record continues past the merge, through deploy and production.
+
+It runs on the Claude Code subscription you already pay for, and every stage
+writes its artefact incrementally — so a run that hits a usage limit resumes
+from where it stopped rather than starting over.
 
 > **This repository is the reusable source of truth for Aveto.**
 > *(Formerly "Agentic SDLC". The `.agentic/` directory, `/agentic-*` commands and
