@@ -2,12 +2,12 @@
 
 **Great software shouldn't need a big company.**
 
-Ship like FAANG. Staffed like you.
+Ship like FAANG. Anyone can.
 
 At FAANG scale, nothing reaches production until an architect, an independent
 reviewer, security and a release gate have all signed off. That process — not
-the headcount — is what separates a demo from production software, and almost
-nobody outside those companies can run it.
+the headcount — is what separates a demo from production software, and until
+now almost nobody outside those companies could run it.
 
 Aveto encodes it as **28 specialist agents**: orchestrator, engineering manager,
 product manager, designers, architects, developers, QA, security, release,
