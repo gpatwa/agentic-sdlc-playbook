@@ -49,11 +49,15 @@ template, and leaves the rest of the system out of its head.
 | AI Governance *(enterprise)* | Model card + intended use | Risk tier + eval coverage | Compliance Reviewer + Release Manager | `agents/ai-governance.md` |
 | FinOps *(enterprise)* | Tech spec + projected volume | Cost model + budget + kill-switch | Release Manager | `agents/finops.md` |
 | Tech Writer *(overlay)* | Diff + QA + specs | Doc delta + release notes | Release Manager | `agents/tech-writer.md` |
-| Release Manager | All artefacts | Go/no-go + checklist | Post-Launch | `agents/release-manager.md` |
+| Release Manager | All artefacts | Go/no-go + checklist | Cloud Deployment (or Post-Launch where nothing deploys) | `agents/release-manager.md` |
+| Cloud Deployment *(enterprise)* | Release go + tech spec | Deployed infrastructure + the approval recorded once | Production Verification | `agents/cloud-deployment.md` |
+| Production Verification *(enterprise)* | Live deploy + safety invariants + success criteria | Health verdict under real traffic — go or roll back | SRE + Post-Launch | `agents/production-verification.md` |
 | Data Analyst | Question + warehouse + experiment spec | Readout (experiment or post-launch) | Asking agent (PM, Post-Launch, Release Manager) | `agents/data-analyst.md` |
 | Post-Launch Learning | Released change + Data Analyst readout | Post-launch review | Orchestrator | `agents/post-launch-learning.md` |
-| Site Reliability Engineer *(enterprise)* | Tech spec + monitoring contracts | SLOs, runbooks, incident reviews | Post-Launch + Orchestrator | `agents/sre.md` |
+| Site Reliability Engineer *(enterprise)* | Tech spec + monitoring contracts | SLOs, runbooks, incident reviews | On-Call Engineer + Post-Launch + Orchestrator | `agents/sre.md` |
+| On-Call Engineer *(enterprise)* | Alert or support escalation + SRE's runbook | Mitigation, recovery check, or a new slice at Intake | Orchestrator + Post-Launch | `agents/on-call-engineer.md` |
 | Customer Success *(enterprise)* | Live customer signal | Customer signal review | Post-Launch + Orchestrator | `agents/customer-success.md` |
+| Customer Support *(enterprise)* | Inbound issue + account context | Drafted reply — never sent — plus escalation | On-Call Engineer + Customer Success | `agents/customer-support.md` |
 
 ---
 

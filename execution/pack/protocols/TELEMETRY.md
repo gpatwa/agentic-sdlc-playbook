@@ -114,7 +114,7 @@ the actual test.
 - **Per-role attribution is not available on metrics.** `agent.name` reports
   built-in agent types verbatim but collapses **user-defined agents to
   `"custom"`** — and every role in this pack is user-defined. Metrics will show
-  one undifferentiated `custom` bucket, not 24 roles. Per-role cost therefore
+  one undifferentiated `custom` bucket, not 28 roles. Per-role cost therefore
   needs **spans** (`subagent_type`, still beta) or the `agent_type` field on
   hooks. Anyone wiring per-role cost analysis to metrics alone will get a
   single number and not notice.
