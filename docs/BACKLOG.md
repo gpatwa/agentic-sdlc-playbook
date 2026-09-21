@@ -574,6 +574,13 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - **Record disconfirming answers in full**, per this file's own habit (T2
     keeps its miss, T10 refuses to round trajectory data up). A falsification
     test whose failures go unwritten is not a test.
+  - **Priority raised 2026-09-20 — see T21.** Anthropic's own AI-native SDLC
+    course targets *"engineering, platform, and security leads at large
+    enterprises, especially regulated organizations"*: the ICP this project
+    moved away from two days earlier. That is a disconfirming signal about the
+    repositioning, and this test is what settles it. The ordering is now wrong
+    in the costly direction — the decision has been made and the test that
+    should have informed it has still not run.
 
 - **T19 · Correct the cost model against measured data — most of it is
   already wrong.** *Raised 2026-09-18.* `MODEL_ROUTING.md` and
@@ -676,6 +683,84 @@ from the run" pattern as effort / operator / executor / gateCatches.
     behaviour, not a grey area, and a system of record for accountable
     development cannot ship a circumvention feature. See the parked entry
     below.
+
+- **T21 · Close the gaps Anthropic's own AI-native SDLC course exposes — and
+  reconsider two decisions it contradicts.** *Raised 2026-09-20.* Anthropic
+  published **"The AI-Native SDLC Playbook"**
+  (`academy.claude.com/courses/ai-native-sdlc-playbook`): 14 lessons, ~1 hour,
+  six stages (Plan → Design → Build → Test → Deploy → Maintain), covering
+  `intent.md`, `CLAUDE.md`, skills, subagents, PR review loops, **hooks as
+  approval gates**, continuous evals in CI, and post-launch metrics. Its stated
+  problem framing is this project's "why now" almost verbatim — *"why planning,
+  review, testing, and deployment become bottlenecks when agents handle code
+  writing"* — and one objective is *"governance enforcement through approval
+  gates and control feedback loops."*
+  - **Provenance, so the next reader can weigh it.** This was read from the
+    public course page: module titles, objectives, audience, prerequisites. The
+    course itself was **not taken**, so per-lesson depth is unknown. Treat
+    "they cover X" as "X is a named lesson", not as a claim about how far it
+    goes. Re-check before acting on any comparison below that depends on depth.
+  - **The validation is the headline.** The model vendor now teaches this
+    category. That retires any lingering question about whether the problem is
+    real, and it makes the *practice* layer free — which pushes all defensible
+    value to enforcement and evidence, where this project is deep and a
+    one-hour course cannot go.
+  - **Gap 1 — `intent.md`, and it is the one that matters.** Zero occurrences
+    in this repo (checked). They capture requirements and constraints in **one
+    file, one session**. Our entry path is ask → discovery brief → scoped work
+    item → PRD → feature spec → UX spec → tech spec: **six artefacts before
+    code.** For the regulated-enterprise reader that was rigour. For the solo
+    builder the site now addresses it is a wall, so this is a contradiction
+    with **our own repositioning**, not merely with their course. The work is a
+    single canonical entry artefact that the EM can expand into the full chain
+    only when the slice's stakes justify it — the depth-tier idea from
+    `RUN_ECONOMICS.md` §3 applied to the *design* stages rather than to review.
+  - **Gap 2 — plan mode.** Zero occurrences (checked). They teach Claude Code's
+    native plan mode as the default start of Build. We may be hand-rolling
+    planning the harness supplies free. Cheap to check, and the answer is
+    either "adopt it" or a recorded reason not to.
+  - **Not gaps, checked rather than assumed.** *Skills*: **we are ahead** —
+    T8 shipped `skills/tdd-fail-first/SKILL.md` on 2026-08-27, validated
+    against the official `skills-ref` validator; they teach the concept, we
+    have one that passes the spec's own checker. *Eval-gated merge*: exists at
+    `RELEASE_GATES.md` §158, though scoped to AI slices where theirs is a
+    general stage — worth widening, not building. *Hooks*: we use a
+    `PreToolUse` hook for **budget**; they use hooks for **approval**. Ours is
+    the enforced one, since our approval gate is the environment + named-human
+    record rather than a hook. Different application, not a missing feature.
+  - **Where we are ahead, for the comparison table this deserves:** 28 named
+    role briefs against generic "subagents"; verifier ≠ implementer as an
+    enforced invariant against "layered review"; a recorded, attributable
+    approval against a gate mechanism; refusal at intake; standards mapping
+    (ISO 42005, NIST AI RMF, OWASP agentic Top 10, DORA 2025); and a Maintain
+    stage that is five roles rather than one lesson on metrics. **Their course
+    contains nothing on cost or run economics at all** — which T19 has just
+    shown is a first-order problem, not a footnote.
+  - **It contradicts the repositioning, and T18 is the tiebreak.** Their stated
+    audience is *"engineering, platform, and security leads at large
+    enterprises, especially regulated organizations"* — precisely the ICP this
+    project moved **away from** on 2026-09-18 in favour of "anyone shipping
+    without a safety net". Anthropic has vastly more market data than we do and
+    bet the course on the regulated enterprise. That is not proof we are wrong;
+    it is the strongest disconfirming signal the repositioning has met, and it
+    is exactly the question **T18** was written to settle. **Raise T18's
+    priority accordingly** — it is now the item gating a decision already made,
+    which is the worst order to leave it in.
+  - **Reconsider the vocabulary ban.** `aveto-rebrand-positioning` bans *SDLC*
+    and *playbook* from customer-facing copy. Anthropic has now named the
+    category **"The AI-Native SDLC Playbook"**, using both — and this repo is
+    literally `agentic-sdlc-playbook`. The ban was correct when the words were
+    generic; they are now the vendor-blessed label the audience will search
+    after finishing a free course. A product that never says "SDLC" is
+    invisible to the exact people being trained to want it. The revision is
+    probably "do not *lead* with it" rather than "never use it" — but it should
+    be a decision, not an inherited rule.
+  - **The distribution play this opens.** A one-hour course creates demand it
+    cannot satisfy: people finish it wanting the thing built. Map the 28 roles
+    onto their six stages, name the course, and be the obvious next click —
+    *"you took the course; this is the implementation."* That uses Anthropic's
+    funnel rather than competing with it, and it is the cheapest distribution
+    available to a project with no audience of its own.
 
 ## Decided NO / parked — recorded so they don't return
 
