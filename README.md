@@ -1,6 +1,6 @@
 # Aveto
 
-**The AI-native SDLC, implemented.**
+**The AI-native SDLC, in one install.**
 
 Ship like FAANG. Anyone can. Great software shouldn't need a big company.
 
