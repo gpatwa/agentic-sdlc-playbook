@@ -1,8 +1,8 @@
 # Aveto
 
-**Great software shouldn't need a big company.**
+**The AI-native SDLC, implemented.**
 
-Ship like FAANG. Anyone can.
+Ship like FAANG. Anyone can. Great software shouldn't need a big company.
 
 At FAANG scale, nothing reaches production until an architect, an independent
 reviewer, security and a release gate have all signed off. That process — not
@@ -16,7 +16,14 @@ the agent that verifies is never the agent that wrote the code, every gate fails
 closed, and the run pauses for a **named human** at the actions that can't be
 undone. The record continues past the merge, through deploy and production.
 
-It runs on the Claude Code subscription you already pay for, and it plans every
+It runs on the **Claude Code subscription you already pay for** — not a metered
+API bill — so a slice carries no marginal cost and falling token prices make it
+cheaper to run without anything changing here. Today it is built for one person
+on one subscription; shared team gates, a cross-developer run inventory and the
+conformity export are **roadmap, not shipped** (`docs/VALIDATION_MATRIX.md`
+marks exactly what has been run and what hasn't).
+
+It plans every
 run before it spends: each stage costed against a budget it checks *before* the
 spend, each artefact written to disk as it goes, each stage resumable. Long
 autonomous work fails for unglamorous reasons — it overspends, stalls, and

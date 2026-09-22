@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Build software the way FAANG builds it — architecture review, independent verification, security, a release gate — as 28 specialist agents on the Claude Code subscription you already pay for.">
+<meta name="description" content="An AI-native SDLC you can install: 28 specialist agents covering plan, design, build, test, deploy and maintain — running on your Claude Code subscription, not an API bill.">
 <meta property="og:title" content="Aveto">
 <meta property="og:description" content="Ship like FAANG. Anyone can.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://aveto.dev/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23A87515' stroke-width='4'/%3E%3Ccircle cx='22' cy='10' r='4' fill='%23A87515'/%3E%3C/svg%3E">
-<title>Aveto</title>
+<title>Aveto — the AI-native SDLC, implemented</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 </head>
 <body>
@@ -799,9 +799,9 @@
   </nav>
 
   <header class="hero">
-    <p class="brandline">Great software shouldn't need a big company.</p>
+    <p class="brandline">The AI-native SDLC, implemented.</p>
     <h1>Ship like <span class="em">FAANG</span>. Anyone can.</h1>
-    <p class="hero-sub">At FAANG scale, nothing reaches production until an architect, an independent reviewer, security and a release gate have all signed off. Aveto hands you that entire org as 28 specialist agents, running on the Claude Code subscription you already pay for. The agent that verifies never wrote the code. Gates fail closed. And every run is planned before it spends — each stage costed against a budget, each artefact written to disk as it goes — so long work finishes instead of stalling out and starting over.</p>
+    <p class="hero-sub">At FAANG scale, nothing reaches production until an architect, an independent reviewer, security and a release gate have all signed off. Aveto hands you that entire org as 28 specialist agents &mdash; running on the Claude Code subscription you already pay for, not a metered API bill. The agent that verifies never wrote the code. Gates fail closed. And every run is planned before it spends — each stage costed against a budget, each artefact written to disk as it goes — so long work finishes instead of stalling out and starting over.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
       <a class="btn btn-ghost" href="#roles">Meet the 28</a>
@@ -1255,6 +1255,16 @@
         <p>Aveto assumes your credential scoping is already correct and adds the layer above it &mdash; the one an auditor asks for when scoping alone turns out not to have been the question.</p>
       </details>
       <details>
+        <summary>Why a subscription instead of an API key?</summary>
+        <p>Because it changes who carries the cost. Aveto never resells inference &mdash; it runs on the Claude Code subscription you already pay for, so a slice has no marginal bill attached to it. The scarce resource is the usage window, not your credit card, which is why every stage is costed before it spends and written to disk as it goes.</p>
+        <p>It also means falling token prices make Aveto cheaper to run without anything changing here.</p>
+      </details>
+      <details>
+        <summary>Does this work for a team, or an enterprise?</summary>
+        <p>Today it is built for one person on one subscription, and that is where it is proven. Each developer running their own slices on their own subscription works now.</p>
+        <p>Shared gates across a team, a run inventory spanning developers, and the conformity export an auditor asks for are on the roadmap, not shipped &mdash; several of the 28 roles already carry the enterprise overlay they will build on. The validation matrix in the repo marks exactly what has and hasn't been run at that scale.</p>
+      </details>
+      <details>
         <summary>How is this different from spec-driven development?</summary>
         <p>Spec-driven tools structure how software gets written, and several good ones exist. All of them end at the merge. Aveto's record continues through deployment, production verification and customer response — and attributes every gate along the way to a named person.</p>
       </details>
@@ -1300,7 +1310,7 @@
 
   <footer>
     <div class="brand"><span class="mark"></span>Aveto</div>
-    <span class="tag">Ship like FAANG. Anyone can.</span>
+    <span class="tag">Great software shouldn't need a big company.</span>
     <a href="https://github.com/gpatwa/agentic-sdlc-playbook" style="color:var(--muted);text-decoration:none">Source on GitHub &#8599;</a>
   </footer>
 
