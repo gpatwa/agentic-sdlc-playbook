@@ -2,7 +2,7 @@
 
 **The AI-native SDLC, in one install.**
 
-Ship like FAANG. Anyone can. Great software shouldn't need a big company.
+Ship like FAANG. No badge required. Great software shouldn't need a big company.
 
 At FAANG scale, nothing reaches production until an architect, an independent
 reviewer, security and a release gate have all signed off. That process — not
