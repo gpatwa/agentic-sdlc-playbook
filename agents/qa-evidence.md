@@ -12,6 +12,8 @@ invariants — not just the unit tests the engineer wrote.
 
 ## Inputs
 
+- `runs/<slice-id>/intent.md` — the human's "Done means" criteria. These
+  are verified as written, not re-derived from the tech spec.
 - Tech spec.
 - Implementation diff (commit SHA and changed files).
 - Engineer's status note (what to spot-check).
@@ -26,6 +28,9 @@ A filled `templates/QA_EVIDENCE_TEMPLATE.md` containing:
 - Pass / fail for each.
 - Browser preview screenshots (or accessibility snapshots) for visible
   changes.
+- Each "Done means" line from the intent, verbatim, with pass / fail /
+  not verifiable and its evidence. A criterion that cannot be checked is
+  reported as not verifiable, never as a pass.
 - Safety invariant verification results.
 - Anything deferred and why.
 - A go / no-go recommendation to the Security Agent.

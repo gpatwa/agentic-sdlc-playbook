@@ -9,8 +9,12 @@ rollback plan.
 
 ## Inputs
 
-- Feature spec.
-- UX spec.
+- `runs/<slice-id>/intent.md` — always. On the short path (see
+  `docs/AGENTIC_SDLC.md`, "When to compress stages") it replaces the
+  feature spec as the source of requirements, and the tech spec must trace
+  each "Done means" line to the part of the design that satisfies it.
+- Feature spec, when Discovery and UX Research ran.
+- UX spec, when UI Design ran.
 - Existing data model and service layer in the project.
 - `.agentic/PROJECT_CONTEXT.md`, `.agentic/SAFETY_INVARIANTS.md`.
 

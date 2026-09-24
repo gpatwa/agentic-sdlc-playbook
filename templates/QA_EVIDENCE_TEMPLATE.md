@@ -21,6 +21,21 @@ Record actual output (tail at minimum).
 > For TypeScript / Node projects these are typically `npm run typecheck`,
 > `npx vitest run <file>`, `npm test`, `npm run build`, `npm run qa:mvp`.
 
+## Intent verification
+
+Each line of "Done means" from `runs/<slice-id>/intent.md`, copied
+**verbatim** — not paraphrased, not merged. The human wrote these; this is
+where an agent that did not build the change checks them.
+
+| # | Done means (verbatim) | Result | Evidence |
+|---|-----------------------|--------|----------|
+| 1 | <copied line> | pass / fail / not verifiable | <command output, screenshot, or why it cannot be checked> |
+
+A line that cannot be verified is reported as **not verifiable**, with the
+reason — never as a pass. A **fail** here blocks the go recommendation the
+same way a failing test does: the slice works and is safe, but it is not what
+was asked for.
+
 ## UI verification
 
 For each state listed in the UX spec, evidence of the state rendering:
