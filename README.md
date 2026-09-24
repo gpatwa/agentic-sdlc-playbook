@@ -86,6 +86,7 @@ agentic-sdlc/
     customer-success.md            ← enterprise overlay
     customer-support.md            ← enterprise overlay
   templates/                       ← fill-in-the-blank artefacts
+    INTENT_TEMPLATE.md             ← start here — the one page the human writes
     DISCOVERY_BRIEF_TEMPLATE.md
     PRD_TEMPLATE.md
     FEATURE_SPEC_TEMPLATE.md

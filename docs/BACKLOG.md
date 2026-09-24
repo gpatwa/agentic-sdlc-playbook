@@ -715,6 +715,22 @@ from the run" pattern as effort / operator / executor / gateCatches.
     single canonical entry artefact that the EM can expand into the full chain
     only when the slice's stakes justify it — the depth-tier idea from
     `RUN_ECONOMICS.md` §3 applied to the *design* stages rather than to review.
+    ✅ **Built 2026-09-24.** `templates/INTENT_TEMPLATE.md`, stored as
+    `runs/<slice-id>/intent.md`; `/agentic-slice` accepts a one-liner or a
+    path. The short path skips Market Research, Discovery and UX Research
+    when the intent is complete and no Stakes box is ticked beyond "adds a
+    UI" — agent-written design artefacts before code go from six to two
+    (EM scope, tech spec). **Stakes override completeness**, and **gates
+    never compress**. Two things surfaced while building it that were worth
+    more than the gap itself: QA's evidence template had **no
+    acceptance-criteria section at all** — it checked that a slice worked
+    and was safe, never that it was what had been asked — and now verifies
+    each "Done means" line verbatim, with not-verifiable never rounded to a
+    pass; and a drafted intent marks its guesses **(inferred)**, dropped
+    unless the human confirms them. **Not yet shown:** that the short path
+    holds on a real slice. It is a rule in the briefs, not an observed run —
+    the next seed slice should take it deliberately and record whether QA's
+    verbatim check caught anything the full chain would have.
   - **Gap 2 — plan mode.** Zero occurrences (checked). They teach Claude Code's
     native plan mode as the default start of Build. We may be hand-rolling
     planning the harness supplies free. Cheap to check, and the answer is

@@ -118,9 +118,32 @@ not allowed to mean once that happens.
 
 ### 5. Run a slice
 
+Either give it a one-line ask:
+
 ```
 /agentic-slice "<what you want built>"
 ```
+
+or, better, write the intent yourself first — one page, from
+`templates/INTENT_TEMPLATE.md`: what you want, what "done" means as
+checkable statements, what must not break, and what is at stake — and pass
+its path:
+
+```
+/agentic-slice path/to/intent.md
+```
+
+Given a one-liner, the Orchestrator drafts the intent for you and marks
+everything it guessed as **(inferred)**. You confirm the intent and the
+plan together, once; nothing past scope review starts before that.
+
+The intent is what decides how much process you get. A complete one with
+low stakes takes the short path — no market research, discovery or UX
+research, because you already said what those stages would have derived.
+Tick real user data, money, anything irreversible, or a safety control, and
+the full chain runs however well the intent is written. QA, Security and the
+release gate run on every path; QA checks each "done means" line exactly as
+you wrote it.
 
 The session becomes the Orchestrator: plans the slice, writes
 `runs/<slice-id>/STATE.md`, and delegates each stage to its subagent. A
