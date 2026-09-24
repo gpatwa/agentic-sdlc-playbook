@@ -34,6 +34,7 @@ the originating conversation.
 
 | Stage | Owner | Status | Artefact | Gate |
 |-------|-------|--------|----------|------|
+| Intent | Human (Orchestrator drafts if given a one-liner) | confirmed | runs/<id>/intent.md | human confirms |
 | Intake | Orchestrator | done | runs/<id>/00-slice-plan.md | n/a |
 | Scope | Engineering Manager | in-progress | — | — |
 | ... | ... | pending | — | — |

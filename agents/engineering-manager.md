@@ -71,9 +71,21 @@ The EM may compress stages when justified. Common patterns:
   Architect writes the tech spec.
 - **Doc-only change:** Skip Architecture / Implementation / QA UI checks.
   Security still runs (docs can leak claims).
+- **Well-specified feature — the short path:** when `intent.md` has
+  checkable "Done means" criteria, no open questions, and no Stakes ticked
+  other than "adds a screen or UI", skip Market Research, Discovery and UX
+  Research — the intent already carries what those stages would derive.
+  UI Design runs only if that UI box is ticked. The Architect writes the
+  tech spec directly from the intent. QA, Security and the Release Gate
+  always run.
+- **Stakes override completeness.** If real user data, money, an
+  irreversible action, or auth / safety controls are ticked in the intent,
+  the full chain runs however complete the intent is. A well-written
+  description of a risky change is still a risky change.
 
 The compression decision is recorded in the slice plan with a one-line
-rationale.
+rationale. When the short path is taken, the rationale names the intent's
+Stakes line that allowed it.
 
 ## Context-window guardrails
 

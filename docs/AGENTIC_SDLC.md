@@ -41,10 +41,19 @@ trivial bug fix may collapse stages 2 and 4–7 into a single tech spec).
 
 ## 1. Intake — Orchestrator
 
-**Input:** Free-form ask from a human or a parent agent.
+**Input:** Free-form ask from a human or a parent agent, or a path to an
+intent file the human wrote.
 
-**Output:** A short slice plan that names which stages will run, which agents
-will be invoked, and what the success criteria are.
+**Output:** An **intent** (`templates/INTENT_TEMPLATE.md`, stored as
+`runs/<slice-id>/intent.md`) — the human's own statement of what they want,
+what "done" means, what must not break, and what is at stake. Then a short
+slice plan that names which stages will run, which agents will be invoked,
+and success criteria taken from the intent rather than rewritten.
+
+The intent is written **once** and read by every later stage. That is what
+lets a well-specified feature skip the stages whose only job was to derive
+requirements the human had already stated — see "When to compress stages".
+Nothing past Scope Review starts until the human has confirmed both files.
 
 **Hand off to:** Market Researcher (when problem validation is needed) or
 Engineering Manager (when the problem is already validated).
@@ -240,6 +249,18 @@ also runs the experiment readout following
   Research). The EM records why in the slice plan.
 - **No new measurement or modelling:** Skip the Analytics Engineer parallel
   in 7 and the Data Analyst spine in 12.
+- **Well-specified feature — the short path:** when the intent has checkable
+  "Done means", no open questions, and no Stakes ticked other than "adds a
+  screen or UI", skip 2, 4 and 5. Run 6 only if that UI box is ticked. The
+  Architect (7) reads the intent directly. Agent-written design artefacts
+  before code drop from six (discovery brief, scope, PRD, feature spec, UX
+  spec, tech spec) to two — the EM's scope and the tech spec — plus a UX spec
+  only when the UI box is ticked. The slice plan is unchanged on both paths.
+- **Stakes override completeness:** real user data, money, an irreversible
+  action, or an auth / safety-control change in the intent's Stakes means the
+  full chain, however complete the intent is.
+
+Gates never compress. Stages 9–11 run on every path, including the short one.
 
 The EM owns the decision and records the rationale in the slice plan.
 
