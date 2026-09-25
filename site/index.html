@@ -507,6 +507,77 @@
   a.fw:hover .name { color: var(--gold-text); }
   .fw .role { font-size: .8rem; color: var(--muted); line-height: 1.45; }
 
+  /* ---------- announcement ---------- */
+
+  .announce {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 26px;
+    padding: 7px 14px 7px 8px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    font-size: .86rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    max-width: 100%;
+  }
+  .announce:hover { border-color: var(--gold); color: var(--ink); }
+  .announce .pill {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+    background-color: var(--gold-wash);
+    padding: 3px 8px;
+    border-radius: 999px;
+    flex: none;
+  }
+
+  /* ---------- course map ---------- */
+
+  .sec-lede a { color: var(--gold-text); text-underline-offset: 3px; }
+  .sec-lede a:hover { color: var(--ink); }
+
+  .map {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--surface);
+  }
+  .map-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 1.35fr;
+    gap: 22px;
+    padding: 18px 22px;
+    border-top: 1px solid var(--rule);
+  }
+  .map-row:first-child { border-top: none; }
+  .map-head {
+    background-color: var(--sunk);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .map-stage { font-family: var(--f-display); font-weight: 600; font-size: 1rem; }
+  .map-stage .n { font-family: var(--f-mono); font-size: .75rem; color: var(--gold-text); margin-right: 8px; }
+  .map-course { font-size: .9rem; color: var(--muted); line-height: 1.5; }
+  .map-aveto { font-size: .92rem; line-height: 1.55; }
+  .map-foot { font-size: .8rem; color: var(--muted); margin: 14px 0 0; }
+  @media (max-width: 760px) {
+    .map-row { grid-template-columns: 1fr; gap: 6px; }
+    .map-head { display: none; }
+    .map-course::before { content: "The course: "; font-weight: 600; }
+    .map-aveto::before { content: "Aveto: "; font-weight: 600; color: var(--gold-text); }
+  }
+
   /* ---------- roles ---------- */
 
   .role-group { margin-bottom: 26px; }
@@ -789,6 +860,7 @@
     <div class="brand"><span class="mark"></span>Aveto</div>
     <div class="nav-links">
       <a href="#roles">The team</a>
+      <a href="#course">From the course</a>
       <a href="#how">How it works</a>
       <a href="#span">Build · Deploy · Run</a>
       <a href="#evidence-runs">Evidence</a>
@@ -799,6 +871,7 @@
   </nav>
 
   <header class="hero">
+    <a class="announce" href="#course"><span class="pill">New</span><span>Anthropic published the AI-Native SDLC Playbook. Here is how Aveto runs it &rarr;</span></a>
     <p class="brandline">The AI-native SDLC, in one install.</p>
     <h1>Ship like <span class="em">FAANG</span>. No badge required.</h1>
     <p class="hero-sub">At FAANG scale, nothing reaches production until an architect, an independent reviewer, security and a release gate have all signed off. Aveto hands you that entire org as 28 specialist agents &mdash; running on the Claude Code subscription you already pay for, not a metered API bill. The agent that verifies never wrote the code. Gates fail closed. And every run is planned before it spends — each stage costed against a budget, each artefact written to disk as it goes — so long work finishes instead of stalling out and starting over.</p>
@@ -923,6 +996,47 @@
         <div class="fw"><span class="name">Customer Support</span><span class="role">Drafts the response &mdash; a human sends it</span></div>
       </div>
     </div>
+  </section>
+
+  <section id="course">
+    <p class="sec-eyebrow">From the course to your repo</p>
+    <h2>Anthropic teaches the AI&#8209;native SDLC. Aveto installs it.</h2>
+    <p class="sec-lede">Anthropic&rsquo;s <a href="https://academy.claude.com/courses/ai-native-sdlc-playbook">AI-Native SDLC Playbook</a> walks through six stages in about an hour: plan, design, build, test, deploy, maintain. It teaches the practice. Aveto is that practice as software &mdash; one install puts every stage into your repo, with its roles, its gates and its record, on the Claude Code subscription you already have.</p>
+
+    <div class="map">
+      <div class="map-row map-head"><span>Stage</span><span>The course teaches</span><span>Aveto installs</span></div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">01</span>Plan</div>
+        <div class="map-course">Capture requirements and constraints in an <code>intent.md</code>.</div>
+        <div class="map-aveto">The same <code>intent.md</code>, as a one-page template. Give Aveto a one-line ask and it drafts the file for you, marking every guess as <em>(inferred)</em> until you confirm it.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">02</span>Design</div>
+        <div class="map-course">Turn intent into requirements and a design.</div>
+        <div class="map-aveto">Product, UX, UI and an Architect &mdash; plus a short path that skips the stages your intent already answered. Real user data, money, or anything irreversible still gets the full chain.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">03</span>Build</div>
+        <div class="map-course">Plan mode, <code>CLAUDE.md</code>, parallel sessions and subagents.</div>
+        <div class="map-aveto">One least-privilege subagent per role, generated from 28 written briefs, plus the <code>CLAUDE.md</code> and <code>AGENTS.md</code> that run them. The Architect&rsquo;s plan is on disk before a line of code is written.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">04</span>Test</div>
+        <div class="map-course">Give Claude a feedback loop; run continuous evals in CI.</div>
+        <div class="map-aveto">QA checks every &ldquo;done means&rdquo; line from your intent, word for word &mdash; and QA never built the change it is checking. AI slices add an eval gate that blocks the merge like a failing test.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">05</span>Deploy</div>
+        <div class="map-course">AI in the PR review loop; hooks as approval gates.</div>
+        <div class="map-aveto">A security review and a release gate that fail closed, and a named human on every deploy. A hook checks the budget before every agent is allowed to start.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">06</span>Maintain</div>
+        <div class="map-course">Close the loop on metrics.</div>
+        <div class="map-aveto">Production verification, SRE, on-call and post-launch roles &mdash; and measured token use for every stage, read from Claude Code&rsquo;s own logs rather than from the agents.</div>
+      </div>
+    </div>
+    <p class="map-foot">Course stages summarised from its public outline. Aveto is independent and is not affiliated with or endorsed by Anthropic.</p>
   </section>
 
   <section id="how">
@@ -1247,6 +1361,11 @@
       <details open>
         <summary>Is this a coding agent?</summary>
         <p>No. Aveto directs the agents you already use rather than replacing them. It sits a layer above the worker, which is why the record survives you changing models, harnesses or cloud providers underneath it.</p>
+      </details>
+      <details>
+        <summary>How does this relate to Anthropic&rsquo;s AI-Native SDLC course?</summary>
+        <p>The course teaches the practice: six stages, an <code>intent.md</code>, plan mode, subagents, hooks as approval gates. Aveto is an open implementation of that practice you install into a repo &mdash; 28 roles with their tool limits, gates that fail closed, a named approver on the actions you can&rsquo;t undo, and QA that checks your own acceptance criteria.</p>
+        <p>Aveto is independent. It is not affiliated with or endorsed by Anthropic; it runs on Claude Code because that is where the subscription, the subagents and the hooks it needs already are.</p>
       </details>
       <details>
         <summary>Our agents already run under scoped credentials &mdash; isn't that enough?</summary>
