@@ -735,6 +735,34 @@ from the run" pattern as effort / operator / executor / gateCatches.
     native plan mode as the default start of Build. We may be hand-rolling
     planning the harness supplies free. Cheap to check, and the answer is
     either "adopt it" or a recorded reason not to.
+    **Checked 2026-09-25 — not adopted, for two verified reasons.** (1) It is
+    ignored for our users: *"When the main conversation is in
+    `bypassPermissions`, `acceptEdits`, or auto mode, the subagent runs in
+    that same mode and Claude Code ignores the `permissionMode` you set"*
+    (sub-agents docs, verbatim), and Pro/Max/Team sessions start in auto
+    mode — exactly the subscribers this project now targets. Setting
+    `permissionMode: plan` on the Architect would be declared, never
+    enforced. (2) Where it does apply it denies Write outright, so the
+    Architect could not write its own tech spec; plan mode keeps the plan in
+    an approval prompt, and this pipeline hands off through files.
+    **What checking exposed was worth more than the gap.** Twenty of the 28
+    roles — Architect, PM, EM, Release Manager among them — got
+    `Read, Write, Edit, Grep, Glob`; withholding Bash was their only
+    boundary, so an Architect could edit `src/` with nothing but its brief
+    to stop it. ✅ **Built:** `execution/hooks/write-scope-guard.mjs`, a
+    PreToolUse hook in each of those 20 agents' frontmatter, scoping writes
+    to `runs/` plus the files a role is named as owning. Fails closed; role
+    taken from argv, never the payload; symlinks resolved. Mutation-tested —
+    and one mutation initially failed no test at all, which is recorded in
+    the commit rather than smoothed over. Pack v5.
+    **Not yet shown, and the next thing to check:** that the deny holds in a
+    *live* session in auto mode. The hooks docs do not say either way, and
+    auto mode already overrides one subagent setting. Test: from a product
+    repo, `/agentic-slice` with the pack installed, ask the Architect to
+    write `src/x.js`, and confirm the edit is blocked. Until then this is the
+    T17 situation in a new place — a boundary expected, not watched to hold.
+    Plan mode still has a legitimate *optional* role as a human-side way to
+    start a session, not as an enforcement mechanism.
   - **Not gaps, checked rather than assumed.** *Skills*: **we are ahead** —
     T8 shipped `skills/tdd-fail-first/SKILL.md` on 2026-08-27, validated
     against the official `skills-ref` validator; they teach the concept, we
