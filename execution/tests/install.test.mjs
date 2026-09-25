@@ -104,6 +104,30 @@ describe("install.mjs — least privilege", () => {
       assert.match(raw, /^tools:\s*\S/m, `${f}: tools must be explicit, never omitted`);
     }
   });
+
+  // Withholding Bash left every non-building role free to Edit src/. The
+  // write-scope guard is the boundary for those roles; losing it on one role
+  // would be as silent as granting that role Bash.
+  test("every role without Bash carries the write-scope guard, naming itself", () => {
+    for (const f of readdirSync(join(target, ".claude", "agents"))) {
+      const slug = f.replace(/\.md$/, "");
+      if (EXPECT_BASH.includes(slug)) continue;
+      const raw = readFileSync(agentPath(slug), "utf8");
+      const fm = raw.split(/^---$/m)[1];
+      assert.match(fm, /matcher: "Write\|Edit\|MultiEdit\|NotebookEdit"/, `${slug}: guard not on Write/Edit`);
+      assert.match(fm, new RegExp(`write-scope-guard\\.mjs" ${slug}'$`, "m"), `${slug}: guard must name its own role`);
+    }
+  });
+
+  test("Bash roles are not scoped — Bash could write around a Write hook", () => {
+    for (const slug of EXPECT_BASH) {
+      assert.doesNotMatch(readFileSync(agentPath(slug), "utf8"), /write-scope-guard/, slug);
+    }
+  });
+
+  test("the write-scope guard script is installed", () => {
+    assert.ok(existsSync(join(target, ".claude", "hooks", "write-scope-guard.mjs")));
+  });
 });
 
 describe("install.mjs — model and effort routing", () => {
