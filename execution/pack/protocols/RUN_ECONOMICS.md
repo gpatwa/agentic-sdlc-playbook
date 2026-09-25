@@ -26,6 +26,17 @@ actually at stake) turned on the pipeline itself.
 Measured across 27 real stages (`runs/*/trace.json`). Use these to estimate
 before spawning; re-derive them as data accumulates.
 
+> **These are peak context, not consumption (corrected 2026-09-25).** The
+> figures below came from each spawn's `totalTokens`, which is the context size
+> of the stage's *last* request. What a stage actually processes — every
+> request's tokens, summed — is typically **10–50× larger**, mostly cache reads.
+> `execution/usage.mjs` measures both from the harness's own logs: e.g. an
+> Implementation stage recorded here as ~118k processed 4.4M across 55
+> requests (~726k cost-weighted). The table is still a fair gauge of *context
+> pressure*, and the budget gate compares like with like, so it is not wrong
+> as a relative control — but it is not a measure of how much of a usage
+> window a slice burns. Read it as the former, never as the latter.
+
 | Archetype | Typical | Budget with | Worst seen |
 |-----------|---------|-------------|------------|
 | **design** (Market Research, PRD, UX, UI, AI Governance) | ~69k | **70k** | 77k |

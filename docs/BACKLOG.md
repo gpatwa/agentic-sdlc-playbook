@@ -643,6 +643,37 @@ from the run" pattern as effort / operator / executor / gateCatches.
     §4 (incremental artefacts) and §6 (stage resume) the core *reliability*
     mechanism rather than cost hygiene, and it means the budget gate should
     stay denominated in tokens. Do not "fix" it to dollars.
+  - **Update 2026-09-25 — every per-stage cost this project quoted was peak
+    context, not consumption.** `trace.json` took each stage's tokens from
+    the spawn result's `totalTokens`, which is the context size of the
+    stage's *last* request. Verified on streak-seed `security-hardening`:
+    the trace figures match `totalTokens` to the token, and the subagent logs
+    show the Implementation stage recorded as 118k made 55 requests and
+    processed **4.4M**. `execution/usage.mjs` now measures both from harness
+    logs, across the nine slices that still have subagent logs:
+
+    | Slice | Trace said (peak) | Processed | Cost-weighted |
+    |---|---:|---:|---:|
+    | streak-seed `greenfield` | 947k | 11.6M | 3.7M |
+    | streak-seed `http-layer` | 868k | 16.5M | 4.4M |
+    | streak-seed `browser-client` | 538k | 25.4M | 4.2M |
+    | streak-seed `security-hardening` | 405k | 13.7M | 2.7M |
+    | stash-seed `saved-item-folders` | 947k | 13.1M | 3.0M |
+
+    Consequences, in order of how much they matter. (1) **The public site
+    understates cost.** The limits section says a slice runs "roughly
+    70k–130k tokens" a stage and "a full greenfield build measured 947k" —
+    true as peak context, but the build processed 11.6M (3.7M weighted), so
+    the one section whose job is not to understate anything does, by 4–12×.
+    Not yet changed: it needs a decision on which number to publish. (2) The
+    **"~868k" that triggered RUN_ECONOMICS** is the same kind of figure
+    (peak-context sum), so the budget gate has always been a control on
+    context pressure, not on window consumption; it is still internally
+    consistent, and §1 now says which it is. (3) `usage.mjs` also shows the
+    generic-agent problem as data: every stage of the playbook-driven slices
+    ran as `claude`/`general-purpose`, so least-privilege did not bind for
+    any of them. (4) The Orchestrator's own turns are still unmeasured —
+    they sit in the main session log, unattributed.
   - **The architecture will never be the cheap option, and that is the
     point.** Multi-agent runs use ~15× the tokens of a chat turn (Anthropic's
     own production measurement; token usage explained 80% of their

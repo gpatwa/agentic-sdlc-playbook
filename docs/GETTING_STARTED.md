@@ -160,7 +160,14 @@ Regenerate the fleet views:
 node <playbook>/execution/analyze.mjs <product-repo>
 node <playbook>/execution/conformity.mjs <product-repo>
 node <playbook>/execution/verify-approvals.mjs <product-repo>
+node <playbook>/execution/usage.mjs <product-repo>          # add --write to save runs/<slice>/usage.json
 ```
+
+`usage.mjs` reports what each stage actually consumed, read from the logs
+Claude Code itself writes rather than from the agents. It shows two numbers
+per stage and keeps them apart: **processed** (every token of every request)
+and **peak context** (the last request's size, which is what `trace.json`
+records). Expect the first to be ten to fifty times the second.
 
 `runs/CONFORMITY.md` is the artefact to hand someone who asks "how do you
 know a human approved this."

@@ -147,6 +147,7 @@ agentic-sdlc/
     setup-deploy.sh                ← one-time Cloudflare + GitHub setup, idempotent
   execution/                       ← makes the playbook self-running (.claude/ pack)
     install.mjs                    ← generates subagents from briefs; installs the pack
+    usage.mjs                      ← measured tokens per slice/stage, from harness logs
     pack/                          ← commands, protocols, CLAUDE template
 ```
 
