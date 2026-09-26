@@ -883,7 +883,18 @@ from the run" pattern as effort / operator / executor / gateCatches.
     have 0 stars, so real question *volume* starts near zero and grows only
     with the site's audience. If production-scale traffic from day one matters
     more than serving the business, (b) triage on active public repos is the
-    stronger pick. *Human decision pending.*
+    stronger pick.
+  - **Decided 2026-09-26 by the human:** build **(a) the Aveto support agent**;
+    runtime model calls on **the owner's own API key at low volume**, with a
+    hard monthly spend cap and a rate limit set before the key is used; deploy
+    to **Azure through the Cloud Deployment role**, which also exercises
+    Production Verification for real and closes "real-cloud deploy" on the
+    site's limits list. Consequences to carry into the first slices: an Azure
+    subscription is required, and its cost is part of the experiment; the API
+    key and the Azure credential are supplied by the human and never handled
+    by an agent (`HUMAN_APPROVAL_RULES.md`, same reason `setup-deploy.sh` takes
+    its one token from a person); and wiring the real model is Tier 3 plus
+    approval rule 5, so the deterministic path ships first behind the adapter.
   - **Runtime design: a workflow with two model roles, not a swarm.** Aveto
     builds it with the full multi-agent pipeline; the *shipped* agent should not
     be multi-agent, and the reason is this file's own evidence (T19):
