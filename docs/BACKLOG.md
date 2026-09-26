@@ -837,6 +837,75 @@ from the run" pattern as effort / operator / executor / gateCatches.
     funnel rather than competing with it, and it is the cheapest distribution
     available to a project with no audience of its own.
 
+- **T22 · Build a credible reference app: an AI agent, built by Aveto, in
+  public. PRIORITY — ahead of T23.** *Raised 2026-09-26.* Neither seed app is a
+  reference a sceptic would accept. Checked, not assumed: Stash is ~670 lines
+  and StreakKeeper ~1,090, both dependency-free Node with in-memory storage, no
+  real sign-in, no real model call, nothing deployed live, 0 stars. They are
+  honest *test benches* — the pipeline ran end to end, gates caught real
+  defects, approvals fired — but they cannot answer the buyer's actual question,
+  *would this hold on software like mine?*, and a 700-line in-memory service
+  undercuts "Ship like FAANG" faster than having no demo would.
+  - **Why an agent first.** It closes the item the site's own limits section
+    lists as unproven — *a real model wired into a shipped feature* — and it is
+    the first real use of `project-packs/ai-agent-product.md`, the AI Engineer
+    and AI Governance roles, and eval-gated merge, all of which exist in the
+    briefs and have barely run. It also matches what the market is building now,
+    which a bookmarks app does not. This is Aveto *building* an agent product —
+    codegen through the normal lifecycle — not a runtime agent that designs
+    agents, which T19 records as the pattern that does not pay.
+  - **Done means** (the bar for "credible", stated before starting so it cannot
+    drift): a normal stack — TypeScript, a real database, real sign-in, a web
+    UI; **deployed at a public URL**; at least one **real model call in a
+    shipped feature**, behind the pack's adapter, deterministic-first; an eval
+    suite as a required merge check, including unhappy paths; **built in
+    public** with `runs/` committed so every intent, spec, QA check, security
+    finding and approval is readable; and `usage.mjs` numbers published for
+    every slice.
+  - **Which agent is the human's decision, and the first step.** Candidates that
+    exercise what Aveto is for, not just what it can do: (a) a **support-reply
+    agent** that answers from a knowledge base and **drafts, never sends** —
+    the most common real business agent, and it fires approval rule 1 by
+    design; (b) an **issue/PR triage agent** run on this repo — real data,
+    visibly useful, and it dogfoods the project; (c) something from a domain a
+    T18 interviewee names. Recommended: (a), because a buyer recognises it
+    instantly and it forces the grounding and never-invent-claims invariants.
+  - **Decisions to settle before the first slice.** Runtime model cost: building
+    runs on the subscription, but a *shipped* agent calls a model at run time,
+    and that is metered — keep demo volume small, or require the visitor's own
+    key. Deploy target: the Cloud Deployment role wraps Azure, and using it
+    would also close "real-cloud deploy" from the limits section, at the cost
+    of an Azure subscription; a cheaper host proves less.
+  - **Folds in two open checks.** Its first slice runs the Architect under pack
+    v5, so it is the natural place for T21's **live write-scope-guard test**
+    (have the Architect try to write `src/`, confirm the deny in auto mode).
+    Wiring the real model is Tier 3 and fires **approval rule 5** — the first
+    time that gate runs for real.
+  - **Honest cost.** Several slices, each a meaningful share of a usage window,
+    plus the human's time at every gate. Weeks, not a day.
+
+- **T23 · Build Aveto's own console as the second reference app — with Aveto.**
+  *Raised 2026-09-26. After T22.* The console is already the planned paid tier
+  (`aveto-rebrand-positioning`: record → console → ACP): the approval queue, run
+  history, usage per slice, and the conformity export an auditor asks for.
+  Building it *with Aveto* makes the strongest pitch available — *the console
+  was built by the pipeline it reports on; here is every decision it made* —
+  and produces a product people use rather than a demo.
+  - **Most of the back end already exists as CLIs**: `analyze.mjs` (run
+    analytics), `conformity.mjs` (T16 export), `verify-approvals.mjs` (T14
+    binding), `usage.mjs` (measured tokens). The console is largely a UI and a
+    store over artefacts this repo already produces, which keeps its first
+    slices small and its claims checkable.
+  - **Why second, not first.** It is the *expansion* tier: it serves teams and,
+    eventually, the regulated buyer T18 is testing for. Its design should be
+    informed by T18's answers and by what T22 teaches about running a real
+    stack through the pipeline. Built first, it would be designed on
+    assumptions both of those are about to test.
+  - **Same "credible" bar as T22**, plus one of its own: it must display this
+    repo's own approval records and usage honestly, including the
+    `telemetrySource: self-reported` runs and the unmeasured Orchestrator turns
+    — a console that rounds those up would fail the product's own test.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
