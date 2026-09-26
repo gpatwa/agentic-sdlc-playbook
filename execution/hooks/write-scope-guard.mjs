@@ -30,14 +30,25 @@ const COMMON = ["runs/"];
 
 // Repo files a role is named as owning. Sources: the .agentic/ stubs in
 // install.mjs (Market Researcher / PM own PROJECT_CONTEXT; the Architect fills
-// SAFETY_INVARIANTS) and agents/cloud-deployment.md's outputs (.azure/ plan,
-// generated IaC in azd's layout). A trailing "/" is a directory prefix;
-// anything else is an exact file.
+// SAFETY_INVARIANTS), agents/cloud-deployment.md's outputs (.azure/ plan,
+// generated IaC in azd's layout), and the product docs a repo others adopt
+// needs: the Architect keeps docs/ARCHITECTURE.md and the decision records in
+// docs/adr/; the Tech Writer applies README, CHANGELOG and the rest of docs/.
+// A trailing "/" is a directory prefix; anything else is an exact file.
 const EXTRA = {
   "market-researcher": [".agentic/PROJECT_CONTEXT.md"],
   "product-manager": [".agentic/PROJECT_CONTEXT.md"],
-  "software-architect": [".agentic/SAFETY_INVARIANTS.md"],
+  "software-architect": [".agentic/SAFETY_INVARIANTS.md", "docs/ARCHITECTURE.md", "docs/adr/"],
+  "tech-writer": ["README.md", "CHANGELOG.md", "docs/"],
   "cloud-deployment": [".azure/", "infra/", "azure.yaml"],
+};
+
+// Carve-outs inside an allowed prefix, where another role owns the file. The
+// Tech Writer applies docs, but the architecture record and its decisions are
+// the Architect's — the same per-file ownership that stops the PM rewriting
+// SAFETY_INVARIANTS.
+const EXCLUDE = {
+  "tech-writer": ["docs/ARCHITECTURE.md", "docs/adr/"],
 };
 
 const deny = (reason) => {
@@ -85,9 +96,13 @@ try {
     deny(`write-scope-guard: ${role} may not write outside the project (${target}).`);
   }
 
+  const matches = (a) => (a.endsWith("/") ? rel.startsWith(a) : rel === a);
   const allowed = [...COMMON, ...(EXTRA[role] ?? [])];
-  const ok = allowed.some((a) => (a.endsWith("/") ? rel.startsWith(a) : rel === a));
-  if (ok) process.exit(0);
+  const excluded = (EXCLUDE[role] ?? []).find(matches);
+  if (excluded) {
+    deny(`write-scope-guard: "${rel}" is owned by another role, not ${role}. Describe the change in your artefact and hand it to its owner.`);
+  }
+  if (allowed.some(matches)) process.exit(0);
 
   deny(
     `write-scope-guard: ${role} writes its artefacts, not the product. ` +

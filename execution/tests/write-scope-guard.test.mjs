@@ -73,6 +73,34 @@ describe("a scoped role can still do its job", () => {
   });
 });
 
+describe("product docs have owners", () => {
+  test("the Architect keeps the living architecture doc and its decision records", () => {
+    const d = repo();
+    assert.equal(run(d, "software-architect", write("docs/ARCHITECTURE.md")), "allow");
+    assert.equal(run(d, "software-architect", write("docs/adr/0001-python-fastapi.md")), "allow");
+  });
+  test("the Architect still cannot write other docs or the README", () => {
+    const d = repo();
+    assert.equal(run(d, "software-architect", write("docs/DEPLOY.md")), "deny");
+    assert.equal(run(d, "software-architect", write("README.md")), "deny");
+  });
+  test("the Tech Writer applies docs, not just drafts them", () => {
+    const d = repo();
+    for (const p of ["README.md", "CHANGELOG.md", "docs/DEPLOY.md", "docs/runbooks/escalation.md"]) {
+      assert.equal(run(d, "tech-writer", write(p)), "allow", p);
+    }
+  });
+  test("the Tech Writer cannot rewrite the Architect's record inside docs/", () => {
+    const d = repo();
+    assert.equal(run(d, "tech-writer", write("docs/ARCHITECTURE.md")), "deny");
+    assert.equal(run(d, "tech-writer", write("docs/adr/0001-x.md")), "deny");
+  });
+  test("the Tech Writer still cannot touch code", () => {
+    const d = repo();
+    assert.equal(run(d, "tech-writer", write("src/app.py")), "deny");
+  });
+});
+
 describe("the product is out of scope", () => {
   test("Architect cannot edit source — the case plan mode exists for", () => {
     const d = repo();
