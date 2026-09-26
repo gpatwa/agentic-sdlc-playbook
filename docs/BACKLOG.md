@@ -870,6 +870,43 @@ from the run" pattern as effort / operator / executor / gateCatches.
     visibly useful, and it dogfoods the project; (c) something from a domain a
     T18 interviewee names. Recommended: (a), because a buyer recognises it
     instantly and it forces the grounding and never-invent-claims invariants.
+    **Revised 2026-09-26: (a), pointed at Aveto itself.** A generic support
+    agent has no real traffic on day one — without real customers or a real
+    helpdesk it is a demo — and it lands in the most crowded agent category
+    (Intercom Fin, Zendesk AI, Decagon, Sierra), where a small reference app
+    reads as thin. So: a support agent that answers questions **about Aveto**,
+    grounded in **this repo's own docs**, drafting replies to real **GitHub
+    issues and Discussions**, posted only after a human approves. The use case
+    stays recognisable; the knowledge base is real from the first slice;
+    anyone can check a draft against the docs it cites; and it serves the
+    audience the site and T18 are trying to reach. **Honest limit:** the repos
+    have 0 stars, so real question *volume* starts near zero and grows only
+    with the site's audience. If production-scale traffic from day one matters
+    more than serving the business, (b) triage on active public repos is the
+    stronger pick. *Human decision pending.*
+  - **Runtime design: a workflow with two model roles, not a swarm.** Aveto
+    builds it with the full multi-agent pipeline; the *shipped* agent should not
+    be multi-agent, and the reason is this file's own evidence (T19):
+    multi-agent runs cost ~15× a single call, and an orchestrator only pays when
+    work exceeds one context window or splits into independent pieces. One
+    support answer is one dependent chain in one context — the shape where a
+    single model at lower effort won in every case Anthropic measured — and
+    every runtime call is metered. The design:
+    1. **Classify** the question — deterministic first (rules, labels), a model
+       only for what rules cannot place.
+    2. **Retrieve** the relevant docs — deterministic.
+    3. **Draft** a reply grounded in what was retrieved — **model role 1**.
+    4. **Check** the draft against its sources — **model role 2: a separate,
+       cheaper model that did not write the draft.** Every claim must trace to a
+       retrieved passage; anything unsupported is removed or the question is
+       escalated. Never "fixed" by the checker inventing a better answer.
+    5. **A human approves** before anything is posted (approval rule 1).
+    Step 4 is the point of the whole app: it is *the agent that verifies never
+    wrote it* running **inside the product**, not only in how the product was
+    built — a stronger demonstration than any number of agents, and cheap if
+    the checker is a small model. Audit events record `generationMode` and
+    which model drafted and which checked, per the pack's invariants. Adding a
+    third model role later requires the same argument this one had to make.
   - **Decisions to settle before the first slice.** Runtime model cost: building
     runs on the subscription, but a *shipped* agent calls a model at run time,
     and that is metered — keep demo volume small, or require the visitor's own
