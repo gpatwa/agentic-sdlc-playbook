@@ -77,7 +77,11 @@ for (const file of htmlFiles(root)) {
   const allowed = ["fonts.googleapis.com", "fonts.gstatic.com"];
   const resources = [
     ...html.matchAll(/<(?:script|img|iframe|video|audio|source)\b[^>]*\ssrc="https?:\/\/([^/"]+)/gi),
-    ...html.matchAll(/<link\b[^>]*\shref="https?:\/\/([^/"]+)/gi),
+    // rel=canonical / alternate name a URL for crawlers; the browser loads
+    // nothing from them, so they are metadata, not a third-party resource.
+    ...[...html.matchAll(/<link\b[^>]*>/gi)]
+      .filter((m) => !/\srel="(?:canonical|alternate)"/i.test(m[0]))
+      .flatMap((m) => [...m[0].matchAll(/\shref="https?:\/\/([^/"]+)/gi)]),
   ];
   for (const m of resources) {
     if (!allowed.includes(m[1])) fail(file, `unexpected external resource origin: ${m[1]}`);
