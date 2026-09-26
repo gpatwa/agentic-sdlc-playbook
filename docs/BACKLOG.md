@@ -794,6 +794,17 @@ from the run" pattern as effort / operator / executor / gateCatches.
     T17 situation in a new place — a boundary expected, not watched to hold.
     Plan mode still has a legitimate *optional* role as a human-side way to
     start a session, not as an enforcement mechanism.
+    **Two ownership gaps the guard surfaced (2026-09-26), found while
+    preparing aveto-support's first slice.** (1) On a greenfield repo taking
+    the short path, `.agentic/PROJECT_CONTEXT.md` has no writer: the roles that
+    own it (Market Researcher, PM) are exactly the ones the short path skips.
+    Resolved there by the owner writing it directly; the pack should say so —
+    a greenfield short path needs the human, or a PM stage, to own the project
+    context. (2) `.agentic/CURRENT_MVP_STATUS.md` has no named owner at all;
+    under the guard only engineers and the unguarded Orchestrator can write it,
+    so it stays a stub. Candidate owner: the Release Manager or Post-Launch,
+    since the stub says "replace as the slice lands". Not fixed yet — recorded
+    so the next slice does not rediscover it.
   - **Not gaps, checked rather than assumed.** *Skills*: **we are ahead** —
     T8 shipped `skills/tdd-fail-first/SKILL.md` on 2026-08-27, validated
     against the official `skills-ref` validator; they teach the concept, we
