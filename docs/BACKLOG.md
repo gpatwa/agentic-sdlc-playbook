@@ -918,6 +918,48 @@ from the run" pattern as effort / operator / executor / gateCatches.
     the checker is a small model. Audit events record `generationMode` and
     which model drafted and which checked, per the pack's invariants. Adding a
     third model role later requires the same argument this one had to make.
+  - **Goal restated by the human, 2026-09-26: a production-ready template
+    other people deploy, not only a reference that proves the pipeline.** That
+    is a higher bar, and it changed four things:
+    1. **Configurable, not Aveto-only.** Adopters point it at *their* docs and
+       *their* repos; Aveto is the first deployment, not the only one.
+    2. **Genuinely agentic, but bounded.** Step 3 becomes a **tool-using loop**
+       — the drafting model decides whether to search the docs again, read the
+       full issue thread, or look up related issues — under a hard cap on turns
+       and on spend. The independent checker (step 4) and human approval
+       (step 5) are unchanged. A model choosing tools inside limits is how
+       production agents are built; a swarm is not.
+    3. **Stack: Python + FastAPI, calling Anthropic's SDK directly — no agent
+       framework.** Chosen over TypeScript because the audience for a template
+       is AI-agent developers, most of whom work in Python; Azure's own AI
+       samples are mostly Python; and eval tooling (RAGAS and similar) is
+       native there, which matters once evals are part of what is being sold.
+       No framework because a five-step, deterministic-first workflow is less
+       code and easier to audit against the SDK, and frameworks hide the
+       adapter boundary the pack requires. Cost accepted: a rich UI would mean
+       a second language, so the admin surface stays server-rendered. The
+       Architect records this as the first ADR.
+    4. **Production-ready is a checklist, not a claim.** In addition to the
+       bar above, the repo must contain, and the release gate must check:
+       - **One-command deploy** — an `azd` template (`azure.yaml` + `infra/`),
+         with separate dev and prod environments.
+       - **Secrets in Key Vault**, never in environment files; a **spend cap
+         and rate limit** on model use set before the key is first used.
+       - **Sign-in** for the admin surface, and a **GitHub App** — not a
+         personal token — for reading issues and posting approved replies.
+       - **Observability**: logs, traces and cost per request, via the
+         existing OpenTelemetry work.
+       - **Evals as a required merge check**, with the eval report committed.
+       - **A rehearsed rollback** and **runbooks** in `docs/runbooks/`.
+       - **A threat model covering prompt injection from issue text** —
+         issue bodies are untrusted input to a model that can call tools —
+         and a public `SECURITY.md`.
+       - **Docs for someone who was not there**: `docs/ARCHITECTURE.md` and
+         ADRs (Architect), a 30-minute deploy guide and a configuration guide
+         (Tech Writer), a cost guide stating what a month of running it costs,
+         `.env.example`, `CHANGELOG.md`, `LICENSE`.
+       Pack v6 gives every one of the doc items an owning role, so they are
+       produced by the pipeline slice by slice rather than written up after.
   - **Decisions to settle before the first slice.** Runtime model cost: building
     runs on the subscription, but a *shipped* agent calls a model at run time,
     and that is metered — keep demo volume small, or require the visitor's own
