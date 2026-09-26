@@ -31,6 +31,18 @@ A filled `templates/TECH_SPEC_TEMPLATE.md` covering:
 - Rollback plan (how to undo this slice without manual intervention).
 - Test plan (which evals, which integration tests, which UI checks).
 
+And, every slice, the **living architecture record** in the product repo —
+the tech spec is per slice and lives in `runs/`; these are what someone who
+adopts the product reads:
+
+- **`docs/ARCHITECTURE.md`** — the system as it stands after this slice: the
+  components, the data flow, the model adapter boundaries, and a diagram.
+  Updated, not appended to; it describes the present, the ADRs hold the history.
+- **`docs/adr/<NNNN>-<slug>.md`** — one record per significant decision the
+  slice made (stack, storage, a dependency, a boundary), using
+  `templates/ADR_TEMPLATE.md`. Accepted records are never edited; a changed
+  decision gets a new record that supersedes the old one.
+
 ## Decisions the Architect owns
 
 - Data shape and where it lives.

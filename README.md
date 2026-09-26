@@ -109,6 +109,7 @@ agentic-sdlc/
     INCIDENT_REVIEW_TEMPLATE.md
     POST_LAUNCH_REVIEW_TEMPLATE.md
     CUSTOMER_SIGNAL_REVIEW_TEMPLATE.md
+    ADR_TEMPLATE.md                ← one architecture decision, never edited once accepted
     AGENT_HANDOFF_TEMPLATE.md
     CUSTOMER_ISSUE_RESOLUTION_TEMPLATE.md
   prompts/                         ← copy-paste prompts to invoke each agent

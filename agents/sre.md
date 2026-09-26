@@ -29,6 +29,9 @@ cannot.
   freeze, reliability work prioritised) and who decides.
 - **Runbook(s)** for the new surface: how to detect, diagnose, mitigate,
   and roll back — executable by someone who didn't build the feature.
+  Written into the product repo at **`docs/runbooks/`**, not only into the
+  slice's `runs/` folder: a runbook that lives with the build record is
+  unreachable to whoever is on call for someone else's deployment.
 - **Alert wiring**: symptom-based, tied to the SLOs, low false-positive.
 - **Incident reviews**: blameless postmortems using
   `templates/INCIDENT_REVIEW_TEMPLATE.md`.

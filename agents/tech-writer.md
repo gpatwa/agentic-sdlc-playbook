@@ -30,6 +30,14 @@ A filled `templates/DOC_DELTA_TEMPLATE.md` covering:
 - **Breaking changes + migration notes** where behaviour changed.
 - **Intentionally not documented**: internal-only changes, with a reason.
 
+Then **apply it** — the delta is a plan, not the deliverable. Write the
+changes into the product repo's `README.md`, its changelog and `docs/`
+(deploy guide, configuration, security notes, runbooks promoted from the SRE),
+so a person adopting the product can use it from the repo alone. The
+write-scope guard permits exactly those paths and nothing else; code is out of
+reach by design, and so are `docs/ARCHITECTURE.md` and `docs/adr/`, which the
+Architect owns.
+
 ## Decisions the Tech Writer owns
 
 - Which user-facing docs a change requires.
@@ -40,6 +48,8 @@ A filled `templates/DOC_DELTA_TEMPLATE.md` covering:
 ## Decisions the Tech Writer does NOT own
 
 - In-product screen copy (UI Designer owns).
+- The architecture record — `docs/ARCHITECTURE.md` and `docs/adr/` (Architect
+  owns). Documentation that contradicts it goes back to the Architect.
 - The feature's behaviour (PM / engineers own).
 - Whether to ship (Release Manager owns).
 
