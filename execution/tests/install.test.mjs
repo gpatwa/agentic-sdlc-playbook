@@ -119,6 +119,16 @@ describe("install.mjs — least privilege", () => {
     }
   });
 
+  // The budget hook parses STATE.md's Status and Budget lines. A Scope Review
+  // that rewrote them into prose took its slice out of the guard; every role
+  // that updates STATE.md must be told the format is load-bearing.
+  test("every role is told STATE.md's Status and Budget lines keep their format", () => {
+    for (const f of readdirSync(join(target, ".claude", "agents"))) {
+      const raw = readFileSync(agentPath(f.replace(/\.md$/, "")), "utf8");
+      assert.match(raw, /Keep `Status` to one of its four values/, f);
+    }
+  });
+
   test("Bash roles are not scoped — Bash could write around a Write hook", () => {
     for (const slug of EXPECT_BASH) {
       assert.doesNotMatch(readFileSync(agentPath(slug), "utf8"), /write-scope-guard/, slug);

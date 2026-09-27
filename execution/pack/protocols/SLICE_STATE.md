@@ -13,6 +13,11 @@ the originating conversation.
 - Never advance `Current stage` past a stage whose gate hasn't passed.
 - Never advance past an open approval (see `APPROVAL_PROTOCOL.md`).
 - Artefacts are referenced by path, never inlined.
+- `Status` is exactly one of the four template values, and the Budget block's
+  `Budget`, `Spent` and `Next stage` lines keep their template format. The
+  pre-spawn budget hook parses them; anything else — a reason, a split's
+  per-slice figures — goes in a note beneath. A slice it cannot parse is
+  checked by no one, and the hook can only say so.
 - Alongside `STATE.md`, emit `runs/<slice-id>/trace.json` — machine-readable
   telemetry mirroring the Trace table (see "Machine-readable trace").
 

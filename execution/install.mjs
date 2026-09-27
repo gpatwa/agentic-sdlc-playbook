@@ -144,7 +144,7 @@ You are the **${title}** in an autonomous Aveto run. Stay strictly in this role.
 - **Write your artefact incrementally, section by section, as you go** — never buffer the whole document to one write at the end (\`.claude/protocols/RUN_ECONOMICS.md\`). If you are interrupted, what you finished must already be on disk.
 - Work at the **depth the brief states** (smoke / standard / adversarial). Do not escalate rigor on your own initiative — match effort to what is actually at stake.
 - **Your tool boundary is: ${tools}.** You have no others. If a task appears to need a tool outside that list, stop and hand back rather than working around it. When this brief is spawned from \`.claude/agents/\` the harness enforces this; when it is **inlined** into a general-purpose agent it cannot, so honor it yourself — the boundary is the role's, not the harness's.
-${scoped ? "- **You write artefacts, not the product.** Your writes are limited to \`runs/<slice-id>/\` and the few repo files your role owns; \`.claude/hooks/write-scope-guard.mjs\` blocks the rest. If the product needs a change, describe it in your artefact and hand off to the role that builds it — never work around the block.\n" : ""}- Update \`runs/<slice-id>/STATE.md\` per \`.claude/protocols/SLICE_STATE.md\` when you finish. Do not invent token/tool-call figures — the Orchestrator records telemetry from the harness.
+${scoped ? "- **You write artefacts, not the product.** Your writes are limited to \`runs/<slice-id>/\` and the few repo files your role owns; \`.claude/hooks/write-scope-guard.mjs\` blocks the rest. If the product needs a change, describe it in your artefact and hand off to the role that builds it — never work around the block.\n" : ""}- Update \`runs/<slice-id>/STATE.md\` per \`.claude/protocols/SLICE_STATE.md\` when you finish. Keep \`Status\` to one of its four values and the \`Budget\`, \`Spent\` and \`Next stage\` lines in their exact format — a hook parses them; put anything else in a note below them. Do not invent token/tool-call figures — the Orchestrator records telemetry from the harness.
 - If your stage hits a human-approval action, STOP and follow \`.claude/protocols/APPROVAL_PROTOCOL.md\` — do not proceed on assumed approval.
 - On a failed gate, follow \`.claude/protocols/FAILURE_LOOP.md\` (bounded retries, then escalate).
 - Hand off only through artefacts. The full methodology lives in the playbook at \`${playbookRel}\`.
@@ -235,7 +235,7 @@ writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
 // Pack version. Bump when a regeneration changes what agents *do* — new
 // frontmatter the harness acts on, a changed tool boundary, a protocol whose
 // absence would change a decision. Cosmetic edits do not earn a bump.
-const PACK_VERSION = 8;
+const PACK_VERSION = 9;
 
 // Read the previous install back before overwriting it. Until now this field
 // was written and never read, so a product repo could drift arbitrarily far
