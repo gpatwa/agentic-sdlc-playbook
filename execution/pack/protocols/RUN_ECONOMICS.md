@@ -63,6 +63,11 @@ spent + estimate(next stage)  ≤  budget ?
   human** with the numbers. Raising the budget to fit the spend is the same
   anti-pattern `PIPELINE_SLOS.md` forbids for SLOs.
 
+The Claude Code adapter's pre-spawn hook runs this same check mechanically. It
+reads `Spent` and the **Next stage** line's `est.` from `STATE.md`, so update
+that line before every spawn: a stale estimate is checked against the wrong
+stage, and a missing one leaves only the `spent ≥ budget` backstop.
+
 Default budget = Σ estimates of planned stages, rounded up one stage's worth as
 headroom. A slice that needs more than **6 stages** or **~600k** is a signal the
 slice is too big — send it back to the EM before spending, not after.

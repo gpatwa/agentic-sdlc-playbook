@@ -3,8 +3,12 @@
 //
 // Makes RUN_ECONOMICS.md's pre-spawn budget check MECHANICAL instead of a
 // discipline the Orchestrator has to remember. Reads the active slice's Budget
-// block from runs/<slice>/STATE.md and, when a spawn would exceed the declared
-// budget, asks the human with the numbers rather than proceeding silently.
+// block from runs/<slice>/STATE.md and checks the rule as written:
+// spent + estimate(next stage) <= budget. When a spawn would exceed the
+// declared budget, it asks the human with the numbers rather than proceeding.
+//
+// The estimate comes from the Budget block's "Next stage: ... est. <n>k" line.
+// With no readable estimate it checks spent alone — a backstop, not the rule.
 //
 // FAILS OPEN, DELIBERATELY. This is a cost control, not a safety gate: a parse
 // bug must never block legitimate work. Release gates fail closed; convenience
@@ -58,35 +62,47 @@ try {
     const b = num((text.match(/\*\*Budget:\*\*\s*([\d.,]+\s*[kKmM]?)/) || [])[1]);
     const s = num((text.match(/\*\*Spent:\*\*\s*([\d.,]+\s*[kKmM]?)/) || [])[1]);
     if (!b || s === null) continue; // unreadable numbers -> not guardable
-    const ratio = s / b;
-    if (!active || ratio > active.ratio) active = { slice: d, budget: b, spent: s, ratio };
+    // The next stage's estimate. Before this, a stage that would overshoot
+    // still spawned, because only spent >= budget asked. Found by a product
+    // repo's Orchestrator comparing the hook against the rule it cites.
+    const e = num((text.match(/\*\*Next stage:\*\*[^\n]*?\best\.?\s*([\d.,]+\s*[kKmM]?)/i) || [])[1]) || 0;
+    const ratio = (s + e) / b;
+    if (!active || ratio > active.ratio) active = { slice: d, budget: b, spent: s, est: e, ratio };
   }
   if (!active) allow(); // no active budgeted slice — nothing to guard
 
-  const { budget, spent } = active;
-
-  const pct = spent / budget;
+  const { budget, spent, est } = active;
   const k = (n) => Math.round(n / 1000) + "k";
 
-  if (pct >= 1) {
+  // Over the line once spent has reached the budget, or once the next stage
+  // would take it past. Landing exactly on the budget is within the rule.
+  if (spent >= budget || spent + est > budget) {
+    const pct = spent / budget;
+    const what = est && spent < budget
+      ? `The next stage (est. ${k(est)}) would take slice "${active.slice}" to ${k(spent + est)} ` +
+        `of a ${k(budget)} budget — ${k(spent)} spent so far.`
+      : `Budget exceeded on slice "${active.slice}": ${k(spent)} spent of a ${k(budget)} budget ` +
+        `(${Math.round(pct * 100)}%).`;
     allow({
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
         permissionDecision: "ask",
         permissionDecisionReason:
-          `Budget exceeded on slice "${active.slice}": ${k(spent)} spent of a ${k(budget)} budget ` +
-          `(${Math.round(pct * 100)}%). RUN_ECONOMICS.md says degrade the stage's depth, drop a ` +
+          `${what} RUN_ECONOMICS.md says degrade the stage's depth, drop a ` +
           `non-load-bearing stage, or stop — never raise the budget to fit the spend. Approve only ` +
           `if you intend to continue anyway.`,
       },
     });
   }
 
-  if (pct >= 0.8) {
+  if ((spent + est) / budget >= 0.8) {
     allow({
       systemMessage:
-        `Budget guard: slice "${active.slice}" is at ${Math.round(pct * 100)}% ` +
-        `(${k(spent)}/${k(budget)}). One more stage will likely exceed it — consider a lower depth.`,
+        est
+          ? `Budget guard: slice "${active.slice}" will be at ${Math.round(((spent + est) / budget) * 100)}% ` +
+            `after the next stage (${k(spent)} spent + ${k(est)} est. of ${k(budget)}). Consider a lower depth.`
+          : `Budget guard: slice "${active.slice}" is at ${Math.round((spent / budget) * 100)}% ` +
+            `(${k(spent)}/${k(budget)}). One more stage will likely exceed it — consider a lower depth.`,
     });
   }
 
