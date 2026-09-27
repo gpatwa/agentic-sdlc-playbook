@@ -5,6 +5,12 @@ methodology (roles, templates, gates, rules) lives in the playbook at:
 
 > `{{PLAYBOOK_PATH}}`
 
+That path is relative to this repo's **main checkout**. From a git worktree
+(for example one the desktop app creates under `.claude/worktrees/`) it points
+nowhere: resolve it against the main checkout — the directory containing
+`git rev-parse --path-format=absolute --git-common-dir` — and give roles the
+absolute path.
+
 This file is the **source of truth** for any tool that reads `AGENTS.md`
 (Codex, Cursor, GitHub Copilot's coding agent, Windsurf, Amp, Aider, Gemini
 CLI, Zed, Jules, Devin, Junie, and others). `CLAUDE.md` at the repo root

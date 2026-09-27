@@ -13,6 +13,13 @@ Do this:
 
 1. Read `.agentic/` (PROJECT_CONTEXT, SAFETY_INVARIANTS, LOCAL_COMMANDS,
    CURRENT_MVP_STATUS) and pick the project pack.
+   **Resolve the playbook path first.** It is recorded relative to the repo's
+   *main* checkout. In a git worktree (e.g. under `.claude/worktrees/`) that
+   relative path points nowhere; resolve it against the main checkout — the
+   directory containing `git rev-parse --path-format=absolute
+   --git-common-dir` — and hand every role the absolute path. Also check the
+   worktree's branch is not behind `main` before planning — a stale branch
+   plans without files the owner has already committed.
 2. Choose a short `slice-id` (kebab-case). Create `runs/<slice-id>/` and a
    `STATE.md` following `.claude/protocols/SLICE_STATE.md`.
 3. **Capture the intent** in `runs/<slice-id>/intent.md`, following the
