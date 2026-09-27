@@ -52,16 +52,30 @@ try {
   // them and picking the highest spent/budget ratio makes the guard correct
   // under concurrency without needing a lock: the binding constraint is the
   // one worth surfacing, whichever slice it belongs to.
+  //
+  // A slice it cannot read is skipped — failing open — but NOT silently. An
+  // agent that rewrote the Status value or the Budget line into prose used to
+  // take its slice out of the guard without a word; now the spawn goes ahead
+  // with a message naming the slice and the line to restore.
   let active = null;
+  const unguarded = [];
   for (const d of readdirSync(runsDir)) {
     const p = join(runsDir, d, "STATE.md");
     if (!existsSync(p) || !statSync(join(runsDir, d)).isDirectory()) continue;
     const text = readFileSync(p, "utf8");
-    if (!/^\s*-\s*\*\*Status:\*\*\s*in-progress/im.test(text)) continue;
-    if (!/\*\*Budget:\*\*/.test(text)) continue;
+    const status = (text.match(/^\s*-\s*\*\*Status:\*\*\s*(.*)$/im) || [])[1];
+    if (status === undefined) continue; // not a slice state (yet)
+    if (!/^(in-progress|blocked-on-approval|blocked-on-failure|done)\b/i.test(status.trim())) {
+      unguarded.push(`${d}: Status is not one of in-progress / blocked-on-approval / blocked-on-failure / done`);
+      continue;
+    }
+    if (!/^in-progress\b/i.test(status.trim())) continue;
     const b = num((text.match(/\*\*Budget:\*\*\s*([\d.,]+\s*[kKmM]?)/) || [])[1]);
     const s = num((text.match(/\*\*Spent:\*\*\s*([\d.,]+\s*[kKmM]?)/) || [])[1]);
-    if (!b || s === null) continue; // unreadable numbers -> not guardable
+    if (!b || s === null) { // unreadable numbers -> not guardable
+      unguarded.push(`${d}: no readable "- **Budget:** <n>k" and "- **Spent:** <n>k" lines`);
+      continue;
+    }
     // The next stage's estimate. Before this, a stage that would overshoot
     // still spawned, because only spent >= budget asked. Found by a product
     // repo's Orchestrator comparing the hook against the rule it cites.
@@ -69,7 +83,20 @@ try {
     const ratio = (s + e) / b;
     if (!active || ratio > active.ratio) active = { slice: d, budget: b, spent: s, est: e, ratio };
   }
-  if (!active) allow(); // no active budgeted slice — nothing to guard
+  const notice = unguarded.length
+    ? `Budget guard could not check ${unguarded.length === 1 ? "a slice" : "some slices"} ` +
+      `(${unguarded.join("; ")}). Restore the exact SLICE_STATE.md format so the ` +
+      `budget is checked before the next spawn.`
+    : null;
+  // Adds the notice to whatever the guard decides; never changes the decision.
+  const say = (extra = {}) => {
+    const msgs = [extra.systemMessage, notice].filter(Boolean);
+    const out = { ...extra };
+    if (msgs.length) out.systemMessage = msgs.join(" ");
+    allow(Object.keys(out).length ? out : undefined);
+  };
+
+  if (!active) say(); // no guardable slice — nothing to check
 
   const { budget, spent, est } = active;
   const k = (n) => Math.round(n / 1000) + "k";
@@ -83,7 +110,7 @@ try {
         `of a ${k(budget)} budget — ${k(spent)} spent so far.`
       : `Budget exceeded on slice "${active.slice}": ${k(spent)} spent of a ${k(budget)} budget ` +
         `(${Math.round(pct * 100)}%).`;
-    allow({
+    say({
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
         permissionDecision: "ask",
@@ -96,7 +123,7 @@ try {
   }
 
   if ((spent + est) / budget >= 0.8) {
-    allow({
+    say({
       systemMessage:
         est
           ? `Budget guard: slice "${active.slice}" will be at ${Math.round(((spent + est) / budget) * 100)}% ` +
@@ -106,7 +133,7 @@ try {
     });
   }
 
-  allow();
+  say();
 } catch {
   allow(); // fail open, always
 }
