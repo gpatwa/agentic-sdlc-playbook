@@ -169,7 +169,11 @@ copyDir(join(here, "hooks"), join(claudeDir, "hooks"));
 // RUN_ECONOMICS.md's pre-spawn check is mechanical, not a discipline the
 // Orchestrator has to remember. Merge — never clobber existing settings.
 const settingsPath = join(claudeDir, "settings.json");
-const HOOK_CMD = "node .claude/hooks/budget-guard.mjs";
+// Invoked via $CLAUDE_PROJECT_DIR: a bare relative path only resolves while the
+// session's cwd is the project root, and a hook that cannot be found is a
+// non-blocking error — the spawn goes ahead unguarded.
+const HOOK_CMD = 'node "$CLAUDE_PROJECT_DIR/.claude/hooks/budget-guard.mjs"';
+const LEGACY_HOOK_CMDS = ["node .claude/hooks/budget-guard.mjs"];
 let settings = {};
 if (existsSync(settingsPath)) {
   try {
@@ -182,6 +186,15 @@ if (existsSync(settingsPath)) {
 if (settings) {
   settings.hooks ??= {};
   settings.hooks.PreToolUse ??= [];
+  // Upgrade older installs in place rather than adding a second guard beside
+  // the broken one.
+  let migrated = false;
+  for (const e of settings.hooks.PreToolUse) {
+    for (const h of e?.hooks ?? []) {
+      if (LEGACY_HOOK_CMDS.includes(h?.command)) { h.command = HOOK_CMD; migrated = true; }
+    }
+  }
+  if (migrated) writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
   const already = settings.hooks.PreToolUse.some((e) =>
     (e?.hooks ?? []).some((h) => h?.command === HOOK_CMD),
   );
@@ -192,6 +205,19 @@ if (settings) {
     });
     writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
   }
+}
+
+// Harness-local paths a product repo should never commit: worktrees the
+// desktop app creates under .claude/, and per-user settings. Append only
+// what is missing; never rewrite the user's .gitignore.
+const gitignorePath = join(productDir, ".gitignore");
+const IGNORE = [".claude/worktrees/", ".claude/settings.local.json"];
+const existingIgnore = existsSync(gitignorePath) ? readFileSync(gitignorePath, "utf8") : "";
+const haveIgnore = new Set(existingIgnore.split("\n").map((l) => l.trim()));
+const addIgnore = IGNORE.filter((l) => !haveIgnore.has(l));
+if (addIgnore.length) {
+  const sep = existingIgnore && !existingIgnore.endsWith("\n") ? "\n" : "";
+  writeFileSync(gitignorePath, existingIgnore + sep + addIgnore.join("\n") + "\n");
 }
 
 // AGENTS.md is the source of truth (see execution/pack/AGENTS.md's own
@@ -209,7 +235,7 @@ writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
 // Pack version. Bump when a regeneration changes what agents *do* — new
 // frontmatter the harness acts on, a changed tool boundary, a protocol whose
 // absence would change a decision. Cosmetic edits do not earn a bump.
-const PACK_VERSION = 6;
+const PACK_VERSION = 7;
 
 // Read the previous install back before overwriting it. Until now this field
 // was written and never read, so a product repo could drift arbitrarily far

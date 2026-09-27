@@ -185,6 +185,35 @@ describe("install.mjs — pack integrity", () => {
     assert.match(JSON.stringify(settings), /budget-guard/);
   });
 
+  test("the budget guard is invoked via $CLAUDE_PROJECT_DIR, not a cwd-relative path", () => {
+    const cmds = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"))
+      .hooks.PreToolUse.flatMap((e) => e.hooks.map((h) => h.command))
+      .filter((c) => c.includes("budget-guard"));
+    assert.deepEqual(cmds, ['node "$CLAUDE_PROJECT_DIR/.claude/hooks/budget-guard.mjs"']);
+  });
+
+  test("an older install's cwd-relative guard is upgraded in place, not duplicated", () => {
+    const p = join(target, ".claude", "settings.json");
+    const s = JSON.parse(readFileSync(p, "utf8"));
+    s.hooks.PreToolUse = [{ matcher: "Agent", hooks: [{ type: "command", command: "node .claude/hooks/budget-guard.mjs", timeout: 10 }] }];
+    writeFileSync(p, JSON.stringify(s, null, 2));
+    install();
+    const cmds = JSON.parse(readFileSync(p, "utf8")).hooks.PreToolUse
+      .flatMap((e) => e.hooks.map((h) => h.command)).filter((c) => c.includes("budget-guard"));
+    assert.deepEqual(cmds, ['node "$CLAUDE_PROJECT_DIR/.claude/hooks/budget-guard.mjs"']);
+  });
+
+  test("worktrees and local settings are gitignored, once, without clobbering the file", () => {
+    const p = join(target, ".gitignore");
+    writeFileSync(p, "node_modules/");
+    install();
+    install();
+    const lines = readFileSync(p, "utf8").split("\n");
+    assert.ok(lines.includes("node_modules/"), "existing entries kept");
+    assert.equal(lines.filter((l) => l === ".claude/worktrees/").length, 1);
+    assert.equal(lines.filter((l) => l === ".claude/settings.local.json").length, 1);
+  });
+
   test("re-running is idempotent", () => {
     const snapshot = (d) =>
       readdirSync(d).sort().map((f) => `${f}:${readFileSync(join(d, f), "utf8")}`).join("\n");
