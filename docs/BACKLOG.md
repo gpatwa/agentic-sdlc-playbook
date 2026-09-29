@@ -984,6 +984,36 @@ from the run" pattern as effort / operator / executor / gateCatches.
     time that gate runs for real.
   - **Honest cost.** Several slices, each a meaningful share of a usage window,
     plus the human's time at every gate. Weeks, not a day.
+  - **First slice, `docs-retrieval` (2026-09-27 → 29): gate failed, nothing
+    shipped — the eval did its job.** Record: `gpatwa/aveto-support`,
+    `runs/docs-retrieval/` (close-out `08-close-out.md`).
+    - **Two methods stopped before shipping.** Keyword retrieval (BM25):
+      2/24 against a bar of 20, ungated recall@5 14/24. A local embedding model
+      (bge-small, ONNX) fused with BM25, frozen before a fresh held-out set was
+      written: 5/17 on that set, ungated 8/17 — against 17/24 on the questions
+      the design had seen. A reference comparison ruled out an embedding bug.
+      Both methods failed the same way: a similarity threshold cannot separate
+      answerable from unanswerable questions on this corpus.
+    - **What made the result trustworthy** is the part worth showing: an eval
+      set written before the code, then — once it had been seen — a held-out set
+      committed after the method was frozen and run once. Without the held-out
+      set the slice would have reported 71%.
+    - **Cost, measured** (`usage.mjs`): 854k by the budget's unit (peak context)
+      against **30.9M tokens processed**, 93% cache reads, most of it from
+      resuming the same agents. Budgets in peak context understate what a slice
+      takes from a usage window — evidence for T20.
+    - **Pack defects the run surfaced, all fixed upstream** (v7 → v10): the
+      budget guard read `runs/` from cwd and ignored the next stage's estimate;
+      it went silent when a role rewrote STATE.md's format; the playbook path
+      broke in a worktree; the Trace's model was filled from memory (an Opus
+      stage recorded as Sonnet); `usage.mjs` missed worktree logs and resumed
+      stages' peak context.
+    - **Carried to the next slice, as the owner's decisions:** corpus scope
+      (exclude internal docs), file-level ranking, and whether "no confident
+      match" belongs in the check step rather than retrieval (a gate change,
+      rule 4). Any further method needs a third fresh held-out set.
+    - **Still open from this item:** the live write-scope-guard test in auto
+      mode (T21) — not yet confirmed from this run's logs.
 
 - **T23 · Build Aveto's own console as the second reference app — with Aveto.**
   *Raised 2026-09-26. After T22.* The console is already the planned paid tier
