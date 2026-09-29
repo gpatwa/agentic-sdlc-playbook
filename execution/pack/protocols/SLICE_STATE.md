@@ -83,13 +83,23 @@ One row per stage attempt — this is the pipeline's telemetry. Fill Tokens /
 Tool calls from the harness's usage stats where available; wall-clock
 always. Totals row = the slice's run cost. Feeds `PIPELINE_SLOS.md`.
 
+**Model comes from the harness log, never from memory.** After each stage,
+run `node <playbook>/execution/usage.mjs <product-repo> --slice <id>` and copy
+that spawn's `model` — what the harness logged for every request it made. A
+Trace filled from recall has recorded an Opus stage as Sonnet. If the log
+cannot be read, write the model the agent's frontmatter (or your spawn
+override) set, followed by `(declared)`. Every spawn the report lists gets a
+row, including ones you consider minor.
+
 | Stage | Model | Effort | Start (UTC) | End (UTC) | Wall | Tokens | Tool calls | Retry # |
 |-------|-------|--------|-------------|-----------|------|--------|------------|---------|
 | <stage> | <model> | <effort> | <ts> | <ts> | <m:ss> | <n> | <n> | 0 |
 | **Total** | | | | | | <Σ> | <Σ> | |
 
 Record the effort the stage **actually ran at**, not the frontmatter
-default — tier and failure escalation both move it (`MODEL_ROUTING.md`).
+default — tier and failure escalation both move it (`MODEL_ROUTING.md`). The
+harness log does not record effort, so this column is always declared: the
+frontmatter value, or the override you passed at spawn.
 Without this column a routing change cannot be evaluated after the fact.
 
 ## Next action

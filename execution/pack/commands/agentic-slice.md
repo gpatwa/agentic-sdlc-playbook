@@ -54,7 +54,9 @@ Do this:
    subagents in `.claude/agents/` (Engineering Manager → Product Manager →
    … → Release Manager → Post-Launch). Each agent reads its input artefact
    from `runs/<slice-id>/`, writes its output there, and updates `STATE.md`.
-   Every agent may read `intent.md`; the Architect and QA must.
+   Every agent may read `intent.md`; the Architect and QA must. After each
+   stage, fill its Trace row's Model from `usage.mjs` (the harness log), not
+   from memory — see `SLICE_STATE.md` "Trace".
 8. Enforce gates (`RELEASE_GATES.md`) between stages. On a failure, follow
    `.claude/protocols/FAILURE_LOOP.md` (bounded retries, then escalate).
    **Gates never compress**, however short the path to them was.
