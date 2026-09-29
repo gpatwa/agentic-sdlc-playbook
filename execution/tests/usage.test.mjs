@@ -138,11 +138,12 @@ describe("collect", () => {
 describe("totals — peak context is not consumption", () => {
   test("processed and peak context are reported side by side, never merged", () => {
     const f = fixture();
-    // 3 requests of 1,160 tokens each; the harness would report a peak of 500.
+    // 3 requests of 1,160 tokens each, each sending 1,110 (input + cache read
+    // + cache write). Peak context is the largest single request, not the sum.
     f.spawn({ agentId: "a1", slice: "alpha", peak: 500, rows: [req("q1"), req("q2"), req("q3")] });
     const t = totals(collect({ repo: f.repo, logDirs: [f.logs] }).alpha);
     assert.equal(t.processed, 3 * 1160);
-    assert.equal(t.peakContextSum, 500);
+    assert.equal(t.peakContextSum, 1110);
     assert.notEqual(t.processed, t.peakContextSum);
   });
   test("cache hit rate is reads over all input-side tokens", () => {
@@ -211,5 +212,24 @@ describe("the logged model is printed", () => {
     f.spawn({ agentId: "a1", slice: "alpha", rows: [req("q1", usage(), "claude-opus-5-5")] });
     const out = execFileSync("node", [cli, f.repo, "--logs", f.logs], { encoding: "utf8", env: { ...process.env, HOME: f.root } });
     assert.match(out, /software-architect\s+opus-5-5\s/);
+  });
+});
+
+// Resuming an agent appends to the same subagent log and writes no new spawn
+// result. Peak context was taken from that one result, so a resumed stage's
+// later, larger context went unseen. It is now the largest request in the log.
+describe("resumed stages", () => {
+  test("peak context is the largest request in the log, not the first pass", () => {
+    const f = fixture();
+    const big = usage({ input_tokens: 5, cache_read_input_tokens: 90000, cache_creation_input_tokens: 10000 });
+    f.spawn({ agentId: "a1", slice: "alpha", peak: 500, rows: [req("q1"), req("q2", big)] });
+    const s = collect({ repo: f.repo, logDirs: [f.logs] }).alpha[0];
+    assert.equal(s.peakContext, 100005);
+    assert.equal(s.firstPassContext, 500);
+  });
+  test("without a log, the spawn result's figure is kept", () => {
+    const f = fixture();
+    f.spawn({ agentId: "a1", slice: "alpha", peak: 500, withLog: false });
+    assert.equal(collect({ repo: f.repo, logDirs: [f.logs] }).alpha[0].peakContext, 500);
   });
 });

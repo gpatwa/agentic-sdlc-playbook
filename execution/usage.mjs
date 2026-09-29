@@ -25,6 +25,10 @@
 // product repo's log directory and the playbook's are searched by default,
 // because slices have often been driven from a session rooted in the playbook.
 //
+// RESUMED STAGES. Resuming an agent appends to its existing subagent log and
+// produces no new spawn result, so every figure here is read from the log —
+// including peak context, which is the largest single request's context.
+//
 // NOT MEASURED HERE: the Orchestrator's own turns. They live in the main
 // session log interleaved with everything else that session did, and are not
 // attributed to a slice. Totals cover subagent stages only, and say so.
@@ -83,7 +87,7 @@ export const sumSubagent = (rows) => {
     byReq.set(r.requestId ?? r.uuid ?? byReq.size, u);
     if (r.message.model && r.message.model !== "<synthetic>") models.add(r.message.model);
   }
-  const t = { requests: 0, input: 0, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, output: 0 };
+  const t = { requests: 0, input: 0, cacheRead: 0, cacheWrite5m: 0, cacheWrite1h: 0, output: 0, peakContext: 0 };
   for (const u of byReq.values()) {
     const cw = u.cache_creation_input_tokens ?? 0;
     const h1 = u.cache_creation?.ephemeral_1h_input_tokens ?? 0;
@@ -93,6 +97,10 @@ export const sumSubagent = (rows) => {
     t.cacheWrite1h += h1;
     t.cacheWrite5m += Math.max(0, cw - h1);
     t.output += u.output_tokens ?? 0;
+    // A request's context is everything it sent. The largest over the whole
+    // log is the stage's true peak — including passes after a resume, which
+    // Claude Code appends to the same log but never reports a new spawn result for.
+    t.peakContext = Math.max(t.peakContext, (u.input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0) + cw);
   }
   t.processed = t.input + t.cacheRead + t.cacheWrite5m + t.cacheWrite1h + t.output;
   t.inputEquivalents = Math.round(
@@ -166,9 +174,14 @@ export const collect = ({ repo, logDirs, only, runsDirs = [join(repo, "runs")] }
           finishedAt: row.timestamp ?? null,
           durationMs: r.totalDurationMs ?? null,
           toolCalls: r.totalToolUseCount ?? null,
-          peakContext: r.totalTokens ?? null,
           measured: existsSync(log) ? sumSubagent(readJsonl(log)) : null,
         });
+        // Peak context from the log when there is one. The spawn result's
+        // totalTokens describes the FIRST pass only: a stage resumed later keeps
+        // writing to the same log, so its real peak was being understated.
+        const s = spawns.get(r.agentId);
+        s.peakContext = s.measured?.requests ? s.measured.peakContext : (r.totalTokens ?? null);
+        s.firstPassContext = r.totalTokens ?? null;
       }
     }
   }
@@ -258,6 +271,6 @@ if (isMain) {
     }
     console.log(`\nmodel = as logged by the harness for each request — copy it into STATE.md's Trace, never from memory`);
     console.log(`* = spawned as a generic agent (role from its description), so the role's tool restrictions did not bind`);
-    console.log(`processed = every token each request sent or received · in-equiv = weighted by cost (notional on a subscription) · peak ctx = what trace.json has been recording`);
+    console.log(`processed = every token each request sent or received · in-equiv = weighted by cost (notional on a subscription) · peak ctx = the largest single request's context, across resumed passes`);
   }
 }
