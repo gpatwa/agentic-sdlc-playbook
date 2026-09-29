@@ -10,7 +10,7 @@ import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync } from "node
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
-import { sumSubagent, sliceOf, collect, totals, encodeDir, WEIGHTS } from "../usage.mjs";
+import { sumSubagent, sliceOf, collect, totals, encodeDir, logDirsFor, runsDirsFor, WEIGHTS } from "../usage.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cli = join(here, "..", "usage.mjs");
@@ -169,5 +169,47 @@ describe("CLI", () => {
     assert.equal(u.totals.measuredSpawns, 1);
     assert.equal(readFileSync(trace, "utf8"), '{"untouched":true}\n');
     assert.equal(existsSync(join(f.repo, "runs", "beta", "usage.json")), false);
+  });
+});
+
+// The desktop app runs sessions in worktrees under <repo>/.claude/worktrees/,
+// and Claude Code keys logs by the session's directory. Run from the main
+// checkout, the tool searched only the repo's own log dir and knew only the
+// repo's own runs/, so a live slice driven from a worktree reported nothing.
+describe("worktrees", () => {
+  test("log dirs include every worktree's, from the main checkout", () => {
+    const main = "/u/x/product";
+    const wtDir = encodeDir(main) + "--claude-worktrees-review-1";
+    const dirs = logDirsFor(main, "/base", [wtDir, encodeDir("/u/x/other"), encodeDir(main)]);
+    assert.ok(dirs.includes(join("/base", wtDir)));
+    assert.ok(!dirs.includes(join("/base", encodeDir("/u/x/other"))));
+  });
+  test("from a worktree, the main checkout's log dir is searched too", () => {
+    const dirs = logDirsFor("/u/x/product/.claude/worktrees/review-1", "/base", []);
+    assert.ok(dirs.includes(join("/base", encodeDir("/u/x/product"))));
+    assert.ok(dirs.includes(join("/base", encodeDir("/u/x/product/.claude/worktrees/review-1"))));
+  });
+  test("a slice that exists only in a worktree is attributed, and --write lands there", () => {
+    const f = fixture();
+    const wtRuns = join(f.repo, ".claude", "worktrees", "review-1", "runs");
+    mkdirSync(join(wtRuns, "gamma"), { recursive: true });
+    f.spawn({ agentId: "c1", slice: "gamma" });
+    const r = collect({ repo: f.repo, logDirs: [f.logs], runsDirs: runsDirsFor(f.repo) });
+    assert.equal(r.gamma[0].runsDir, wtRuns);
+    execFileSync("node", [cli, f.repo, "--logs", f.logs, "--write"], { encoding: "utf8", env: { ...process.env, HOME: f.root } });
+    assert.ok(existsSync(join(wtRuns, "gamma", "usage.json")));
+    assert.ok(!existsSync(join(f.repo, "runs", "gamma")));
+  });
+});
+
+// The Trace table's Model column was filled from memory and was wrong: a stage
+// that ran on Opus was recorded as Sonnet. The report prints what the harness
+// logged, so the Orchestrator can copy it.
+describe("the logged model is printed", () => {
+  test("each stage row shows the model from its requests", () => {
+    const f = fixture();
+    f.spawn({ agentId: "a1", slice: "alpha", rows: [req("q1", usage(), "claude-opus-5-5")] });
+    const out = execFileSync("node", [cli, f.repo, "--logs", f.logs], { encoding: "utf8", env: { ...process.env, HOME: f.root } });
+    assert.match(out, /software-architect\s+opus-5-5\s/);
   });
 });

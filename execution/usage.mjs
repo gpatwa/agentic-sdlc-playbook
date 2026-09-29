@@ -46,6 +46,23 @@ const GENERIC = new Set(["claude", "general-purpose"]);
 
 export const encodeDir = (p) => resolve(p).replace(/[^a-zA-Z0-9]/g, "-");
 
+// The log dirs that can hold a product repo's slices. The desktop app runs
+// sessions in git worktrees under <repo>/.claude/worktrees/<name>, and Claude
+// Code keys logs by the session's directory — so a slice driven from a
+// worktree logs under the worktree's name, not the repo's. Searching only the
+// repo's own dir found nothing for a live slice. Covers both directions: from
+// the main checkout, every worktree's dir; from a worktree, the main one's too.
+export const logDirsFor = (repo, base, existing = []) => {
+  const abs = resolve(repo);
+  const main = abs.split(`${"/"}.claude${"/"}worktrees${"/"}`)[0];
+  const prefix = encodeDir(main) + "--claude-worktrees-";
+  return [...new Set([
+    join(base, encodeDir(abs)),
+    join(base, encodeDir(main)),
+    ...existing.filter((d) => d.startsWith(prefix)).map((d) => join(base, d)),
+  ])];
+};
+
 const readJsonl = (f) => {
   const out = [];
   for (const line of readFileSync(f, "utf8").split("\n")) {
@@ -99,13 +116,28 @@ export const sliceOf = (prompt, known) => {
   return best?.[0] ?? null;
 };
 
-export const collect = ({ repo, logDirs, only }) => {
-  const runsDir = join(repo, "runs");
-  const known = new Set(
-    existsSync(runsDir)
-      ? readdirSync(runsDir).filter((d) => statSync(join(runsDir, d)).isDirectory())
-      : [],
-  );
+// Every runs/ dir a product repo's slices can live in: its own, and each of
+// its worktrees' — a slice started in a worktree exists only there until merged.
+export const runsDirsFor = (repo) => {
+  const main = resolve(repo).split(`${"/"}.claude${"/"}worktrees${"/"}`)[0];
+  const wt = join(main, ".claude", "worktrees");
+  return [...new Set([
+    join(resolve(repo), "runs"),
+    join(main, "runs"),
+    ...(existsSync(wt) ? readdirSync(wt).map((w) => join(wt, w, "runs")) : []),
+  ])].filter((d) => existsSync(d));
+};
+
+export const collect = ({ repo, logDirs, only, runsDirs = [join(repo, "runs")] }) => {
+  // slice id -> the runs/ dir that holds it (first found wins: the repo's own).
+  const where = new Map();
+  for (const rd of runsDirs) {
+    if (!existsSync(rd)) continue;
+    for (const d of readdirSync(rd)) {
+      if (!where.has(d) && statSync(join(rd, d)).isDirectory()) where.set(d, rd);
+    }
+  }
+  const known = new Set(where.keys());
   // Keyed by agentId: that key is what stops overlapping log dirs double
   // counting. The has() check below only skips re-reading a log already summed.
   const spawns = new Map();
@@ -124,6 +156,7 @@ export const collect = ({ repo, logDirs, only }) => {
         const type = r.agentType ?? meta.agentType ?? null;
         spawns.set(r.agentId, {
           slice,
+          runsDir: where.get(slice),
           agentId: r.agentId,
           role: type,
           // A generic type means the brief was inlined into a general agent,
@@ -180,19 +213,19 @@ if (isMain) {
   const playbook = resolve(dirname(fileURLToPath(import.meta.url)), "..");
   const base = join(homedir(), ".claude", "projects");
   const logDirs = [...new Set([
-    join(base, encodeDir(productRepo)),
+    ...logDirsFor(productRepo, base, existsSync(base) ? readdirSync(base) : []),
     join(base, encodeDir(playbook)),
     ...values("--logs").map((d) => resolve(d)),
   ])];
 
-  const bySlice = collect({ repo: productRepo, logDirs, only: values("--slice")[0] });
+  const bySlice = collect({ repo: productRepo, logDirs, only: values("--slice")[0], runsDirs: runsDirsFor(productRepo) });
   const report = Object.fromEntries(
     Object.entries(bySlice).map(([id, spawns]) => [id, { totals: totals(spawns), spawns }]),
   );
 
   if (flag("--write")) {
     for (const [id, r] of Object.entries(report)) {
-      writeFileSync(join(productRepo, "runs", id, "usage.json"), JSON.stringify({
+      writeFileSync(join(r.spawns[0].runsDir, id, "usage.json"), JSON.stringify({
         schema: "aveto/usage@1",
         source: "harness-log",
         note: "Subagent stages only; the Orchestrator's own turns are not attributed. " +
@@ -211,16 +244,20 @@ if (isMain) {
     if (!Object.keys(report).length) console.log(`no attributable subagent spawns for ${basename(productRepo)} in:\n  ${logDirs.join("\n  ")}`);
     for (const [id, { totals: t, spawns }] of Object.entries(report)) {
       console.log(`\n${id}  —  ${t.measuredSpawns}/${t.spawns} stages measured, ${t.requests} requests, cache hit ${t.cacheHitRate == null ? "—" : (t.cacheHitRate * 100).toFixed(1) + "%"}`);
-      console.log(`  ${"role".padEnd(24)}${"reqs".padStart(6)}${"processed".padStart(11)}${"in-equiv".padStart(10)}${"peak ctx".padStart(10)}   ratio`);
+      console.log(`  ${"role".padEnd(24)}${"model".padEnd(20)}${"reqs".padStart(6)}${"processed".padStart(11)}${"in-equiv".padStart(10)}${"peak ctx".padStart(10)}   ratio`);
       for (const s of spawns) {
         const m = s.measured;
         const ratio = m && s.peakContext ? (m.processed / s.peakContext).toFixed(0) + "x" : "";
         const label = s.generic ? `*${s.description ?? "unknown"}` : s.role;
-        console.log(`  ${String(label).slice(0, 23).padEnd(24)}${String(m?.requests ?? "—").padStart(6)}${k(m?.processed).padStart(11)}${k(m?.inputEquivalents).padStart(10)}${k(s.peakContext).padStart(10)}   ${m ? ratio : "no subagent log"}`);
+        // The model the harness logged for every request — what the Trace
+        // table's Model column must say. Recalled from memory, it has been wrong.
+        const model = m?.models?.length ? m.models.map((x) => x.replace(/^claude-/, "")).join("+") : "—";
+        console.log(`  ${String(label).slice(0, 23).padEnd(24)}${model.slice(0, 19).padEnd(20)}${String(m?.requests ?? "—").padStart(6)}${k(m?.processed).padStart(11)}${k(m?.inputEquivalents).padStart(10)}${k(s.peakContext).padStart(10)}   ${m ? ratio : "no subagent log"}`);
       }
-      console.log(`  ${"TOTAL".padEnd(24)}${String(t.requests).padStart(6)}${k(t.processed).padStart(11)}${k(t.inputEquivalents).padStart(10)}${k(t.peakContextSum).padStart(10)}`);
+      console.log(`  ${"TOTAL".padEnd(44)}${String(t.requests).padStart(6)}${k(t.processed).padStart(11)}${k(t.inputEquivalents).padStart(10)}${k(t.peakContextSum).padStart(10)}`);
     }
-    console.log(`\n* = spawned as a generic agent (role from its description), so the role's tool restrictions did not bind`);
+    console.log(`\nmodel = as logged by the harness for each request — copy it into STATE.md's Trace, never from memory`);
+    console.log(`* = spawned as a generic agent (role from its description), so the role's tool restrictions did not bind`);
     console.log(`processed = every token each request sent or received · in-equiv = weighted by cost (notional on a subscription) · peak ctx = what trace.json has been recording`);
   }
 }
