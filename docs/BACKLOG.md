@@ -1007,6 +1007,93 @@ from the run" pattern as effort / operator / executor / gateCatches.
     `telemetrySource: self-reported` runs and the unmeasured Orchestrator turns
     — a console that rounds those up would fail the product's own test.
 
+- **T24 · Close the product loop: decide what to build from evidence, and
+  measure whether it worked.** *Raised 2026-09-28.* Prompted by Geoff Charles
+  (CPO, Ramp) describing Ramp's product "factory" (YouTube `ZG8Mf3P9xzI`,
+  worked from a Gemini summary of the talk — **check every figure against the
+  video before quoting it**). Ramp's agents pull customer signal (sales calls,
+  tickets, logs, surveys), rank and de-duplicate it into backlogs, write specs
+  from warehouse data *and the codebase*, fix most small UX issues within a day
+  without being asked, and leave humans the ambitious work. Aveto has most of
+  the roles — the gap is the loop that joins them, at both ends of a slice.
+  - **Before: nothing decides what to build next.** Every slice starts from
+    the human's ask.
+    - **The PM never reads the evidence.** `agents/product-manager.md` lists as
+      inputs the scoped item, `.agentic/`, the pack and existing PRDs — not the
+      Discovery Brief, the Customer Signal Review or the Data Analyst's readout.
+      The role that decides what problem a slice solves is never told to read
+      what the research roles found, and a PRD need not cite one ticket or
+      interview. Nor does it read the code, which Ramp's definition agent does.
+    - **Candidate slices have nowhere to go.** Customer Success and Post-Launch
+      both file candidates "for the Orchestrator", which exists only while a
+      slice runs; both briefs say what to build next belongs to "Orchestrator +
+      human" — in practice, the human, from memory.
+    - **No record of where evidence lives.** The research roles use "whatever
+      research surface the project uses"; nothing says where a product's
+      tickets, analytics or interviews are, or that there are none yet.
+  - **After: success is measured on the full path only, and only once.** The
+    chain exists — PRD success criteria → Analytics Engineer's event contract
+    and metric queries → QA checks the wires are live → Data Analyst readout
+    (experiments carry guardrails and a decision rule) → Post-Launch review.
+    It breaks where a solo builder actually works:
+    - **The short path drops it.** No PM means no PRD, so no outcome criteria
+      and no Analytics Engineer. The intent's "Done means" are ship-time checks
+      (tests pass, eval ≥ 80%), not outcomes after launch — aveto-support's
+      first slice proves retrieval works and says nothing about users getting
+      good answers.
+    - **No gate enforces it.** Success criteria are checked at Discovery
+      review; no release gate fails a slice whose outcome metric isn't
+      instrumented.
+    - **No baseline, target, date or decision.** Outside experiments, the
+      Post-Launch review asks "met? yes / partial / no" with no before-number,
+      no target, no check-by date, and no keep / iterate / roll back rule.
+    - **It assumes a warehouse** (event pipeline, dbt, semantic layer). A solo
+      builder has an app database at best, and traffic too low for
+      significance.
+    - **It happens once.** Post-Launch runs a week after release and stops.
+      `runs/ANALYTICS.md` is *pipeline* analytics (cost, stage time), not
+      product; product metrics never reach the next "what to build" decision.
+  - **What to build — smallest first:**
+    1. **The PM reads the evidence and the code.** Add the Discovery Brief,
+       Customer Signal Review and Data Analyst readout to its inputs; its
+       quality bar requires every problem statement to cite evidence, or to
+       say "no evidence — owner's judgment".
+    2. **Evidence sources in `PROJECT_CONTEXT.md`** — where tickets, analytics
+       and interviews live, or "none yet". Ramp's "every question is an API",
+       at solo scale. Connectors (support desk, issue tracker) are optional
+       adapters, never a requirement.
+    3. **"How we'll know it worked" in `INTENT_TEMPLATE.md`**, optional: metric,
+       baseline, target, check-by date, decision if it misses. On the short
+       path it stands in for the PRD's success criteria.
+    4. **A release-gate row:** every outcome metric has a working event or
+       query, or is marked "not measured, because …".
+    5. **A light default for measurement:** an events table in the app's own
+       database. The Data Analyst reports small numbers as counts, never
+       percentages dressed as findings, and claims no significance it doesn't
+       have.
+    6. **A product backlog and scorecard in the product repo**
+       (`.agentic/PRODUCT_BACKLOG.md`): Customer Success, Post-Launch and
+       Support add candidates, each with its evidence quoted raw — Ramp's
+       "hate channel", for one person. Post-Launch appends each slice's outcome
+       against its target. A short "what's next" step has the PM de-duplicate
+       and rank; **the human picks**. The next slice starts from a ranked,
+       cited candidate, not a blank ask.
+  - **Owner's decision, not a default: an autonomous small-fix loop.** Ramp
+    fixes most small UX issues without a human asking. Aveto could run
+    low-risk candidates on the short path at release tier 1 unprompted — but
+    the merge still stops for the human, because agents never approve their
+    own work (`HUMAN_APPROVAL_RULES.md`). That caps how autonomous the loop can
+    be, and it should be decided deliberately, not drift in with item 6.
+  - **First user: aveto-support's second slice.** The drafter's success
+    measures already exist in `agents/customer-support.md` ("edited before
+    sent is a real signal"): share of drafts sent unedited, how much is
+    edited, escalation and abandonment rate, and "no confident match" cases
+    that turn out to be real doc gaps. That is the eval continuing in
+    production — the measure T22 needs to call the app production-ready.
+  - **Not doing:** requiring a warehouse or connectors; roadmap by loudest
+    customer (Customer Success already forbids it); letting agents choose
+    what gets built — they rank, the human picks.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
