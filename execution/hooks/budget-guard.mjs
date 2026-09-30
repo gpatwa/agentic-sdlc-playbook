@@ -29,8 +29,17 @@ try {
   // into a subdirectory — or runs from a worktree the harness roots elsewhere —
   // otherwise finds no runs/ and silently allows every spawn. Found by a
   // product-repo session, which had patched only its installed copy.
-  const runsDir = join(process.env.CLAUDE_PROJECT_DIR || process.cwd(), "runs");
-  if (!existsSync(runsDir)) allow(); // not a slice-running repo
+  const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+  // Slices started in a desktop-app worktree live in that worktree's runs/,
+  // and CLAUDE_PROJECT_DIR can be the main checkout, which has none — the
+  // guard then saw no slice and allowed silently. Read the project's runs/
+  // and every worktree's.
+  const wt = join(projectDir, ".claude", "worktrees");
+  const runsDirs = [
+    join(projectDir, "runs"),
+    ...(existsSync(wt) ? readdirSync(wt).map((w) => join(wt, w, "runs")) : []),
+  ].filter((d) => existsSync(d));
+  if (!runsDirs.length) allow(); // not a slice-running repo
 
   // Accept "600k", "600,000", "0.6M".
   const num = (s) => {
@@ -59,7 +68,7 @@ try {
   // with a message naming the slice and the line to restore.
   let active = null;
   const unguarded = [];
-  for (const d of readdirSync(runsDir)) {
+  for (const runsDir of runsDirs) for (const d of readdirSync(runsDir)) {
     const p = join(runsDir, d, "STATE.md");
     if (!existsSync(p) || !statSync(join(runsDir, d)).isDirectory()) continue;
     const text = readFileSync(p, "utf8");

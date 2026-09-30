@@ -186,3 +186,41 @@ describe("it fails closed", () => {
     assert.equal(run(d, "software-architect", { tool_input: { file_path: 42 } }), "deny");
   });
 });
+
+// Seen live: a session in a desktop-app worktree had CLAUDE_PROJECT_DIR set to
+// the MAIN checkout on one spawn, so post-launch-learning's write to
+// runs/<slice>/ in the worktree was judged as ".claude/worktrees/<w>/runs/..."
+// and denied. The target is judged by its path inside the worktree.
+describe("worktrees under the project", () => {
+  const withWorktree = () => {
+    const d = repo();
+    const w = join(d, ".claude", "worktrees", "wt-1");
+    for (const p of ["runs/slice-a", "src", ".claude"]) mkdirSync(join(w, p), { recursive: true });
+    return { d, w };
+  };
+  const runIn = (d, w, role, payload) => {
+    const out = execFileSync("node", [guard, role], {
+      cwd: w, encoding: "utf8", stdio: "pipe",
+      input: JSON.stringify({ cwd: w, tool_name: "Write", ...payload }),
+      env: { ...process.env, CLAUDE_PROJECT_DIR: d },
+    });
+    return out.trim() && JSON.parse(out).hookSpecificOutput?.permissionDecision === "deny" ? "deny" : "allow";
+  };
+  test("runs/ inside a worktree is in scope, with CLAUDE_PROJECT_DIR = main", () => {
+    const { d, w } = withWorktree();
+    assert.equal(runIn(d, w, "post-launch-learning", write(join(w, "runs/slice-a/02-close-out.md"))), "allow");
+    assert.equal(runIn(d, w, "post-launch-learning", write("runs/slice-a/STATE.md")), "allow");
+  });
+  test("src/ inside a worktree is still denied", () => {
+    const { d, w } = withWorktree();
+    assert.equal(runIn(d, w, "software-architect", write(join(w, "src/x.py"))), "deny");
+  });
+  test("a worktree's own .claude/ is still denied", () => {
+    const { d, w } = withWorktree();
+    assert.equal(runIn(d, w, "tech-writer", write(join(w, ".claude/settings.json"))), "deny");
+  });
+  test("the worktrees directory itself is not a way out", () => {
+    const { d, w } = withWorktree();
+    assert.equal(runIn(d, w, "tech-writer", write(join(d, ".claude/worktrees/notes.md"))), "deny");
+  });
+});

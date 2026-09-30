@@ -90,7 +90,15 @@ try {
 
   const root = canonical(resolve(process.env.CLAUDE_PROJECT_DIR || payload.cwd || process.cwd()));
   const abs = canonical(isAbsolute(target) ? target : resolve(payload.cwd || root, target));
-  const rel = relative(root, abs).split(sep).join("/");
+  let rel = relative(root, abs).split(sep).join("/");
+  // A session in a desktop-app worktree (<root>/.claude/worktrees/<name>/) may
+  // get CLAUDE_PROJECT_DIR set to the MAIN checkout, not the worktree — it has
+  // varied across spawns. Its in-scope writes then looked like
+  // ".claude/worktrees/<name>/runs/...", outside runs/, and were denied. Judge
+  // such a target by its path inside that worktree. Stripped once: anything
+  // still not in scope afterwards is denied as before.
+  const inWorktree = rel.match(/^\.claude\/worktrees\/[^/]+\/(.+)$/);
+  if (inWorktree) rel = inWorktree[1];
 
   if (!rel || rel.startsWith("../") || rel === ".." || isAbsolute(rel)) {
     deny(`write-scope-guard: ${role} may not write outside the project (${target}).`);
