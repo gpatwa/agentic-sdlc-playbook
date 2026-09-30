@@ -79,6 +79,27 @@ export class PlaceholderLlmXAdapter implements XAdapter {
 - Cases are deterministic — no API calls, no random seeds without a
   fixed seed.
 
+### Held-out gates (for retrieval, ranking, classification)
+
+Proven on aveto-support, where it caught two methods that scored 71–79% on
+questions the designer had seen and 47–69% on questions it hadn't:
+
+1. **The gate set is written by the owner or QA, never by whoever builds the
+   method**, and committed before the method is tuned.
+2. **Once a set has been seen, it stops being evidence.** Keep it as a
+   development set; it is reported, never gates.
+3. **Freeze first.** Record the method's commit; only then is the next gate
+   set committed. Git order is the proof. Run it once.
+4. **Review the labels before the freeze, by someone other than the drafter.**
+   For each question, list *every* file that defensibly answers it — a
+   template's owning role, a protocol's command. A too-narrow label fails a
+   correct answer, and it cannot be fixed after the run: relabelling a seen
+   result is tuning the gate.
+5. **Never change the bar, or the labels, after seeing a result.** A bar
+   that should move is changed in the next intent, in advance (approval rule 4).
+6. **Report the diagnostic that separates causes** — e.g. recall with no
+   confidence cutoff — so a failure says whether ranking or abstention broke.
+
 ## Anti-patterns specific to AI agent products
 
 - Wiring a real model client because "it's just for testing".
