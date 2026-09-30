@@ -1014,6 +1014,29 @@ from the run" pattern as effort / operator / executor / gateCatches.
       rule 4). Any further method needs a third fresh held-out set.
     - **Still open from this item:** the live write-scope-guard test in auto
       mode (T21) — not yet confirmed from this run's logs.
+  - **Second slice, `docs-retrieval-2` + `-proof` (2026-09-29 → 30): gate
+    failed again, but the method improved.** File-level hybrid ranking over an
+    explicit user-docs corpus (123 files), no confidence cutoff (abstention
+    moved to a future check step, a rule 4 decision made in advance):
+    **11/16** on a third held-out set against a bar of 13; 12/17 on the second
+    set and 19/24 on the seen dev set as diagnostics. About 47% → about 70% on
+    unseen questions. Close-out: `runs/docs-retrieval-2-proof/02-close-out.md`.
+    - **Labelling lesson.** At least one miss (t13) returned the file that
+      owns the labelled template: a defensible answer the drafter's label
+      didn't list. Not relabelled — that would be tuning a seen gate. Now in
+      the pack: someone other than the drafter reviews labels before the
+      freeze (`project-packs/ai-agent-product.md`, "Held-out gates", v12).
+    - **Cheaper, by method.** One fresh spawn per stage, not resumed agents:
+      6.7M tokens processed across both halves, against slice 1's 30.9M.
+    - **Pack defect found live:** in a worktree, hooks could get the main
+      checkout as `CLAUDE_PROJECT_DIR`; the write guard falsely denied an
+      in-scope write, and the budget guard went blind. Fixed in v11. It is
+      also the first live evidence of the write guard acting at all.
+    - **Carried forward:** a reranker slice with a fourth held-out set; a
+      check-step slice that **owns abstention** (it has no slice today — a
+      safety requirement resting on nothing planned); CI still blocked on a
+      passing gate. `main` now holds the code (PR #1); its README says the
+      gate has not been passed.
 
 - **T23 · Build Aveto's own console as the second reference app — with Aveto.**
   *Raised 2026-09-26. After T22.* The console is already the planned paid tier
