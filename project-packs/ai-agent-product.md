@@ -90,7 +90,8 @@ questions the designer had seen and 47–69% on questions it hadn't:
    development set; it is reported, never gates.
 3. **Freeze first.** Record the method's commit; only then is the next gate
    set committed. Git order is the proof. Run it once.
-4. **Review the labels before the freeze, by someone other than the drafter.**
+4. **Review the labels before the gate set is committed, by someone other
+   than the drafter.**
    For each question, list *every* file that defensibly answers it — a
    template's owning role, a protocol's command. A too-narrow label fails a
    correct answer, and it cannot be fixed after the run: relabelling a seen

@@ -53,8 +53,8 @@ A filled `templates/QA_EVIDENCE_TEMPLATE.md` containing:
 - For an eval-gated slice, follow the held-out rules in
   `project-packs/ai-agent-product.md` ("Held-out gates"): score the gate set
   once, after confirming no method file changed since the recorded freeze,
-  and report the seen sets as diagnostics only. Before the freeze, if asked,
-  review the gate set's labels for questions another file also answers.
+  and report the seen sets as diagnostics only. Before the gate set is committed,
+  if asked, review its labels for questions another file also answers.
 
 - Every command in the project's local regression sequence is run, in
   order, with the output recorded (tail at minimum).

@@ -1025,7 +1025,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
       owns the labelled template: a defensible answer the drafter's label
       didn't list. Not relabelled — that would be tuning a seen gate. Now in
       the pack: someone other than the drafter reviews labels before the
-      freeze (`project-packs/ai-agent-product.md`, "Held-out gates", v12).
+      gate set is committed (`project-packs/ai-agent-product.md`, "Held-out gates", v12).
     - **Cheaper, by method.** One fresh spawn per stage, not resumed agents:
       6.7M tokens processed across both halves, against slice 1's 30.9M.
     - **Pack defect found live:** in a worktree, hooks could get the main
