@@ -1037,6 +1037,38 @@ from the run" pattern as effort / operator / executor / gateCatches.
       safety requirement resting on nothing planned); CI still blocked on a
       passing gate. `main` now holds the code (PR #1); its README says the
       gate has not been passed.
+  - **Third slice, `docs-retrieval-3` + `-proof` (2026-09-30 → 10-01): the
+    gate passed — by exactly the minimum — and the added component earned
+    nothing.** A local cross-encoder reranker (`ms-marco-MiniLM-L6-v2`, ONNX,
+    approved under rules 4 and 5 with exact revision and hashes) over
+    slice 2's method, scored once on a fourth held-out set whose labels a fresh
+    QA spawn reviewed: **13/16 against a bar of 13**. Slice 2's method alone
+    got 14/16 on the same set. Across four sets the reranker was +2, 0, −1 and
+    −5 (net −4 hits), at 2.3–3.8 s a question against 0.9 s, plus 91 MB and an
+    open MS MARCO licence question. Closed as "gate met, no demonstrated
+    gain; nothing ships". Close-out: `runs/docs-retrieval-3-proof/03-close-out.md`.
+    - **What it proves about the process.** A gate can be met without the
+      change earning its cost; the comparison to the first stage, reported as
+      a diagnostic in the same run, is what exposed it. Passing at the bar is
+      "meets", not "solved". Keep that comparison in every eval-gated slice.
+    - **Labels, again.** The label review (a fresh spawn, sees only the
+      questions and the docs) was worth it — it added 40 files to 13 questions
+      — and also showed its own failure mode: under "a file that alone could
+      answer it" one overview doc counted for 12 of 16 questions, which would
+      have made the gate passable without finding the specific doc. The owner
+      sharpened the labels before scoring ("files whose subject is the
+      question"); the pack rule should say so (follow-up below).
+    - **Cost, measured:** 8.1M tokens processed across both halves (slice 2:
+      6.7M; slice 1: 30.9M), one fresh spawn per stage throughout.
+    - **Open defect:** the gate run aborted at teardown (exit 134, ONNX
+      runtime mutex) after printing its full report. Harmless to the score,
+      fatal to any CI step. Fix before `docs-retrieval-ci`.
+    - **Carried forward, as the owner's direction:** a small slice 4 — make
+      `file-rrf-v1` the default and the reranker optional and off by default,
+      fix the teardown crash, then Security and the Release Gate once on that
+      smaller change; the check-step slice that owns abstention (nothing that
+      writes text ships before it); `docs-retrieval-ci`. Pack follow-up:
+      tighten the label rule to "files whose subject is the question".
 
 - **T23 · Build Aveto's own console as the second reference app — with Aveto.**
   *Raised 2026-09-26. After T22.* The console is already the planned paid tier

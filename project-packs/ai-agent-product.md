@@ -96,9 +96,18 @@ questions the designer had seen and 47–69% on questions it hadn't:
    template's owning role, a protocol's command. A too-narrow label fails a
    correct answer, and it cannot be fixed after the run: relabelling a seen
    result is tuning the gate.
+   A label lists files whose **subject is the question** — the owning agent,
+   its template and prompt, a doc dedicated to the topic — not cross-cutting
+   overviews that restate every stage. Applied as "any file that alone could
+   answer it", one overview became a source for 12 of 16 questions and made
+   the gate passable without finding the specific doc. Sharpen the labels
+   before scoring, never after.
 5. **Never change the bar, or the labels, after seeing a result.** A bar
    that should move is changed in the next intent, in advance (approval rule 4).
-6. **Report the diagnostic that separates causes** — e.g. recall with no
+6. **Report the comparison to the first stage** (the method without the
+   change) on the same set, in the same run. A gate can be met by a change
+   that earns nothing; passing at the bar is "meets", not "solved".
+7. **Report the diagnostic that separates causes** — e.g. recall with no
    confidence cutoff — so a failure says whether ranking or abstention broke.
 
 ## Anti-patterns specific to AI agent products
