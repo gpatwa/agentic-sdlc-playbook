@@ -1096,6 +1096,8 @@ from the run" pattern as effort / operator / executor / gateCatches.
       - [ ] A real model in a shipped feature, behind the rule 5 and 6
             approvals, with a spend cap set first.
       - [ ] A drafting step that never sends: a person approves every reply.
+            *This proves the assistant half only; the action-taking half is
+            the block below.*
       - [ ] CI blocks a bad merge on the reference app (needs the exit-134
             fix first).
       - [ ] A real-cloud deploy through the Cloud Deployment role, with the
@@ -1113,6 +1115,45 @@ from the run" pattern as effort / operator / executor / gateCatches.
             (the "anyone can" claim).
     - **Rule.** Update this list when evidence lands; link it, don't restate
       it. An item that stays unticked is not a failure, it is the roadmap.
+  - **Not covered by the list above: an agent that takes actions and
+    completes a goal.** *Added 2026-10-02 at the owner's prompt.* T22's app
+    as designed **drafts and never sends**; its only "agentic" part is a
+    bounded loop that decides whether to search the docs again, and every
+    outward action waits for a person. Even fully released, it would show a
+    governed *assistant*, not an *agent*. A claim that Aveto builds agentic
+    systems that act needs its own evidence:
+    - **Owner decision, not made here: where does the action-taking proof
+      live?** (a) Extend the app after the check step: its goal becomes
+      "resolve a support issue", with tools on an **action ladder** — *auto*
+      (reversible, low risk, e.g. labelling), *needs approval* (anything
+      that sends or submits: a reply, a docs PR), *forbidden* (closing
+      issues, editing `main`). (b) A **sandbox first**: a repo the agent owns,
+      where it may label, comment, close and open PRs for real, so side effects
+      are real and user risk is zero; graduate only the *auto* tier to the real
+      repo. *Claude's recommendation: (b) then (a).* Either way the shipped
+      agent stays single-agent (the T19 reason).
+    - [ ] **A goal completed end to end:** a seeded issue goes from open to
+          resolved or triaged through several tool actions, scored as a
+          goal-completion rate on a held-out set of trajectories, frozen first
+          like every other gate.
+    - [ ] **The action ladder is enforced in code, outside the model.** Every
+          tool is tagged auto, needs approval or forbidden; a deterministic
+          policy layer decides; tests show the model cannot talk its way past
+          it.
+    - [ ] **Trajectory evals, not just answers:** right tool, right arguments,
+          right order, stops when done. **Unsafe-action rate is zero** on a
+          red-team set (issue text that tries to make it close issues, post
+          elsewhere or leak a secret).
+    - [ ] **Every action is accountable:** logged with what, why, inputs, result
+          and approver; safe to retry (idempotent); reversible or compensable
+          where possible; a kill switch that has been tested.
+    - [ ] **Hard bounds, tested:** step cap, spend cap, timeout, loop
+          detection.
+    - [ ] **Runtime least privilege:** a scoped GitHub App; secrets never in
+          the model's context; nothing reachable outside its scope.
+    - [ ] **Failure is a state, not a crash:** a tool error or half-finished
+          goal leaves a clear record and escalates to a person with what was
+          done.
 
 - **T23 · Build Aveto's own console as the second reference app — with Aveto.**
   *Raised 2026-09-26. After T22.* The console is already the planned paid tier
