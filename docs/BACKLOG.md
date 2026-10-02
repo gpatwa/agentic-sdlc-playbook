@@ -1122,16 +1122,28 @@ from the run" pattern as effort / operator / executor / gateCatches.
     outward action waits for a person. Even fully released, it would show a
     governed *assistant*, not an *agent*. A claim that Aveto builds agentic
     systems that act needs its own evidence:
-    - **Owner decision, not made here: where does the action-taking proof
-      live?** (a) Extend the app after the check step: its goal becomes
-      "resolve a support issue", with tools on an **action ladder** — *auto*
-      (reversible, low risk, e.g. labelling), *needs approval* (anything
-      that sends or submits: a reply, a docs PR), *forbidden* (closing
-      issues, editing `main`). (b) A **sandbox first**: a repo the agent owns,
-      where it may label, comment, close and open PRs for real, so side effects
-      are real and user risk is zero; graduate only the *auto* tier to the real
-      repo. *Claude's recommendation: (b) then (a).* Either way the shipped
-      agent stays single-agent (the T19 reason).
+    - **Decision (owner delegated it, 2026-10-02: "decide a vs b"): (b)
+      then (a).** The action-taking proof starts in a **sandbox**, and only
+      its *auto* tier graduates to the real repo.
+      - **Sandbox:** a separate repo, owned by the owner, where the agent may
+        label, comment, close and open PRs for real, so side effects are real
+        and user risk is zero. It has its **own scoped GitHub App**, never the
+        real repo's credentials, and its own spend cap. Credentials are supplied
+        by the owner and never handled by an agent; a real model call is rule 5
+        as ever.
+      - **The action ladder** applies from the first line: *auto* (reversible,
+        low risk, e.g. labelling), *needs approval* (anything that sends or
+        submits: a reply, a docs PR), *forbidden* (closing issues on the real
+        repo, editing `main`). The sandbox relaxes the tiers only because
+        nothing there is a user's.
+      - **Order:** after slice 4 and the check-step slice; the sandbox slices
+        may run alongside the check step, but **nothing reaches the real repo
+        before the check step has passed its own gate** (slice 3's rule that
+        nothing writing text for a user ships before it still holds).
+      - **Graduation (a):** the *auto* tier moves to the real repo only when
+        the evidence items below are ticked for the sandbox. *Needs approval*
+        stays with a person for good; *forbidden* stays forbidden.
+      - Either way the shipped agent stays single-agent (the T19 reason).
     - [ ] **A goal completed end to end:** a seeded issue goes from open to
           resolved or triaged through several tool actions, scored as a
           goal-completion rate on a held-out set of trajectories, frozen first
