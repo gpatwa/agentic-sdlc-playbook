@@ -1069,6 +1069,50 @@ from the run" pattern as effort / operator / executor / gateCatches.
       smaller change; the check-step slice that owns abstention (nothing that
       writes text ships before it); `docs-retrieval-ci`. Pack follow-up:
       tighten the label rule to "files whose subject is the question".
+  - **Evidence checklist — "Aveto builds production-grade agentic systems".**
+    *Added 2026-10-02.* The app checklist above (#4) says what the *app* must
+    contain; this one says what must be *shown* before Aveto may claim it can
+    build one. Tick an item only with a link to the evidence, and never on the
+    strength of a plan. Until the second block is ticked, the claim to make is:
+    *"an AI-native SDLC that has caught real defects and failed bad components
+    honestly, validated on seed apps; its reference app is mid-build and has not
+    released."*
+    - **Shown** (evidence in the repos):
+      - [x] Gates stop a bad slice: Security blocked a real defect
+            (`streak-seed` `runs/http-layer/`); eval gates failed three
+            retrieval methods (`aveto-support` `runs/docs-retrieval*/`).
+      - [x] Human approvals are enforced and recorded in the owner's own words
+            (`APPROVAL_RECORD-*.md`, slices 1–3).
+      - [x] A held-out gate catches overfitting: 71–79% on seen questions
+            against 47–70% on new ones.
+      - [x] Cost is measured from the harness logs, not recalled
+            (`usage.mjs`: 30.9M, 6.7M and 8.1M tokens processed).
+      - [x] Defects found in live runs are fixed upstream, with tests that
+            fail without the fix (pack v7 → v13).
+    - **Not yet shown** (each is a slice or a run, not a decision):
+      - [ ] A reference-app slice passes its Release Gate. None has.
+      - [ ] The check step (abstention) is built and gated. Nothing that
+            writes text for a user ships before it.
+      - [ ] A real model in a shipped feature, behind the rule 5 and 6
+            approvals, with a spend cap set first.
+      - [ ] A drafting step that never sends: a person approves every reply.
+      - [ ] CI blocks a bad merge on the reference app (needs the exit-134
+            fix first).
+      - [ ] A real-cloud deploy through the Cloud Deployment role, with the
+            owner's approval, and a rehearsed rollback.
+      - [ ] Observability in production: logs, traces and cost per request.
+      - [ ] The write-scope guard *denies* a real out-of-scope write in auto
+            mode (T21). So far it has only been seen allowing, and once
+            wrongly denying.
+      - [ ] Real use: several weeks on real GitHub issues, with the T24
+            after-launch numbers (drafts sent unedited, edit size, escalation).
+      - [ ] A human expert, not Claude, reviews a slice's threat model and
+            Security Review. Today every verifier is the same model family as
+            the builder, so their blind spots are correlated.
+      - [ ] Someone other than the owner builds a slice from the README alone
+            (the "anyone can" claim).
+    - **Rule.** Update this list when evidence lands; link it, don't restate
+      it. An item that stays unticked is not a failure, it is the roadmap.
 
 - **T23 · Build Aveto's own console as the second reference app — with Aveto.**
   *Raised 2026-09-26. After T22.* The console is already the planned paid tier
