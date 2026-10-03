@@ -224,8 +224,12 @@ until the method is frozen; a fresh QA agent then reviews the labels
    the human here, pack defects to the support session by name, never push.
 3. Start the slice with `/agentic-slice <intent>`.
 
-Sessions share one account's usage limits; two sessions in parallel use them
-faster, they do not add to them.
+Sessions on the same account share that account's usage limits, so two in
+parallel use them faster. A session on another account draws on that
+account's, and a message between sessions is processed, and paid for, by the
+receiving session's account. Keep the split by role; don't build or rely on
+anything that moves work to a different account when one runs out — whether
+your plans' terms allow using more than one is yours to check.
 
 ## Honest limits, stated up front
 
