@@ -41,8 +41,9 @@ jobs:
           missing=0
           for r in $(grep -rhoE '\b[A-Z][A-Z_]+\.md\b' agents/ execution/pack/ | sort -u); do
             # ANALYTICS.md / INDEX.md / STATE.md are generated at run time in the
-            # product repo, so their absence here is correct.
-            case "$r" in ANALYTICS.md|INDEX.md|STATE.md) continue ;; esac
+            # product repo, so their absence here is correct. So are the two
+            # mailbox files a driver and a support session use between them.
+            case "$r" in ANALYTICS.md|INDEX.md|STATE.md|SUPPORT_REQUESTS.md|SUPPORT_REPLIES.md) continue ;; esac
             if [ -z "$(find . -name "$r" -not -path './node_modules/*' -print -quit)" ]; then
               echo "::error::dangling reference: $r"
               missing=$((missing + 1))
