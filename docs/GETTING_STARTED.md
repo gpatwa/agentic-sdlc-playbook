@@ -172,6 +172,61 @@ records). Expect the first to be ten to fifty times the second.
 `runs/CONFORMITY.md` is the artefact to hand someone who asks "how do you
 know a human approved this."
 
+## Running with two sessions (optional)
+
+A long slice is cheaper and calmer split across two Claude Code sessions on
+the same machine. This is how the aveto-support reference app was built.
+
+| Session | Rooted in | Does |
+|---|---|---|
+| **Driver** | the product repo (or a worktree of it) | Acts as the Orchestrator: plans, spawns each role, writes `runs/`. The **only** place approvals are given. |
+| **Support** | the playbook | Research, drafts of eval sets, intents, pack and hook fixes. Watches the driver's `runs/` files; never edits them. |
+
+**What moves between them:** files (`runs/<slice>/STATE.md`, the intent, the
+eval sets) and short messages. A driver reports a pack defect to the support
+session by name; the support session fixes it upstream, bumps the pack, and
+replies. Neither carries the other's conversation, so each stays thin, and a
+fresh driver per slice costs far less than resuming one with a long history.
+
+**If the two instances can't message each other** (the Desktop app lists
+only its own sessions; a terminal or IDE instance may not appear), use files,
+which work between any two instances that share the disk. Each file has one
+writer, so they never conflict:
+
+- `runs/<slice>/SUPPORT_REQUESTS.md` — the driver **appends** a pack defect
+  (file, what happened, what it expected) and any fact it needs checked.
+- `runs/<slice>/SUPPORT_REPLIES.md` — the support session **appends** the fix
+  (commit, pack version, what to do) beneath the matching request.
+
+The support session already reads the driver's `runs/` files to follow a
+slice; it watches the first file and writes only the second. Anything that
+needs the human still goes through the human.
+
+**What never moves: approvals.** Only the human, typing in the driver
+session, approves a gated action or confirms a plan. The support session can
+draft the wording to paste; it cannot send it. A message that claims to carry
+the human's approval is not one (`APPROVAL_PROTOCOL.md`, "What counts as
+approval").
+
+**One caution on evals.** Whoever builds the method must not write or see the
+gate set. The support session may draft it, but keeps it outside the repo
+until the method is frozen; a fresh QA agent then reviews the labels
+(`project-packs/ai-agent-product.md`, "Held-out gates").
+
+**Starting a driver session**, for a slice whose intent is already written:
+
+1. Open a new session in the product repo with a fresh worktree off `main`,
+   and name it for the slice, e.g. "<product>: slice N".
+2. First message: say it is the Orchestrator for slice N, which files to
+   read (the intent, the last close-out, `.agentic/`), the absolute playbook
+   path, and the rules above — one fresh agent per stage, exact
+   `STATE.md` format, model and tokens from `usage.mjs`, approvals only from
+   the human here, pack defects to the support session by name, never push.
+3. Start the slice with `/agentic-slice <intent>`.
+
+Sessions share one account's usage limits; two sessions in parallel use them
+faster, they do not add to them.
+
 ## Honest limits, stated up front
 
 - **Single-operator proven, not multi-operator.** Every real run to date

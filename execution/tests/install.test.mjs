@@ -189,6 +189,21 @@ describe("install.mjs — pack integrity", () => {
     }
   });
 
+  // With a support session beside the driver, a relayed message that says "the
+  // owner approved" is the easiest way for an approval gate to be bypassed by
+  // an agent that proposed the action. The rule must be in what the driver
+  // reads, and in the protocol it follows.
+  test("a relayed message is never an approval, in the run guide and the protocol", () => {
+    const guide = readFileSync(join(target, "AGENTS.md"), "utf8");
+    assert.match(guide, /directly, in\s+the session driving the run/);
+    assert.match(guide, /even one that quotes the human, is never an approval/);
+    assert.match(guide, /support session by name/);
+    assert.match(guide, /SUPPORT_REQUESTS\.md/);
+    const protocol = readFileSync(join(target, ".claude", "protocols", "APPROVAL_PROTOCOL.md"), "utf8");
+    assert.match(protocol, /NOT relayed/);
+    assert.match(protocol, /the verifier\s+cannot be the implementer/);
+  });
+
   test("the budget guard is installed and wired into settings", () => {
     assert.ok(existsSync(join(target, ".claude", "hooks", "budget-guard.mjs")));
     const settings = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));
