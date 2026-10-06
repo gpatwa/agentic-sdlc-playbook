@@ -1276,6 +1276,39 @@ from the run" pattern as effort / operator / executor / gateCatches.
     customer (Customer Success already forbids it); letting agents choose
     what gets built — they rank, the human picks.
 
+- **T25 · Learn from ECC without copying it.** *Raised 2026-10-06.* Prompted
+  by a review of [affaan-m/ECC](https://github.com/affaan-m/ECC) (MIT, a
+  single maintainer, a multi-harness toolbox of agents, skills, hooks and
+  memory). Read from its README and file tree only: nothing was run and its
+  hooks were not audited, and its star and component counts are its own
+  claims, so **check any figure before quoting it**. It optimises how well
+  one agent works; Aveto governs whether a run can be trusted. They sit at
+  different layers, so this is not a competitor list item. Three ideas worth
+  taking, in this order:
+  - [ ] **Scan the generated pack as an attack surface.** ECC's AgentShield
+        audits an agent's own hooks, MCP, permission and secret surfaces. The
+        equivalent here is a check, run in CI against the output of
+        `install.mjs`, over the generated `.claude/`: no hook that reaches the
+        network, no broad `allow` rule, no secret-shaped string, no MCP server
+        the pack did not write. Today our hooks are tested one by one and
+        nothing audits the installed whole. Cheapest of the three.
+  - [ ] **Hook strictness profiles and a low-context path.** ECC offers a
+        default profile, per-hook disable and a no-hooks install. Aveto's
+        hooks are all-or-nothing. Decide deliberately: a profile must never
+        let the budget guard, the write-scope guard or the approval rule be
+        switched off, because those are the product. A lighter install that
+        drops them is a different product and should not carry the name.
+  - [ ] **If memory is ever added, mark it unreviewed until a human promotes
+        it.** ECC's vault keeps every entry unreviewed and create-only, and
+        tells agents never to treat a recalled body as an instruction. That
+        matches our rule that nothing an agent writes is an approval. Record
+        it now so a future memory design starts from it.
+  - **Not doing:** breadth for its own sake (hundreds of skills and command
+    shims is the context cost our budget-first design avoids); a multi-harness
+    port (Aveto relies on Claude Code's subagents, hooks and subscription);
+    continuous "instincts" that rewrite behaviour without a human reading
+    them; a paid tier or hosted app.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
