@@ -67,6 +67,7 @@ from `execution/usage.mjs` reading the harness's own logs.
 |---|--------|----------|--------|
 | L31 | **A depth the intent names binds; lowering it is a recorded owner decision.** | Slice 5's intent asked for adversarial Security. After the model path stopped, the Orchestrator ran it at standard depth and only its own plan recorded the change. The Release Manager listed it as a deviation. The reasoning held (no new code or download path), but a gate was weakened without the owner's word. | **Open**, pack v18 candidate (T26 P7). |
 | L32 | **Cite an advisory by its source, not its label.** Labels A1–A5 collide across slices and records. | Slice 4's A1–A5 and slice 5's own advisories used the same labels. | **Open**, working rule. |
+| L33 | **Pilot a hosted model as research before designing around a local one, when the task is judgement.** | Slice 5 spent 131k building a small local judge that scored 2/20. A pilot costing a few subagent runs showed two capable models pass on the same questions. | **Practice**; the Architect brief's pilot-first rule (v16) already covers the order. |
 | L26 | **Split the work by role, not by account.** One session drives a slice; another does research, drafts evals and fixes the pack. The two sessions may be on different accounts; the split is fixed and nothing rotates work between accounts to avoid a limit. | The owner's two sessions are on different accounts. | **Enforced**, documented in the getting-started guide. |
 | L27 | **Give the driver a file mailbox as a fallback.** A message can be held for approval in a stricter permission mode. | Pack v14 mailbox files. | **Enforced**, v14. |
 | L28 | **Do the research the driver would otherwise buy.** The support session verified the candidate model from public metadata and saved a 30–40k research spawn. | Slice 5. | **Practice**, not a rule. |
@@ -95,8 +96,13 @@ These are results, not process rules. They are kept so they are not rediscovered
   slice 3; none in 660 runs in slice 4; one more in slice 5 with a third
   session loaded. It is open. The future CI step must fail on any 134, with no
   retry wrapper.
-- **Abstention needs a different kind of signal.** What that signal is, is an
-  open question for a new slice with its own pilot, not a tweak to this one.
+- **A capable language model separates the cases where the small local ones
+  could not (a pilot on the seen sets, not a gate result).** Opus 5.5 scored
+  20/20 and 49/56, Sonnet 5.5 20/20 and 51/56, against bars of 16 and 45; the
+  local QNLI judge scored 2/20. The hard cases are untested and the question and
+  passages would leave the machine, so it is evidence a hosted judge is worth a
+  slice with approvals and a spend cap, not a result to ship on. See
+  `docs/pilots/2026-10-llm-answerability-pilot.md`.
 
 ## Where the rest is tracked
 
