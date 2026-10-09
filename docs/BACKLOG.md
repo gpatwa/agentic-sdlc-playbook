@@ -1123,8 +1123,14 @@ from the run" pattern as effort / operator / executor / gateCatches.
       - [ ] A reference-app slice passes its Release Gate *with a release
             claim*. Slice 4 passed one as "internally releasable, not
             announced" (tier 2, no quality claim); none has released.
-      - [ ] The check step (abstention) is built and gated. Nothing that
-            writes text for a user ships before it.
+      - [ ] The check step is built and gated, in two halves. **Abstention**
+            ("the docs don't answer this"): intent committed 2026-10-08
+            (`aveto-support` `intents/docs-abstention.md`), slice not started.
+            **INV-3, the draft checker** (a draft is checked against its
+            sources by a different model from the one that wrote it): cannot
+            be built or gated with no drafter, so it belongs to the drafting
+            slice, which must pass its own gate before anything reaches a
+            user. Nothing that writes text for a user ships before both.
       - [ ] A real model in a shipped feature, behind the rule 5 and 6
             approvals, with a spend cap set first.
       - [ ] A drafting step that never sends: a person approves every reply.
