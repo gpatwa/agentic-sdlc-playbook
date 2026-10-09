@@ -204,6 +204,14 @@ describe("install.mjs — pack integrity", () => {
     assert.match(protocol, /the verifier\s+cannot be the implementer/);
   });
 
+  test("the pack tells the Architect to baseline a defect and the Orchestrator to estimate review stages high", () => {
+    const arch = readFileSync(join(target, ".claude", "agents", "software-architect.md"), "utf8");
+    assert.match(arch, /baseline on the unfixed code/);
+    assert.match(arch, /does\s+not claim a fix or an explanation/);
+    const econ = readFileSync(join(target, ".claude", "protocols", "RUN_ECONOMICS.md"), "utf8");
+    assert.match(econ, /Estimate a review stage at \*\*50–60k\*\*/);
+  });
+
   test("the budget guard is installed and wired into settings", () => {
     assert.ok(existsSync(join(target, ".claude", "hooks", "budget-guard.mjs")));
     const settings = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));

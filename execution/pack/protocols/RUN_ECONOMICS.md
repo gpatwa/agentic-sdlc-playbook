@@ -43,6 +43,15 @@ before spawning; re-derive them as data accumulates.
 | **review** (Scope, Architecture, Security, Release, Post-Launch) | ~98k | **100k** | 149k |
 | **build** (Implementation, QA, AI Engineer) | ~129k | **130k** | 178k |
 
+> **Review stages run far over a small estimate (added 2026-10-08, slice 4 of
+> the reference app).** A Security Review at adversarial depth peaked at 129k
+> against a 70k estimate; a Release Manager step that reads many artefacts
+> peaked at 59k against 15k. Estimate a review stage at **50–60k**, or at
+> **100–130k** if the intent asks for adversarial depth, and give it a tight
+> read list (the artefacts it must read, by name). The same slice planned
+> 400k and measured 581k: a small slice with a Security Review and a Release
+> Gate should be planned from these figures, not from a per-stage guess.
+
 A stage's cost is dominated by its **agentic loop**, not its output: ~4–5k per
 tool call, re-processing accumulated context each turn. So cost tracks *number
 of turns*, which tracks *how much you asked it to do*.

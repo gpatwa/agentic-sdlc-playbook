@@ -67,6 +67,13 @@ adopts the product reads:
   execute it from the spec alone.
 - The test plan names the suites, files, and eval cases that will be
   added or modified.
+- A spec that fixes a defect rests on what was **observed**, not on the
+  Architect's account of the cause. Where the defect can be reproduced,
+  the spec first records a baseline on the unfixed code (how many runs,
+  what happened) and states the cause only as far as that baseline
+  supports it. If the defect does not reproduce, the spec says so and does
+  not claim a fix or an explanation. (Slice 4 of the reference app argued a
+  mechanism that an unfixed-code loop of 220 runs showed to be false.)
 
 ## Operating constraints
 
@@ -92,3 +99,5 @@ piece if the slice spans roles.
 - New dependency without a cost discussion.
 - Skipping the audit event section.
 - Skipping the rollback plan because the change "feels safe".
+- Naming a cause for a defect nobody has reproduced, then calling the change
+  "the fix".
