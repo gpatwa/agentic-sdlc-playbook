@@ -83,10 +83,14 @@ These are results, not process rules. They are kept so they are not rediscovered
   questions.** Pooled across four seen sets, the best threshold or margin cell
   reached 65% on one bar and 66% on the other; unanswerable top scores ran
   0.548–0.808 against 0.619–0.800 for answerable hits.
-- **A QNLI answerability judge does not work at section length.** On the four
-  seen sets it abstained on 2 of 20 unanswerable questions and let 55 of 56
-  answerable ones through. It was trained on a question and one sentence. ADR
-  0007 records the rejection; the code was dropped.
+- **A QNLI answerability judge did not separate the cases on these sets.** On
+  the four seen sets it abstained on 2 of 20 unanswerable questions and let 55
+  of 56 answerable ones through. The cause is not established. The spec
+  guessed a domain shift (trained on a question and one sentence, used on
+  longer passages), and so did the support session in conversation; the index
+  contradicts the premise: passages are mostly short (median 291 characters,
+  90% under 881), so "whole sections" is not what the judge read. ADR 0007
+  records the rejection; the code was dropped.
 - **The exit-134 abort is real and intermittent.** One in eight runs in
   slice 3; none in 660 runs in slice 4; one more in slice 5 with a third
   session loaded. It is open. The future CI step must fail on any 134, with no
