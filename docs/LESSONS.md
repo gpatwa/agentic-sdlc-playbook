@@ -68,6 +68,7 @@ from `execution/usage.mjs` reading the harness's own logs.
 | L26 | **Split the work by role, not by account.** One session drives a slice; another does research, drafts evals and fixes the pack. The two sessions may be on different accounts; the split is fixed and nothing rotates work between accounts to avoid a limit. | The owner's two sessions are on different accounts. | **Enforced**, documented in the getting-started guide. |
 | L27 | **Give the driver a file mailbox as a fallback.** A message can be held for approval in a stricter permission mode. | Pack v14 mailbox files. | **Enforced**, v14. |
 | L28 | **Do the research the driver would otherwise buy.** The support session verified the candidate model from public metadata and saved a 30–40k research spawn. | Slice 5. | **Practice**, not a rule. |
+| L30 | **Install or upgrade the pack from the main checkout, never inside a linked worktree.** The installer writes a playbook path relative to where it runs; from a worktree that path is wrong for `main`, and merging the branch carries it there. | Upgrading the fifth slice's worktree changed 35 files (every agent brief, the run guide and the config) instead of 10. Caught before commit, undone, and done from the main checkout with the commit cherry-picked into the worktree. | **Enforced**, installer warning and a test (playbook, after v17; no pack bump). |
 
 ## 6. What we learned about the product
 
