@@ -1101,6 +1101,51 @@ from the run" pattern as effort / operator / executor / gateCatches.
       default-path offline test; one test overstates what it proves; a cosmetic
       hash-mismatch message; hard-coded paths in the crash scripts). The MS
       MARCO licence question stays open for anyone who opts in.
+  - **Fifth slice, `docs-abstention` (2026-10-09): the simple rules failed, the
+    one model tried failed its pre-registered check, and nothing was built —
+    which is the result.** The slice set out to make retrieval say "the docs
+    don't answer this". Close-out: `runs/docs-abstention/07-close-out.md` on
+    branch `claude/docs-abstention-c835b1`. Release Gate verdict: **not
+    releasable**; the two bars were never evaluated.
+    - **The baseline, measured on the four seen sets (93 questions).** The
+      default path abstains on 0 of 93. No similarity threshold, margin or
+      combination reaches either bar: the best pooled cell was 13/20 and 37/56
+      (65% and 66%). Unanswerable top scores ran 0.548–0.808 against 0.619–0.800
+      for answerable hits, so they overlap. The paragraph in the intent that
+      predicted this held on the fourth set and understated the range
+      pooled.
+    - **The model path.** `cross-encoder/qnli-electra-base` (Apache-2.0 on the
+      model card; trained on QNLI, derived from SQuAD under CC BY-SA 4.0 —
+      the owner accepted the card's licence without a legal opinion). Rule 5
+      and rule 4 approvals were given, built in 131k, and a pre-registered
+      seen-set check then failed: Bar 1 **2/20** against 16 required, Bar 2
+      55/56. The owner stopped the path, the code was reverted, the approvals
+      were recorded as lapsed, ADR 0007 is marked rejected. **The fifth gate set
+      (24 answerable, 24 unanswerable, six reserves, drafted by the support
+      session and kept outside the repo) was never spent.**
+    - **What landed.** INV-4 corrected to say retrieval does not abstain (rule 4,
+      owner-approved), and the README, `docs/ARCHITECTURE.md` and
+      `.agentic/CURRENT_MVP_STATUS.md` no longer say it does. Product code is
+      unchanged from `main`.
+    - **Exit 134 recurred.** One abort after a full report, on the third seen
+      set, with the judge loaded. Slice 4 had recorded "not reproduced" in 660
+      runs, so the crash item is **open and real, and the hygiene change did not
+      explain it**. `docs-retrieval-ci` must still fail any 134, with no retry
+      wrapper.
+    - **Cost, measured:** 672k peak context across 11 stages, 8.4M processed,
+      against a 650k plan; the owner raised the budget once, to 780k. Stages
+      over estimate: Architecture 187k vs 70k, the baseline sweep 82k vs 60k, a
+      completion pass 63k vs 25k.
+    - **Pack changes it produced:** v16 (ceiling asked once, digests, pilot a
+      model first, doc-truth check, held-out rules 8–9) and v17 (the status
+      file has an owner — a gap recorded here in August and rediscovered).
+      Thirty lessons are in `docs/LESSONS.md`.
+    - **Carried forward — owner's decisions.** Abstention is still owed: a
+      different method in a new slice (with a seen-set pilot first), or
+      revising the intent's rule that nothing which writes text ships before
+      abstention passes. Remaining stale lines in `ARCHITECTURE.md` and the
+      status file each need a new approval. Security ran at standard, not the
+      intent's adversarial depth, and only the plan records it.
   - **Evidence checklist — "Aveto builds production-grade agentic systems".**
     *Added 2026-10-02.* The app checklist above (#4) says what the *app* must
     contain; this one says what must be *shown* before Aveto may claim it can
@@ -1117,8 +1162,11 @@ from the run" pattern as effort / operator / executor / gateCatches.
             (`APPROVAL_RECORD-*.md`, slices 1–3).
       - [x] A held-out gate catches overfitting: 71–79% on seen questions
             against 47–70% on new ones.
+      - [x] A pre-registered check stops a failing method before the one-shot
+            gate set is spent (`aveto-support` `runs/docs-abstention/`: 2/20
+            against 16 required; fifth set unspent).
       - [x] Cost is measured from the harness logs, not recalled
-            (`usage.mjs`: 30.9M, 6.7M, 8.1M and 9.7M tokens processed).
+            (`usage.mjs`: 30.9M, 6.7M, 8.1M, 9.7M and 8.4M tokens processed).
       - [x] Defects found in live runs are fixed upstream, with tests that
             fail without the fix (pack v7 → v14).
     - **Not yet shown** (each is a slice or a run, not a decision):
