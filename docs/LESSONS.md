@@ -65,6 +65,8 @@ from `execution/usage.mjs` reading the harness's own logs.
 
 | # | Lesson | Evidence | Status |
 |---|--------|----------|--------|
+| L31 | **A depth the intent names binds; lowering it is a recorded owner decision.** | Slice 5's intent asked for adversarial Security. After the model path stopped, the Orchestrator ran it at standard depth and only its own plan recorded the change. The Release Manager listed it as a deviation. The reasoning held (no new code or download path), but a gate was weakened without the owner's word. | **Open**, pack v18 candidate (T26 P7). |
+| L32 | **Cite an advisory by its source, not its label.** Labels A1–A5 collide across slices and records. | Slice 4's A1–A5 and slice 5's own advisories used the same labels. | **Open**, working rule. |
 | L26 | **Split the work by role, not by account.** One session drives a slice; another does research, drafts evals and fixes the pack. The two sessions may be on different accounts; the split is fixed and nothing rotates work between accounts to avoid a limit. | The owner's two sessions are on different accounts. | **Enforced**, documented in the getting-started guide. |
 | L27 | **Give the driver a file mailbox as a fallback.** A message can be held for approval in a stricter permission mode. | Pack v14 mailbox files. | **Enforced**, v14. |
 | L28 | **Do the research the driver would otherwise buy.** The support session verified the candidate model from public metadata and saved a 30–40k research spawn. | Slice 5. | **Practice**, not a rule. |

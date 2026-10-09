@@ -1174,8 +1174,9 @@ from the run" pattern as effort / operator / executor / gateCatches.
             claim*. Slice 4 passed one as "internally releasable, not
             announced" (tier 2, no quality claim); none has released.
       - [ ] The check step is built and gated, in two halves. **Abstention**
-            ("the docs don't answer this"): intent committed 2026-10-08
-            (`aveto-support` `intents/docs-abstention.md`), slice not started.
+            ("the docs don't answer this"): slice 5 (`docs-abstention`) ran and
+            stopped, not releasable; abstention is still owed and its next
+            attempt needs a different method and a seen-set pilot first.
             **INV-3, the draft checker** (a draft is checked against its
             sources by a different model from the one that wrote it): cannot
             be built or gated with no drafter, so it belongs to the drafting
@@ -1456,6 +1457,10 @@ from the run" pattern as effort / operator / executor / gateCatches.
           the repo for each factual claim in the intent and each status line
           before the plan is confirmed. Drafters (including this session)
           verify an intent's claims against the code before committing it.
+    - [ ] **P7 · A depth the intent names binds.** Lowering the depth of
+          Security or the Release Gate below what the intent asked for is a
+          stop-and-ask, and a digest item, not an Orchestrator decision. Found
+          on the fifth slice (`docs/LESSONS.md` L31).
   - **Status 2026-10-09:** P1, P2, P4, P5 and P6 are enforced in pack v16
     (`docs/LESSONS.md` L2–L4, L11–L13, L23). **P3 stays proposed**: it changes
     who decides what, so it waits for the owner.
