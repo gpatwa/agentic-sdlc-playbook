@@ -1069,6 +1069,36 @@ from the run" pattern as effort / operator / executor / gateCatches.
       smaller change; the check-step slice that owns abstention (nothing that
       writes text ships before it); `docs-retrieval-ci`. Pack follow-up:
       tighten the label rule to "files whose subject is the question".
+  - **Fourth slice, `docs-retrieval-4` (2026-10-03 → 10-08): the simple method
+    became the default, and the slice's own crash claim did not survive
+    measurement.** `file-rrf-v1` is now the default ranking; the reranker is
+    opt-in (`ingest --with-reranker`), so the default path fetches and loads
+    nothing of it. Security Review failed once on a real over-claim (an ADR
+    saying exit codes were "no longer at the mercy of teardown order"), passed
+    after the fix; the Release Gate re-ran the default once on the fourth set
+    (14/16, same misses as recorded) and gave **"internally releasable, not
+    announced"**, tier 2, with no quality claim. Close-out:
+    `runs/docs-retrieval-4/07-close-out.md`.
+    - **The crash is NOT REPRODUCED, and the intent's "fixed or explained" is
+      not met.** 0 exit-134s in 660 runs (220 unfixed, 440 fixed) after one in
+      eight in slice 3. The Architect's mechanism was observed false on the
+      unfixed code, so the added `close()` discipline is hygiene with no
+      demonstrated effect. Recorded that way everywhere; `docs-retrieval-ci`
+      still fails any exit 134 with no retry wrapper.
+    - **Lesson for the pack:** baseline a defect on the unfixed code before a
+      spec argues a cause. The cheap unfixed loop, suggested from this session,
+      is what caught it. Related: a status line claimed "releasable" before
+      any gate ran and was corrected.
+    - **Cost, measured (`usage.mjs`):** 9.7M tokens processed, 581k peak
+      context across 10 stages, against a 400k plan. The owner raised the
+      budget three times (520k, 560k, 585k). Review-archetype stages ran 3–4×
+      their estimates (Security 129k vs 70k, Release Manager 59k vs 15k);
+      estimate them at 50–60k or give them a tight read list.
+    - **Carried forward:** the check-step slice (abstention and the release
+      claim); `docs-retrieval-ci`; advisories A1, A2, A3, A5 (INV-5 names no
+      default-path offline test; one test overstates what it proves; a cosmetic
+      hash-mismatch message; hard-coded paths in the crash scripts). The MS
+      MARCO licence question stays open for anyone who opts in.
   - **Evidence checklist — "Aveto builds production-grade agentic systems".**
     *Added 2026-10-02.* The app checklist above (#4) says what the *app* must
     contain; this one says what must be *shown* before Aveto may claim it can
@@ -1086,11 +1116,13 @@ from the run" pattern as effort / operator / executor / gateCatches.
       - [x] A held-out gate catches overfitting: 71–79% on seen questions
             against 47–70% on new ones.
       - [x] Cost is measured from the harness logs, not recalled
-            (`usage.mjs`: 30.9M, 6.7M and 8.1M tokens processed).
+            (`usage.mjs`: 30.9M, 6.7M, 8.1M and 9.7M tokens processed).
       - [x] Defects found in live runs are fixed upstream, with tests that
-            fail without the fix (pack v7 → v13).
+            fail without the fix (pack v7 → v14).
     - **Not yet shown** (each is a slice or a run, not a decision):
-      - [ ] A reference-app slice passes its Release Gate. None has.
+      - [ ] A reference-app slice passes its Release Gate *with a release
+            claim*. Slice 4 passed one as "internally releasable, not
+            announced" (tier 2, no quality claim); none has released.
       - [ ] The check step (abstention) is built and gated. Nothing that
             writes text for a user ships before it.
       - [ ] A real model in a shipped feature, behind the rule 5 and 6
