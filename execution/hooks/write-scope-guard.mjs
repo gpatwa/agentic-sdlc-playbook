@@ -34,12 +34,16 @@ const COMMON = ["runs/"];
 // generated IaC in azd's layout), and the product docs a repo others adopt
 // needs: the Architect keeps docs/ARCHITECTURE.md and the decision records in
 // docs/adr/; the Tech Writer applies README, CHANGELOG and the rest of docs/.
+// The status file `.agentic/CURRENT_MVP_STATUS.md` had no owner, so a stale-text
+// pass was blocked (aveto-support, 2026-10-09): the Tech Writer and the
+// close-out role (Post-Launch Learning) may now write it.
 // A trailing "/" is a directory prefix; anything else is an exact file.
 const EXTRA = {
   "market-researcher": [".agentic/PROJECT_CONTEXT.md"],
   "product-manager": [".agentic/PROJECT_CONTEXT.md"],
   "software-architect": [".agentic/SAFETY_INVARIANTS.md", "docs/ARCHITECTURE.md", "docs/adr/"],
-  "tech-writer": ["README.md", "CHANGELOG.md", "docs/"],
+  "tech-writer": ["README.md", "CHANGELOG.md", "docs/", ".agentic/CURRENT_MVP_STATUS.md"],
+  "post-launch-learning": [".agentic/CURRENT_MVP_STATUS.md"],
   "cloud-deployment": [".azure/", "infra/", "azure.yaml"],
 };
 

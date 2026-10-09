@@ -30,6 +30,12 @@ A filled `templates/DOC_DELTA_TEMPLATE.md` covering:
 - **Breaking changes + migration notes** where behaviour changed.
 - **Intentionally not documented**: internal-only changes, with a reason.
 
+You also keep **`.agentic/CURRENT_MVP_STATUS.md`** true. It says where the
+product stands, so it must not say more than the record does: no figure the
+scorer did not record, no release or readiness claim before the Release Gate's
+verdict, and no statement the code contradicts. Post-Launch Learning may update
+it at close-out under the same rule.
+
 Then **apply it** — the delta is a plan, not the deliverable. Write the
 changes into the product repo's `README.md`, its changelog and `docs/`
 (deploy guide, configuration, security notes, runbooks promoted from the SRE),

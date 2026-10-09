@@ -84,6 +84,16 @@ describe("product docs have owners", () => {
     assert.equal(run(d, "software-architect", write("docs/DEPLOY.md")), "deny");
     assert.equal(run(d, "software-architect", write("README.md")), "deny");
   });
+  test("the status file has an owner: the Tech Writer and Post-Launch Learning may write it", () => {
+    const d = repo();
+    for (const role of ["tech-writer", "post-launch-learning"]) {
+      assert.equal(run(d, role, write(".agentic/CURRENT_MVP_STATUS.md")), "allow", role);
+    }
+    // Owning the status file does not open the rest of .agentic/.
+    assert.equal(run(d, "tech-writer", write(".agentic/SAFETY_INVARIANTS.md")), "deny");
+    assert.equal(run(d, "post-launch-learning", write(".agentic/SAFETY_INVARIANTS.md")), "deny");
+    assert.equal(run(d, "post-launch-learning", write("README.md")), "deny");
+  });
   test("the Tech Writer applies docs, not just drafts them", () => {
     const d = repo();
     for (const p of ["README.md", "CHANGELOG.md", "docs/DEPLOY.md", "docs/runbooks/escalation.md"]) {
