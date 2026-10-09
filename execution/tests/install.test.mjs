@@ -274,6 +274,25 @@ describe("install.mjs — pack integrity", () => {
     assert.equal(readFileSync(join(target, ".claude", "settings.json"), "utf8"), settingsBefore);
   });
 
+  test("warns when asked to install into a linked git worktree", () => {
+    const root = join(tmpdir(), `agentic-wt-${process.pid}`);
+    rmSync(root, { recursive: true, force: true });
+    const main = join(root, "main");
+    mkdirSync(join(main, ".agentic"), { recursive: true });
+    writeFileSync(join(main, ".agentic", "PROJECT_CONTEXT.md"), "x\n");
+    const git = (...a) => execFileSync("git", ["-C", main, "-c", "user.name=t", "-c", "user.email=t@t", ...a], { stdio: "pipe" });
+    git("init", "-q");
+    git("add", "-A");
+    git("commit", "-q", "-m", "init");
+    const wt = join(root, "wt");
+    git("worktree", "add", "-q", wt, "-b", "side");
+    const fromMain = execFileSync("node", [installer, main], { encoding: "utf8", cwd: playbook });
+    const fromWorktree = execFileSync("node", [installer, wt], { encoding: "utf8", cwd: playbook });
+    assert.doesNotMatch(fromMain, /linked git worktree/);
+    assert.match(fromWorktree, /linked git worktree/);
+    rmSync(root, { recursive: true, force: true });
+  });
+
   test("refuses a repo with no .agentic/ rather than inventing one", () => {
     const bare = join(tmpdir(), `agentic-bare-${process.pid}`);
     rmSync(bare, { recursive: true, force: true });

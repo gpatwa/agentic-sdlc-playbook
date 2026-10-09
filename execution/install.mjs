@@ -14,6 +14,7 @@ import {
   readFileSync, writeFileSync, readdirSync, mkdirSync, copyFileSync, existsSync,
 } from "node:fs";
 import { join, dirname, basename, relative } from "node:path";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -254,6 +255,28 @@ if (previous && Number.isFinite(previous.packVersion) && previous.packVersion !=
     (previous.packVersion < PACK_VERSION
       ? `  Agent definitions were regenerated. Re-read .claude/agents/ before the next run.\n`
       : `  This playbook is OLDER than the installed pack. Check you are on the intended playbook revision.\n`),
+  );
+}
+
+// A linked git worktree has its own path to the playbook. Installing from one
+// writes that worktree-relative path into every agent brief, AGENTS.md and the
+// config, and merging the branch then carries it into the main checkout, where
+// it points nowhere. Found on the fifth reference-app slice (2026-10-09): a
+// v15 -> v17 upgrade run inside a worktree changed 35 files instead of 10.
+const inLinkedWorktree = (() => {
+  try {
+    const q = (flag) => execFileSync(
+      "git", ["-C", productDir, "rev-parse", "--path-format=absolute", flag],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+    ).trim();
+    return q("--git-dir") !== q("--git-common-dir");
+  } catch { return false; }
+})();
+if (inLinkedWorktree) {
+  process.stdout.write(
+    `\n  WARNING: ${productDir} is a linked git worktree. The playbook path written below is\n` +
+    `  relative to THIS worktree, and merging this branch would carry it into the main\n` +
+    `  checkout. Install from the main checkout and cherry-pick the commit instead.\n`,
   );
 }
 
