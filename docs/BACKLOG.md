@@ -1378,7 +1378,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
           otherwise). The owner types the ceiling once. A stop is then only for
           spend above the ceiling, a failed pre-registered check, or a gate
           that would be compressed. Agents still never raise a budget.
-    - [x] **P2 · Estimate from measured ratios..** `RUN_ECONOMICS.md` gains a
+    - [x] **P2 · Estimate from measured ratios.** `RUN_ECONOMICS.md` gains a
           measured over/under per stage kind; the Release Gate counts as three
           spawns; an Architecture that proposes a model counts as two passes.
     - [ ] **P3 · Name three classes of question** (owner decision). *Class A,
