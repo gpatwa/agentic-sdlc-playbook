@@ -59,6 +59,7 @@ from `execution/usage.mjs` reading the harness's own logs.
 | L23 | **Check the intent's claims and the status lines against the code.** | Slice 5's Scope Review found the README, the status file and INV-4 all said retrieval abstains, which it had not since ADR 0004, and that the intent named a pack version two behind. | **Enforced**, v16 (Engineering Manager brief). |
 | L24 | **A drafter checks its own claims before committing.** | Support-session slips, all caught and corrected: label-review timing written wrong in the pack, T22 and an intent; a stale CI run read as the new commit's; two scope extras said to be unrecorded when they were. | **Open.** Carried as a working rule for the drafting session. |
 | L25 | **CI's cross-document check must know the mailbox files.** | Two pushes turned CI red because the check flagged `SUPPORT_REQUESTS.md` and `SUPPORT_REPLIES.md`; the earlier push was made without waiting for CI, and that was disclosed. | **Enforced**, CI exemption (commit 931650b). |
+| L29 | **A gap recorded as "not fixed yet" will be found again, at a worse moment.** | The status file's missing owner was written down in T21 in August with the note "so the next slice does not rediscover it." The fifth slice rediscovered it during a Release Gate and the stale-text pass was held until the owner and the support session could respond. Fixed in v17. | **Enforced**, v17 (write-scope guard, Tech Writer brief, a test). Working rule: a recorded gap gets an owner and a date, or it is fixed. |
 
 ## 5. Two sessions, one outcome
 

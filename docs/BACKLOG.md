@@ -803,8 +803,10 @@ from the run" pattern as effort / operator / executor / gateCatches.
     context. (2) `.agentic/CURRENT_MVP_STATUS.md` has no named owner at all;
     under the guard only engineers and the unguarded Orchestrator can write it,
     so it stays a stub. Candidate owner: the Release Manager or Post-Launch,
-    since the stub says "replace as the slice lands". Not fixed yet — recorded
-    so the next slice does not rediscover it.
+    since the stub says "replace as the slice lands". **Rediscovered by the
+    fifth reference-app slice (2026-10-09)**, where a Release Gate's stale-text
+    pass was blocked by the guard and held for a day. Fixed in pack v17: the
+    Tech Writer and Post-Launch Learning own the file.
   - **Not gaps, checked rather than assumed.** *Skills*: **we are ahead** —
     T8 shipped `skills/tdd-fail-first/SKILL.md` on 2026-08-27, validated
     against the official `skills-ref` validator; they teach the concept, we
