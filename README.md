@@ -49,6 +49,7 @@ agentic-sdlc/
     GETTING_STARTED.md             ← start here — what you get, exact commands
     ARCHITECTURE.md                ← system design + data flow
     VALIDATION_MATRIX.md           ← how the playbook is proven, phase by phase
+    LESSONS.md                     ← what building the reference app taught the process, with evidence
     PLATFORM_EVAL.md               ← the platform success scorecard + benchmark
     STANDARDS_WATCH.md             ← external standards/ecosystem tracker
     AGENTIC_SDLC.md                ← end-to-end lifecycle

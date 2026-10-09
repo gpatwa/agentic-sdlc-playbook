@@ -1372,13 +1372,13 @@ from the run" pattern as effort / operator / executor / gateCatches.
     (480k, 520k, 600k) that were too low each time, because I added a margin
     by feel and not from these ratios.
   - **Gaps and proposed fixes (pack v16 candidates; the owner decides P3).**
-    - [ ] **P1 · Ask for a ceiling once, at plan confirmation.** The
+    - [x] **P1 · Ask for a ceiling once, at plan confirmation.** The
           Orchestrator proposes the plan total and a ceiling (about 1.5× when
           the plan has an adversarial Security or a model proposal, about 1.3×
           otherwise). The owner types the ceiling once. A stop is then only for
           spend above the ceiling, a failed pre-registered check, or a gate
           that would be compressed. Agents still never raise a budget.
-    - [ ] **P2 · Estimate from measured ratios.** `RUN_ECONOMICS.md` gains a
+    - [x] **P2 · Estimate from measured ratios..** `RUN_ECONOMICS.md` gains a
           measured over/under per stage kind; the Release Gate counts as three
           spawns; an Architecture that proposes a model counts as two passes.
     - [ ] **P3 · Name three classes of question** (owner decision). *Class A,
@@ -1391,21 +1391,24 @@ from the run" pattern as effort / operator / executor / gateCatches.
           owner vetoes by exception. *Class C:* the agent decides. Today the
           pack has no such distinction, so a Class B item costs the same
           round-trip as a safety-control change.
-    - [ ] **P4 · A short digest at every stop.** At most 15 lines: the decision
+    - [x] **P4 · A short digest at every stop.** At most 15 lines: the decision
           needed and its class, the recommendation, the exact reply to type,
           what waiting costs, and what was verified against source and by
           whom. The support session writes the independent check
           (`SUPPORT_REPLIES.md`), as it has been doing informally.
-    - [ ] **P5 · Batch the Class A items.** Gather pending approvals into one
+    - [x] **P5 · Batch the Class A items.** Gather pending approvals into one
           packet at fixed points (plan confirmation; end of Architecture; end
           of Security) and not one at a time.
-    - [ ] **P6 · Doc-truth check at Scope Review.** Slice 5's Scope Review
+    - [x] **P6 · Doc-truth check at Scope Review.** Slice 5's Scope Review
           found that the README, `CURRENT_MVP_STATUS.md` and INV-4 all still
           said retrieval returns "no confident match" when it has not since
           ADR 0004, and that the intent said "pack v14". The EM should grep
           the repo for each factual claim in the intent and each status line
           before the plan is confirmed. Drafters (including this session)
           verify an intent's claims against the code before committing it.
+  - **Status 2026-10-09:** P1, P2, P4, P5 and P6 are enforced in pack v16
+    (`docs/LESSONS.md` L2–L4, L11–L13, L23). **P3 stays proposed**: it changes
+    who decides what, so it waits for the owner.
   - **Not doing:** an agent that approves or confirms on the owner's behalf
     (declined earlier, and unchanged); letting an agent raise its own budget;
     any change to what counts as an approval.
