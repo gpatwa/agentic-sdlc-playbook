@@ -1347,6 +1347,69 @@ from the run" pattern as effort / operator / executor / gateCatches.
     continuous "instincts" that rewrite behaviour without a human reading
     them; a paid tier or hosted app.
 
+- **T26 · Cut the owner's round-trips without cutting the owner's authority.**
+  *Raised 2026-10-09.* The owner asked for a review of every question a driver
+  asks, a recommended action for each, and a search for the gaps behind them.
+  Evidence is the two most recent slices of the reference app, read from their
+  `STATE.md`, approval records and `usage.mjs` (figures are peak context per
+  spawn; nothing below is a claim beyond those two slices).
+  - **What the owner was asked (slices 4 and 5 so far), by kind.**
+    - *Budget raises: 4.* 400k → 520k → 560k → 585k (slice 4), 650k → 780k
+      (slice 5). Each stopped the driver and waited.
+    - *Rule 4 / rule 5 approvals: 2 batches* (INV-5 wording in slice 4; the
+      model, INV-4 and INV-5 in slice 5).
+    - *Plan confirmations: 2.*
+    - *Design decisions with a recommended default: about 8* (scope extras;
+      Scope Review Q1–Q5; the licence call; the crash-status call).
+    - **Every answer I can see was "yes" or "as recommended".** The owner's
+      typed authority was needed; the deliberation mostly was not.
+  - **Why the budget stops happened.** Estimates were low in the same places
+    each time: adversarial Security 129k vs 70k; the Release Gate (three
+    spawns, not one) 146k vs 70k; Architecture with a model proposal 187k vs
+    70k (two passes); the baseline sweep 82k vs 60k. Whole slice: 581k vs a
+    400k plan (1.45×); slice 5 is tracking 1.2–1.3×. Stages that matched their
+    estimate: Scope, Implementation, close-out. I also recommended ceilings
+    (480k, 520k, 600k) that were too low each time, because I added a margin
+    by feel and not from these ratios.
+  - **Gaps and proposed fixes (pack v16 candidates; the owner decides P3).**
+    - [ ] **P1 · Ask for a ceiling once, at plan confirmation.** The
+          Orchestrator proposes the plan total and a ceiling (about 1.5× when
+          the plan has an adversarial Security or a model proposal, about 1.3×
+          otherwise). The owner types the ceiling once. A stop is then only for
+          spend above the ceiling, a failed pre-registered check, or a gate
+          that would be compressed. Agents still never raise a budget.
+    - [ ] **P2 · Estimate from measured ratios.** `RUN_ECONOMICS.md` gains a
+          measured over/under per stage kind; the Release Gate counts as three
+          spawns; an Architecture that proposes a model counts as two passes.
+    - [ ] **P3 · Name three classes of question** (owner decision). *Class A,
+          owner-typed, never delegable:* rules 1–6, credentials, a budget above
+          the ceiling, push, merge and deploy. *Class B, a design choice with a
+          recommended default* (ordering, thresholds, "as recommended" items):
+          the Orchestrator proceeds on the EM or Architect recommendation after
+          the support session has checked its facts, records it as "adopted,
+          reversible until stage X", and shows it in the owner's digest; the
+          owner vetoes by exception. *Class C:* the agent decides. Today the
+          pack has no such distinction, so a Class B item costs the same
+          round-trip as a safety-control change.
+    - [ ] **P4 · A short digest at every stop.** At most 15 lines: the decision
+          needed and its class, the recommendation, the exact reply to type,
+          what waiting costs, and what was verified against source and by
+          whom. The support session writes the independent check
+          (`SUPPORT_REPLIES.md`), as it has been doing informally.
+    - [ ] **P5 · Batch the Class A items.** Gather pending approvals into one
+          packet at fixed points (plan confirmation; end of Architecture; end
+          of Security) and not one at a time.
+    - [ ] **P6 · Doc-truth check at Scope Review.** Slice 5's Scope Review
+          found that the README, `CURRENT_MVP_STATUS.md` and INV-4 all still
+          said retrieval returns "no confident match" when it has not since
+          ADR 0004, and that the intent said "pack v14". The EM should grep
+          the repo for each factual claim in the intent and each status line
+          before the plan is confirmed. Drafters (including this session)
+          verify an intent's claims against the code before committing it.
+  - **Not doing:** an agent that approves or confirms on the owner's behalf
+    (declined earlier, and unchanged); letting an agent raise its own budget;
+    any change to what counts as an approval.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
