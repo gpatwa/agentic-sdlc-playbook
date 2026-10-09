@@ -27,6 +27,12 @@ A filled `templates/POST_LAUNCH_REVIEW_TEMPLATE.md` covering:
 - What to fold into the next PRD (carry-forward items).
 - Any follow-up slices to file (with a one-line description each).
 
+End the review with a **Lessons** section. For each lesson: the lesson in one
+line, the evidence (a run, a number, a file), what it cost, and where it should
+be enforced (a pack file, a hook, a project-pack rule, or nowhere yet). Mark
+any that are pack defects for the support session, which curates them into the
+playbook's `docs/LESSONS.md`. A lesson with no evidence line is dropped.
+
 Also at slice close, refresh the pipeline analytics: confirm this slice's
 `runs/<slice-id>/trace.json` is complete (per `SLICE_STATE.md`), then regenerate
 `runs/ANALYTICS.md` + `runs/dashboard.html` via

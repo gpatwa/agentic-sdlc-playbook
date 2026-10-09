@@ -212,6 +212,23 @@ describe("install.mjs — pack integrity", () => {
     assert.match(econ, /Estimate a review stage at \*\*50–60k\*\*/);
   });
 
+  test("the pack asks for a ceiling once, opens stops with a digest, and tells the Architect to pilot a model first", () => {
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /Propose a ceiling with the plan/);
+    const proto = readFileSync(join(target, ".claude", "protocols", "APPROVAL_PROTOCOL.md"), "utf8");
+    assert.match(proto, /digest of at most 15 lines/);
+    assert.match(proto, /does\s+not weaken "not batchable"/);
+    const arch = readFileSync(join(target, ".claude", "agents", "software-architect.md"), "utf8");
+    assert.match(arch, /Pilot before you build/);
+    assert.match(arch, /Facts come from the source, not memory/);
+    const em = readFileSync(join(target, ".claude", "agents", "engineering-manager.md"), "utf8");
+    assert.match(em, /Check the intent's claims against the repo/);
+    const state = readFileSync(join(target, ".claude", "protocols", "SLICE_STATE.md"), "utf8");
+    assert.match(state, /Keep `Next action` and the Budget block/);
+    const econ = readFileSync(join(target, ".claude", "protocols", "RUN_ECONOMICS.md"), "utf8");
+    assert.match(econ, /Ceiling, asked once/);
+  });
+
   test("the budget guard is installed and wired into settings", () => {
     assert.ok(existsSync(join(target, ".claude", "hooks", "budget-guard.mjs")));
     const settings = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));

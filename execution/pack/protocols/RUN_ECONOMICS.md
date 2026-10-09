@@ -43,6 +43,13 @@ before spawning; re-derive them as data accumulates.
 | **review** (Scope, Architecture, Security, Release, Post-Launch) | ~98k | **100k** | 149k |
 | **build** (Implementation, QA, AI Engineer) | ~129k | **130k** | 178k |
 
+> **Count the spawns, not the stages (added 2026-10-09).** A Release Gate is
+> three spawns (plan, QA run, Release Manager verdict) and ran 146k against a
+> 70k single-spawn estimate. An Architecture stage that proposes a model is
+> two passes (the spec, then the model facts) and ran 187k against 70k. A
+> baseline measurement with a parameter sweep ran 82k against 60k. Estimate
+> each spawn, and add a pass when the stage ends in a request to the human.
+>
 > **Review stages run far over a small estimate (added 2026-10-08, slice 4 of
 > the reference app).** A Security Review at adversarial depth peaked at 129k
 > against a 70k estimate; a Release Manager step that reads many artefacts
@@ -78,7 +85,17 @@ that line before every spawn: a stale estimate is checked against the wrong
 stage, and a missing one leaves only the `spent ≥ budget` backstop.
 
 Default budget = Σ estimates of planned stages, rounded up one stage's worth as
-headroom. A slice that needs more than **6 stages** or **~600k** is a signal the
+headroom.
+
+**Ceiling, asked once (added 2026-10-09).** At plan confirmation the
+Orchestrator proposes the plan total *and* a ceiling, and the human types the
+ceiling. Measured on two reference-app slices, whole slices ran 1.45× and
+about 1.25× their plans, and the overruns sat in the same stages every time, so
+the ceiling is about **1.5×** the plan when it contains an adversarial
+Security Review or a model proposal, about **1.3×** otherwise. Spend between
+the plan and the ceiling needs no question. A stop is for spend above the
+ceiling, a failed pre-registered check, or a gate that would be compressed;
+the stop-and-ask message leads with the numbers and the exact reply to type. A slice that needs more than **6 stages** or **~600k** is a signal the
 slice is too big — send it back to the EM before spending, not after.
 
 **Cost is a first-class gate.** A run that blows its budget is a failed run even

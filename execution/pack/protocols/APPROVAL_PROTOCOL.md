@@ -47,6 +47,29 @@ see them:
    - **Denied** → stop the slice. Record the rationale, hand back to the
      Orchestrator. Do not look for a workaround.
 
+## Stopping well: the digest, and batching (added 2026-10-09)
+
+Every stop for the human, whether an approval, a budget question or a design
+question, opens with a **digest of at most 15 lines**, so the human decides
+without reading the artefacts:
+
+- **Decision needed**, and whether it is an approval under rules 1–6, a budget
+  question, or a design question with a recommended default.
+- **Recommendation**, one line, with the reason.
+- **The exact reply to type**, per item.
+- **What waiting costs**, and what is reversible if the answer is no.
+- **What was checked against source, and by whom.** Where a support session
+  has checked the facts, its reply is linked; nothing it says is an approval.
+
+**Batch the approvals that are known in advance.** At fixed points (plan
+confirmation; the end of Architecture; the end of Security Review) gather
+every approval now known into one packet instead of asking one at a time. This
+does not weaken "not batchable": each item is written out in full with its
+exact text and numbered, the human's answer names them ("approve all" counts
+only because each was shown), and the record lists each one. Items the human
+answers differently are recorded separately. A rule 4 or rule 5 item is never
+described in place of its text.
+
 ## What counts as approval
 
 Mirrors `HUMAN_APPROVAL_RULES.md`:

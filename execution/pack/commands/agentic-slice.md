@@ -44,6 +44,12 @@ Do this:
    Nothing past Scope Review starts until they confirm. A line still marked
    (inferred) after confirmation is dropped, not kept — it never becomes an
    acceptance criterion.
+   **Propose a ceiling with the plan.** State the plan total and a ceiling
+   above it (see `RUN_ECONOMICS.md` §2: about 1.5× when the plan has an
+   adversarial Security Review or a model proposal, about 1.3× otherwise).
+   The human types the ceiling once. After that, stop and ask only when a
+   stage would pass the ceiling, a pre-registered check fails, or a gate
+   would have to be compressed. You never raise a budget yourself.
 6. **Scan for gated actions now.** If the ask trips any rule in the
    playbook's `docs/HUMAN_APPROVAL_RULES.md` (send/submit, destructive
    shared-state, deploy, safety-control change, real model/client, new data

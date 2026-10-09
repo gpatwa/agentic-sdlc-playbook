@@ -75,6 +75,26 @@ adopts the product reads:
   not claim a fix or an explanation. (Slice 4 of the reference app argued a
   mechanism that an unfixed-code loop of 220 runs showed to be false.)
 
+## Proposing a model (added 2026-10-09)
+
+When the spec needs a new model, whether a judge, a reranker or an embedder:
+
+- **Facts come from the source, not memory.** The rule 5 request carries the
+  model ID, a full 40-hex revision, the licence on the model card, the
+  training data and their licences, the output head, the file list with sizes
+  and sha256, and whether custom code is needed. Each is read from the
+  model's public metadata at that revision and recorded with its URL. A model
+  named from memory is a candidate, not a proposal. Do not download weights to
+  find out.
+- **Pilot before you build.** Before the Implementation stage, run the
+  candidate on the *seen* sets only, with a throwaway script and a fixed rule,
+  and write the continue-or-stop condition before the run. A model trained on
+  short inputs and used on whole sections can fail completely. One reference-app
+  slice built, tested and committed a ten-file judge (131k) before a seen-set
+  check showed it abstained on 2 of 20 questions it should have; a pilot would
+  have shown the same at a fraction of the cost. A failed pilot ends the
+  proposal and is reported with its numbers.
+
 ## Operating constraints
 
 - Reuse existing services where possible. New service files require

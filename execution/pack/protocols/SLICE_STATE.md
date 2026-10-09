@@ -107,6 +107,13 @@ Without this column a routing change cannot be evaluated after the fact.
 <one line: the very next thing to do — what a resuming session executes>
 ```
 
+**Keep `Next action` and the Budget block's `Next stage` saying the same
+thing.** A stale `Next action` is read by the next session that resumes, and
+one reference-app slice left it naming a stage three stages old. Update both in
+the same edit. Set `Spent` from `execution/usage.mjs` after every stage, not
+only when the run stops: the figure recorded from memory ran 29k to 40k behind
+the measured one in two slices.
+
 ## Machine-readable trace
 
 Alongside `STATE.md`, each run emits **`runs/<slice-id>/trace.json`** — the same

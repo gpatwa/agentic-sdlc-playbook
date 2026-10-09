@@ -48,6 +48,18 @@ A **scoped work item** delivered as a filled
 - The architecture (Architect owns).
 - The release go/no-go (Release Manager owns).
 
+## Check the intent's claims against the repo (added 2026-10-09)
+
+Before the plan is confirmed, find the factual claims in the intent and in
+the status lines it relies on (README status line, `.agentic/CURRENT_MVP_STATUS.md`,
+the safety invariants, version numbers) and check each against the code or
+the config, with a grep. Report any that are false or stale as a required
+clarification. One reference-app slice found, only because its Scope Review
+was careful, that the README, the status file and a safety invariant all
+said retrieval abstains when the code had not since an earlier decision, and
+that the intent named a pack version two behind. Do not edit the intent;
+record the reading.
+
 ## Scope discipline rules
 
 The EM rejects a slice if any of these are true:

@@ -110,6 +110,20 @@ questions the designer had seen and 47–69% on questions it hadn't:
 7. **Report the diagnostic that separates causes** — e.g. recall with no
    confidence cutoff — so a failure says whether ranking or abstention broke.
 
+8. **Pilot on seen sets before the build, and check on them before the gate
+   set is spent.** Write a continue-or-stop condition in advance, run the
+   candidate on the seen sets, and stop if it fails. The gate set is the one
+   clean test you have; do not spend it on a method the seen sets already
+   show cannot pass. (Slice 5 of aveto-support: the pre-registered seen-set
+   check failed at 2 of 20 on the abstention bar and saved a 340k gate run and
+   the fifth set. It would have saved the 131k build too, had it run first.)
+9. **Questions the docs do not answer are claims of absence.** Each needs a
+   reviewer who tries to find a defensible answer and records what it searched
+   and found. Supply a surplus, so the minimum still holds after the review
+   drops some, and tag each hard negative with the file it overlaps and the
+   shared terms. A review that leaves fewer than the minimum stops the slice;
+   the bar does not shrink.
+
 ## Anti-patterns specific to AI agent products
 
 - Wiring a real model client because "it's just for testing".
