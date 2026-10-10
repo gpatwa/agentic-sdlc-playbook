@@ -1468,6 +1468,24 @@ from the run" pattern as effort / operator / executor / gateCatches.
     (declined earlier, and unchanged); letting an agent raise its own budget;
     any change to what counts as an approval.
 
+- **T27 · Name the session a stage needs, and bound the budget with a band.**
+  *Raised 2026-10-10.* Slice 6 stopped because a cheap seen-set check needs a
+  judge helper started from a session with few tools (helpers inherit the
+  starter's tools; an agent can start one only with `claude -p`, which the owner
+  has ruled out), and because the check's cost was about 5× the ceiling on the
+  pack's unit. The design is in `docs/SESSION_AND_BUDGET_DESIGN.md`: Part A,
+  an `Environment` field per stage and a `SESSION_REQUEST` file with a
+  ready-made one-line start; Part B, a ceiling plus a hard cap, with a notice
+  (not a stop) between them and the ranges learned from a ratios file.
+  - [ ] Owner decides A, B and the notice-vs-pause choice (design doc, last
+        section). Nothing is enforced yet.
+  - [ ] Elapsed time: see `docs/LESSONS.md` L35. Slices 1–5 each took 9 to 143
+        hours of wall clock for 1 to 5 hours of work; the rest was gaps
+        between commits, mostly at stops. Measure it properly (a timestamp per
+        stage start, stop and restart in `STATE.md`) before proposing a cure.
+  - **Not doing:** `claude -p` or any unattended start; an agent approving or
+    raising the hard cap.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
