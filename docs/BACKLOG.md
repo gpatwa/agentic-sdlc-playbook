@@ -1457,7 +1457,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
           the repo for each factual claim in the intent and each status line
           before the plan is confirmed. Drafters (including this session)
           verify an intent's claims against the code before committing it.
-    - [ ] **P7 · A depth the intent names binds.** Lowering the depth of
+    - [x] **P7 · A depth the intent names binds.** Lowering the depth of
           Security or the Release Gate below what the intent asked for is a
           stop-and-ask, and a digest item, not an Orchestrator decision. Found
           on the fifth slice (`docs/LESSONS.md` L31).
