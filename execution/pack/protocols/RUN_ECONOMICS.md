@@ -117,9 +117,19 @@ State the depth **explicitly in the brief**. The `http-layer` run got
 "go beyond the shipped tests" — nobody chose it, and a dependency-free local
 seed did not warrant 178k of QA.
 
-Degrading depth is a legitimate response to budget pressure. Degrading it to
-dodge a *finding* is not: if a stage at `standard` surfaces something that needs
-adversarial depth, escalate the depth and the budget, and record why.
+Degrading depth is a legitimate response to budget pressure for a depth the
+Orchestrator chose. Degrading it to dodge a *finding* is not: if a stage at
+`standard` surfaces something that needs adversarial depth, escalate the depth
+and the budget, and record why.
+
+**A depth the intent names binds (added 2026-10-09).** If the intent says a stage
+runs at a depth ("Security Review at adversarial depth"), the plan carries that
+depth, and lowering it later, including when the reason it was asked for seems to
+have gone away, is a stop-and-ask: a digest item with the numbers and the exact
+reply to type, answered in the human's own words and recorded in an approval
+record. One reference-app slice lowered Security from `adversarial` to `standard`
+after its model path stopped; the reasoning held, but only the Orchestrator's own
+plan recorded it, and the Release Manager had to list it as a deviation.
 
 ## 4. Incremental artefacts — no all-or-nothing work
 

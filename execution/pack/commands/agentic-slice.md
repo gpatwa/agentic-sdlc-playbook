@@ -47,6 +47,8 @@ Do this:
    **Propose a ceiling with the plan.** State the plan total and a ceiling
    above it (see `RUN_ECONOMICS.md` §2: about 1.5× when the plan has an
    adversarial Security Review or a model proposal, about 1.3× otherwise).
+   Carry any depth the intent names into the plan as written; it binds (see
+   `RUN_ECONOMICS.md` §3).
    The human types the ceiling once. After that, stop and ask only when a
    stage would pass the ceiling, a pre-registered check fails, or a gate
    would have to be compressed. You never raise a budget yourself.

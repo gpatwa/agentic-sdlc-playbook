@@ -229,6 +229,16 @@ describe("install.mjs — pack integrity", () => {
     assert.match(econ, /Ceiling, asked once/);
   });
 
+  test("a depth the intent names binds, and lowering it is the human's decision", () => {
+    const guide = readFileSync(join(target, "AGENTS.md"), "utf8");
+    assert.match(guide, /A depth\s+the intent names binds/);
+    const econ = readFileSync(join(target, ".claude", "protocols", "RUN_ECONOMICS.md"), "utf8");
+    assert.match(econ, /A depth the intent names binds/);
+    assert.match(econ, /stop-and-ask/);
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /Carry any depth the intent names into the plan as written/);
+  });
+
   test("the budget guard is installed and wired into settings", () => {
     assert.ok(existsSync(join(target, ".claude", "hooks", "budget-guard.mjs")));
     const settings = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));

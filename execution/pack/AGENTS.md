@@ -40,7 +40,11 @@ These hold regardless of which tool is driving the run.
    stage's depth, drop a non-load-bearing stage, or stop and ask the human
    with the numbers. Never raise the budget to fit the spend. Set each
    stage's depth (smoke / standard / adversarial) explicitly — `standard`
-   is the default and `adversarial` is earned by stakes, not habit.
+   is the default and `adversarial` is earned by stakes, not habit. **A depth
+   the intent names binds:** lowering a stage below what the intent asked for
+   (for example, Security below `adversarial`) is the human's decision, recorded
+   in their own words, never the Orchestrator's. Degrading a depth you chose
+   yourself stays yours to do.
 
 ## Project context
 
