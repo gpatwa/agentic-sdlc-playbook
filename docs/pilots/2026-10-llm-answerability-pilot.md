@@ -216,3 +216,87 @@ Any tool use other than one Read (more only if the tool truncates) of the agent'
 
 ## Limits stated in advance
 The negatives are written by the same model family as the judges, so errors may correlate. 24 questions: one is about 4 points. The absence review is itself an LLM reading a corpus, not a proof. Seen-type questions only; the fifth gate set stays unspent. A pass is evidence, not permission to ship.
+
+---
+
+# Third and fourth pilots: the cheapest tier, and false premises
+
+*2026-10-09. Same method as pilots 1 and 2. Research only; the fifth gate set was not used.*
+
+## Pilot 3: Haiku 4.5 on the two existing sets
+
+| Haiku 4.5 | Bar 1 | Bar 2 |
+|---|---|---|
+| Seen sets (need 16/20 and 45/56) | **20/20** | **47/56** (83.9%) |
+| Hard negatives (need 20/24 and 8/10) | **24/24** | **9/10** |
+
+Nine fresh agents, all within the tool rules. Haiku agrees with Opus on 88 of 93
+and 36 of 36 questions, and with Sonnet on 87 of 93 and 35 of 36. Its misses are
+the same kind as the others': the answering section was not among the shown
+passages. **The cheapest tier is enough for this task on these sets.**
+
+## Pilot 4: false-premise negatives
+
+24 questions that take something for granted the docs deny or never state (16
+where a passage contradicts the premise, 8 where the docs are silent), judged
+with the same 12 controls. Three of the 30 candidates (p08, p10, p22) were
+dropped because the absence reviewer found a passage answering them as asked.
+
+| Strict reading (gold = NOT_ANSWERABLE) | Bar 1 (need 20/24) | Bar 2 (need 8/10) |
+|---|---|---|
+| Opus 5.5 | **20/24** (the minimum) | 9/10 |
+| Sonnet 5.5 | **22/24** | 9/10 |
+| Haiku 4.5 | **22/24** | 9/10 |
+
+All three pass. Every "answerable" verdict on a false-premise question was
+class (a), **corrects the premise** ("a named human approves deploys; the
+Orchestrator does not"). **None was class (b), supplies a decoy.** All eight
+questions where the docs are silent were flagged by all three judges. Read
+leniently (a premise-correcting answer counted as acceptable) every judge scores
+24/24; the strict reading is the pre-registered pass and is conservative.
+
+The stronger model did worst here, because it answers the correction. Whether a
+support product should answer "no, a named human approves deploys" or decline is
+a product decision, not a judge error, and it is recorded as open.
+
+## Limits
+
+The same model family wrote the questions, reviewed them and judges them. 24 and
+10 questions are small. Class (a) versus (b) was assigned by the support session
+from each judge's one-line reason; the reasons are in the run record and any
+reader can re-classify them. The fifth gate set is still unspent.
+
+## What the four pilots add up to
+
+A capable hosted judge, including the cheapest tier, separates answerable from
+unanswerable questions on the seen sets, on negatives that sit next to documented
+topics, and on false premises, where a small local classifier and every score
+rule could not. What they do not settle is permission, cost, and the fifth set.
+
+---
+
+## The third pre-registration, verbatim
+
+### Pre-registration. Pilots 3 and 4: a cheaper tier, and false-premise questions
+
+Written 2026-10-09, BEFORE any Haiku verdict existed and before any false-premise question was drafted, reviewed or retrieved. Not changed after, except by a dated amendment above the first run of the thing it amends.
+
+## Pilot 3: Haiku on the two existing sets
+- **Judge:** Haiku 4.5 (the cheapest tier), the same fixed prompt, the same batches, the same one-Read rule as pilots 1 and 2. Nine fresh agents: the six seen-set batches and the three hard-negative batches, unchanged.
+- **Bars, as before:** seen sets: Bar 1 at least 16 of 20, Bar 2 at least 45 of 56. Hard negatives: Bar 1 at least 20 of 24, Bar 2 at least 8 of the 10 controls whose right file was in the top five.
+- Reported next to Opus and Sonnet on the same questions: every question where the three judges do not agree.
+- **Reading:** Haiku passing means the cheapest tier is enough for this task on these sets; failing says a mid tier is the floor. Neither is a product claim.
+
+## Pilot 4: false-premise negatives
+- **What a false-premise negative is.** A question that asserts or presupposes something the documentation contradicts or never states, and asks for more about it. Example shape: "Why does the Security agent fix the vulnerabilities it finds?" where the docs say it reports and does not fix.
+- **The gold verdict, fixed now.** Under the unchanged judge prompt the correct verdict for a false-premise negative is **NOT_ANSWERABLE**, because the passages do not contain what the question asks for as stated. A judge that says ANSWERABLE is classified by me from its own one-line reason into (a) **corrects the premise** (the reason says the docs state the opposite, or that the thing does not exist) or (b) **supplies a decoy** (the reason treats a nearby fact as the answer). Every ANSWERABLE verdict and its class is listed in the report.
+- **Strict Bar 1:** NOT_ANSWERABLE on at least 80% of the surviving false-premise negatives. **Lenient reading, reported separately and never as the pass:** verdicts of class (a) counted as acceptable. Class (b) is the dangerous failure and is reported on its own.
+- **Controls:** the same 12 answerable controls as pilot 2, so a judge that abstains on everything cannot pass. **Bar 2:** at least 80% of the controls whose right file retrieval put in the top five.
+- **Set:** 30 candidates drafted by the support session, none repeating a question in the fifth set, its reserves or any earlier pilot. A fresh Opus agent with search access to the corpus snapshot tries to find a passage that answers each question as asked; any it finds is dropped, unedited. The first 24 survivors in drafting order are the set; if fewer than 20 survive, the pilot is reported as underpowered and stops.
+- **Judges:** Opus 5.5, Sonnet 5.5 and Haiku 4.5, same prompt, same rules as before: a fresh agent per batch, three batches of 12, shuffled, ids hidden, no scores or labels, full passage text for the five files `retrieve` returns by default.
+
+## Validity rules (unchanged)
+Any tool use other than one Read (more only if the tool truncates it) of the agent's own batch file voids that batch; rerun once; both outcomes reported. Prompt, batching and models are not changed after the first result.
+
+## Limits stated in advance
+Same model family wrote the questions, reviewed them and judges them. The gold for a false-premise question is debatable, which is why the strict and lenient readings are separate and the reasons are listed. Small n. The fifth gate set stays unspent.

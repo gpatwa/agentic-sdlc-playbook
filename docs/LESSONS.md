@@ -103,7 +103,11 @@ These are results, not process rules. They are kept so they are not rediscovered
   passages would leave the machine, so it is evidence a hosted judge is worth a
   slice with approvals and a spend cap, not a result to ship on. A second pilot on 24 hard negatives (unanswerable questions that sit next to
   documented topics) gave 24/24 for both models and 9/10 on the controls; the
-  cheaper Sonnet matched Opus. The false-premise kind is untested. See
+  cheaper Sonnet matched Opus, and a third pilot found Haiku, the cheapest tier,
+  does too (seen sets 20/20 and 47/56; hard negatives 24/24 and 9/10). A fourth,
+  on 24 false-premise questions, passed for all three on the strict reading (20,
+  22 and 22 of 24) with no decoy answers; every miss was a premise-correcting
+  answer, which a support product may want. See
   `docs/pilots/2026-10-llm-answerability-pilot.md`.
 
 ## Where the rest is tracked
