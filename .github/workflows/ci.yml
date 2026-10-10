@@ -34,6 +34,11 @@ jobs:
         working-directory: execution
         run: npm test
 
+      # The Azure pilot runner is a research tool the owner runs with their own
+      # key; its tests use a stub and need no network, no key and no inputs.
+      - name: Azure pilot runner tests
+        run: node --test scripts/azure-judge-pilot/run.test.mjs
+
       # Reference integrity: a brief pointing at a protocol that no longer
       # exists fails silently at run time, when an agent needs it most.
       - name: Cross-document references resolve
