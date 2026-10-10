@@ -35,6 +35,7 @@ from `execution/usage.mjs` reading the harness's own logs.
 | L9 | **Hooks must work from a worktree.** The write guard wrongly denied an in-scope write, and the budget guard went blind. | First live evidence of the write guard acting at all. | **Enforced**, v11, with tests. |
 | L10 | **Resumed agents are expensive.** One fresh agent per stage. | Slice 1 processed 30.9M tokens (854k by the budget's unit), slice 2 6.7M, slice 3 8.1M. Budgets in peak context understate what a window loses. | **Enforced** in the slice command; the unit mismatch is open (T20). |
 | L11 | **Estimate per spawn, not per stage.** | A Release Gate is three spawns and ran 146k against 70k. An Architecture that ends in a model request ran 187k against 70k. Adversarial Security ran 129k against 70k. Slice 4 ran 581k against 400k (1.45×). | **Enforced**, v15 and v16 (run economics). |
+| L34 | **Name the model from the harness log, in reports as well as in `STATE.md`.** | The pilot reports called the cheapest judge "Haiku 4.5"; the log said `claude-haiku-5-5`. Found when the driver asked what `model: haiku` resolves to. | **Practice**; `usage.mjs` prints the model per stage. |
 | L12 | **Set `Spent` from `usage.mjs` after every stage.** | The recorded figure ran 29k to 40k behind the measured one in two slices. | **Enforced**, v16 (slice state). |
 | L13 | **`Next action` and `Next stage` must agree.** | One slice's `Next action` named a stage three stages old for most of the run. | **Enforced**, v16 (slice state). |
 

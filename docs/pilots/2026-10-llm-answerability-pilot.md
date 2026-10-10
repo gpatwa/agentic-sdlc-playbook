@@ -221,11 +221,19 @@ The negatives are written by the same model family as the judges, so errors may 
 
 # Third and fourth pilots: the cheapest tier, and false premises
 
+> **Correction, 2026-10-10.** The cheapest-tier judge was labelled "Haiku 4.5" here
+> and in the verbatim pre-registration below. The harness log for every one of those
+> agents records the model as **`claude-haiku-5-5`**; the label came from the support
+> session's notes, not from the log (the mistake lesson L8 exists to prevent). The
+> verdicts and scores are unaffected. The pre-registration is left as written; read
+> "Haiku 4.5" in it as `claude-haiku-5-5`. The same log records `claude-opus-5-5` and
+> `claude-sonnet-5-5` for the other judges.
+
 *2026-10-09. Same method as pilots 1 and 2. Research only; the fifth gate set was not used.*
 
-## Pilot 3: Haiku 4.5 on the two existing sets
+## Pilot 3: Haiku 5.5 on the two existing sets
 
-| Haiku 4.5 | Bar 1 | Bar 2 |
+| Haiku 5.5 | Bar 1 | Bar 2 |
 |---|---|---|
 | Seen sets (need 16/20 and 45/56) | **20/20** | **47/56** (83.9%) |
 | Hard negatives (need 20/24 and 8/10) | **24/24** | **9/10** |
@@ -246,7 +254,7 @@ dropped because the absence reviewer found a passage answering them as asked.
 |---|---|---|
 | Opus 5.5 | **20/24** (the minimum) | 9/10 |
 | Sonnet 5.5 | **22/24** | 9/10 |
-| Haiku 4.5 | **22/24** | 9/10 |
+| Haiku 5.5 | **22/24** | 9/10 |
 
 All three pass. Every "answerable" verdict on a false-premise question was
 class (a), **corrects the premise** ("a named human approves deploys; the
