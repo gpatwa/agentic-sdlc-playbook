@@ -125,3 +125,94 @@ Each judge agent's one permitted tool call is a single Read of its own batch fil
 
 ## Second amendment, made before the first run (2026-10-09)
 Found while checking the inputs: the product's display prints only the first three non-empty lines of each passage (160 characters each). A judge fed that would be handicapped by a display choice, and a fail would say nothing about the judge. A product judge would be given the full passage text, as the earlier local judge was. So the judge sees, for each of the five returned files, the file path and the full text of its shown passages (heading path, line range, whole passage text), at most two passages per file, in rank order. Nothing else changes: no scores, no labels, same question order and ids, same prompt, same bars. (Passage lengths in the index: median 291 characters, 90th percentile 881, maximum 8,147.)
+
+---
+
+# Second pilot: hard negatives
+
+*2026-10-09. Same method, same judges, a harder set. Research only; the fifth gate set was not used.*
+
+## Result
+
+24 unanswerable questions, each written to share vocabulary with a documented
+topic while asking for a detail the docs do not state, plus 12 answerable
+controls. Retrieval put the right file in the top five for 10 of the 12
+controls.
+
+| | Bar 1: hard negatives flagged (need 20/24) | Bar 2: controls not abstained (need 8/10) |
+|---|---|---|
+| **Opus 5.5** | **24/24** | **9/10** |
+| **Sonnet 5.5** | **24/24** | **9/10** |
+
+The two models agree on 35 of 36 questions. Every judge stayed within the tool
+rules, so nothing was voided or rerun. The only controls the judges marked "not
+answerable" were ones where retrieval had not shown the answering passage (the
+full stage order of the lifecycle; the release-tier owner, whose file was not in
+the top five). That is a retrieval and passage-selection weakness, not a judging
+error.
+
+## How the set was built
+
+Thirty candidate negatives and 12 controls were drafted, then reviewed by a
+fresh Opus agent with search access to a snapshot of the 123-file corpus, which
+tried to find a defensible answer to each. It found one for four negatives
+(n03, n13, n26, n30), which were dropped unedited. The first 24 survivors in
+drafting order were used. It found an answer to every control. Examples of how
+adjacent the surviving negatives are: "how quickly should a human answer an
+approval request" sits next to "no timeout auto-approves"; the WCAG-level
+question sits next to a contrast placeholder; incident-review retention sits
+next to a draft deadline.
+
+## What it does and does not show
+
+- **Shows:** both capable judges separate unanswerable questions that sit next
+  to documented topics, and the cheaper tier does as well as the stronger one.
+- **Does not show:** the harder kind of negative, where the shown passages hold a
+  plausible but wrong or partial answer (a false premise). Neither pilot tests it.
+- **Same family:** Claude wrote the questions and the absence review, and Claude
+  judged them, so errors may correlate.
+- **Small:** 24 and 10; one question is 4 to 10 points.
+- **No cost, latency, privacy or permission result.** The question and the
+  passages would leave the machine; that needs rules 4, 5 and 6, a credential the
+  owner supplies, and a spend cap.
+- The fifth gate set is still unspent.
+
+## What I would do next
+
+Test the cheapest tier (Haiku) the same way, and write a false-premise set,
+before a slice commits to a hosted judge. Then draft the check-step intent, with
+the privacy decision made first by the owner.
+
+---
+
+## The second pre-registration, verbatim
+
+### Pre-registration. Hard-negative pilot: do the judges hold up when the unanswerable questions share vocabulary with the docs?
+
+Written 2026-10-09, BEFORE any candidate question was drafted, reviewed, retrieved or judged. Not changed after, except by a dated amendment above the first run.
+
+## Question
+The first pilot passed 20/20 on unanswerable questions, but most of the 20 were easy (a product the docs never mention). Do the same two judges still flag unanswerable questions when each one sits next to something the docs do cover?
+
+## The set (new; never touched the fifth gate set)
+- **30 candidate hard negatives**, drafted by the support session, each written to share vocabulary with a documented topic while asking for a detail the docs do not state. None repeats a question in the fifth set, its reserves, or any seen set.
+- **12 answerable controls**, new questions with a known source, written in the same style. They exist so a judge that answers NOT_ANSWERABLE to everything cannot pass.
+- **Absence review.** A fresh Opus agent with read and grep access to a snapshot of the pinned corpus (123 files) tries to find a defensible answer to every candidate. Any hard negative it finds an answer for is dropped. The first 24 survivors, in drafting order, are the set; if fewer than 20 survive, the pilot is reported as underpowered and stops. Any control it fails to find an answer for is dropped. Dropped questions are not edited, only removed, and are listed in the report.
+
+## What the judges see
+Exactly as in the first pilot: the question and, for the five files `retrieve` returns by default (`file-rrf-v1`), the file path and the full text of the shown passages (at most two per file). No scores, no labels, shuffled order, ids hidden, one fresh agent per batch, same fixed prompt as the first pilot, one Read of its own batch file as its only tool call.
+
+## Scoring
+- **Bar 1:** NOT_ANSWERABLE on at least 80% of the surviving hard negatives (ceil(0.8 n)).
+- **Bar 2:** ANSWERABLE on at least 80% of the surviving controls whose correct file retrieval put in the top five.
+- Pass = both bars. A judge that passes Bar 1 only by abstaining on the controls fails Bar 2 and is reported as doing so.
+- Report: every hard negative a judge answered ANSWERABLE, with its reason, and what the reason cited, so the failure mode is visible.
+
+## Judges, in order
+1. Opus 5.5. 2. Sonnet 5.5, whatever Opus scores (both are reported; the first pilot's gate on running the second no longer applies, because the point here is to compare them).
+
+## Validity rules
+Any tool use other than one Read (more only if the tool truncates) of the agent's own batch file voids the batch; rerun once; both outcomes reported. The prompt, batching and models are not changed after the first result. A different design is a new pilot.
+
+## Limits stated in advance
+The negatives are written by the same model family as the judges, so errors may correlate. 24 questions: one is about 4 points. The absence review is itself an LLM reading a corpus, not a proof. Seen-type questions only; the fifth gate set stays unspent. A pass is evidence, not permission to ship.

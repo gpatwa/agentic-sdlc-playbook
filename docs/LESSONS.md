@@ -101,7 +101,9 @@ These are results, not process rules. They are kept so they are not rediscovered
   20/20 and 49/56, Sonnet 5.5 20/20 and 51/56, against bars of 16 and 45; the
   local QNLI judge scored 2/20. The hard cases are untested and the question and
   passages would leave the machine, so it is evidence a hosted judge is worth a
-  slice with approvals and a spend cap, not a result to ship on. See
+  slice with approvals and a spend cap, not a result to ship on. A second pilot on 24 hard negatives (unanswerable questions that sit next to
+  documented topics) gave 24/24 for both models and 9/10 on the controls; the
+  cheaper Sonnet matched Opus. The false-premise kind is untested. See
   `docs/pilots/2026-10-llm-answerability-pilot.md`.
 
 ## Where the rest is tracked
