@@ -1175,8 +1175,14 @@ from the run" pattern as effort / operator / executor / gateCatches.
             announced" (tier 2, no quality claim); none has released.
       - [ ] The check step is built and gated, in two halves. **Abstention**
             ("the docs don't answer this"): slice 5 (`docs-abstention`) ran and
-            stopped, not releasable; abstention is still owed and its next
-            attempt needs a different method and a seen-set pilot first.
+            stopped, not releasable; slice 6 (`docs-answerability`, an
+            attended Haiku judge on the operator's subscription) built the
+            judge step and passed a refusal probe, then failed its seen-set
+            check by one question (Bar 1 20/20, Bar 2 44/56 against 45) and
+            was closed not releasable on 2026-10-12 (`docs/LESSONS.md`
+            L36–L39). Abstention is still owed; the fifth gate set is
+            unspent, and the next attempt is a new intent (a larger judge is
+            a measured option, with a new rule 5 approval and budget).
             **INV-3, the draft checker** (a draft is checked against its
             sources by a different model from the one that wrote it): cannot
             be built or gated with no drafter, so it belongs to the drafting
