@@ -239,6 +239,27 @@ describe("install.mjs — pack integrity", () => {
     assert.match(cmd, /Carry any depth the intent names into the plan as written/);
   });
 
+  test("a session request is desktop-app only, checks its folder first, and the plan lists prerequisites", () => {
+    const req = readFileSync(join(target, ".claude", "protocols", "SESSION_REQUEST.md"), "utf8");
+    assert.match(req, /desktop app only/);
+    assert.match(req, /print its working directory and stop if it is\s+not the folder/);
+    assert.match(req, /Never include a `claude` command line/);
+    assert.match(req, /It\s+approves nothing/);
+    // the template itself must not carry a runnable terminal command line
+    const fences = req.match(/```[\s\S]*?```/g) || [];
+    for (const f of fences) assert.doesNotMatch(f, /\bclaude\s+["'-]/);
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /\*\*Prerequisites\*\* table/);
+    assert.match(cmd, /`fresh-load`/);
+    assert.match(cmd, /SESSION_REQUEST\.md/);
+  });
+
+  test("a stop sends a push notice that is not an approval", () => {
+    const proto = readFileSync(join(target, ".claude", "protocols", "APPROVAL_PROTOCOL.md"), "utf8");
+    assert.match(proto, /Send a push notification/);
+    assert.match(proto, /The\s+notice is not an approval and not a relay of one/);
+  });
+
   test("the budget guard is installed and wired into settings", () => {
     assert.ok(existsSync(join(target, ".claude", "hooks", "budget-guard.mjs")));
     const settings = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));

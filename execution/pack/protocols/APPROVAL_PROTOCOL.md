@@ -37,6 +37,10 @@ see them:
    - **The smallest request** — one action, not a batch.
 4. **Surface + wait.** Present the request to the human and **wait**. The
    run yields control. No timeout auto-approves. Silence is not consent.
+   **Send a push notification** (the `PushNotification` tool) with one line:
+   the slice, what is needed, and the exact words the human can type. The
+   notice is not an approval and not a relay of one; the human types their own
+   words in the driving session.
 5. **Record.** On an answer, write
    `runs/<slice-id>/APPROVAL_RECORD-<n>.md`: the decision, the approver,
    the UTC timestamp, and the human's response **verbatim**. Update the

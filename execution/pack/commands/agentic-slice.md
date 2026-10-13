@@ -38,8 +38,12 @@ Do this:
 4. Write `runs/<slice-id>/00-slice-plan.md`: the one-line outcome, the
    stages that will run (compressed per the EM's judgment and the intent's
    **Stakes** — see "When to compress stages" in the playbook's
-   `docs/AGENTIC_SDLC.md`), success criteria taken from the intent's "Done
-   means", non-goals, and constraints from `.agentic/`.
+   `docs/AGENTIC_SDLC.md`), each with the **Environment** it needs
+   (`default` or `fresh-load`, see `SESSION_REQUEST.md`), success criteria
+   taken from the intent's "Done means", non-goals, and constraints from
+   `.agentic/`. Add a **Prerequisites** table (permission rules, settings,
+   folder shortcuts the stages need, each with its dry run) and run the dry
+   runs before the first session request.
 5. **Confirm intent and plan together, once.** Show the human both files.
    Nothing past Scope Review starts until they confirm. A line still marked
    (inferred) after confirmation is dropped, not kept — it never becomes an
@@ -52,6 +56,8 @@ Do this:
    The human types the ceiling once. After that, stop and ask only when a
    stage would pass the ceiling, a pre-registered check fails, or a gate
    would have to be compressed. You never raise a budget yourself.
+   Also list every `fresh-load` stage and the Prerequisites table, so the
+   human sets and starts them once, in order, and not at a stop.
 6. **Scan for gated actions now.** If the ask trips any rule in the
    playbook's `docs/HUMAN_APPROVAL_RULES.md` (send/submit, destructive
    shared-state, deploy, safety-control change, real model/client, new data
