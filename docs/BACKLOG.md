@@ -1492,6 +1492,41 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - **Not doing:** `claude -p` or any unattended start; an agent approving or
     raising the hard cap.
 
+- **T28 · Test the official routes that could remove owner stops.** *Raised
+  2026-10-13; owner agreed.* Research note: `docs/research/2026-10-orchestration-prior-art.md`
+  (Anthropic's official docs fetched that day; OpenAI and press sources are
+  secondary and unverified). The owner's cost is the interruption, not the
+  seconds, and slices 1–5 spent 9–143 hours of wall clock for 1–5 hours of work.
+  - [ ] **Agent teams.** An Orchestrator started inside the slice worktree as
+        the lead, with stage agents as teammates (fresh sessions whose agent
+        definitions are read at spawn). Test, after slice 7's smoke result and
+        outside any running slice: does a teammate see the worktree's
+        `.claude/agents` and skills; does the desktop app start it without a
+        prompt; what does it cost. The lead's automatic plan approval is **not**
+        a human approval and must never be recorded as one.
+  - [ ] **A script for fixed loops** (dynamic workflows) for the 48-spawn checks:
+        availability on a subscription, cost, fit with the one-spawn-per-question audit.
+  - [ ] **Deliver messages:** set `crossSessionInbound: accept` for driver
+        sessions (messages never count as approval either way).
+  - [ ] **Notice and one-step answers:** a push notification at each
+        `blocked-on-approval`, and approvals taken as the owner's own structured
+        selection in the driver session, recorded verbatim.
+  - [ ] **Charter at plan confirmation** (T26 P3, T27 Part B) once the owner adopts it.
+  - [ ] **Pack v19 (the hand-holding gaps from slice 7, `docs/LESSONS.md` L40 to L43):**
+        - [ ] a `Prerequisites` table in the plan: permission rules, settings flags
+              and visible folder shortcuts the slice needs; approved once at plan
+              confirmation; a dry run proves them before any session request
+        - [ ] a `SESSION_REQUEST` template: desktop app only, no `claude` command
+              line, the first step prints the working directory and stops on a
+              mismatch; a pack test enforces both
+        - [ ] the Orchestrator makes a visible symlink to the worktree at intake
+        - [ ] a push notification at every `blocked-on-approval`, carrying the exact reply
+        - [ ] the charter at plan confirmation (model, processor scope, depth,
+              ceiling and band, pre-approved session starts)
+        - [ ] agent-team lead mode, if the test above passes
+  - **Not doing:** Projects (cloud threads; local worktree path undocumented),
+    anything unattended (`claude -p`, routines), any agent approving for the owner.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
