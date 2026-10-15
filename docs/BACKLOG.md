@@ -1524,8 +1524,23 @@ from the run" pattern as effort / operator / executor / gateCatches.
         - [ ] the charter at plan confirmation (model, processor scope, depth,
               ceiling and band, pre-approved session starts)
         - [ ] agent-team lead mode, if the test above passes
+  - **Precondition for the next slice (owner, 2026-10-13):** close these gaps
+    *first*. The next reference-app slice does not start until: pack v19 is
+    installed from the main checkout and its dry-run Prerequisites table works;
+    the agent-teams test has a recorded result; and the owner has decided the
+    charter (T26 P3, T27 Part B) and `crossSessionInbound: accept`.
   - **Not doing:** Projects (cloud threads; local worktree path undocumented),
     anything unattended (`claude -p`, routines), any agent approving for the owner.
+
+- **T29 · Process v2: one approval at the start, then the run finishes.**
+  *Raised 2026-10-15 by the owner ("stop future slices ... eliminate human
+  approval, except in the beginning to agree on the plan").* Plan:
+  `docs/PROCESS_V2_PLAN.md`. Reference-app slices are **paused after slice 7**
+  until pack v20 passes a dry run on a toy repo with one owner touch.
+  - [ ] Owner decides the three questions in the plan's section 6.
+  - [ ] Pack v20: Charter template and check; approval protocol around the
+        Charter; setup phase; stage-boundary notice; single-session Orchestrator.
+  - [ ] T28 agent-teams test; dry run on a seed repo; then site and README.
 
 ## Decided NO / parked — recorded so they don't return
 
