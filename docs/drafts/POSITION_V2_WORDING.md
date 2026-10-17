@@ -1,9 +1,9 @@
-# Draft: public wording for Process v2 (not applied)
+# Public wording for Process v2 (applied 2026-10-16, on the owner's "apply both")
 
-> **Draft for the owner's approval. Nothing here is live.** Process v2 (pack v20)
+> **Applied to `README.md` and `site/index.html` on 2026-10-16** after the owner chose "apply both" over the recommendation (README now, site after a second run). Kept as the record of the exact replacements. Process v2 (pack v20)
 > replaces "a human approves each risky action" with "a human approves a bounded
 > Charter at the start and reviews the result at the end". The README and the
-> site still promise the old model. These are the exact replacements. Applying
+> site promised the old model. These are the exact replacements. Applying
 > them changes what Aveto publicly claims, and the site deploys from `main`, so
 > the owner approves the words before anything is committed.
 >
