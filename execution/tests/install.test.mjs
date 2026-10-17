@@ -282,10 +282,13 @@ describe("install.mjs — pack integrity", () => {
     assert.match(cmd, /Never ask the human to open a session\s+during a Charter run/);
     assert.match(cmd, /charter-check-output\.txt/);
     assert.match(cmd, /C6\.P permission rules/);
+    assert.match(cmd, /local `\/code-review` skill at `high` effort/);
+    assert.match(cmd, /Never use its `--fix` option/);
     assert.match(cmd, /a prompt\s+that appears anyway is a Charter miss/);
     const rm = readFileSync(join(target, ".claude", "agents", "release-manager.md"), "utf8");
     assert.match(rm, /\*\*Under a Charter \(Process v2\)\.\*\*/);
     assert.match(rm, /A missing or mismatched output file is a\s+NO-GO you report/);
+    assert.match(rm, /Read `code-review\.md` too/);
     const plain = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));
     assert.equal(plain.env?.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS, undefined);
     const t2 = join(tmpdir(), `aveto-teams-${process.pid}-${Date.now()}`);

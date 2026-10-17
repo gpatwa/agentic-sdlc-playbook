@@ -72,7 +72,10 @@ holds the human's verbatim approval of `CHARTER.md` by its sha256, that
 before this stage, because this role has no shell) shows the same sha256 and
 "charter complete", and that every gated action in the Approvals table cites a
 Charter line that names it exactly. A missing or mismatched output file is a
-NO-GO you report, not a check you skip.
+NO-GO you report, not a check you skip. Read `code-review.md` too: every
+finding is either fixed (with the commit) or carried into the end review with
+the reason it was not; an unaddressed correctness finding with no reason is a
+NO-GO.
 
 ## Operating constraints
 
