@@ -1088,7 +1088,7 @@
 
             <rect class="wf-box wf-box-own" x="626" y="88" width="132" height="46" rx="6"/>
             <text class="wf-label wf-label-own" x="692" y="110">Release gate</text>
-            <text class="wf-sub wf-sub-own" x="692" y="126">hard stop</text>
+            <text class="wf-sub wf-sub-own" x="692" y="126">fails closed</text>
 
             <rect class="wf-box" x="786" y="88" width="112" height="46" rx="6"/>
             <text class="wf-label" x="842" y="110">Shipped</text>
@@ -1391,7 +1391,7 @@
       <details>
         <summary>How is this different from toolkits like ECC?</summary>
         <p>They sit at different layers. Toolkits such as <a href="https://github.com/affaan-m/ECC">ECC</a> make an agent work better: a large library of skills, hooks, rules and memory, across many editors and harnesses. That is useful, and it is a different job from this one.</p>
-        <p>Aveto governs whether the work can be trusted. Every stage is costed and checked against a budget before it spends. The agent that verifies never wrote the code, and the gates fail closed. A named human approves what can&rsquo;t be undone, and an approval typed in another session doesn&rsquo;t count. Evidence for AI features comes from a held-out set the builder didn&rsquo;t write, run once, with the bar fixed in advance.</p>
+        <p>Aveto governs whether the work can be trusted. Every stage is costed and checked against a budget before it spends. The agent that verifies never wrote the code, and the gates fail closed. A named human approves one Charter before the run, by its hash, and reviews the result after it; the run acts only within that Charter, and an approval typed in another session still doesn&rsquo;t count. Evidence for AI features comes from a held-out set the builder didn&rsquo;t write, run once, with the bar fixed in advance.</p>
         <p>The trade is breadth: Aveto is narrower, Claude Code only, built for one person on one subscription. The two can be used together. Aveto is independent and not affiliated with ECC.</p>
       </details>
       <details>
@@ -1416,7 +1416,7 @@
     <div class="fw-grid">
       <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/ARCHITECTURE.md"><span class="name">Architecture &amp; data flow &rarr;</span><span class="role">Agent topology, how the repo realizes it, and the execution loop</span></a>
       <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_ROLES.md"><span class="name">Agent roles &rarr;</span><span class="role">Who does what, who hands off to whom</span></a>
-      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md"><span class="name">Human approval rules &rarr;</span><span class="role">The six categories a human must approve, always</span></a>
+      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md"><span class="name">Human approval rules &rarr;</span><span class="role">The six categories a human must approve, and how one Charter covers them</span></a>
       <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/RELEASE_GATES.md"><span class="name">Release gates &rarr;</span><span class="role">What must be true before anything merges or ships</span></a>
       <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md"><span class="name">Validation matrix &rarr;</span><span class="role">What is proven, and what is still open</span></a>
       <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook"><span class="name">Source on GitHub &rarr;</span><span class="role">Everything above, plus the execution pack</span></a>
