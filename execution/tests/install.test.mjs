@@ -281,6 +281,8 @@ describe("install.mjs — pack integrity", () => {
     assert.match(cmd, /\*\*never\*\* a human approval/);
     assert.match(cmd, /Never ask the human to open a session\s+during a Charter run/);
     assert.match(cmd, /charter-check-output\.txt/);
+    assert.match(cmd, /C6\.P permission rules/);
+    assert.match(cmd, /a prompt\s+that appears anyway is a Charter miss/);
     const rm = readFileSync(join(target, ".claude", "agents", "release-manager.md"), "utf8");
     assert.match(rm, /\*\*Under a Charter \(Process v2\)\.\*\*/);
     assert.match(rm, /A missing or mismatched output file is a\s+NO-GO you report/);

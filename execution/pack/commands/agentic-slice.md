@@ -48,7 +48,11 @@ Do this:
    run a **setup phase** first: build and dry-run every agent, skill, hook,
    permission rule and script the gated stages will need, and record each dry
    run in the plan's Prerequisites table. A gated stage never changes a
-   definition it then has to reload. Then draft `runs/<slice-id>/CHARTER.md`
+   definition it then has to reload. The setup phase also writes the Charter's
+   C6.P permission rules to `.claude/settings.json` (only after the Charter is
+   approved, and only the exact rules it lists) and runs each allowed command
+   once, so no app permission prompt can interrupt a gated stage; a prompt
+   that appears anyway is a Charter miss, noted in `END_REVIEW.md`. Then draft `runs/<slice-id>/CHARTER.md`
    from the playbook's `templates/CHARTER_TEMPLATE.md`, run
    `node <playbook>/execution/charter-check.mjs runs/<slice-id>/CHARTER.md
    --plan runs/<slice-id>/00-slice-plan.md` until it passes, and show the human
