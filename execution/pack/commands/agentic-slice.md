@@ -49,8 +49,10 @@ Do this:
    permission rule and script the gated stages will need, and record each dry
    run in the plan's Prerequisites table. A gated stage never changes a
    definition it then has to reload. The setup phase also writes the Charter's
-   C6.P permission rules to `.claude/settings.json` (only after the Charter is
-   approved, and only the exact rules it lists) and runs each allowed command
+   C6.P permission rules to `.claude/settings.local.json` (gitignored; never the
+   tracked `.claude/settings.json`, or they ship to `main`; only after the Charter
+   is approved, and only the exact rules it lists; delete the file after the pull
+   request is opened) and runs each allowed command
    once, so no app permission prompt can interrupt a gated stage; a prompt
    that appears anyway is a Charter miss, noted in `END_REVIEW.md`. Then draft `runs/<slice-id>/CHARTER.md`
    from the playbook's `templates/CHARTER_TEMPLATE.md`, run
@@ -79,6 +81,8 @@ Do this:
    Otherwise run stages as subagents and keep the setup-phase rule, so no stage
    needs a session the human starts. Never ask the human to open a session
    during a Charter run; if one is truly needed, that is a Charter stop.
+   `END_REVIEW.md` also reports **questions asked of the human after the
+   Charter** (the target is 0) and the **spend against each stage's estimate**.
 5b. **Confirm intent and plan together, once.** Show the human both files.
    Nothing past Scope Review starts until they confirm. A line still marked
    (inferred) after confirmation is dropped, not kept — it never becomes an

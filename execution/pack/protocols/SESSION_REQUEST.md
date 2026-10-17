@@ -39,7 +39,7 @@ approves nothing. It contains, in this order:
 1. **Why** this stage needs a fresh session, in one sentence.
 2. **Where.** The folder, as a visible path. When the worktree lives under a
    hidden folder, create a symlink to it with a visible name at intake
-   (`ln -s <worktree> <parent>/<slice-id>-worktree`) and name both paths.
+   (`ln -s <worktree> <parent>/<slice-id>-worktree`), **in the repo's parent folder, never inside the repo** (a link inside the repo shows up untracked and can be committed), and name both paths.
 3. **How, desktop app only.** "Open a new Code session, choose the folder above,
    check the folder shown under the session name, and paste the one line below."
    **Never include a `claude` command line, a terminal route or `claude -p`.** The

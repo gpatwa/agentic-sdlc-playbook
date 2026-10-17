@@ -328,6 +328,20 @@ describe("install.mjs — pack integrity", () => {
     for (const key of ["source", "severity", "file", "change", "must_find"]) assert.equal([...raw.matchAll(new RegExp(`^${key} = `, "gm"))].length, ids.length, key);
   });
 
+  test("pack v24: Charter permission rules go to the gitignored local file; shortcuts outside the repo; time recorded; review ratios", () => {
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /`\.claude\/settings\.local\.json` \(gitignored;\s+never the\s+tracked `\.claude\/settings\.json`/);
+    assert.match(cmd, /questions asked of the human after the\s+Charter/);
+    const sr = readFileSync(join(target, ".claude", "protocols", "SESSION_REQUEST.md"), "utf8");
+    assert.match(sr, /in the repo's parent folder, never inside the repo/);
+    const ap = readFileSync(join(target, ".claude", "protocols", "APPROVAL_PROTOCOL.md"), "utf8");
+    assert.match(ap, /\*\*Record the time\.\*\*/);
+    const rm = readFileSync(join(target, ".claude", "agents", "release-manager.md"), "utf8");
+    assert.match(rm, /no allow rule from the Charter's C6\.P is in a tracked settings file/);
+    const econ = readFileSync(join(target, ".claude", "protocols", "RUN_ECONOMICS.md"), "utf8");
+    assert.match(econ, /Review stages run about 1\.5 to 3 times their estimate/);
+  });
+
   test("the budget guard is installed and wired into settings", () => {
     assert.ok(existsSync(join(target, ".claude", "hooks", "budget-guard.mjs")));
     const settings = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));

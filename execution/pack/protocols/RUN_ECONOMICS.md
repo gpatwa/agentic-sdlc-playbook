@@ -43,6 +43,13 @@ before spawning; re-derive them as data accumulates.
 | **review** (Scope, Architecture, Security, Release, Post-Launch) | ~98k | **100k** | 149k |
 | **build** (Implementation, QA, AI Engineer) | ~129k | **130k** | 178k |
 
+> **Review stages run about 1.5 to 3 times their estimate (added 2026-10-17,
+> third time).** At tier 3 the aveto-support landing run measured Security at
+> 94k against 60k, a Release Manager that re-reads a prior verdict and many
+> records at 187k against 60k, and a Tech Writer over its line. Estimate a tier 3
+> Release Manager at 150 to 190k and a standard Security re-check at 90 to 100k,
+> and give each a tight read list.
+>
 > **Count the spawns, not the stages (added 2026-10-09).** A Release Gate is
 > three spawns (plan, QA run, Release Manager verdict) and ran 146k against a
 > 70k single-spawn estimate. An Architecture stage that proposes a model is

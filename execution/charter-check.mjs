@@ -57,6 +57,10 @@ export function checkCharter(text, planText = null) {
   if (ph) errors.push(`placeholder(s) left: ${[...new Set(ph)].slice(0, 5).join(", ")}`);
   for (const m of body.matchAll(/^\s*-\s*\*\*(C\d+\.\d+)[^*]*\*\*\s*:?\s*$/gm)) errors.push(`${m[1]} has no value`);
 
+  // C6.P must write to the gitignored local settings file, not the tracked one.
+  const p6 = (sections.get(6)?.body || "").split("\n").find((l) => /\|\s*C6\.P\s*\|/.test(l)) || "";
+  if (p6 && !/settings\.local\.json/.test(p6)) errors.push("C6.P must write the allow rules to .claude/settings.local.json (gitignored), not the tracked .claude/settings.json");
+
   // Permission rules (section 6): a fixed command prefix, a wildcard only at the end.
   const permRule = /`(\w+)\(([^`]*)\)`/g;
   for (const line of (sections.get(6)?.body || "").split("\n")) {

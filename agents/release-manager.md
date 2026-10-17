@@ -75,7 +75,10 @@ Charter line that names it exactly. A missing or mismatched output file is a
 NO-GO you report, not a check you skip. Read `code-review.md` too: every
 finding is either fixed (with the commit) or carried into the end review with
 the reason it was not; an unaddressed correctness finding with no reason is a
-NO-GO. Re-derive the risk tier from the diff yourself (see
+NO-GO. Check that no allow rule from the Charter's C6.P is in a tracked settings file:
+`git diff <base> -- .claude/settings.json` must be empty of those rules (the
+Orchestrator runs it and saves the output next to `charter-check-output.txt`).
+Re-derive the risk tier from the diff yourself (see
 `.claude/protocols/CODE_REVIEW.md` section 2); if it is higher than the one
 recorded, the higher tier applies and you say so.
 

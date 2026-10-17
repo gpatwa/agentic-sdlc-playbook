@@ -35,7 +35,7 @@ const complete = `# Charter: demo-slice
 ## 6. Prerequisites (set once in the setup phase, each with its dry run)
 | id | What | Why | Dry run that proves it |
 |---|---|---|---|
-| C6.P | allow rules in \`.claude/settings.json\`: \`Bash(uv run pytest *)\`, \`Bash(git push origin slice/demo)\` | every stage | each run once in setup, no prompt |
+| C6.P | allow rules in \`.claude/settings.local.json\`: \`Bash(uv run pytest *)\`, \`Bash(git push origin slice/demo)\` | every stage | each run once in setup, no prompt |
 | C6.1 | folder shortcut to the worktree | stage 5 | ls the shortcut, expect the agents dir |
 
 ## 7. Depth (may not be lowered)
@@ -96,6 +96,11 @@ describe("charter-check", () => {
     assert.ok(checkCharter(complete.replace(/- \*\*C8\.4[^\n]*\n/, "")).errors.some((e) => /no C8\.4 line/.test(e)));
     assert.ok(checkCharter(complete.replace("at the end:** review", "at the end:** maybe")).errors.some((e) => /C8\.4 must be exactly/.test(e)));
     assert.equal(checkCharter(complete.replace("at the end:** review", "at the end:** skip")).errors.length, 0);
+  });
+
+  test("C6.P must target the gitignored local settings file, not the tracked one", () => {
+    const r = checkCharter(complete.replace("settings.local.json", "settings.json"));
+    assert.ok(r.errors.some((e) => /settings\.local\.json/.test(e)), r.errors.join("; "));
   });
 
   test("C6.P (how app permission prompts are prevented) is required", () => {

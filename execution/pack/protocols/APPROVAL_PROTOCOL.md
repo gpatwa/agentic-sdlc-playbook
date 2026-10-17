@@ -58,6 +58,10 @@ and the human has approved **that file by its sha256** in this session
 (recorded as `APPROVAL_RECORD-1.md` with the hash), the steps above change for
 the actions the Charter covers:
 
+0. **Record the time.** The Charter approval record carries the date and the
+   time of day in UTC taken from the environment's clock (`date -u`) when it is
+   recorded, marked "recorded at". The human's message has no timestamp the
+   Orchestrator can see; do not invent one.
 1. **Detect** as before, then find the Charter line that names this exact
    action (model ID, processor and data, invariant or file and its bounds,
    irreversible action and its target). Read the line literally.

@@ -41,7 +41,7 @@ against these bounds and shown to the human in the end-of-run review.
 ## 6. Prerequisites (set once in the setup phase, each with its dry run)
 | id | What | Why | Dry run that proves it |
 |---|---|---|---|
-| C6.P | <Permissions: how no app permission prompt interrupts the run: the exact allow rules written to `.claude/settings.json` (a fixed command prefix, a wildcard only at the end, for example `Bash(npm test *)`), or the permission mode the session runs in> | <every stage> | <each allowed command run once in setup, no prompt shown> |
+| C6.P | <Permissions: how no app permission prompt interrupts the run: the exact allow rules written to `.claude/settings.local.json`, which is gitignored (never the tracked `.claude/settings.json`, or they ship to `main`); a fixed command prefix, a wildcard only at the end, for example `Bash(npm test *)`), or the permission mode the session runs in> | <every stage> | <each allowed command run once in setup, no prompt shown> |
 | C6.1 | <setting, folder shortcut, or other prerequisite> | <stage that needs it> | <command and expected result> |
 
 > C6.P is required. A permission prompt during the run is a Charter miss, recorded
