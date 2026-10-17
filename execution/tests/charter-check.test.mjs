@@ -1,0 +1,100 @@
+import { test, describe } from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { checkCharter } from "../charter-check.mjs";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const template = readFileSync(join(here, "..", "..", "templates", "CHARTER_TEMPLATE.md"), "utf8");
+
+const complete = `# Charter: demo-slice
+
+> Header text.
+
+## 1. Scope
+- **C1.1 Intent:** \`runs/demo/intent.md\`, sha256 \`abc\`
+- **C1.2 Plan:** \`runs/demo/00-slice-plan.md\`, sha256 \`def\`
+- **C1.3 Non-goals:** no drafting, no deploy
+
+## 2. Budget (unit: peak context summed per spawn)
+- **C2.1 Plan total:** 2100k
+- **C2.2 Ceiling:** 2700k. Above it the run continues and sends a notice.
+- **C2.3 Hard cap:** 3100k. Above it the run stops.
+
+## 3. Models (rule 5)
+- **C3.1** judge: \`claude-sonnet-5-5\`, the operator's session
+
+## 4. Data processors (rule 6)
+- **C4.0** None beyond those already approved: APPROVAL_RECORD-3, APPROVAL_RECORD-6.
+
+## 5. Safety controls (rule 4)
+- **C5.1** \`.agentic/SAFETY_INVARIANTS.md\` INV-5: may gain one sentence naming what the operator's session sends, as measured; nothing removed
+- **C5.2** \`.claude/agents/judge.md\`: may only add names to \`disallowedTools\`, ending in \`mcp__*\`
+
+## 6. Prerequisites (set once in the setup phase, each with its dry run)
+| id | What | Why | Dry run that proves it |
+|---|---|---|---|
+| C6.1 | allow rule for the helper | stage 5 | run the helper on r001, expect exit 0 |
+
+## 7. Depth (may not be lowered)
+- **C7.1** Security Review: adversarial
+- **C7.2** Release Gate tier: 3
+
+## 8. Outcomes decided now
+- **C8.1 If a pre-registered check fails:** close as not releasable and stop
+- **C8.2 At the end of a passing run:** push the branch and open a pull request; never merge, never deploy, never send
+- **C8.3 Irreversible actions allowed (rules 1 to 3):** none
+
+## 9. Stops (the only reasons the run asks)
+1. An action not covered by a line above.
+`;
+
+describe("charter-check", () => {
+  test("a complete charter passes and reports its sha256", () => {
+    const r = checkCharter(complete);
+    assert.deepEqual(r.errors, []);
+    assert.equal(r.ok, true);
+    assert.match(r.sha256, /^[0-9a-f]{64}$/);
+  });
+
+  test("the unfilled template fails on placeholders", () => {
+    const r = checkCharter(template);
+    assert.equal(r.ok, false);
+    assert.ok(r.errors.some((e) => /placeholder/.test(e)));
+  });
+
+  test("a missing section fails", () => {
+    const r = checkCharter(complete.replace(/## 7\. Depth[\s\S]*?## 8\./, "## 8."));
+    assert.ok(r.errors.some((e) => /section 7 \(Depth\) is missing/.test(e)));
+  });
+
+  test("a blank field fails", () => {
+    const r = checkCharter(complete.replace("- **C8.3 Irreversible actions allowed (rules 1 to 3):** none", "- **C8.3 Irreversible actions allowed (rules 1 to 3):**"));
+    assert.ok(r.errors.some((e) => /C8\.3 has no value/.test(e)));
+  });
+
+  test("a budget out of order fails", () => {
+    const r = checkCharter(complete.replace("**C2.3 Hard cap:** 3100k", "**C2.3 Hard cap:** 2500k"));
+    assert.ok(r.errors.some((e) => /budget out of order/.test(e)));
+  });
+
+  test("an open-ended grant fails", () => {
+    const r = checkCharter(complete.replace("may only add names to", "may change any file including"));
+    assert.ok(r.errors.some((e) => /open-ended grant/.test(e)), r.errors.join("; "));
+    const r2 = checkCharter(complete.replace("C4.0** None beyond those already approved: APPROVAL_RECORD-3, APPROVAL_RECORD-6.", "C4.1** Anthropic, receives: issue text, etc."));
+    assert.ok(r2.errors.some((e) => /open-ended grant/.test(e)), r2.errors.join("; "));
+  });
+
+  test("mcp__* inside a deny-list direction is not treated as a wildcard grant", () => {
+    assert.equal(checkCharter(complete).errors.filter((e) => /open-ended/.test(e)).length, 0);
+  });
+
+  test("with --plan, a model or invariant the plan names must be in the charter", () => {
+    const plan = "Stage 3 uses claude-opus-5-5 and edits INV-4 and INV-5.";
+    const r = checkCharter(complete, plan);
+    assert.ok(r.errors.some((e) => /claude-opus-5-5/.test(e)));
+    assert.ok(r.errors.some((e) => /INV-4/.test(e)));
+    assert.ok(!r.errors.some((e) => /INV-5/.test(e)));
+  });
+});
