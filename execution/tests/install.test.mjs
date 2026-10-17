@@ -280,6 +280,10 @@ describe("install.mjs — pack integrity", () => {
     assert.match(cmd, /\*\*One session runs the slice\.\*\*/);
     assert.match(cmd, /\*\*never\*\* a human approval/);
     assert.match(cmd, /Never ask the human to open a session\s+during a Charter run/);
+    assert.match(cmd, /charter-check-output\.txt/);
+    const rm = readFileSync(join(target, ".claude", "agents", "release-manager.md"), "utf8");
+    assert.match(rm, /\*\*Under a Charter \(Process v2\)\.\*\*/);
+    assert.match(rm, /A missing or mismatched output file is a\s+NO-GO you report/);
     const plain = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));
     assert.equal(plain.env?.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS, undefined);
     const t2 = join(tmpdir(), `aveto-teams-${process.pid}-${Date.now()}`);

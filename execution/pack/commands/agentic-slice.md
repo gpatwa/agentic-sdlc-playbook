@@ -54,7 +54,10 @@ Do this:
    --plan runs/<slice-id>/00-slice-plan.md` until it passes, and show the human
    the intent, the plan and the Charter with its sha256, once. When the human
    approves the Charter by its hash, run every stage to the end without asking,
-   send a notice at each stage boundary, act on covered gated actions per
+   send a notice at each stage boundary (immediately before the release
+   stage, re-run `charter-check` and save its output to
+   `runs/<slice-id>/charter-check-output.txt` for the Release Manager, who has
+   no shell), act on covered gated actions per
    `APPROVAL_PROTOCOL.md` "A run under a Charter", stop only for the Charter's
    section 9, and finish with `END_REVIEW.md`. Without an approved Charter,
    step 5 below applies as written.

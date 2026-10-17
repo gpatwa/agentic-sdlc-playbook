@@ -66,6 +66,14 @@ For Tier 3 slices, the Release Manager confirms:
 - The approval applies to the specific action being released (not a
   prior request).
 
+**Under a Charter (Process v2).** Confirm instead that `APPROVAL_RECORD-1.md`
+holds the human's verbatim approval of `CHARTER.md` by its sha256, that
+`charter-check-output.txt` in the run folder (written by the Orchestrator just
+before this stage, because this role has no shell) shows the same sha256 and
+"charter complete", and that every gated action in the Approvals table cites a
+Charter line that names it exactly. A missing or mismatched output file is a
+NO-GO you report, not a check you skip.
+
 ## Operating constraints
 
 - Don't write code, specs, or designs. The Release Manager produces a
