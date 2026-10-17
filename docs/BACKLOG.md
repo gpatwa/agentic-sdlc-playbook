@@ -1182,7 +1182,11 @@ from the run" pattern as effort / operator / executor / gateCatches.
             was closed not releasable on 2026-10-12 (`docs/LESSONS.md`
             L36–L39). Abstention is still owed; the fifth gate set is
             unspent, and the next attempt is a new intent (a larger judge is
-            a measured option, with a new rule 5 approval and budget).
+            a measured option, with a new rule 5 approval and budget). Slice 7
+            (`docs-answerability-2`, Sonnet 5.5 judge) **passed the gate** on
+            the fifth set (24/24, 16/19) and closed on 2026-10-16 as an internal
+            candidate not cleared to land at tier 3 (T1 to T11 deferred to the
+            next Charter); branch `claude/docs-answerability-2` pushed, not merged.
             **INV-3, the draft checker** (a draft is checked against its
             sources by a different model from the one that wrote it): cannot
             be built or gated with no drafter, so it belongs to the drafting
