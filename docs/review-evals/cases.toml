@@ -1,0 +1,42 @@
+# Each case: the change, and what a good review must raise. IDs are stable.
+
+[[case]]
+id = "s5-quote-breakout"
+source = "aveto-support slice 7, Security Review finding S5"
+severity = "Important"
+file = ".claude/skills/aveto-judge-seen/SKILL.md"
+change = """A skill puts the caller's text inside single quotes in a shell-injection line:
+!`uv run -q --project "$P" python "$D/seen_payload.py" '$ARGUMENTS'`"""
+must_find = "A single quote in the argument breaks out of the quotes and runs a second command before the script's own validation."
+
+[[case]]
+id = "s6-wildcard-permission-rule"
+source = "aveto-support slice 7, Security Review finding S6"
+severity = "Important"
+file = ".claude/settings.local.json"
+change = """A permission rule allows: Bash(uv run -q --project * python * seen_payload.py *)"""
+must_find = "A wildcard before and inside the command lets any command ending in that script name run without a prompt; the rule allows far more than the one helper."
+
+[[case]]
+id = "ci-dangling-reference"
+source = "agentic-sdlc-playbook pack v20, three red CI runs"
+severity = "Important"
+file = "execution/pack/protocols/APPROVAL_PROTOCOL.md"
+change = """The pack text starts naming CHARTER.md and END_REVIEW.md, files created at run time in a product repo."""
+must_find = "The playbook's CI cross-reference check treats a named document that does not exist in the playbook as dangling, so CI fails unless the run-time files are exempted."
+
+[[case]]
+id = "retyped-payload"
+source = "aveto-support slice 6, seen-set check stopped at r003"
+severity = "Important"
+file = ".claude/skills/aveto-judge/SKILL.md"
+change = """A step has the driving model retype a 4-5k-token payload verbatim into a subagent call."""
+must_find = "A model copying a long payload can truncate or alter it; the payload must be injected by the harness or a script, with a hash check."
+
+[[case]]
+id = "string-hard-negative"
+source = "aveto-support evals/retrieval-heldout-4.toml"
+severity = "Nit"
+file = "evals/retrieval-heldout-4.toml"
+change = """hard_negative = "explanatory string" on unanswerable questions; the loader counts only hard_negative = true."""
+must_find = "The loader's boolean check silently counts zero hard negatives for string values."

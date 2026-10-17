@@ -1546,6 +1546,21 @@ from the run" pattern as effort / operator / executor / gateCatches.
         Charter; setup phase; stage-boundary notice; single-session Orchestrator.
   - [ ] T28 agent-teams test; dry run on a seed repo; then site and README.
 
+- **T30 · Code review playbook (pack v23).** *Raised 2026-10-17 from Anthropic's
+  "Solving code review at Anthropic" and the Code Review GA note.* Built:
+  `docs/CODE_REVIEW.md`, pack protocol `CODE_REVIEW.md` (tier from the diff,
+  bounded rounds, finding record, evidence rule), a starter `REVIEW.md`
+  (never overwritten), Charter line C8.4, review evals from five real incidents
+  (`docs/review-evals/`). Aveto builds no review engine; it uses the local
+  `/code-review` and adds the governance around it.
+  - [ ] Install v23 in aveto-support and use it in the landing run; read
+        `code-review.md` and `END_REVIEW.md` for the first real numbers.
+  - [ ] Rescore the review step against `docs/review-evals/` and record it in
+        `RESULTS.md` (needs a session; not done).
+  - [ ] Add owner touches per run and time to the first touch to the analytics.
+  - [ ] Decide later whether to use the Code Review GitHub App (Team and
+        Enterprise plans only; the owner's plan is not known to qualify).
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
