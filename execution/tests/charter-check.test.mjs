@@ -46,6 +46,7 @@ const complete = `# Charter: demo-slice
 - **C8.1 If a pre-registered check fails:** close as not releasable and stop
 - **C8.2 At the end of a passing run:** push the branch and open a pull request; never merge, never deploy, never send
 - **C8.3 Irreversible actions allowed (rules 1 to 3):** none
+- **C8.4 Human review of a Low-risk change at the end:** review
 
 ## 9. Stops (the only reasons the run asks)
 1. An action not covered by a line above.
@@ -89,6 +90,12 @@ describe("charter-check", () => {
 
   test("mcp__* inside a deny-list direction is not treated as a wildcard grant", () => {
     assert.equal(checkCharter(complete).errors.filter((e) => /open-ended/.test(e)).length, 0);
+  });
+
+  test("C8.4 (human review of a Low-risk change) is required and is exactly review or skip", () => {
+    assert.ok(checkCharter(complete.replace(/- \*\*C8\.4[^\n]*\n/, "")).errors.some((e) => /no C8\.4 line/.test(e)));
+    assert.ok(checkCharter(complete.replace("at the end:** review", "at the end:** maybe")).errors.some((e) => /C8\.4 must be exactly/.test(e)));
+    assert.equal(checkCharter(complete.replace("at the end:** review", "at the end:** skip")).errors.length, 0);
   });
 
   test("C6.P (how app permission prompts are prevented) is required", () => {

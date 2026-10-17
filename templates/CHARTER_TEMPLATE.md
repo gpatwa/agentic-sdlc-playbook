@@ -57,6 +57,7 @@ against these bounds and shown to the human in the end-of-run review.
 - **C8.1 If a pre-registered check fails:** <for example "close as not releasable, write the close-out, stop">
 - **C8.2 At the end of a passing run:** <default: "push the branch and open a pull request; never merge, never deploy, never send">
 - **C8.3 Irreversible actions allowed (rules 1 to 3):** <default: "none"> (each one names its exact target and its rollback)
+- **C8.4 Human review of a Low-risk change at the end:** <review | skip> (default: review; see `CODE_REVIEW.md`: Medium and High changes are always reviewed)
 
 ## 9. Stops (the only reasons the run asks)
 1. An action not covered by a line above (a new model, processor, data, file, invariant, or irreversible action).

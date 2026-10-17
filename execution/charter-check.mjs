@@ -46,6 +46,11 @@ export function checkCharter(text, planText = null) {
     if (n === 6 && !/\|\s*C6\.P\s*\|/.test(s.body)) errors.push("section 6 has no C6.P row: say how no app permission prompt will interrupt the run (allow rules or the permission mode)");
   }
 
+  // C8.4 must be exactly review or skip.
+  const c84 = text.match(/\*\*C8\.4[^*]*\*\*\s*:?\s*([^\n(]*)/);
+  if (!c84) errors.push("section 8 has no C8.4 line (human review of a Low-risk change: review or skip)");
+  else if (!/^\s*(review|skip)\s*$/i.test(c84[1])) errors.push(`C8.4 must be exactly "review" or "skip", found "${c84[1].trim().slice(0, 40)}"`);
+
   // Placeholders and blank fields anywhere outside the leading quote block.
   const body = text.replace(/^>.*$/gm, "");
   const ph = body.match(/<[^>\n]{1,80}>/g);

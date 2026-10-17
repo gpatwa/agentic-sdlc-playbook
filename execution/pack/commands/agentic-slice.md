@@ -61,13 +61,13 @@ Do this:
    send a notice at each stage boundary (immediately before the release
    stage, re-run `charter-check` and save its output to
    `runs/<slice-id>/charter-check-output.txt` for the Release Manager, who has
-   no shell; and run the local `/code-review` skill at `high` effort on the
-   slice's changes against its base branch, saving the findings to
-   `runs/<slice-id>/code-review.md`. Never use its `--fix` option: each finding
-   goes back to the role that wrote the code, through `FAILURE_LOOP.md`'s
-   bounded retries, then one re-review. A finding whose fix would go outside
-   the Charter is a Charter stop. If the skill is not available in the session,
-   say so in `code-review.md` and in `END_REVIEW.md`; that is not a stop), act on covered gated actions per
+   no shell; and run the review layer in `.claude/protocols/CODE_REVIEW.md`: the
+   local `/code-review` skill at `high` effort on the slice's changes against
+   its base branch, the repo's `REVIEW.md` as its rules, the risk tier derived
+   from the diff, findings recorded in `runs/<slice-id>/code-review.md`. Never
+   use `--fix`: findings go to the role that wrote the code, three rounds at most,
+   then the Architect reconsiders. If the skill is not available, say so in
+   `code-review.md` and `END_REVIEW.md`; that is not a stop), act on covered gated actions per
    `APPROVAL_PROTOCOL.md` "A run under a Charter", stop only for the Charter's
    section 9, and finish with `END_REVIEW.md`. Without an approved Charter,
    step 5 below applies as written.

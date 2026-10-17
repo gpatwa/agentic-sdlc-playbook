@@ -75,7 +75,9 @@ Charter line that names it exactly. A missing or mismatched output file is a
 NO-GO you report, not a check you skip. Read `code-review.md` too: every
 finding is either fixed (with the commit) or carried into the end review with
 the reason it was not; an unaddressed correctness finding with no reason is a
-NO-GO.
+NO-GO. Re-derive the risk tier from the diff yourself (see
+`.claude/protocols/CODE_REVIEW.md` section 2); if it is higher than the one
+recorded, the higher tier applies and you say so.
 
 ## Operating constraints
 

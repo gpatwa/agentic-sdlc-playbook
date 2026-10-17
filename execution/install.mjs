@@ -170,6 +170,13 @@ const copyDir = (src, dst) => {
 copyDir(join(packDir, "commands"), join(claudeDir, "commands"));
 copyDir(join(packDir, "protocols"), join(claudeDir, "protocols"));
 copyDir(join(here, "hooks"), join(claudeDir, "hooks"));
+// A starter REVIEW.md (read by every code review) only if the repo has none:
+// the owners of the code write the real one, so never overwrite it.
+const reviewMd = join(productDir, "REVIEW.md");
+if (!existsSync(reviewMd)) {
+  writeFileSync(reviewMd, readFileSync(join(packDir, "REVIEW.md"), "utf8"));
+  console.log("  REVIEW.md        : starter written (fill in the bracketed lines)");
+}
 
 // Wire the budget guard as a PreToolUse hook on Agent spawns, so
 // RUN_ECONOMICS.md's pre-spawn check is mechanical, not a discipline the
@@ -247,7 +254,7 @@ writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
 // Pack version. Bump when a regeneration changes what agents *do* — new
 // frontmatter the harness acts on, a changed tool boundary, a protocol whose
 // absence would change a decision. Cosmetic edits do not earn a bump.
-const PACK_VERSION = 22;
+const PACK_VERSION = 23;
 
 // Read the previous install back before overwriting it. Until now this field
 // was written and never read, so a product repo could drift arbitrarily far

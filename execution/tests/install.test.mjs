@@ -283,7 +283,7 @@ describe("install.mjs — pack integrity", () => {
     assert.match(cmd, /charter-check-output\.txt/);
     assert.match(cmd, /C6\.P permission rules/);
     assert.match(cmd, /local `\/code-review` skill at `high` effort/);
-    assert.match(cmd, /Never use its `--fix` option/);
+    assert.match(cmd, /use `--fix`: findings go to the role that wrote the code/);
     assert.match(cmd, /a prompt\s+that appears anyway is a Charter miss/);
     const rm = readFileSync(join(target, ".claude", "agents", "release-manager.md"), "utf8");
     assert.match(rm, /\*\*Under a Charter \(Process v2\)\.\*\*/);
@@ -299,6 +299,33 @@ describe("install.mjs — pack integrity", () => {
     assert.equal(withTeams.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS, "1");
     assert.match(JSON.stringify(withTeams), /budget-guard/);
     rmSync(t2, { recursive: true, force: true });
+  });
+
+  test("pack v23: the code review layer: tiers from the diff, bounded rounds, a REVIEW.md starter that is never overwritten", () => {
+    const proto = readFileSync(join(target, ".claude", "protocols", "CODE_REVIEW.md"), "utf8");
+    assert.match(proto, /Risk tier, set by the change/);
+    assert.match(proto, /At most \*\*three\*\* review-and-fix rounds/);
+    assert.match(proto, /"0 findings\." is a complete, valid first line/);
+    assert.match(proto, /It never approves a change on a person's behalf/);
+    assert.match(proto, /Never its `--fix`/);
+    const review = readFileSync(join(target, "REVIEW.md"), "utf8");
+    assert.match(review, /Start with the count of findings/);
+    writeFileSync(join(target, "REVIEW.md"), "# mine\n");
+    execFileSync("node", [join(here, "..", "install.mjs"), target], { stdio: "pipe" });
+    assert.equal(readFileSync(join(target, "REVIEW.md"), "utf8"), "# mine\n");
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /\.claude\/protocols\/CODE_REVIEW\.md/);
+    const rm = readFileSync(join(target, ".claude", "agents", "release-manager.md"), "utf8");
+    assert.match(rm, /Re-derive the risk tier from the diff yourself/);
+  });
+
+  test("the review evals are well-formed cases from real incidents", async () => {
+    const { readFileSync: rf } = await import("node:fs");
+    const raw = rf(join(here, "..", "..", "docs", "review-evals", "cases.toml"), "utf8");
+    const ids = [...raw.matchAll(/^id = "([^"]+)"/gm)].map((m) => m[1]);
+    assert.ok(ids.length >= 5);
+    assert.equal(new Set(ids).size, ids.length);
+    for (const key of ["source", "severity", "file", "change", "must_find"]) assert.equal([...raw.matchAll(new RegExp(`^${key} = `, "gm"))].length, ids.length, key);
   });
 
   test("the budget guard is installed and wired into settings", () => {
