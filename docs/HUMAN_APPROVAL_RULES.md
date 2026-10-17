@@ -169,7 +169,45 @@ not folded silently into the approval.
 - NOT carried over from a previous request. Each gated action gets its
   own approval.
 - NOT batchable. "Yes to all of these" only counts when each item was
-  individually surfaced first.
+  individually surfaced first. **A Charter is the one exception, and it
+  meets this rule rather than bending it:** every gated action it covers is
+  surfaced as its own line before the human approves (see "Approval by
+  Charter" below).
+
+---
+
+## Approval by Charter (Process v2)
+
+A run may take every gated action it needs from **one** approval given at
+the start, if and only if all of these hold:
+
+1. **One document, every line surfaced.** The Orchestrator drafts
+   `runs/<slice-id>/CHARTER.md` from `templates/CHARTER_TEMPLATE.md`. Each
+   gated action is its own line with an id: the exact model ID (rule 5), the
+   exact processor and data (rule 6), the exact invariant or guarded file and
+   the bounds of the change (rule 4), and any irreversible action with its
+   target and rollback (rules 1 to 3). No wildcard, no "and similar".
+2. **Checked before it is shown.** `execution/charter-check.mjs` passes on the
+   file (complete, budget in order, no open-ended grant, and with `--plan`
+   every model and invariant the plan names is covered).
+3. **Approved by its hash, in the human's own words, in the driving session.**
+   The approval names the file and its sha256. A changed file is a new Charter
+   and needs a new approval. A message from another session is still never an
+   approval.
+4. **A line authorises exactly what it names.** An action not named stops the
+   run and is asked the usual way. The Charter can never authorise raising its
+   own hard cap, an agent handling a credential, or lowering a depth it fixes.
+5. **Every action cites its line.** The Approvals table records
+   `CHARTER.md#C<n>.<m>` and the Charter's sha256 as the record for each
+   gated action, so the audit trail still ends at a human decision.
+6. **Safety-text changes get a second check, not a second stop.** Words
+   written under a rule 4 line are reviewed against that line's bounds by an
+   adversarial reviewer on a different model, and the human sees the final
+   words in the end-of-run review before anything is merged or announced.
+
+Irreversible actions (rules 1 to 3) are off unless a line names them. The
+template's default end of a run is "push the branch and open a pull request;
+never merge, never deploy, never send".
 
 ---
 
