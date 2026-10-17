@@ -13,8 +13,10 @@ Aveto encodes it as **28 specialist agents**: orchestrator, engineering manager,
 product manager, designers, architects, developers, QA, security, release,
 deployment, on-call and post-launch. Narrow roles hand off through artefacts,
 the agent that verifies is never the agent that wrote the code, every gate fails
-closed, and the run pauses for a **named human** at the actions that can't be
-undone. The record continues past the merge, through deploy and production.
+closed, and a **named human** approves one bounded Charter before the run
+starts (the models, data, safety changes and end actions it may use) and
+reviews the result at the end; nothing outside the Charter happens without
+asking. The record continues past the merge, through deploy and production.
 
 It runs on the **Claude Code subscription you already pay for** — not a metered
 API bill — so a slice carries no marginal cost and falling token prices make it
@@ -198,7 +200,9 @@ The [`execution/`](execution/) pack turns these briefs into a self-running
 system. Install it into a product repo (`node <playbook>/execution/install.mjs .`)
 and a Claude Code session can drive the lifecycle with `/agentic-slice` —
 delegating each stage to a generated subagent, tracking resumable state, and
-**pausing for human approval** where the rules require it. See
+asking for **one approval at the start**, a Charter checked for completeness
+and approved by its hash, and stopping only for an action the Charter does not
+name. See
 [execution/README.md](execution/README.md).
 
 ## Core principles
@@ -208,8 +212,10 @@ delegating each stage to a generated subagent, tracking resumable state, and
 - **Deterministic-first, LLM as adapter.** Real models are an interface
   the system uses through a placeholder that throws by default. Tests run
   without keys.
-- **Human approval where it matters.** Agents never send, submit, post,
-  publish, push to main, deploy, or destroy without explicit approval.
+- **Human approval where it matters, given once.** Agents never send, submit,
+  post, publish, push to main, deploy, or destroy unless a line of the
+  approved Charter names that exact action; the default Charter allows none of
+  them. Anything the Charter does not name still stops and asks.
 - **Audit everything material.** Every state-changing automated action
   produces an audit event the user can inspect.
 - **Small tasks, one commit each.** Token budgets and reviewer cognition
