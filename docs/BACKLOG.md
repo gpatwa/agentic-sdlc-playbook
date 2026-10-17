@@ -1558,6 +1558,14 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [ ] Rescore the review step against `docs/review-evals/` and record it in
         `RESULTS.md` (needs a session; not done).
   - [ ] Add owner touches per run and time to the first touch to the analytics.
+  - [ ] **Finding from the first real use (aveto-support `land-answerability`, 2026-10-17):**
+        the review caught the run's own C6.P allow rules (`git commit *`,
+        `git branch *`, `gh pr create *`) committed into the shared
+        `.claude/settings.json`, which would have shipped to `main`. Fixed in the
+        run. Rule for pack v24: setup writes C6.P rules to
+        `.claude/settings.local.json` (gitignored), never the shared file, and
+        `charter-check`/the Release Manager check that no allow rule from the
+        Charter is staged in a tracked settings file.
   - [ ] Decide later whether to use the Code Review GitHub App (Team and
         Enterprise plans only; the owner's plan is not known to qualify).
 
