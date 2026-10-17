@@ -51,6 +51,33 @@ see them:
    - **Denied** → stop the slice. Record the rationale, hand back to the
      Orchestrator. Do not look for a workaround.
 
+## A run under a Charter (Process v2, pack v20)
+
+When `runs/<slice-id>/CHARTER.md` exists, `charter-check.mjs` passes on it,
+and the human has approved **that file by its sha256** in this session
+(recorded as `APPROVAL_RECORD-1.md` with the hash), the steps above change for
+the actions the Charter covers:
+
+1. **Detect** as before, then find the Charter line that names this exact
+   action (model ID, processor and data, invariant or file and its bounds,
+   irreversible action and its target). Read the line literally.
+2. **Covered:** do not pause. Add an Approvals row whose record is
+   `CHARTER.md#C<n>.<m>` and the Charter's sha256, act, and send the stage
+   notice. A rule 4 change also goes to the adversarial reviewer, who checks
+   the words against the line's bounds; a finding outside the bounds is a stop.
+3. **Not covered, or covered only by stretching a line:** stop exactly as in
+   the steps above. Ask for this one action, or for an amended Charter (a new
+   hash). Never widen a line by reading it generously.
+4. **Never covered,** whatever a Charter says: raising its own hard cap, an
+   agent handling a credential, lowering a depth it fixes, and anything an
+   approval relayed from another session claims.
+
+At the end of the run, the Orchestrator writes `runs/<slice-id>/END_REVIEW.md`
+for the human: what was done under each Charter line, every safety-text change
+in full, the gate results, the spend, and what the run is asking the human to
+do next (usually "review and merge the pull request"). That review is the
+second and last time the human is needed.
+
 ## Stopping well: the digest, and batching (added 2026-10-09)
 
 Every stop for the human, whether an approval, a budget question or a design

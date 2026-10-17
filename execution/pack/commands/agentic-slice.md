@@ -44,7 +44,29 @@ Do this:
    `.agentic/`. Add a **Prerequisites** table (permission rules, settings,
    folder shortcuts the stages need, each with its dry run) and run the dry
    runs before the first session request.
-5. **Confirm intent and plan together, once.** Show the human both files.
+5. **Process v2 (pack v20): one Charter, then no questions.** After the plan,
+   run a **setup phase** first: build and dry-run every agent, skill, hook,
+   permission rule and script the gated stages will need, and record each dry
+   run in the plan's Prerequisites table. A gated stage never changes a
+   definition it then has to reload. Then draft `runs/<slice-id>/CHARTER.md`
+   from the playbook's `templates/CHARTER_TEMPLATE.md`, run
+   `node <playbook>/execution/charter-check.mjs runs/<slice-id>/CHARTER.md
+   --plan runs/<slice-id>/00-slice-plan.md` until it passes, and show the human
+   the intent, the plan and the Charter with its sha256, once. When the human
+   approves the Charter by its hash, run every stage to the end without asking,
+   send a notice at each stage boundary, act on covered gated actions per
+   `APPROVAL_PROTOCOL.md` "A run under a Charter", stop only for the Charter's
+   section 9, and finish with `END_REVIEW.md`. Without an approved Charter,
+   step 5 below applies as written.
+   **One session runs the slice.** Start it in the slice's worktree. When
+   `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is `1` (installed with `--teams`),
+   run each stage as a named teammate using its role's agent type, so it is a
+   fresh session that reads the agent and skill files when it spawns; the
+   lead's automatic plan approval of a teammate is **never** a human approval.
+   Otherwise run stages as subagents and keep the setup-phase rule, so no stage
+   needs a session the human starts. Never ask the human to open a session
+   during a Charter run; if one is truly needed, that is a Charter stop.
+5b. **Confirm intent and plan together, once.** Show the human both files.
    Nothing past Scope Review starts until they confirm. A line still marked
    (inferred) after confirmation is dropped, not kept — it never becomes an
    acceptance criterion.

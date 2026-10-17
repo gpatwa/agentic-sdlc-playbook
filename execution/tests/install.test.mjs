@@ -260,6 +260,38 @@ describe("install.mjs — pack integrity", () => {
     assert.match(proto, /The\s+notice is not an approval and not a relay of one/);
   });
 
+  test("pack v20: a run under an approved Charter asks nothing for covered actions and ends with a review", () => {
+    const proto = readFileSync(join(target, ".claude", "protocols", "APPROVAL_PROTOCOL.md"), "utf8");
+    assert.match(proto, /A run under a Charter/);
+    assert.match(proto, /approved \*\*that file by its sha256\*\*/);
+    assert.match(proto, /Never widen a line by reading it generously/);
+    assert.match(proto, /raising its own hard cap, an\s+agent handling a credential, lowering a depth it fixes/);
+    assert.match(proto, /END_REVIEW\.md/);
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /\*\*setup phase\*\*/);
+    assert.match(cmd, /charter-check\.mjs/);
+    assert.match(cmd, /A gated stage never changes a\s+definition it then has to reload/);
+    const state = readFileSync(join(target, ".claude", "protocols", "SLICE_STATE.md"), "utf8");
+    assert.match(state, /\*\*Charter:\*\*/);
+  });
+
+  test("pack v20: one session runs the slice, and --teams turns on agent teams for this repo only", () => {
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /\*\*One session runs the slice\.\*\*/);
+    assert.match(cmd, /\*\*never\*\* a human approval/);
+    assert.match(cmd, /Never ask the human to open a session\s+during a Charter run/);
+    const plain = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));
+    assert.equal(plain.env?.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS, undefined);
+    const t2 = join(tmpdir(), `aveto-teams-${process.pid}-${Date.now()}`);
+    mkdirSync(join(t2, ".agentic"), { recursive: true });
+    for (const f of ["PROJECT_CONTEXT.md", "SAFETY_INVARIANTS.md", "LOCAL_COMMANDS.md", "CURRENT_MVP_STATUS.md"]) writeFileSync(join(t2, ".agentic", f), "# x\n");
+    execFileSync("node", [join(here, "..", "install.mjs"), t2, "--teams"], { stdio: "pipe" });
+    const withTeams = JSON.parse(readFileSync(join(t2, ".claude", "settings.json"), "utf8"));
+    assert.equal(withTeams.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS, "1");
+    assert.match(JSON.stringify(withTeams), /budget-guard/);
+    rmSync(t2, { recursive: true, force: true });
+  });
+
   test("the budget guard is installed and wired into settings", () => {
     assert.ok(existsSync(join(target, ".claude", "hooks", "budget-guard.mjs")));
     const settings = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));

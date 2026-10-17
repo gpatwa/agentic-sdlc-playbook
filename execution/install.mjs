@@ -23,9 +23,14 @@ const packDir = join(here, "pack");
 
 const args = process.argv.slice(2);
 const greenfield = args.includes("--greenfield");
+// --teams (Process v2, pack v20): turn on Claude Code agent teams for this repo
+// only, so the Orchestrator can run each stage as a fresh teammate session and
+// the human never starts a session by hand. Experimental in Claude Code; off
+// unless asked for, and written to the repo's own .claude/settings.json.
+const teams = args.includes("--teams");
 const productDir = args.find((a) => !a.startsWith("--"));
 if (!productDir) {
-  console.error("usage: node <playbook>/execution/install.mjs <product-dir> [--greenfield]");
+  console.error("usage: node <playbook>/execution/install.mjs <product-dir> [--greenfield] [--teams]");
   process.exit(1);
 }
 
@@ -206,6 +211,12 @@ if (settings) {
     });
     writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
   }
+  if (teams && settings.env?.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS !== "1") {
+    settings.env ??= {};
+    settings.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+    writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
+    console.log("  agent teams      : on (CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 in .claude/settings.json)");
+  }
 }
 
 // Harness-local paths a product repo should never commit: worktrees the
@@ -236,7 +247,7 @@ writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
 // Pack version. Bump when a regeneration changes what agents *do* — new
 // frontmatter the harness acts on, a changed tool boundary, a protocol whose
 // absence would change a decision. Cosmetic edits do not earn a bump.
-const PACK_VERSION = 19;
+const PACK_VERSION = 20;
 
 // Read the previous install back before overwriting it. Until now this field
 // was written and never read, so a product repo could drift arbitrarily far

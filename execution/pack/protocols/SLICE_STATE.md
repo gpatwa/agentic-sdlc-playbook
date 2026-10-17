@@ -33,6 +33,7 @@ the originating conversation.
 - **Status:** <in-progress / blocked-on-approval / blocked-on-failure / done>
 - **Least-privilege:** <enforced / declared> — see "Least-privilege tier" below
 - **Telemetry:** <otel / self-reported> — see `TELEMETRY.md`
+- **Charter:** <none / runs/<slice-id>/CHARTER.md, sha256 <hash>, approved in APPROVAL_RECORD-1> — see `APPROVAL_PROTOCOL.md` "A run under a Charter"
 - **Started:** <UTC>  ·  **Updated:** <UTC>
 
 ## Stages
