@@ -59,6 +59,9 @@ agentic-sdlc/
     RELEASE_GATES.md               ← merge / release / launch gates
     OPERATING_MODEL.md             ← cadence, scope, context discipline
     HUMAN_APPROVAL_RULES.md        ← what a human MUST approve, always
+    CODE_REVIEW.md                 ← the review layer: tiers from the diff, bounded rounds, evals from real incidents
+    PROCESS_V2_PLAN.md             ← one Charter approval at the start, a review at the end
+    review-evals/                  ← past mistakes as test cases for the review step
   agents/                          ← role briefs, one per agent
     orchestrator.md
     market-researcher.md
@@ -90,6 +93,7 @@ agentic-sdlc/
     customer-support.md            ← enterprise overlay
   templates/                       ← fill-in-the-blank artefacts
     INTENT_TEMPLATE.md             ← start here — the one page the human writes
+    CHARTER_TEMPLATE.md            ← the one approval of a Process v2 run, approved by its hash
     DISCOVERY_BRIEF_TEMPLATE.md
     PRD_TEMPLATE.md
     FEATURE_SPEC_TEMPLATE.md
