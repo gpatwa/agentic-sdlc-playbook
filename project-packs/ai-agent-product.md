@@ -126,6 +126,14 @@ questions the designer had seen and 47–69% on questions it hadn't:
 
 ## Anti-patterns specific to AI agent products
 
+- **User text spliced into a shell line.** A skill that injects command output
+  with a `` !`...` `` line must never put `$ARGUMENTS` (or any caller text)
+  inside that command, quoted or not: a `'` breaks out before the script's own
+  checks run (reference app slice 7, Security finding S5). Take a fixed id the
+  script validates against a committed list, or pass the text through a file the
+  caller writes, and test the injection with a hostile argument in the setup
+  phase.
+
 - Wiring a real model client because "it's just for testing".
 - Letting the placeholder return a fake successful response.
 - Using the LLM to fill a field the user must verify.
