@@ -1280,6 +1280,18 @@
         <p>Shown an unsafe ask, it refused at intake. Shown an impossible one, it bounded the failure and escalated &mdash; without weakening a gate. Earlier, discovery caught a correctness trap before a line of code existed, and QA found a bug whose proposed fix Security then proved insufficient.</p>
       </div>
     </div>
+    <div class="cap" style="border-bottom:none;padding-bottom:0">
+      <div>
+        <div class="cap-num">A third app, built in public</div>
+        <h3>It failed its own gates three times before one passed.</h3>
+        <p>Aveto&rsquo;s support agent (<a href="https://github.com/gpatwa/aveto-support">aveto-support</a>) was built slice by slice with the question &ldquo;when do the docs <em>not</em> answer?&rdquo; held out in advance. Three held-out retrieval gates and one abstention attempt failed, and each failure was recorded as a result, not tuned away. A seventh slice, an attended judge on a Claude subscription, then passed on a set it had never seen: <strong>24 of 24</strong> unanswerable questions refused, <strong>16 of 19</strong> answerable ones kept. It passed the second bar by one question, and the page says so.</p>
+      </div>
+      <div>
+        <div class="cap-num">One approval, then a review</div>
+        <h3>A Charter replaces a prompt at every step.</h3>
+        <p>In Process v2 the human approves one bounded Charter by its hash &mdash; the models, data, safety changes and end actions a run may use &mdash; and reviews the result. A real run landed that judge step through a tier 3 gate and opened a pull request after <strong>one typed message</strong>. Its own code review caught the run&rsquo;s permission rules about to ship in a tracked file, and fixed them before the PR.</p>
+      </div>
+    </div>
   </section>
 
   <section id="evidence">
@@ -1349,7 +1361,14 @@
         <div class="hold-mark">04</div>
         <div>
           <h4>Not yet proven.</h4>
-          <p>Real-cloud deploy against a live subscription and production SLOs, enterprise multi-tenancy, and a real model wired into a shipped feature. The deployment and production-verification roles exist and are specified; they have not been run against live infrastructure. Each is listed as open in the validation matrix &mdash; none are claimed here.</p>
+          <p>Real-cloud deploy against a live subscription and production SLOs, enterprise multi-tenancy, and a real model running unattended inside a shipped feature. (A real model does run in one attended, internal feature: the answerability judge, started by a person.) The deployment and production-verification roles exist and are specified; they have not been run against live infrastructure. Each is listed as open in the validation matrix &mdash; none are claimed here.</p>
+        </div>
+      </div>
+      <div class="hold">
+        <div class="hold-mark">05</div>
+        <div>
+          <h4>The newest evidence is small.</h4>
+          <p>Process v2 has two runs behind it, one tiny and one real. The judge step passes its gate by a single question on a 19-question denominator, and retrieval itself finds the right file for 79.2% of answerable questions, just under its own bar. There is no data-processing agreement with the model provider, so the step is for public docs and internal use. A person still starts each run and decides the merge.</p>
         </div>
       </div>
     </div>
@@ -1362,6 +1381,15 @@
       <details open>
         <summary>Is this a coding agent?</summary>
         <p>No. Aveto directs the agents you already use rather than replacing them. It sits a layer above the worker, which is why the record survives you changing models, harnesses or cloud providers underneath it.</p>
+      </details>
+      <details>
+        <summary>Do I have to approve every step?</summary>
+        <p>No. You approve one <strong>Charter</strong> at the start: the exact models, data processors, safety-control changes, permission rules, budget and end actions the run may use, checked for completeness and approved by its hash. After that the run asks nothing; it stops only for an action the Charter does not name, for spend past its hard cap, or for a credential. At the end you review what was done under each line.</p>
+        <p>The default Charter allows no merge, no deploy and no send: a run ends by opening a pull request for you. An approval typed in another session still does not count, and a review by an agent is never a person&rsquo;s approval. Process v2 is new: it has two runs behind it, and the page above says what is not yet proven.</p>
+      </details>
+      <details>
+        <summary>Is code review part of it?</summary>
+        <p>Yes, as a layer around the review Claude Code already provides, not a new reviewer. Every Charter run reviews its own diff with a reviewer that did not write it, sets a risk tier from the change (safety text, permissions, hooks and CI are always high), bounds the fix-and-review rounds at three, and records each finding as fixed, rejected or intentional. Past mistakes become test cases for the review step. The playbook is <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/CODE_REVIEW.md">docs/CODE_REVIEW.md</a>.</p>
       </details>
       <details>
         <summary>How does this relate to Anthropic&rsquo;s AI-Native SDLC course?</summary>
