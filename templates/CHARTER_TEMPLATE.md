@@ -41,7 +41,13 @@ against these bounds and shown to the human in the end-of-run review.
 ## 6. Prerequisites (set once in the setup phase, each with its dry run)
 | id | What | Why | Dry run that proves it |
 |---|---|---|---|
-| C6.1 | <permission rule, setting, folder shortcut> | <stage that needs it> | <command and expected result> |
+| C6.P | <Permissions: how no app permission prompt interrupts the run: the exact allow rules written to `.claude/settings.json` (a fixed command prefix, a wildcard only at the end, for example `Bash(npm test *)`), or the permission mode the session runs in> | <every stage> | <each allowed command run once in setup, no prompt shown> |
+| C6.1 | <setting, folder shortcut, or other prerequisite> | <stage that needs it> | <command and expected result> |
+
+> C6.P is required. A permission prompt during the run is a Charter miss, recorded
+> in the end review. A rule with a wildcard before or inside the command (for
+> example `Bash(uv run * python * x.py *)`) is refused by `charter-check`: it can
+> allow any command.
 
 ## 7. Depth (may not be lowered)
 - **C7.1** Security Review: <smoke | standard | adversarial>

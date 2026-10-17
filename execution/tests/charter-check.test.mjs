@@ -35,7 +35,8 @@ const complete = `# Charter: demo-slice
 ## 6. Prerequisites (set once in the setup phase, each with its dry run)
 | id | What | Why | Dry run that proves it |
 |---|---|---|---|
-| C6.1 | allow rule for the helper | stage 5 | run the helper on r001, expect exit 0 |
+| C6.P | allow rules in \`.claude/settings.json\`: \`Bash(uv run pytest *)\`, \`Bash(git push origin slice/demo)\` | every stage | each run once in setup, no prompt |
+| C6.1 | folder shortcut to the worktree | stage 5 | ls the shortcut, expect the agents dir |
 
 ## 7. Depth (may not be lowered)
 - **C7.1** Security Review: adversarial
@@ -88,6 +89,17 @@ describe("charter-check", () => {
 
   test("mcp__* inside a deny-list direction is not treated as a wildcard grant", () => {
     assert.equal(checkCharter(complete).errors.filter((e) => /open-ended/.test(e)).length, 0);
+  });
+
+  test("C6.P (how app permission prompts are prevented) is required", () => {
+    const r = checkCharter(complete.replace(/\| C6\.P \|[^\n]*\n/, ""));
+    assert.ok(r.errors.some((e) => /no C6\.P row/.test(e)), r.errors.join("; "));
+  });
+
+  test("a permission rule with a wildcard before or inside the command is refused; a trailing one is fine", () => {
+    const bad = checkCharter(complete.replace("\`Bash(uv run pytest *)\`", "\`Bash(uv run -q --project * python * seen_payload.py *)\`"));
+    assert.ok(bad.errors.some((e) => /permission rule allows any command/.test(e)), bad.errors.join("; "));
+    assert.equal(checkCharter(complete).errors.filter((e) => /permission rule/.test(e)).length, 0);
   });
 
   test("with --plan, a model or invariant the plan names must be in the charter", () => {

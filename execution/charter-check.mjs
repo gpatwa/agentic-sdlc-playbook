@@ -42,7 +42,8 @@ export function checkCharter(text, planText = null) {
     if (!s) { errors.push(`section ${n} (${name}) is missing`); continue; }
     if (!s.title.toLowerCase().startsWith(name.toLowerCase())) errors.push(`section ${n} should be "${name}", found "${s.title}"`);
     if (n <= 8 && n !== 6 && !new RegExp(`\\*\\*C${n}\\.\\d+`).test(s.body)) errors.push(`section ${n} (${name}) has no C${n}.x line`);
-    if (n === 6 && !/\|\s*C6\.\d+\s*\|/.test(s.body) && !/\*\*C6\.0/.test(s.body)) errors.push("section 6 (Prerequisites) has no C6.x row (write C6.0 None if there are none)");
+    if (n === 6 && !/\|\s*C6\.(\d+|P)\s*\|/.test(s.body) && !/\*\*C6\.0/.test(s.body)) errors.push("section 6 (Prerequisites) has no C6.x row (write C6.0 None if there are none)");
+    if (n === 6 && !/\|\s*C6\.P\s*\|/.test(s.body)) errors.push("section 6 has no C6.P row: say how no app permission prompt will interrupt the run (allow rules or the permission mode)");
   }
 
   // Placeholders and blank fields anywhere outside the leading quote block.
@@ -51,12 +52,29 @@ export function checkCharter(text, planText = null) {
   if (ph) errors.push(`placeholder(s) left: ${[...new Set(ph)].slice(0, 5).join(", ")}`);
   for (const m of body.matchAll(/^\s*-\s*\*\*(C\d+\.\d+)[^*]*\*\*\s*:?\s*$/gm)) errors.push(`${m[1]} has no value`);
 
+  // Permission rules (section 6): a fixed command prefix, a wildcard only at the end.
+  const permRule = /`(\w+)\(([^`]*)\)`/g;
+  for (const line of (sections.get(6)?.body || "").split("\n")) {
+    if (line.trimStart().startsWith(">")) continue; // explanatory quote, not a grant
+    for (const m of line.matchAll(permRule)) {
+      const inner = m[2].trim();
+      const stem = inner.replace(/(\s\*|:\*)$/, "");
+      if (stem.includes("*")) errors.push(`permission rule allows any command (wildcard before or inside it): ${m[0]}`);
+      if (!stem.trim()) errors.push(`permission rule has no command prefix: ${m[0]}`);
+    }
+  }
+
   // Granting lines must be exact.
   for (const n of GRANTING) {
     const s = sections.get(n);
     if (!s) continue;
     for (const line of s.body.split("\n")) {
-      if (!/C\d+\.\d+/.test(line)) continue;
+      if (!/C\d+\.(\d+|P)/.test(line)) continue;
+      if (n === 6) {
+        const noRules = line.replace(/`\w+\([^`]*\)`/g, "");
+        if (WILDCARD.test(noRules.replace(/`[^`]*`/g, ""))) errors.push(`open-ended grant in section 6: ${line.trim().slice(0, 100)}`);
+        continue;
+      }
       if (WILDCARD.test(line.replace(/`[^`]*`/g, (c) => (c.includes("*") && !/mcp__\*/.test(c) ? " * " : "")))) {
         errors.push(`open-ended grant in section ${n}: ${line.trim().slice(0, 100)}`);
       }
