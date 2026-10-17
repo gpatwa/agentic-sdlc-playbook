@@ -1187,6 +1187,14 @@ from the run" pattern as effort / operator / executor / gateCatches.
             the fifth set (24/24, 16/19) and closed on 2026-10-16 as an internal
             candidate not cleared to land at tier 3 (T1 to T11 deferred to the
             next Charter); branch `claude/docs-answerability-2` pushed, not merged.
+            The **landing run** (`land-answerability`, the first run under Process
+            v2, 2026-10-17) closed T1 to T11 under one Charter, opened PR #4, and
+            the owner merged it (`a6ffbcc`, a merge commit): the judge step is on
+            `main` as an attended, tier 3, internal-use feature (DPA waived, not
+            met; the retrieval limit stated). Open: the compliance and
+            change-request approver boxes; AI Governance's Art. 50 question; the
+            operator path (`/aveto-judge`) has never been measured live; no CI on
+            aveto-support yet.
             **INV-3, the draft checker** (a draft is checked against its
             sources by a different model from the one that wrote it): cannot
             be built or gated with no drafter, so it belongs to the drafting
@@ -1541,7 +1549,17 @@ from the run" pattern as effort / operator / executor / gateCatches.
   approval, except in the beginning to agree on the plan").* Plan:
   `docs/PROCESS_V2_PLAN.md`. Reference-app slices are **paused after slice 7**
   until pack v20 passes a dry run on a toy repo with one owner touch.
-  - [ ] Owner decides the three questions in the plan's section 6.
+  - [x] Owner decided the three questions in the plan's section 6 (adopt Process
+        v2; open a PR at the end of a run; pause new slices until a dry run).
+  - [x] Dry run on `streak-seed` (one Charter message, then a local commit) and a
+        real run on aveto-support (one Charter message, then PR #4, merged).
+  - [ ] Remove the last manual step (the first session start): test Claude
+        Projects or scheduled tasks; scheduled tasks need the owner's decision on
+        unattended operation after Anthropic's terms are read.
+  - [ ] Add a CI workflow to aveto-support (`docs-retrieval-ci`; any exit 134 fails
+        the build, no retry wrapper).
+  - [ ] Mark lines that record an owner position in a drafted Charter as
+        "(drafted, unconfirmed)" (L49).
   - [ ] Pack v20: Charter template and check; approval protocol around the
         Charter; setup phase; stage-boundary notice; single-session Orchestrator.
   - [ ] T28 agent-teams test; dry run on a seed repo; then site and README.
