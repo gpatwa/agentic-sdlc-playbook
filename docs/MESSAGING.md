@@ -1,6 +1,6 @@
 # Messaging: what Aveto says, to whom, and how we know it is true
 
-> **Status: proposed 2026-10-18, not yet applied to the site or README.** It
+> **Status: applied to the site and README 2026-10-18 (pending push and deploy).** It
 > replaces the scattered positioning notes with one guide. The position it keeps
 > is the owner's (2026-09-18): *anyone shipping software can have the engineering
 > process of a large engineering organisation.* What it changes is the story

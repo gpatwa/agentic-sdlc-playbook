@@ -6,6 +6,11 @@
 > GitHub). Severity: **A** states something false or unsupported; **B** is stale
 > against Process v2 or the evidence; **C** is consistency.
 
+> **Applied 2026-10-18 (working tree, on the owner's "apply 1 and 2" and "and 3"):**
+> R1 to R10 (the reference docs), P1 to P7 (README and site), and F0. Open:
+> S2 (read aveto-support's README as a newcomer). Nothing is public until it is
+> pushed and the site deploy is approved.
+
 ## Found and fixed while auditing
 
 | # | Where | Finding | Sev | Status |
