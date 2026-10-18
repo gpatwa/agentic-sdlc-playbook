@@ -2,10 +2,11 @@
 
 **The AI-native SDLC, in one install.**
 
-Ship like FAANG. No badge required. Great software shouldn't need a big company.
+Ship with the review process of a big engineering team. No badge required. Great
+software shouldn't need a big company.
 
-At FAANG scale, nothing reaches production until an architect, an independent
-reviewer, security and a release gate have all signed off. That process — not
+In a large engineering organisation, nothing reaches production until an architect,
+an independent reviewer, security and a release gate have all signed off. That process — not
 the headcount — is what separates a demo from production software, and until
 now almost nobody outside those companies could run it.
 
@@ -19,8 +20,9 @@ reviews the result at the end; nothing outside the Charter happens without
 asking. The record continues past the merge, through deploy and production.
 
 It runs on the **Claude Code subscription you already pay for** — not a metered
-API bill — so a slice carries no marginal cost and falling token prices make it
-cheaper to run without anything changing here. Today it is built for one person
+API bill — so there is no separate API charge. A run spends your plan's usage
+window and checkpoints at every stage, so one that reaches a limit resumes where
+it stopped; falling token prices make it cheaper to run without anything changing here. Today it is built for one person
 on one subscription; shared team gates, a cross-developer run inventory and the
 conformity export are **roadmap, not shipped** (`docs/VALIDATION_MATRIX.md`
 marks exactly what has been run and what hasn't).
@@ -242,6 +244,18 @@ suite missed, caught before it shipped — `saved-item-folders`), real
 budget overruns recorded honestly rather than smoothed over. `docs/VALIDATION_MATRIX.md`
 is the narrative account; `runs/*/trace.json` in either repo is the
 primary evidence.
+
+A third repo, [`aveto-support`](https://github.com/gpatwa/aveto-support), is the
+product Aveto builds about itself, in public: nine traced runs, held-out gates
+fixed before each run, and the failures recorded as results. Four pre-registered
+checks failed (two retrieval gates, then two attempts to know when the docs do
+not answer) before an attended judge, run in the operator's own Claude Code
+session, passed a set it had never seen: 24 of 24 unanswerable questions refused
+and 16 of 19 answerable ones kept, the second bar by one question, with retrieval
+finding the right file for 19 of 24 (79.2%, under its own bar). It reached `main`
+through the first run under a Charter (one typed approval, then a pull request) as
+an internal, tier 3 feature with no data-processing agreement and nothing deployed.
+See `docs/LESSONS.md` L47 to L51.
 
 *(An earlier pointer here named `agentic-job-ops` as "the first reference
 implementation." That repo has a `.agentic/` folder and zero runs — it was
