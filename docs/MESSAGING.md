@@ -86,8 +86,11 @@ fixed *before* the run; and the limits sit beside the claims.
   - *autonomous* unqualified (say: "runs to a pull request after one approval");
   - *no marginal cost* / *free* (the plan's usage window is the currency; a run
     can hit a limit and pause);
-  - *enterprise-ready*, *FAANG-grade*, *Google-quality* (a comparison we cannot
-    support, and it names other companies; say what the process contains);
+  - *enterprise-ready*, *FAANG-grade*, *Google-quality*, *Ship like FAANG* (an
+    outcome comparison we cannot support). **The descriptive use is kept** (owner,
+    2026-10-18): "At FAANG scale, nothing reaches production until an architect, an
+    independent reviewer, security and a release gate have all signed off" is a
+    statement about how large organisations work, not a promise about our output;
   - *certified*, *compliant*, *secure by design* (we record and review; we do not certify);
   - *replaces engineers / reviewers* (humans own direction, risk and outcome);
   - *governance, framework, methodology* in headlines (jargon; the roles that use
