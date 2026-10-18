@@ -5,8 +5,8 @@
 Ship with the review process of a big engineering team. No badge required. Great
 software shouldn't need a big company.
 
-In a large engineering organisation, nothing reaches production until an architect,
-an independent reviewer, security and a release gate have all signed off. That process — not
+At FAANG scale, nothing reaches production until an architect, an independent
+reviewer, security and a release gate have all signed off. That process — not
 the headcount — is what separates a demo from production software, and until
 now almost nobody outside those companies could run it.
 
