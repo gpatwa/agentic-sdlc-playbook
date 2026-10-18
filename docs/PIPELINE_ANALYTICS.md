@@ -54,6 +54,16 @@ duplication; the generator holds the machine copy, the protocol the prose one).
 - The email-digest Tier-3 "miss" was a **false alarm** of the old flat budget.
 - llm-summary's overage is **100% one stage** (FinOps). The detectors isolate it.
 
+## Human attention: owner touches
+
+The measure Process v2 holds itself to is how often a run needs a person. Count
+**owner touches** per run: each message the human types in the run's session after
+`/agentic-slice` (the target is the Charter approval alone), plus the end review.
+Also report **time to the first touch** and **questions asked after the Charter**
+(the target is zero). `END_REVIEW.md` carries the last one; the other two come from
+the session transcript. `analyze.mjs` does not yet compute them: that is a separate
+item (`docs/BACKLOG.md` T30).
+
 ## Not yet
 
 - **Live emission** — the two runs above were backfilled; the mechanism

@@ -24,6 +24,15 @@ deferred items aren't lost between reviews — it's the counterpart to
 | Cheap-evaluator handoff checks (Galileo pattern) | A haiku-class validator on each artefact handoff — continuous evals of the pipeline itself; gives the routing table's haiku tier a standing job | ✅ applied — `HANDOFF_CHECK.md` protocol |
 | Agent/run inventory (control-plane pattern) | `runs/INDEX.md` + a fleet section in `agentic.config.json` | ✅ applied — `RUN_INVENTORY.md` + `/agentic-status` |
 
+## Anthropic pages we depend on (re-read before any launch, and every quarter)
+
+| Page | What we rely on | Re-read because |
+|------|-----------------|-----------------|
+| Trademark guidelines (anthropic.com/legal/trademark-guidelines) | Use marks only as permitted; never alter them; no implied sponsorship or affiliation | They do not address factual references, so ours stay minimal and logo-free (`docs/MESSAGING.md` section 7) |
+| Agent SDK overview, "Branding guidelines" | No "Claude Code" in product names; no look-alike visuals; no third-party claude.ai login or rate limits | Aveto does not use the SDK; it applies in full if that changes |
+| Agent teams, cross-session messaging, agent view (code.claude.com docs) | One session can run named teammates; a message is never an approval | Experimental or changing |
+| *Building effective agents*, the safe-agents framework, *Solving code review at Anthropic* | Shared vocabulary; humans in control; review scaled to risk | They set the bar the messaging claims to meet or beat |
+
 ## Watch (no action yet — building now would be rework)
 
 | Development | Status | Re-evaluate when |

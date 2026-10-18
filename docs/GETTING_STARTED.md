@@ -10,11 +10,14 @@ Not "faster code." A **record** — one that survives the session that
 produced it and answers questions nobody thought to ask while it was being
 written:
 
-- **A named human on every consequential decision**, not a role. Every
-  approval — ship this, deploy this, send this — is a durable artefact:
-  who, what exactly they approved, when, and their answer verbatim. See
-  `docs/HUMAN_APPROVAL_RULES.md` for which actions require this and
-  `execution/pack/protocols/APPROVAL_PROTOCOL.md` for how the pause works.
+- **A named human on every consequential decision**, not a role. You approve
+  one **Charter** at the start, by its sha256: the models, data, safety changes
+  and end actions the run may use. Every action under it cites the Charter line
+  that allows it, and anything it does not name still stops and asks. Each
+  approval is a durable artefact: who, what exactly they approved, when, and
+  their answer verbatim. See `docs/HUMAN_APPROVAL_RULES.md` ("Approval by
+  Charter") for the rules and `execution/pack/protocols/APPROVAL_PROTOCOL.md`
+  for how a run stops.
 - **Verification that didn't write the code it's checking.** QA and
   Security run as separate agents from Implementation, reading the diff
   cold. `docs/RELEASE_GATES.md` is the full gate map; a failed gate sends
@@ -146,9 +149,10 @@ release gate run on every path; QA checks each "done means" line exactly as
 you wrote it.
 
 The session becomes the Orchestrator: plans the slice, writes
-`runs/<slice-id>/STATE.md`, and delegates each stage to its subagent. A
-gated action pauses and waits — no timeout auto-approves; silence is not
-consent. `/agentic-status [slice-id]` checks where a slice stands;
+`runs/<slice-id>/STATE.md`, and delegates each stage to its subagent. Under
+an approved Charter, a gated action the Charter names proceeds and cites its
+line; one it does not name pauses and waits — no timeout auto-approves; silence
+is not consent. `/agentic-status [slice-id]` checks where a slice stands;
 `/agentic-resume <slice-id>` continues one cold, from a different session
 if needed — the entire point of `STATE.md` being durable.
 
@@ -172,10 +176,25 @@ records). Expect the first to be ten to fifty times the second.
 `runs/CONFORMITY.md` is the artefact to hand someone who asks "how do you
 know a human approved this."
 
-## Running with two sessions (optional)
+## One session per slice
 
-A long slice is cheaper and calmer split across two Claude Code sessions on
-the same machine. This is how the aveto-support reference app was built.
+With pack v20 and later, one session runs the whole slice. Start it in the
+product repo (or a worktree of it), check the folder shown under the session
+name, and use the desktop app, not the terminal client, whose only login here is
+the API (metered). You type `/agentic-slice <intent>`, approve the Charter by its
+hash, and review `runs/<slice>/END_REVIEW.md` at the end; the run ends in a pull
+request and the merge is yours. Each stage runs as a fresh agent read from the
+repo's `.claude/agents/` when it starts, so you open no other session. Run
+`install.mjs --teams` to run stages as named teammates. The Orchestrator's setup
+phase builds and tests every agent, skill and permission rule before the gated run,
+so nothing it needs changes mid-run.
+
+## Running with two sessions (optional; the model before Process v2)
+
+A long slice can also be split across two Claude Code sessions on the same
+machine. This is how the aveto-support reference app was built up to its
+landing run. Process v2 makes the support session unnecessary during a run; use
+this only if you want one for research and eval drafting.
 
 | Session | Rooted in | Does |
 |---|---|---|

@@ -94,6 +94,7 @@ system definition.
 | `examples/` | A **captured run** of the whole pipeline | `saved-items-bulk-delete/` — one slice traced through every stage, with a sample `.agentic/` |
 | `.agentic/` *(lives in the product repo)* | **Per-product context/state** read by every node | `PROJECT_CONTEXT`, `SAFETY_INVARIANTS`, `LOCAL_COMMANDS`, `CURRENT_MVP_STATUS` |
 | `execution/` | **Runtime** — compiles the methodology into an executable pack | `install.mjs` (generates `.claude/` agents + protocols + hooks), `analyze.mjs` (renders analytics from telemetry), `hooks/budget-guard.mjs`, `pack/protocols/` (9 protocols) |
+| Approval and review layer | **How a run is allowed to act, and how its changes are checked** | `templates/CHARTER_TEMPLATE.md` + `execution/charter-check.mjs` (one approval, by hash), `execution/pack/protocols/CODE_REVIEW.md` + `docs/CODE_REVIEW.md` (tiers, bounded rounds, the finding record), `docs/review-evals/` (past mistakes as tests) |
 | `runs/` *(lives in the product repo)* | **Execution record + telemetry** | `<slice>/STATE.md` (durable, resumable), `<slice>/trace.json` (machine-readable), the stage artefacts, `ANALYTICS.md` + `dashboard.html` (generated) |
 
 ## View 3 — Execution & the feedback loop

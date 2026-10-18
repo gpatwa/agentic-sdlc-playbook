@@ -148,6 +148,16 @@ short — what was tried, what happened, what's next — not a narrative.
 
 ---
 
+## Charter runs
+
+With pack v20 and later a run needs the human twice: to approve one Charter at the
+start, by its sha256, and to review `END_REVIEW.md` at the end. In between the
+run asks nothing; it stops only for an action the Charter does not name, for
+spend past its hard cap, or for a credential. The default Charter ends a run in a
+pull request and allows no merge, deploy or send. One session runs the slice, and a
+notice (not a question) marks each stage boundary. See `docs/HUMAN_APPROVAL_RULES.md`
+("Approval by Charter") and `docs/PROCESS_V2_PLAN.md`.
+
 ## When the rules conflict
 
 If two rules conflict, prefer in this order:

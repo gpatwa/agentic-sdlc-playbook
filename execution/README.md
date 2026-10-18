@@ -14,6 +14,7 @@ execution/
   analyze.mjs              ← renders ANALYTICS.md + dashboard.html from runs/*/trace.json
   conformity.mjs           ← renders CONFORMITY.md — who authorized what, mapped to SOC 2
   verify-approvals.mjs     ← checks a conformity claim's GitHub PR references against GitHub itself
+  charter-check.mjs        ← checks a Charter is complete (and covers the plan) and prints its sha256, the hash the human approves
   otlp-probe.mjs           ← stands in as an OTLP endpoint to check TELEMETRY.md against reality
   ADAPTERS.md              ← provider-adapter contract (this pack = the Claude Code adapter)
   pack/
@@ -27,6 +28,12 @@ execution/
       MODEL_ROUTING.md     ← per-role model defaults, tier + failure escalation
       PIPELINE_SLOS.md     ← SLOs + DORA metrics for the SDLC itself
       TELEMETRY.md         ← OTel enablement + which trace fields the runtime supplies
+      RUN_ECONOMICS.md     ← the budget check before each spend; measured stage costs and ratios
+      RUN_INVENTORY.md     ← the fleet view across runs
+      HANDOFF_CHECK.md     ← cheap checks on each artefact handoff
+      CODE_REVIEW.md       ← the review layer: tier from the diff, bounded rounds, the finding record
+      SESSION_REQUEST.md   ← when a stage truly needs a session the human starts, and how to ask
+    REVIEW.md              ← starter rules for the repo's reviews (never overwritten)
   README.md                ← you are here
 ```
 

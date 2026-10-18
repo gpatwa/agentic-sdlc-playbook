@@ -212,7 +212,9 @@ log-leak risks must be addressed before this stage passes.
 **Output:** Filled `templates/RELEASE_CHECKLIST_TEMPLATE.md` and a
 go/no-go decision. The Release Manager checks every gate in
 `docs/RELEASE_GATES.md` and confirms human approval for any action listed
-in `docs/HUMAN_APPROVAL_RULES.md`.
+in `docs/HUMAN_APPROVAL_RULES.md`. Under a Charter it confirms instead that the
+Charter was approved by its hash and that each gated action cites a Charter line
+that names it.
 
 **Hand off to:** Post-Launch Learning Agent (after the release lands).
 
@@ -352,7 +354,8 @@ Landing a slice is where the release gates become a wall (see
 
 - **The deploy is a human-approved action.** Promoting a build to a live
   environment is `docs/HUMAN_APPROVAL_RULES.md` rule 3 — the Release Manager
-  confirms the human sign-off; the run does not deploy on its own.
+  confirms the human sign-off; the run does not deploy on its own. Under a Charter the deploy is allowed only
+  if a line names it; the default Charter allows none.
 - **Post-deploy smoke enforces safety, not just liveness.** After a deploy,
   a smoke test runs against the *running* service and re-checks the safety
   invariants (a data endpoint must not leak; a gated action must not send).

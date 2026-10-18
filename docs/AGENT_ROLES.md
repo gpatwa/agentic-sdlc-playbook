@@ -149,3 +149,13 @@ enterprise / governance / operational contexts (see
 - **Customer Success** (`agents/customer-success.md`) — account-level
   customer signal feeding Post-Launch, triangulated against the Data
   Analyst's quant.
+
+## Reviews and approval in a run (Process v2)
+
+Two things sit around the roles above rather than being roles. The **review
+layer** (`docs/CODE_REVIEW.md`) has a reviewer that did not write the change look
+at the diff, sets a risk tier from the change, bounds the fix-and-review rounds at
+three, and records each finding as fixed, rejected or intentional; the Release
+Manager checks the record. The **Charter** (`templates/CHARTER_TEMPLATE.md`) is the
+one approval a run needs: the Orchestrator's setup phase builds and tests what the
+run needs, drafts the Charter, and the human approves it by its hash.

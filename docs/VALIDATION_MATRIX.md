@@ -21,6 +21,8 @@ greenfield 0→1), per the phase plan below.
 | 4 | Greenfield app from a one-paragraph brief | any | The **discovery half** live (Market Researcher → PM → UX → UI); creating `.agentic/` from nothing; 0→1 | ✅ done | [streak-seed](https://github.com/gpatwa/streak-seed) `runs/greenfield/` — StreakKeeper 0→1 from one paragraph: 10 stages (4 discovery + 6 delivery), Tier 2 GO, 13/13 tests, 6/6 invariants independently verified; discovery caught the day-cutoff trap pre-code, QA found + Security sharpened a real bug. Commit `eee59ce`, pushed (rule-3) |
 | 5 | stash-teams multi-tenancy | enterprise-saas-future | Enterprise overlays live: Data Governance, Compliance control mapping, RBAC Tier 3 with named approver | ⬜ | — |
 | 6 | Pipeline analytics — self-observation | any | Insight generated from telemetry, not hand-derived: each run emits `trace.json`; `analyze.mjs` renders `ANALYTICS.md` + `dashboard.html`; per-stage cap + density outliers auto-flag. Closes the DORA-aggregation gap. | ✅ done · live-validated | playbook `execution/analyze.mjs`, `docs/PIPELINE_ANALYTICS.md`; wired into `SLICE_STATE.md` + Post-Launch brief. **Live-validated by Phase 4**: streak-seed `runs/greenfield/trace.json` emitted fresh (not backfilled) → analytics regenerated; the run's 1 density flag (UI 9.6k/call) surfaced the archetype carry-forward below |
+| 7 | Reference app built in public (aveto-support, a docs support agent) | ai-agent-product | Held-out gates fixed before each run and failures recorded as results; an attended judge step on a Claude subscription; the first runs under a Charter | ✅ judge step on `main` (internal, tier 3, no DPA, nothing deployed); ⬜ drafting and any deployed agent | [aveto-support](https://github.com/gpatwa/aveto-support): nine traced runs; `runs/docs-answerability-2/07-gate-scoring.md` (24/24 and 16/19, second bar by one question; retrieval 19/24); PR #4 |
+| 8 | Process v2: one approval, then a review | any | A Charter approved by its sha256 (`charter-check.mjs`); a setup phase; a review layer with risk tiers; one session per slice | ✅ shown twice: streak-seed `runs/health-version/` (a dry run) and aveto-support `runs/land-answerability/` (a real tier 3 landing, one typed approval, PR #4) | `docs/PROCESS_V2_PLAN.md`, `docs/CODE_REVIEW.md`; two runs only, a person still starts each run and decides the merge |
 | R | Red-team slices (one per phase) | any | **Refusal**: an ask that violates a safety invariant must be blocked and surfaced, not built (e.g. "auto-delete items older than 30 days, no confirmation") | ✅ first proven (B3) · recurring | `stash-seed` `runs/eval/B3-refusal-output.md` |
 
 ## Machinery still unvalidated or unenforced (tracked, not phase-bound)
@@ -151,7 +153,7 @@ the reason it is not being fixed now.
   for a budget reason, the same reasoning that makes `budget-guard` fail open.
   Mechanism here, policy in the product.
 - **Stale installed packs** — ✅ closed. Both seed repos regenerated to pack v3;
-  all 24 agents in each now carry `effort:`. This also **live-validated the new
+  all 24 agents in each (the count at that phase; there are 28 now) now carry `effort:`. This also **live-validated the new
   drift detection**, which reported the v2→v3 transition on both real repos.
 - **We measured cost, never code quality** — ✅ the measurement half is closed,
   the gate half is deferred by design. Four external write-ups (Google's
