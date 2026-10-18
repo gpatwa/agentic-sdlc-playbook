@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="An AI-native SDLC you can install: 28 specialist agents covering plan, design, build, test, deploy and maintain — running on your Claude Code subscription, not an API bill.">
 <meta property="og:title" content="Aveto">
-<meta property="og:description" content="Ship like FAANG. No badge required.">
+<meta property="og:description" content="Approve once. Review once. The record covers the rest.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://aveto.dev/">
 <meta name="twitter:card" content="summary">
@@ -684,6 +684,7 @@
     color: var(--muted);
   }
   footer .tag { font-family: var(--f-mono); font-size: 11px; letter-spacing: .05em; color: var(--faint); }
+  footer .indep { flex-basis: 100%; margin: 0; font-size: 12px; color: var(--faint); }
 
   @media (max-width: 860px) {
     .cap { grid-template-columns: 1fr; gap: 28px; }
@@ -874,8 +875,8 @@
   <header class="hero">
     <a class="announce" href="#course"><span class="pill">New</span><span>Anthropic published the AI-Native SDLC Playbook. Here is how Aveto runs it &rarr;</span></a>
     <p class="brandline">The AI-native SDLC, in one install.</p>
-    <h1>Ship like <span class="em">FAANG</span>. No badge required.</h1>
-    <p class="hero-sub">At FAANG scale, nothing reaches production until an architect, an independent reviewer, security and a release gate have all signed off. Aveto hands you that entire org as 28 specialist agents &mdash; running on the Claude Code subscription you already pay for, not a metered API bill. The agent that verifies never wrote the code. Gates fail closed. And every run is planned before it spends — each stage costed against a budget, each artefact written to disk as it goes — so long work finishes instead of stalling out and starting over.</p>
+    <h1>Approve once. Review once. <span class="em">The record covers the rest.</span></h1>
+    <p class="hero-sub">In a large engineering organisation, nothing reaches production until an architect, an independent reviewer, security and a release gate have all signed off. Aveto hands you that process as 28 specialist agents &mdash; running in your own Claude Code session on the plan you already pay for, not a metered API bill. You approve one Charter at the start and review the result at the end. The agent that verifies never wrote the code. Gates fail closed. And every run is planned before it spends — each stage costed against a budget, each artefact written to disk as it goes — so long work finishes instead of stalling out and starting over.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
       <a class="btn btn-ghost" href="#roles">Meet the 28</a>
@@ -1264,7 +1265,7 @@
     <p class="sec-lede">The pipeline has carried slices to merged pull requests on a reference app, then built a second app from a one-paragraph brief &mdash; market research through to a shipped, tested service. Tiers 2 and 3, deterministic-first AI, a greenfield 0&rarr;1, and a security gate that stopped its own release.</p>
     <div class="stats">
       <div class="stat"><span class="fig">0&rarr;1</span><p>A second app built greenfield from one paragraph &mdash; discovery through to shipped.</p></div>
-      <div class="stat"><span class="fig">6</span><p>Slices shipped across two apps, Tiers 2&ndash;3, including deterministic-first AI.</p></div>
+      <div class="stat"><span class="fig">7</span><p>Traced slices across two apps, Tiers 2&ndash;3, including deterministic-first AI &mdash; plus nine runs on a third, built in public.</p></div>
       <div class="stat"><span class="fig">3</span><p>Approval rules fired live &mdash; send, deploy, real-model. Each recorded, each scope-enforced.</p></div>
       <div class="stat"><span class="fig">0</span><p>Retries across every stage of every run.</p></div>
     </div>
@@ -1368,7 +1369,7 @@
         <div class="hold-mark">05</div>
         <div>
           <h4>The newest evidence is small.</h4>
-          <p>Process v2 has two runs behind it, one tiny and one real. The judge step passes its gate by a single question on a 19-question denominator, and retrieval itself finds the right file for 79.2% of answerable questions, just under its own bar. There is no data-processing agreement with the model provider, so the step is for public docs and internal use. A person still starts each run and decides the merge.</p>
+          <p>Process v2 has two runs behind it, one tiny and one real. The judge step passes its gate by a single question on a 19-question denominator, and retrieval itself finds the right file for 79.2% of answerable questions, just under its own bar. There is no data-processing agreement with the model provider, so the step is for public docs and internal use. A person still starts each run and decides the merge. Review mode for an existing codebase is planned, not built.</p>
         </div>
       </div>
     </div>
@@ -1466,6 +1467,7 @@
     <div class="brand"><span class="mark"></span>Aveto</div>
     <span class="tag">Great software shouldn't need a big company.</span>
     <a href="https://github.com/gpatwa/agentic-sdlc-playbook" style="color:var(--muted);text-decoration:none">Source on GitHub &#8599;</a>
+    <p class="indep">Aveto is independent. It is not affiliated with or endorsed by Anthropic. It runs in Claude Code.</p>
   </footer>
 
 </div>
