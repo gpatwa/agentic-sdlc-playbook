@@ -62,6 +62,7 @@ agentic-sdlc/
     CODE_REVIEW.md                 ← the review layer: tiers from the diff, bounded rounds, evals from real incidents
     PROCESS_V2_PLAN.md             ← one Charter approval at the start, a review at the end
     review-evals/                  ← past mistakes as test cases for the review step
+    REVIEW_MODE_PLAN.md            ← planned, not built: reviewing a codebase Aveto did not build (bars declared up front)
   agents/                          ← role briefs, one per agent
     orchestrator.md
     market-researcher.md
@@ -206,7 +207,10 @@ and a Claude Code session can drive the lifecycle with `/agentic-slice` —
 delegating each stage to a generated subagent, tracking resumable state, and
 asking for **one approval at the start**, a Charter checked for completeness
 and approved by its hash, and stopping only for an action the Charter does not
-name. See
+name. Every run also reviews its own diff with a reviewer that did not write it,
+sets a risk tier from the change, and records each finding as fixed, rejected or
+intentional (`docs/CODE_REVIEW.md`). The pack is at **version 24**; re-run the
+installer to upgrade a repo, and it tells you what changed. See
 [execution/README.md](execution/README.md).
 
 ## Core principles
