@@ -1587,6 +1587,19 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [ ] Decide later whether to use the Code Review GitHub App (Team and
         Enterprise plans only; the owner's plan is not known to qualify).
 
+- **T31 · Review mode: review an existing codebase.** *Raised 2026-10-17.* Plan:
+  `docs/REVIEW_MODE_PLAN.md` (goal, declared bars, milestones M0 to M6).
+  - [ ] **M0** owner chooses the pilot and approves the bars (recommended pilot:
+        aveto-support at `c150673`, where S5 and S6 give a recall test).
+  - [ ] **M1** `install.mjs --existing` and `/agentic-onboard` (proposed, unconfirmed invariants).
+  - [ ] **M2** `execution/repo-map.mjs`: deterministic map with a risk tier per path.
+  - [ ] **M3** area runner: diff-against-empty-tree reviews in tier order, findings record, hard cap with a not-reviewed list.
+  - [ ] **M3b** confidentiality and scale controls: secret-path exclusion (tested), data classification and processor as required Charter lines, scoped runs for monorepos.
+  - [ ] **M5** review-mode Charter template and report format.
+  - [ ] **M4** calibration run: recall on S5/S6, seeded bugs by a different agent, precision on a 30-finding sample.
+  - [ ] **M6** pilots on aveto-support, then two or more repos of other stacks and sizes (one not ours); only then README and site, as pilot results.
+  - **Stops after M4** if recall or precision misses its declared bar.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
