@@ -57,6 +57,8 @@ A filled `templates/DISCOVERY_BRIEF_TEMPLATE.md` covering:
   a pointer.
 - The segment is named and sized, even roughly. "Power users" is not a
   segment; "users who imported >100 records in the last 30 days" is.
+- Anything not confirmed is marked unconfirmed, with where you looked; a gap is
+  stated, never filled by plausible-sounding detail.
 - Disconfirming evidence is a real section with real items, not a
   formality. If you can't think of any, the hypothesis is too vague.
 - The recommendation is binary-plus-rationale: proceed / more discovery

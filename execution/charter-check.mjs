@@ -90,6 +90,12 @@ export function checkCharter(text, planText = null) {
     }
   }
 
+  // Section 3: every model line states an effort level; the review rescore is stated.
+  const s3 = (sections.get(3)?.body || "").split("\n").filter((l) => !l.trimStart().startsWith(">"));
+  const modelLines = s3.filter((l) => /\*\*C3\.\d+\*\*/.test(l));
+  for (const l of modelLines) if (!/\beffort\s+(low|medium|high|xhigh|max)\b/i.test(l)) errors.push(`model line has no effort level (low, medium, high, xhigh or max): ${l.trim().slice(0, 90)}`);
+  if (modelLines.length && !s3.some((l) => /\*\*C3\.R\b/.test(l))) errors.push("section 3 needs a C3.R line: the review rescore status (rescored, unchanged, or no review step)");
+
   // Budget order.
   const num = (id) => {
     const m = text.match(new RegExp(`\\*\\*${id.replace(".", "\\.")}[^*]*\\*\\*\\s*:?\\s*([\\d.,]+)\\s*([kKmM])?`));

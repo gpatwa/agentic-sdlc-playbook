@@ -21,9 +21,12 @@
 - **C2.3 Hard cap:** <n>k. Above it the run stops. The run never raises it.
 
 ## 3. Models (rule 5)
-One line per role that calls a model in the product or the run, with the full model ID.
-- **C3.1** <role>: `<full model id>`, <where it runs: the operator's session | the app at runtime>
+One line per role that calls a model in the product or the run, with the full model ID
+and the effort level (`low`, `medium`, `high`, `xhigh` or `max`). Effort changes cost and
+quality, so it is approved with the model.
+- **C3.1** <role>: `<full model id>`, effort <level>, <where it runs: the operator's session | the app at runtime>
 - (or) **C3.0** None: no model in the product path.
+- **C3.R Review rescore:** <rescored on <date> against `docs/review-evals/` | unchanged since the last rescore on <date> | no review step in this run>. A model or effort change since the last rescore means rescore first, or say here that the review is unscored.
 
 ## 4. Data processors (rule 6)
 One line per processor, with exactly what it may receive and its DPA / terms status.

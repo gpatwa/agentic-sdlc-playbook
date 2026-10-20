@@ -45,6 +45,9 @@ These hold regardless of which tool is driving the run.
    (for example, Security below `adversarial`) is the human's decision, recorded
    in their own words, never the Orchestrator's. Degrading a depth you chose
    yourself stays yours to do.
+7. **Mark what you could not confirm, and say where you looked.** A finding, a
+   research claim or a report line that rests on something not checked is labelled
+   unconfirmed, with the places searched. Silence is read as confirmed.
 
 ## Project context
 

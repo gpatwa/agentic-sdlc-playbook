@@ -42,7 +42,9 @@ First line: the **count**. "0 findings." is a complete, valid first line. Then:
 
 - the tier and the paths that set it;
 - one row per finding: `id | severity | file:line | what and what triggers it |
-  disposition`;
+  how to reproduce | disposition`. The reproduction is the input, command or test
+  that shows the failure; for an Important finding without one, say why and mark
+  it unconfirmed;
 - the round number and what changed since the previous round.
 
 Severity is one of **Important** (a correctness, safety or data bug), **Nit**
@@ -91,5 +93,7 @@ is not a human's.
 
 `docs/review-evals/` holds past mistakes as cases (the diff and the finding a
 good reviewer must raise). Rescore the review step against them whenever its
-prompt, skill or model changes, and record the result in that folder's
-`RESULTS.md`.
+prompt, skill, model **or effort level** changes, and record the result in that folder's
+`RESULTS.md`. A different model or effort in the Charter's section 3 than at the last
+rescore means rescoring before the run, or stating "unscored" on the Charter's C3.R line
+and in `END_REVIEW.md`; a lower effort is not assumed to find less, or more.

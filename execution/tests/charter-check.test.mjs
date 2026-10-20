@@ -23,7 +23,8 @@ const complete = `# Charter: demo-slice
 - **C2.3 Hard cap:** 3100k. Above it the run stops.
 
 ## 3. Models (rule 5)
-- **C3.1** judge: \`claude-sonnet-5-5\`, the operator's session
+- **C3.1** judge: \`claude-sonnet-5-5\`, effort high, the operator's session
+- **C3.R Review rescore:** unchanged since the last rescore on 2026-10-17
 
 ## 4. Data processors (rule 6)
 - **C4.0** None beyond those already approved: APPROVAL_RECORD-3, APPROVAL_RECORD-6.
@@ -120,5 +121,15 @@ describe("charter-check", () => {
     assert.ok(r.errors.some((e) => /claude-opus-5-5/.test(e)));
     assert.ok(r.errors.some((e) => /INV-4/.test(e)));
     assert.ok(!r.errors.some((e) => /INV-5/.test(e)));
+  });
+
+  test("pack v25: every model line states an effort level, and C3.R (review rescore) is required", () => {
+    const noEffort = checkCharter(complete.replace(", effort high", ""));
+    assert.ok(noEffort.errors.some((e) => /no effort level/.test(e)), noEffort.errors.join("; "));
+    const badEffort = checkCharter(complete.replace("effort high", "effort thorough"));
+    assert.ok(badEffort.errors.some((e) => /no effort level/.test(e)));
+    const noR = checkCharter(complete.replace(/- \*\*C3\.R[^\n]*\n/, ""));
+    assert.ok(noR.errors.some((e) => /C3\.R/.test(e)), noR.errors.join("; "));
+    assert.equal(checkCharter(complete).errors.length, 0);
   });
 });

@@ -342,6 +342,17 @@ describe("install.mjs — pack integrity", () => {
     assert.match(econ, /Review stages run about 1\.5 to 3 times their estimate/);
   });
 
+  test("pack v25: reproduction column, END_REVIEW headings, unconfirmed rule, effort and rescore lines", () => {
+    const cr = readFileSync(join(target, ".claude", "protocols", "CODE_REVIEW.md"), "utf8");
+    assert.match(cr, /how to reproduce \| disposition/);
+    assert.match(cr, /model \*\*or effort level\*\* changes/);
+    const ap = readFileSync(join(target, ".claude", "protocols", "APPROVAL_PROTOCOL.md"), "utf8");
+    assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
+    const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
+    assert.match(ag, /Mark what you could not confirm, and say where you looked/);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 25);
+  });
+
   test("the budget guard is installed and wired into settings", () => {
     assert.ok(existsSync(join(target, ".claude", "hooks", "budget-guard.mjs")));
     const settings = JSON.parse(readFileSync(join(target, ".claude", "settings.json"), "utf8"));
