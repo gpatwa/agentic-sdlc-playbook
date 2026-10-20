@@ -39,7 +39,7 @@ proven something, it says so on the same page.
 | Layer | Current | Proposed | Why |
 |---|---|---|---|
 | **Brandline** | Built for the subscription you already pay for. | *Unchanged.* | Still true and still ours. Always followed by "in your own Claude Code session" where it could be read as Aveto brokering access (section 7). |
-| **Headline** | From prompt to production, at agent speed. | **Describe it. Get a reviewed pull request.** Kicker above it: *Move beyond supervising agents to reviewing outcomes.* (applied 2026-10-19) | The headline says what a person can do, as Kiro and Devin do; the mechanism (approve once, review once, the record) moves to the sub line. See `docs/drafts/HERO_V3.md`. |
+| **Headline** | From prompt to production, at agent speed. | **From spec to reviewed pull request, with the record.** Kicker above it: *Agentic engineering you can verify.* (applied 2026-10-19; replaced "Describe it. Get a reviewed pull request." on the owner's word that it was not industry vocabulary) | The headline says what a person can do, as Kiro and Devin do; the mechanism (approve once, review once, the record) moves to the sub line. See `docs/drafts/HERO_V3.md`. |
 | **Descriptor** | 28 specialist roles; the agent that verifies never wrote the code; gates fail closed; every stage checkpoints. | *Keep, and add:* one Charter approved by its hash; the run stops only where the Charter ends; every finding recorded as fixed, rejected or intentional. | The old descriptor says what is inside; the addition says what the human experiences. |
 
 **The rule for the one-liner:** it must be falsifiable by a run in the repo. "Approve
