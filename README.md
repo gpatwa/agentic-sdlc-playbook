@@ -1,9 +1,9 @@
 # Aveto
 
-**The AI-native SDLC, in one install.**
+**Agentic engineering you can verify.**
 
-Ship with the review process of a big engineering team. No badge required. Great
-software shouldn't need a big company.
+Move beyond supervising agents to reviewing outcomes. From spec to reviewed pull
+request, with the record. Great software shouldn't need a big company.
 
 At FAANG scale, nothing reaches production until an architect, an independent
 reviewer, security and a release gate have all signed off. That process — not
