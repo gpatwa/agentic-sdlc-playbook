@@ -60,7 +60,7 @@ Anthropic's guidance states principles. Aveto turns each into something checkabl
 
 | Principle (Anthropic) | What Aveto does with it | Evidence |
 |---|---|---|
-| Humans keep control, especially before high-stakes actions | A Charter approved by its sha256, irreversible actions off by default, a stop for anything the Charter does not name; an approval typed in another session never counts | `docs/HUMAN_APPROVAL_RULES.md`, `execution/charter-check.mjs`, pack v24 |
+| Humans keep control, especially before high-stakes actions | A Charter approved by its sha256, irreversible actions off by default, a stop for anything the Charter does not name; an approval typed in another session never counts | `docs/HUMAN_APPROVAL_RULES.md`, `execution/charter-check.mjs`, pack v25 |
 | Transparency in agent behaviour | A record per stage, a notice at each boundary, an `END_REVIEW.md` that lists every deviation and every question asked after the Charter | `runs/*/END_REVIEW.md` |
 | Align with what people actually want | A one-page intent with non-goals; the plan and success criteria are checked against it | `templates/INTENT_TEMPLATE.md` |
 | Secure the interactions | Adversarial review of hostile input, tool-less judge agents with a hook as second layer | aveto-support `runs/*/08-security-review.md`, `06-security-recheck.md` |

@@ -17,7 +17,8 @@ anything:
 - when the review runs, and that it is never the agent that wrote the change;
 - how findings are recorded, fixed, and counted;
 - which changes need a person, set by the change and not by who made it;
-- how we know the review step is any good, and when to rescore it.
+- how we know the review step is any good, and when to rescore it (a change of prompt,
+  skill, model or effort level; the Charter records the status on its C3.R line).
 
 ## The six rules
 

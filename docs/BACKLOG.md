@@ -1584,6 +1584,13 @@ from the run" pattern as effort / operator / executor / gateCatches.
         `.claude/settings.local.json` (gitignored), never the shared file, and
         `charter-check`/the Release Manager check that no allow rule from the
         Charter is staged in a tracked settings file.
+  - [x] **Pack v25 (2026-10-20), from "Getting the most out of Opus 5.5":** review
+        findings gain a reproduction column; `END_REVIEW.md` opens with "Blocked on
+        me / Changed / Found"; AGENTS.md rule 7 (mark what you could not confirm, and
+        say where you looked); the Charter pins an effort level on every model line
+        (C3.n) and states the review rescore status (C3.R), both enforced by
+        `charter-check`. The rescore itself is still a session task (above). Existing
+        Charters need the two lines before they pass the check.
   - [ ] Decide later whether to use the Code Review GitHub App (Team and
         Enterprise plans only; the owner's plan is not known to qualify).
 
