@@ -39,11 +39,11 @@ proven something, it says so on the same page.
 | Layer | Current | Proposed | Why |
 |---|---|---|---|
 | **Brandline** | Built for the subscription you already pay for. | *Unchanged.* | Still true and still ours. Always followed by "in your own Claude Code session" where it could be read as Aveto brokering access (section 7). |
-| **Headline** | From prompt to production, at agent speed. | **Approve once. Review once. The record covers everything between.** | The headline should be the new, ownable thing: a measured reduction of human attention without losing accountability. "At agent speed" is what every tool says. |
+| **Headline** | From prompt to production, at agent speed. | **Describe it. Get a reviewed pull request.** Kicker above it: *Move beyond supervising agents to reviewing outcomes.* (applied 2026-10-19) | The headline says what a person can do, as Kiro and Devin do; the mechanism (approve once, review once, the record) moves to the sub line. See `docs/drafts/HERO_V3.md`. |
 | **Descriptor** | 28 specialist roles; the agent that verifies never wrote the code; gates fail closed; every stage checkpoints. | *Keep, and add:* one Charter approved by its hash; the run stops only where the Charter ends; every finding recorded as fixed, rejected or intentional. | The old descriptor says what is inside; the addition says what the human experiences. |
 
 **The rule for the one-liner:** it must be falsifiable by a run in the repo. "Approve
-once, review once" is: `runs/<slice>/APPROVAL_RECORD-1.md` and `END_REVIEW.md`.
+once, review once" (now in the sub line) is: `runs/<slice>/APPROVAL_RECORD-1.md` and `END_REVIEW.md`.
 
 ## 4. Who it is for, and what each reads first
 
@@ -143,6 +143,7 @@ this repo does not exist. A claim not in the register is not published.
 | C9 | Runs on your Claude Code plan, not an API bill | true as designed | `execution/pack/AGENTS.md` | usage still counts against the plan's limits; a long run can pause; the terminal client here offers only an API login |
 | C10 | A budget is checked before each step | enforced | `execution/hooks/budget-guard.mjs`, `execution/pack/protocols/RUN_ECONOMICS.md` | estimates for review stages have run 1.5 to 3 times over, three times |
 | C11 | Review mode for existing codebases | **planned, not built** | `docs/REVIEW_MODE_PLAN.md` | never described as available |
+| C13 | A greenfield app built from a one-paragraph brief (StreakKeeper) | shown once | `docs/VALIDATION_MATRIX.md` | one small app; a person approves each gate |
 | C12 | Seven traced slices across stash-seed and streak-seed | measured | stash-seed and streak-seed `runs/*/trace.json` (3 + 4) | the site must use this count, not another |
 
 ## 9. Keeping it true
