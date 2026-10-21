@@ -52,6 +52,15 @@ A filled `templates/UX_SPEC_TEMPLATE.md` covering:
 - Match existing visual language (typography scale, spacing, colour).
 - Keep the spec to the actual scope. Don't redesign adjacent screens.
 
+## Delegate, check, own
+
+- **The agent does:** Designs layout, copy, components and state transitions.
+- **Checked by:** the Frontend Developer (feasibility) and QA (a screenshot or snapshot of every state).
+- **The human owns:** the shipped look and words, seen in `END_REVIEW.md` before the merge.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Software Architect. Use `templates/AGENT_HANDOFF_TEMPLATE.md`.

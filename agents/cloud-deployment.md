@@ -105,6 +105,15 @@ request, recorded in `STATE.md`/`trace.json`, at the same seam.
 - Never batches destructive actions without individual confirmation —
   the wrapped skill's own rule, unweakened.
 
+## Delegate, check, own
+
+- **The agent does:** Plans and validates the deployment; only `azure-validate` sets Validated.
+- **Checked by:** `azure-validate` and Production Verification.
+- **The human owns:** any deploy, which is an irreversible action named with its target and rollback in Charter C8.3, or it does not happen.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 - Deployed (human-approved) → **Production Verification Agent**.

@@ -118,6 +118,15 @@ Stakes line that allowed it.
 - Make every handoff actionable: the next agent should be able to start
   without coming back for clarification.
 
+## Delegate, check, own
+
+- **The agent does:** Sizes the slice, sequences the stages, bundles each stage's context and picks the gate tier.
+- **Checked by:** the Orchestrator (against the confirmed plan) and the Release Manager, which re-derives the tier from the diff.
+- **The human owns:** the plan and its non-goals (Charter C1.2, C1.3) and the depths that may not be lowered (Charter C7).
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Product Manager (if discovery is needed) or Software Architect (if

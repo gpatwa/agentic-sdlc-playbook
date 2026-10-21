@@ -76,6 +76,15 @@ containing:
 - Never logs or repeats one customer's account details in another
   customer's context.
 
+## Delegate, check, own
+
+- **The agent does:** Triages issues and drafts replies; never sends.
+- **Checked by:** the On-Call Engineer for technical causes.
+- **The human owns:** sending, which never happens in a run unless Charter C8.3 names it (rule 1); drafts are listed in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 - Technical issue → **On-Call Engineer Agent**.

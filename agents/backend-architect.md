@@ -51,6 +51,11 @@ adding endpoints.
   in this build.") so a missing key never silently no-ops.
 - Tenant / user scoping is preserved on every record where the project
   pack requires it.
+- **Every new test fails first.** Before the change that makes it pass, run the new
+  test against the base commit and record the failing output in the stage
+  artefact. A test that passes on the base commit proves nothing about this change:
+  rewrite it or drop it. (A pure refactor that adds no behaviour says so and adds no
+  new test.)
 - Typecheck, targeted tests, full suite, and build all pass before
   handoff (commands per `.agentic/LOCAL_COMMANDS.md`).
 
@@ -67,6 +72,15 @@ adding endpoints.
   could be PII. Log IDs, lengths, and hashes instead.
 - If the slice introduces a feature flag, the flag must be removable in
   a future slice. No "permanent" flags.
+
+## Delegate, check, own
+
+- **The agent does:** Implements the services and schema to the spec, with targeted tests recorded failing before the change.
+- **Checked by:** QA (re-runs the new tests on the base commit to confirm they fail there), the review layer and Security & Privacy.
+- **The human owns:** the merge, decided from `END_REVIEW.md`; the end action itself is Charter C8.2.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
 
 ## Handoff
 

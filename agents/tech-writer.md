@@ -78,6 +78,15 @@ Architect owns.
 - If the docs surface an undocumented breaking change, flag it back to the
   Release Manager as a blocker rather than papering over it.
 
+## Delegate, check, own
+
+- **The agent does:** Writes the user-facing docs, release notes and migration guidance a change needs.
+- **Checked by:** the Software Architect (no contradiction with the architecture record) and QA.
+- **The human owns:** public wording, seen in `END_REVIEW.md` before the merge.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To the Release Manager (docs are a release-gate item) or back to the

@@ -38,6 +38,11 @@ handing off to QA.
 - The implementation matches the UX spec, including all listed states.
 - Targeted tests cover at minimum the happy path, one edge case, and any
   safety invariant the slice touches.
+- **Every new test fails first.** Before the change that makes it pass, run the new
+  test against the base commit and record the failing output in the stage
+  artefact. A test that passes on the base commit proves nothing about this change:
+  rewrite it or drop it. (A pure refactor that adds no behaviour says so and adds no
+  new test.)
 - The project's typecheck command passes.
 - The project's targeted-test command passes — and is run BEFORE the
   full suite.
@@ -76,6 +81,15 @@ For any slice with a visible UI change:
 4. Take a screenshot for the QA evidence handoff if the change is
    non-trivial.
 5. Check console for new errors / warnings.
+
+## Delegate, check, own
+
+- **The agent does:** Implements the UI to the spec within existing patterns, with targeted tests recorded failing before the change.
+- **Checked by:** QA (fail-first re-run, browser preview of every state), the review layer and Security & Privacy.
+- **The human owns:** the merge, decided from `END_REVIEW.md`; the end action itself is Charter C8.2.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
 
 ## Handoff
 

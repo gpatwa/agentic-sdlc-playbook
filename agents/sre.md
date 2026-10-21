@@ -79,6 +79,15 @@ cannot.
 - Don't let an incident review close without at least one preventative
   (not just mitigative) action item.
 
+## Delegate, check, own
+
+- **The agent does:** Sets SLOs and SLIs, paging rules, incident severity and runbooks.
+- **Checked by:** the On-Call Engineer (who runs the runbooks) and the Release Manager.
+- **The human owns:** new pre-authorised runbook steps and any SLA commitment (Charter C8.3, or raised in `END_REVIEW.md`).
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Post-Launch Learning (incident learnings become carry-forward) and to

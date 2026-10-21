@@ -53,6 +53,15 @@ A filled `templates/PRD_TEMPLATE.md` covering:
 - Never invent a problem to justify a feature. If the data doesn't show a
   problem, say so.
 
+## Delegate, check, own
+
+- **The agent does:** Defines the problem, the success criteria and what is out of scope.
+- **Checked by:** the Engineering Manager (scope review) and QA, which verifies each "Done means" line.
+- **The human owns:** the intent and its non-goals (Charter C1.1, C1.3), and whether the result met it (`END_REVIEW.md`).
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To UX Researcher. Use `templates/AGENT_HANDOFF_TEMPLATE.md` and reference

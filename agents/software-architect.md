@@ -107,6 +107,15 @@ When the spec needs a new model, whether a judge, a reranker or an embedder:
   single slice. If you find yourself splitting, the slice is too big —
   send it back to the EM.
 
+## Delegate, check, own
+
+- **The agent does:** Decides the data shape, the service boundaries, the adapters and the rollback story.
+- **Checked by:** Security & Privacy, the review layer and the Release Manager.
+- **The human owns:** any new model, processor or safety text (Charter C3, C4, C5); architecture changes are listed in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Frontend, Backend, or AI Engineer. Use

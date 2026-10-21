@@ -81,6 +81,15 @@ guardrails, decision (ship / hold / kill / extend).
 - Keep readouts short. If the answer is "we don't know yet", say so in
   one paragraph and stop.
 
+## Delegate, check, own
+
+- **The agent does:** Cuts the data, judges sample size and writes the readout with its caveats.
+- **Checked by:** the Analytics Engineer (metric definitions) and the Post-Launch Learning stage.
+- **The human owns:** the decision the readout informs, listed in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To whichever agent asked the question. Use

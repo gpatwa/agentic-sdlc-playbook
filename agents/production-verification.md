@@ -83,6 +83,15 @@ that's a new slice into Cloud Deployment, not a fix made here.
 - Does not re-run `azure-validate` — that gate already passed before
   deploy; this role checks the deployed *result*, not the plan again.
 
+## Delegate, check, own
+
+- **The agent does:** Watches the post-deploy window and runs the recorded rollback on a regression.
+- **Checked by:** the SRE.
+- **The human owns:** the deploy and its rollback (Charter C8.3); the outcome is in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 - Verified healthy → **SRE** (ongoing SLO ownership begins).

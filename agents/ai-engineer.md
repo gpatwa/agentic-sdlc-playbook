@@ -87,6 +87,15 @@ placeholder confirms the seam exists for future model wiring.
 - Never log the full prompt or full completion at runtime. Log lengths,
   token counts, and content hashes if you need observability.
 
+## Delegate, check, own
+
+- **The agent does:** Splits deterministic logic from model calls, writes the prompts and adapters, and builds the evals.
+- **Checked by:** AI Governance (eval coverage) and Security & Privacy (hostile input).
+- **The human owns:** which model runs, at which effort, and where (Charter C3), and what data it may receive (Charter C4); eval results are in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To QA Evidence Agent. Use `templates/AGENT_HANDOFF_TEMPLATE.md`.

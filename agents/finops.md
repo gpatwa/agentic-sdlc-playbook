@@ -76,6 +76,15 @@ A filled `templates/COST_BUDGET_TEMPLATE.md` covering:
   Match the depth of the review to the money at stake, not to the template's
   maximum.
 
+## Delegate, check, own
+
+- **The agent does:** Builds the cost model, budget thresholds and kill-switch rules.
+- **Checked by:** the budget guard hook (checked before each step) and the Release Manager.
+- **The human owns:** the budget and its hard cap (Charter C2); a bet on negative unit economics is raised in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To the Release Manager (the cost review is a release input) and the

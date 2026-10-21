@@ -82,6 +82,15 @@ A filled `templates/AI_RISK_ASSESSMENT_TEMPLATE.md` covering:
 - Reuse the ML Engineer's eval cases; AI Governance owns the suite while
   engineers contribute to it.
 
+## Delegate, check, own
+
+- **The agent does:** Sets the AI risk tier, judges eval coverage and curates the golden set.
+- **Checked by:** the Compliance Reviewer and the Release Manager.
+- **The human owns:** the data processors and their terms (Charter C4); the decision to ship is the merge in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To the Compliance Reviewer (risk tier + evidence feed the control mapping,

@@ -342,6 +342,33 @@ describe("install.mjs — pack integrity", () => {
     assert.match(econ, /Review stages run about 1\.5 to 3 times their estimate/);
   });
 
+  test("pack v26: every role says what it does, which agent or gate checks it, and where the human decides", () => {
+    const dir = join(target, ".claude", "agents");
+    const files = readdirSync(dir).filter((f) => f.endsWith(".md"));
+    assert.equal(files.length, 28);
+    for (const f of files) {
+      const body = readFileSync(join(dir, f), "utf8");
+      const sec = body.split("## Delegate, check, own")[1]?.split("\n## ")[0];
+      assert.ok(sec, `${f}: no Delegate, check, own section`);
+      const line = (label) => (sec.match(new RegExp(`\\*\\*${label}:\\*\\* (.+)`)) || [])[1] || "";
+      assert.ok(line("The agent does"), `${f}: no "The agent does"`);
+      const checked = line("Checked by");
+      assert.ok(checked, `${f}: no "Checked by"`);
+      assert.doesNotMatch(checked, /\b(human|owner|person|operator)\b/i, `${f}: "Checked by" names a person`);
+      const owns = line("The human owns");
+      assert.match(owns, /Charter|END_REVIEW\.md/, `${f}: "The human owns" must point to the Charter or END_REVIEW.md`);
+    }
+  });
+
+  test("pack v26: new tests fail first on the base commit; generated tests pass a filter", () => {
+    const qa = readFileSync(join(target, ".claude", "agents", "qa-evidence.md"), "utf8");
+    assert.match(qa, /check out\s+the base commit/);
+    assert.match(qa, /passes three\s+consecutive runs/);
+    for (const f of ["backend-architect.md", "frontend-developer.md"]) {
+      assert.match(readFileSync(join(target, ".claude", "agents", f), "utf8"), /Every new test fails first/);
+    }
+  });
+
   test("pack v25: reproduction column, END_REVIEW headings, unconfirmed rule, effort and rescore lines", () => {
     const cr = readFileSync(join(target, ".claude", "protocols", "CODE_REVIEW.md"), "utf8");
     assert.match(cr, /how to reproduce \| disposition/);
@@ -350,7 +377,7 @@ describe("install.mjs — pack integrity", () => {
     assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
     const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
     assert.match(ag, /Mark what you could not confirm, and say where you looked/);
-    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 25);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 26);
   });
 
   test("the budget guard is installed and wired into settings", () => {

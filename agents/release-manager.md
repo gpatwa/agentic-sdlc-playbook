@@ -92,6 +92,15 @@ recorded, the higher tier applies and you say so.
   Release Manager is a separate invocation, not the engineer agent
   wearing a hat).
 
+## Delegate, check, own
+
+- **The agent does:** Classifies the release tier, checks every gate and lands the slice as the Charter's end action.
+- **Checked by:** the review layer (which re-derives the tier from the diff) and `verify-approvals.mjs` (approval records checked against GitHub).
+- **The human owns:** the end action and any irreversible action (Charter C8.2, C8.3); a gate bypass is never in the run (Charter section 9); the merge is decided from `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 After the slice lands: hand off to Post-Launch Learning Agent.

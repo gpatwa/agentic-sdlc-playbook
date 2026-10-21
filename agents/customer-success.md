@@ -68,6 +68,15 @@ A filled `templates/CUSTOMER_SIGNAL_REVIEW_TEMPLATE.md` covering:
 - A recurring, validated problem is handed to the Market Researcher for
   the next discovery loop, not pushed straight into a build.
 
+## Delegate, check, own
+
+- **The agent does:** Separates signal from noise in customer themes and proposes candidate slices.
+- **Checked by:** the Data Analyst (significance).
+- **The human owns:** what to build next (the next Charter's C1); candidates are listed in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Post-Launch Learning (themes become carry-forward) and to the

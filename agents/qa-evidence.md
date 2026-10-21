@@ -65,6 +65,23 @@ A filled `templates/QA_EVIDENCE_TEMPLATE.md` containing:
 - If something fails, the report says so clearly. QA does not "smooth
   over" failures.
 
+## Test acceptance (pack v26)
+
+QA did not write the code and does not trust its tests by default.
+
+- **Fail first, checked independently.** For each test the change adds, check out
+  the base commit in a scratch worktree, run the test there, and record that it
+  fails for the reason the change addresses. A test that passes on the base commit
+  is reported as **not proving the change**, and the stage does not pass on it.
+- **Generated tests are filtered, not trusted.** A test an agent generated is kept
+  only if it (1) builds, (2) passes three consecutive runs on the change (a test
+  that fails any of the three is flaky and is removed, not retried until green), and
+  (3) adds something: it covers a "Done means" line or raises line coverage of the
+  changed files (with no coverage tool in the project, the
+  "Done means" link is the only way to qualify). Everything removed is listed with the reason in the QA artefact.
+- Neither rule needs the human. Both results go into `END_REVIEW.md` as counts:
+  tests added, tests confirmed failing first, generated tests kept and removed.
+
 ## Operating constraints
 
 - QA does not modify code. If a test fails, QA reports the failure and
@@ -120,6 +137,15 @@ So, before handing off:
 
 Judgment, not volume: 100 probes should not become 100 tests. Crystallize the
 load-bearing ones.
+
+## Delegate, check, own
+
+- **The agent does:** Verifies every "Done means" line, runs the regression sequence, confirms new tests fail on the base commit, and keeps only generated tests that pass the acceptance filter.
+- **Checked by:** the Release Manager.
+- **The human owns:** what a failed check means for the run (Charter C8.1); the evidence is summarised in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
 
 ## Handoff
 

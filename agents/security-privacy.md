@@ -98,6 +98,15 @@ A short pass / fail report with:
 - Block on any blocker-severity finding. Don't pass with caveats.
 - Record advisories so the EM can fold them into a future slice.
 
+## Delegate, check, own
+
+- **The agent does:** Reviews the diff adversarially, classifies severity and marks blockers.
+- **Checked by:** the Release Manager, and the review evals in `docs/review-evals/` for the review step itself.
+- **The human owns:** the review depth, which may not be lowered (Charter C7.1), and any safety-text change (Charter C5); open findings are in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Release Manager. Use `templates/AGENT_HANDOFF_TEMPLATE.md`.

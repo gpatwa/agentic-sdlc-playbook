@@ -86,6 +86,15 @@ runbooks, alert wiring, pre-authorized mitigation steps. On-Call Engineer
   pressure.
 - Every governed action and every rollback emits an audit event.
 
+## Delegate, check, own
+
+- **The agent does:** Triages, attributes root cause and runs runbook steps already authorised.
+- **Checked by:** the SRE, and the Release Manager for any code fix.
+- **The human owns:** any novel infrastructure action, which stops the run (Charter section 9) unless Charter C8.3 names it.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 - Root cause needs a code fix → **Orchestrator**, as a new slice.

@@ -92,6 +92,15 @@ A filled `templates/COMPLIANCE_REVIEW_TEMPLATE.md` covering:
 - If closing a control gap requires a contract, policy, or DPA change,
   escalate to the human — do not hand-wave it as satisfied.
 
+## Delegate, check, own
+
+- **The agent does:** Maps the slice to the required controls and checks the evidence would satisfy an auditor.
+- **Checked by:** the Release Manager.
+- **The human owns:** the processors and their terms (Charter C4); certification and legal questions are raised in `END_REVIEW.md`, never decided in the run.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Release Manager (if pass) or back to the engineer / Security & Privacy

@@ -53,6 +53,15 @@ A filled `templates/FEATURE_SPEC_TEMPLATE.md` covering:
 - Reference existing patterns in the product when the journey reuses
   them. Don't redesign.
 
+## Delegate, check, own
+
+- **The agent does:** Names the personas, the happy path, the edge cases and the accessibility floor.
+- **Checked by:** the UI Designer, who designs to it, and QA, which checks each state renders.
+- **The human owns:** who the slice is for (the intent, Charter C1.1); the result is shown in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To UI Designer. Use `templates/AGENT_HANDOFF_TEMPLATE.md`.

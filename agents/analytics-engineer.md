@@ -75,6 +75,15 @@ to verify wires are live.
   retention, that's a Security & Privacy review, not an analytics
   decision.
 
+## Delegate, check, own
+
+- **The agent does:** Specifies events, fields and metric definitions, and checks a success criterion is measurable.
+- **Checked by:** the Data Analyst and QA.
+- **The human owns:** the success measures in the intent (Charter C1.1).
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Backend / Frontend Engineers (so they implement the events) and to

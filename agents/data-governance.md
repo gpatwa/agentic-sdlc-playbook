@@ -64,6 +64,15 @@ A filled `templates/DATA_GOVERNANCE_REVIEW_TEMPLATE.md` covering:
   named consumer.
 - Don't repeat Security's leak scan; assume it ran and build on it.
 
+## Delegate, check, own
+
+- **The agent does:** Classifies each data element, sets retention and residency, and checks each data flow is permitted.
+- **Checked by:** the Compliance Reviewer and Security & Privacy.
+- **The human owns:** which processor receives which data (Charter C4).
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To the Compliance Reviewer (who maps the classified data to named

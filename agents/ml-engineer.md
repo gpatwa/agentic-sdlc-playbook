@@ -93,6 +93,15 @@ or selects from a candidate set — not just a hosted general-purpose LLM.
 - Don't tune on the test set. If you find yourself peeking, freeze a
   new test set and document why.
 
+## Delegate, check, own
+
+- **The agent does:** Trains and evaluates models, fixes the splits and the held-out set.
+- **Checked by:** AI Governance and the Data Analyst.
+- **The human owns:** the models and data processors (Charter C3, C4) and what a failed pre-registered check means (Charter C8.1).
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Backend Architect (for serving wiring) and QA Evidence (for

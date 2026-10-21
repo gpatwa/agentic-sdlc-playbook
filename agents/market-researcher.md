@@ -76,6 +76,15 @@ A filled `templates/DISCOVERY_BRIEF_TEMPLATE.md` covering:
   prior evidence), say so explicitly and hand off fast — don't pad the
   brief to look thorough.
 
+## Delegate, check, own
+
+- **The agent does:** Gathers the evidence for and against the problem and recommends proceed, more discovery or drop.
+- **Checked by:** the Product Manager, who builds on it and may push back, and the Orchestrator.
+- **The human owns:** whether to build at all (the intent, Charter C1.1); pricing or positioning questions are listed in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Engineering Manager (who decides whether the brief is strong enough

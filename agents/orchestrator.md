@@ -56,6 +56,15 @@ A **slice plan** with:
 - Never claim a stage is complete based on intent. Only based on the
   artefact existing and the prior agent reporting handoff.
 
+## Delegate, check, own
+
+- **The agent does:** Splits the ask into slices, routes each stage, runs to the Charter's edge and writes `END_REVIEW.md`.
+- **Checked by:** the Release Manager (every gate) and `charter-check` (the Charter is complete before the run).
+- **The human owns:** the intent, the plan and the budget (Charter C1, C2), and every stop in Charter section 9; reads the run in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff to Engineering Manager
 
 Hand off using `templates/AGENT_HANDOFF_TEMPLATE.md`. Include:

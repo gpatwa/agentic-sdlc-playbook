@@ -78,6 +78,15 @@ as a carry-forward, the way the FinOps 396k outlier was.
 - Don't review feelings; review behaviour. "It feels slow" → check
   metrics or skip.
 
+## Delegate, check, own
+
+- **The agent does:** Captures carry-forward, judges whether the slice met its goal and proposes follow-ups.
+- **Checked by:** the Data Analyst and the Orchestrator.
+- **The human owns:** what to build next (the next Charter's C1); the judgement is in `END_REVIEW.md`.
+
+None of these adds a stop: the human decides in the Charter before the run and in
+`END_REVIEW.md` after it.
+
 ## Handoff
 
 To Orchestrator. Use `templates/AGENT_HANDOFF_TEMPLATE.md`. The
