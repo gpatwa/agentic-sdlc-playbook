@@ -261,3 +261,7 @@ See `docs/LESSONS.md` L47 to L51.
 implementation." That repo has a `.agentic/` folder and zero runs — it was
 never actually exercised. Corrected 2026-09-15 rather than left to mislead
 the next reader.)*
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE). See [NOTICE](NOTICE) for the copyright holder, the trademark note and, where relevant, third-party components.
