@@ -1627,6 +1627,19 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [ ] Measure: tests confirmed failing first, and generated tests kept / removed, as
         counts in `END_REVIEW.md` over the next runs.
 
+- **T33 · Process v3: zero owner touches for routine work.** *Raised 2026-10-20.*
+  Plan: `docs/PROCESS_V3_PLAN.md` (owner decided §6 the same day: unattended runs
+  allowed; first class streak-seed tiers 1–2; auto-merge tier 1; build now).
+  - [x] V3.1 standing Charter template and `execution/standing-charter.mjs` (check, fits).
+  - [x] V3.2 `execution/pick-intent.mjs` (one run per repo; runs used per standing Charter).
+  - [x] V3.4 auto-merge rule (protocol `STANDING_CHARTER.md`, Release Manager, Orchestrator merges).
+  - [ ] V3.3 draft streak-seed's first standing Charter; the owner approves it by hash in a
+        streak-seed session; create the desktop scheduled task (persistent configuration:
+        the owner confirms before it is created); dry run with zero owner messages.
+  - [ ] V3.5 OIDC deploy for aveto-support, after the public ask-the-docs run lands.
+  - [ ] Bars (§5): five routine runs at 0 touches, none outside the class, no auto-merge a
+        later review rejects.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
