@@ -1607,6 +1607,26 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [ ] **M6** pilots on aveto-support, then two or more repos of other stacks and sizes (one not ours); only then README and site, as pilot results.
   - **Stops after M4** if recall or precision misses its declared bar.
 
+- **T32 · Roles against the industry's guidance (pack v26).** *Raised 2026-10-20.*
+  Compared the 28 roles with OpenAI's *Building an AI-Native Engineering Team*,
+  Anthropic's *How Anthropic teams use Claude Code*, Google's migration report and
+  Meta's TestGen-LLM, and with Spec Kit, BMAD-METHOD and the large subagent libraries.
+  No source has independent verification, fail-closed gates and a record together;
+  OpenAI's delegate / review / own split was the useful structure.
+  - [x] **Delegate, check, own** in every agent file and `docs/AGENT_ROLES.md`.
+        "Checked by" is always an agent or a gate; "the human owns" points only to
+        the Charter or `END_REVIEW.md`, so no stop is added (tested).
+  - [x] **Every new test fails first** (developers record it; QA re-runs it on the base
+        commit) and **generated tests are filtered** (builds, three passing runs, covers
+        a "Done means" line or raises coverage; removals listed).
+  - [ ] **Migrations as a named use case.** The best-measured use of coding agents in
+        public (Google, arXiv 2501.06972: large Java and ID migrations, with file
+        discovery, multi-stage validation and human review). Fits after review mode
+        (T31): the map finds the call sites, the area runner bounds each batch. Planned,
+        not built; no claim until a run.
+  - [ ] Measure: tests confirmed failing first, and generated tests kept / removed, as
+        counts in `END_REVIEW.md` over the next runs.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
