@@ -1644,6 +1644,17 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [ ] Bars (§5): five routine runs at 0 touches, none outside the class, no auto-merge a
         later review rejects.
 
+- **T36 · Agent access control and observability.** *Raised 2026-10-21.*
+  Plan: `docs/AGENT_SECURITY_PLAN.md` (audit of what exists; gaps G1 to G6; changes A1 to A6;
+  Claude Code facts read from its documentation, with subagent sandbox inheritance explicitly
+  unverified). Owner decisions in its section 6 are open.
+  - [ ] S1 playbook and messaging wording for the limits (owner approves the wording).
+  - [ ] S2 hash-chained event log hook and verifier; S3 git identity and trailer; S4 alerts;
+        S5 read deny rules for secret paths (pack v28).
+  - [ ] S6 verify that subagents inherit the Bash sandbox, then enable it (A5).
+  - [ ] Order: S1, S2 before the second routine run under any standing Charter; S6 before
+        any standing Charter for a repo that touches real data.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
