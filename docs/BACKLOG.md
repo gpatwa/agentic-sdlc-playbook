@@ -1655,6 +1655,18 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [ ] Order: S1, S2 before the second routine run under any standing Charter; S6 before
         any standing Charter for a repo that touches real data.
 
+- **T34 · Run memory.** *Raised 2026-10-21 after Kiro's memory release.* Plan:
+  `docs/MEMORY_PLAN.md` (four modes as Charter line C9; repo scope only; files in
+  `.agentic/memory/`, not a database; entries checked by `memory-check.mjs`; a memory is
+  data, never authority). Owner decisions in its section 6 are open.
+  - [ ] M1 spec, schema, `memory-check.mjs`, `memory.mjs`; M2 Charter C9; M3 stages and
+        end review; M4 five-run trial against the declared bars.
+  - [ ] Order: after the ask-the-docs run lands, a clean routine dry run, and
+        `AGENT_SECURITY_PLAN.md` S1 and S2.
+- **T35 · The forward-deployed framing.** *Raised 2026-10-21.* Registered as planned claim
+  C14 in `docs/MESSAGING.md`; audience-guide paragraph only. Not in the README, site or a
+  headline until review mode has pilot results.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs

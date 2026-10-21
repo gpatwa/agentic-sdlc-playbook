@@ -52,6 +52,15 @@ once, review once" (now in the sub line) is: `runs/<slice>/APPROVAL_RECORD-1.md`
 | **Solo builder / small team** | production-grade process without the headcount | the Charter run, the cost in their own usage window, the honest limits | "enterprise-ready"; "no cost" |
 | **Claude Code power user** | to stop babysitting agents | one approval, no prompts mid-run, notices not questions, the review layer | that Aveto replaces Claude Code or is made by Anthropic |
 | **Engineering lead with an existing codebase** | to know where the risk is before agents touch it | review mode (planned, bars declared up front) | that it is available; it is a plan (`docs/REVIEW_MODE_PLAN.md`) |
+
+**A framing for this reader, not a headline (planned, 2026-10-21):** *the forward-deployed
+team you install.* In the industry a forward-deployed engineer is a person embedded with a
+customer who adapts the technology to their code and owns the path to a live system; AWS,
+Palantir, Ramp and others use the model, and Constellation Research warns it can paper
+over an immature product. Aveto is not a services business, so the honest version is
+narrower: it onboards to your repo (`REVIEW_MODE_PLAN.md` M1), remembers your conventions
+(`MEMORY_PLAN.md`) and works under your Charter. Until review mode has pilot results this
+stays out of the README, the site and any headline (claim C14, planned).
 | **Security / compliance reader** | evidence of who decided what | named approver, hash-bound Charter, verbatim records, no relayed approvals | that records equal a certification; that a review certifies absence of bugs |
 
 ## 5. Beyond the guidance: what Aveto adds
@@ -144,6 +153,7 @@ this repo does not exist. A claim not in the register is not published.
 | C10 | A budget is checked before each step | enforced | `execution/hooks/budget-guard.mjs`, `execution/pack/protocols/RUN_ECONOMICS.md` | estimates for review stages have run 1.5 to 3 times over, three times |
 | C11 | Review mode for existing codebases | **planned, not built** | `docs/REVIEW_MODE_PLAN.md` | never described as available |
 | C13 | A greenfield app built from a one-paragraph brief (StreakKeeper) | shown once | `docs/VALIDATION_MATRIX.md` | one small app; a person approves each gate |
+| C14 | The forward-deployed team you install (onboards to your repo, remembers conventions, works under your Charter) | **planned, not built** | `docs/REVIEW_MODE_PLAN.md`, `docs/MEMORY_PLAN.md` | never published until review mode has pilot results; not a services claim |
 | C12 | Seven traced slices across stash-seed and streak-seed | measured | stash-seed and streak-seed `runs/*/trace.json` (3 + 4) | the site must use this count, not another |
 
 ## 9. Keeping it true
