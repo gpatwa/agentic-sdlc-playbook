@@ -1,0 +1,983 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="The engineering playbook for AI coding agents: what the agent does, what checks it, what the human decides, and the record that proves it.">
+<meta property="og:title" content="The engineering playbook for AI coding agents · Aveto">
+<meta property="og:description" content="What the agent does, what checks it, what the human decides, and the record that proves it.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://aveto.dev/playbook">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://aveto.dev/playbook">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23A87515' stroke-width='4'/%3E%3Ccircle cx='22' cy='10' r='4' fill='%23A87515'/%3E%3C/svg%3E">
+<title>Aveto playbook</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+</head>
+<body>
+<style>
+  :root {
+    --ground: #FBFAF7;
+    --surface: #FFFFFF;
+    --sunk: #F2F0EB;
+    --ink: #14161A;
+    --ink-soft: #3A4048;
+    --muted: #626B77;
+    --faint: #616974;
+    --rule: #E2DFD8;
+    --rule-strong: #CBC7BE;
+    --gold: #A87515;
+    --gold-text: #85590C;
+    --gold-bright: #C68D22;
+    --gold-wash: #FAF2DF;
+    --pass: #27684B;
+    --pass-wash: #E7F2EC;
+    --block: #B0453D;
+    --block-wash: #FAEAE8;
+    --shadow-sm: 0 1px 2px rgba(20, 22, 26, .05);
+    --shadow: 0 2px 4px rgba(20, 22, 26, .05), 0 12px 32px -16px rgba(20, 22, 26, .22);
+    --f-display: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --f-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0B0E13;
+      --surface: #12161D;
+      --sunk: #171C25;
+      --ink: #E8ECF2;
+      --ink-soft: #C2CAD5;
+      --muted: #8B95A3;
+      --faint: #7E8898;
+      --rule: #232A34;
+      --rule-strong: #333C48;
+      --gold: #E0AC4E;
+      --gold-text: #EBBE72;
+      --gold-bright: #F0C169;
+      --gold-wash: #221A0C;
+      --pass: #5FBE92;
+      --pass-wash: #10231A;
+      --block: #E27C74;
+      --block-wash: #26100E;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+      --shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 12px 32px -16px rgba(0, 0, 0, .8);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0B0E13;
+    --surface: #12161D;
+    --sunk: #171C25;
+    --ink: #E8ECF2;
+    --ink-soft: #C2CAD5;
+    --muted: #8B95A3;
+    --faint: #7E8898;
+    --rule: #232A34;
+    --rule-strong: #333C48;
+    --gold: #E0AC4E;
+    --gold-text: #EBBE72;
+    --gold-bright: #F0C169;
+    --gold-wash: #221A0C;
+    --pass: #5FBE92;
+    --pass-wash: #10231A;
+    --block: #E27C74;
+    --block-wash: #26100E;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+    --shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 12px 32px -16px rgba(0, 0, 0, .8);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background-color: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  .narrow { max-width: 720px; }
+
+  /* ---------- nav ---------- */
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--rule);
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 1.22rem;
+    letter-spacing: -.02em;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .brand .mark {
+    width: 15px; height: 15px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    position: relative;
+    flex: none;
+  }
+  .brand .mark::after {
+    content: "";
+    position: absolute;
+    inset: 3px 3px auto auto;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background-color: var(--gold);
+    top: 3px; right: 3px;
+  }
+
+  .nav-links { display: flex; gap: 26px; font-size: .9rem; color: var(--muted); flex-wrap: wrap; }
+  .nav-links a { color: inherit; text-decoration: none; }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ---------- buttons ---------- */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--f-body);
+    font-size: .92rem;
+    font-weight: 600;
+    padding: 11px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: transform .12s ease, background .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background-color: var(--ink); color: var(--ground); }
+  .btn-primary:hover { background-color: var(--gold); color: #14161A; }
+  .btn-ghost { border-color: var(--rule-strong); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+  a:focus-visible, .btn:focus-visible, details summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  /* ---------- hero ---------- */
+
+  .hero { padding: 78px 0 20px; }
+
+  .brandline {
+    font-family: var(--f-display);
+    font-size: clamp(.95rem, 1.5vw, 1.08rem);
+    font-weight: 600;
+    letter-spacing: .01em;
+    color: var(--gold-text);
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+  .brandline::before {
+    content: "";
+    width: 26px; height: 2px;
+    background-color: var(--gold);
+    flex: none;
+  }
+
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6.2vw, 4.25rem);
+    line-height: 1.03;
+    letter-spacing: -.033em;
+    margin: 0 0 24px;
+    max-width: 17ch;
+    text-wrap: balance;
+  }
+
+  /* --gold-text, not --gold: plain --gold as *text* on --ground measures
+     3.85:1 (light) — below AA. --gold-text exists precisely for gold used as
+     small/text color rather than as a fill; .brandline already uses it. */
+  h1 .em { color: var(--gold-text); }
+
+  .hero-sub {
+    font-size: clamp(1.04rem, 1.9vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 32px;
+  }
+
+  .hero-sub strong { color: var(--ink); font-weight: 600; }
+
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* ---------- lifecycle rail ---------- */
+
+  .rail-block { margin: 66px 0 14px; }
+
+  .rail-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 12px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .rail {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--rule);
+  }
+
+  .phase {
+    background-color: var(--surface);
+    padding: 20px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+
+  .phase.covered { background-color: var(--gold-wash); }
+
+  .phase-top {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .phase-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background-color: var(--gold);
+    flex: none;
+  }
+
+  .phase h3 {
+    font-family: var(--f-display);
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    margin: 0;
+  }
+
+  .phase p {
+    margin: 0;
+    font-size: .87rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .gates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 4px;
+  }
+
+  .gate {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .02em;
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    padding: 2px 6px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .stop-marker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--block);
+    letter-spacing: .03em;
+  }
+  .stop-marker::before {
+    content: "";
+    width: 33%;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--block) 0 5px, transparent 5px 10px);
+    flex: none;
+  }
+
+  /* ---------- sections ---------- */
+
+  section { padding: 84px 0; border-top: 1px solid var(--rule); }
+  section.flush { border-top: none; }
+
+  .sec-eyebrow {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+    margin: 0 0 14px;
+  }
+
+  h2 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+    line-height: 1.12;
+    letter-spacing: -.025em;
+    margin: 0 0 18px;
+    max-width: 20ch;
+    text-wrap: balance;
+  }
+
+  .sec-lede {
+    font-size: 1.04rem;
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: 0 0 34px;
+    line-height: 1.6;
+  }
+
+  /* ---------- stat band ---------- */
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 3px;
+    background-color: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .stat { background-color: var(--surface); padding: 24px 22px; }
+
+  .stat .fig {
+    font-family: var(--f-display);
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+    display: block;
+    margin-bottom: 9px;
+  }
+
+  .stat .fig-sub {
+    display: block;
+    font-family: var(--f-mono);
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .08em;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .stat p { margin: 0; font-size: .87rem; line-height: 1.5; color: var(--muted); }
+  .stat cite { display: block; margin-top: 8px; font-family: var(--f-mono); font-size: 10px; color: var(--faint); font-style: normal; letter-spacing: .04em; }
+
+  /* ---------- capability ---------- */
+
+  .cap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 52px;
+    align-items: center;
+    padding: 52px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .cap:last-of-type { border-bottom: none; padding-bottom: 0; }
+  .cap:first-of-type { padding-top: 0; }
+
+  .cap-num {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold-text);
+    letter-spacing: .1em;
+    margin-bottom: 12px;
+  }
+
+  .cap h3 {
+    font-family: var(--f-display);
+    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+    font-weight: 600;
+    letter-spacing: -.02em;
+    line-height: 1.2;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+
+  .cap p { margin: 0 0 14px; color: var(--ink-soft); font-size: .98rem; }
+  .cap p:last-child { margin-bottom: 0; }
+  .cap .aside { font-size: .87rem; color: var(--muted); }
+
+  /* ---------- artifact panes ---------- */
+
+  .pane {
+    background-color: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .pane-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background-color: var(--sunk);
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .pane-body { padding: 18px; font-family: var(--f-mono); font-size: 12.5px; line-height: 1.75; overflow-x: auto; }
+
+  .pill {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .pill.block { background-color: var(--block-wash); color: var(--block); }
+  .pill.pass { background-color: var(--pass-wash); color: var(--pass); }
+  .pill.hold { background-color: var(--gold-wash); color: var(--gold-text); }
+
+  .ln { display: block; white-space: pre-wrap; word-break: break-word; }
+  .k { color: var(--muted); }
+  .v { color: var(--ink); }
+  .g { color: var(--gold-text); }
+  .r { color: var(--block); }
+  .p { color: var(--pass); }
+  .c { color: var(--faint); }
+
+  .refusal { font-family: var(--f-body); font-size: .93rem; line-height: 1.62; }
+  .refusal p { margin: 0 0 11px; color: var(--ink-soft); }
+  .refusal p:last-child { margin-bottom: 0; }
+  .refusal .named { color: var(--block); font-weight: 600; }
+
+  /* ---------- frameworks ---------- */
+
+  .fw-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 3px;
+    background-color: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .fw {
+    background-color: var(--surface);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .fw .name { font-family: var(--f-display); font-weight: 600; font-size: .97rem; }
+  a.fw { text-decoration: none; color: inherit; transition: background .12s ease; }
+  a.fw:hover { background-color: var(--gold-wash); }
+  a.fw:hover .name { color: var(--gold-text); }
+  .fw .role { font-size: .8rem; color: var(--muted); line-height: 1.45; }
+
+  /* ---------- announcement ---------- */
+
+  .announce {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 26px;
+    padding: 7px 14px 7px 8px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    font-size: .86rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    max-width: 100%;
+  }
+  .announce:hover { border-color: var(--gold); color: var(--ink); }
+  .announce .pill {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+    background-color: var(--gold-wash);
+    padding: 3px 8px;
+    border-radius: 999px;
+    flex: none;
+  }
+
+  /* ---------- course map ---------- */
+
+  .sec-lede a { color: var(--gold-text); text-underline-offset: 3px; }
+  .sec-lede a:hover { color: var(--ink); }
+
+  .map {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--surface);
+  }
+  .map-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 1.35fr;
+    gap: 22px;
+    padding: 18px 22px;
+    border-top: 1px solid var(--rule);
+  }
+  .map-row:first-child { border-top: none; }
+  .map-head {
+    background-color: var(--sunk);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .map-stage { font-family: var(--f-display); font-weight: 600; font-size: 1rem; }
+  .map-stage .n { font-family: var(--f-mono); font-size: .75rem; color: var(--gold-text); margin-right: 8px; }
+  .map-course { font-size: .9rem; color: var(--muted); line-height: 1.5; }
+  .map-aveto { font-size: .92rem; line-height: 1.55; }
+  .map-foot { font-size: .8rem; color: var(--muted); margin: 14px 0 0; }
+  @media (max-width: 760px) {
+    .map-row { grid-template-columns: 1fr; gap: 6px; }
+    .map-head { display: none; }
+    .map-course::before { content: "The course: "; font-weight: 600; }
+    .map-aveto::before { content: "Aveto: "; font-weight: 600; color: var(--gold-text); }
+  }
+
+  /* ---------- roles ---------- */
+
+  .role-group { margin-bottom: 26px; }
+  .role-group:last-child { margin-bottom: 0; }
+  .role-label {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 9px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .role-label .count { color: var(--faint); letter-spacing: .06em; }
+
+  /* ---------- audience ---------- */
+
+  .aud-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+    gap: 16px;
+  }
+
+  .aud {
+    background-color: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .aud h3 { font-family: var(--f-display); font-size: 1.05rem; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+  .aud p { margin: 0; font-size: .89rem; color: var(--muted); line-height: 1.55; }
+  .aud .trigger {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+
+  /* ---------- faq ---------- */
+
+  details {
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 0;
+  }
+  details summary {
+    cursor: pointer;
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -.01em;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: center;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: "+";
+    font-family: var(--f-mono);
+    font-size: 1.1rem;
+    color: var(--gold);
+    flex: none;
+  }
+  details[open] summary::after { content: "\2212"; }
+  details p { margin: 12px 0 0; color: var(--ink-soft); font-size: .95rem; max-width: 68ch; }
+
+  /* ---------- closing ---------- */
+
+  .closer {
+    background-color: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 54px 44px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .closer h2 { margin: 0 auto 16px; max-width: 18ch; }
+  .closer p { color: var(--ink-soft); max-width: 52ch; margin: 0 auto 28px; }
+  .closer .cta-row { justify-content: center; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    margin-top: 84px;
+    padding: 34px 0 56px;
+    display: flex;
+    justify-content: space-between;
+    gap: 22px;
+    flex-wrap: wrap;
+    font-size: .85rem;
+    color: var(--muted);
+  }
+  footer .tag { font-family: var(--f-mono); font-size: 11px; letter-spacing: .05em; color: var(--faint); }
+  footer .indep { flex-basis: 100%; margin: 0; font-size: 12px; color: var(--faint); }
+
+  @media (max-width: 860px) {
+    .cap { grid-template-columns: 1fr; gap: 28px; }
+    .rail { grid-template-columns: 1fr; }
+    .stop-marker::before { width: 20%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    .btn:hover { transform: none; }
+  }
+
+  /* ---------- span diagram ---------- */
+
+  .dgm { margin: 34px 0 8px; }
+
+  /* The page must never scroll horizontally; the diagram scrolls inside itself. */
+  .dgm-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  .dgm svg { display: block; width: 100%; min-width: 640px; height: auto; }
+
+  .dgm figcaption {
+    font-size: .84rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 14px;
+    max-width: 62ch;
+  }
+
+  .dgm-seam rect { fill: var(--sunk); }
+
+  .dgm-seam-label {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    fill: var(--faint);
+    text-anchor: middle;
+  }
+
+  .dgm-row {
+    font-family: var(--f-body);
+    font-size: 13px;
+    font-weight: 600;
+    fill: var(--ink);
+    text-anchor: end;
+  }
+
+  .dgm-row-own { fill: var(--gold-text); }
+
+  .dgm-sub {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    fill: var(--faint);
+    text-anchor: end;
+  }
+
+  /* A competitor's coverage: real, and deliberately quiet. */
+  .dgm-band { fill: var(--rule-strong); }
+
+  /* Absence of coverage, drawn rather than left blank — the blank is the point. */
+  .dgm-void {
+    fill: none;
+    stroke: var(--rule-strong);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+  }
+
+  .dgm-own { fill: var(--gold); }
+
+  /* Fixed, not var(--ground): the band is --gold in both themes, and --ground
+     inverts with them — it measures 3.85:1 light and 1.98:1 dark, i.e. nearly
+     invisible exactly where it matters. Same fixed ink .btn-primary:hover uses
+     on the same gold. 4.50:1 light, 8.78:1 dark. */
+  .dgm-own-label {
+    font-family: var(--f-body);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    fill: #14161A;
+    text-anchor: middle;
+  }
+
+  .dgm-stop { stroke: var(--ink-soft); stroke-width: 2; stroke-linecap: round; }
+
+  .dgm-note {
+    font-family: var(--f-body);
+    font-size: 11.5px;
+    font-style: italic;
+    fill: var(--muted);
+    text-anchor: start;
+  }
+
+  .dgm-note-end { text-anchor: end; }
+
+  .dgm-rule { stroke: var(--rule); stroke-width: 1; }
+
+  .dgm-axis {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: .04em;
+    fill: var(--faint);
+    text-anchor: start;
+  }
+
+  .dgm-axis-mid { text-anchor: middle; }
+  .dgm-axis-end { text-anchor: end; }
+
+
+  /* ---------- workflow diagram ---------- */
+
+  .wf .dgm-scroll svg { min-width: 700px; }
+
+  .wf-box { fill: var(--surface); stroke: var(--rule-strong); stroke-width: 1; }
+  .wf-box-own { stroke: var(--gold); stroke-width: 1.5; fill: var(--gold-wash); }
+
+  .wf-label {
+    font-family: var(--f-body);
+    font-size: 13.5px;
+    font-weight: 600;
+    fill: var(--ink);
+    text-anchor: middle;
+  }
+  .wf-label-own { fill: var(--gold-text); }
+
+  .wf-sub {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    fill: var(--muted);
+    text-anchor: middle;
+  }
+  .wf-sub-own { fill: var(--gold-text); }
+
+  .wf-arrow { fill: none; stroke: var(--rule-strong); stroke-width: 1.5; }
+  .wf-head { fill: var(--rule-strong); }
+
+  .wf-arrow-fail { fill: none; stroke: var(--block); stroke-width: 1.5; }
+  .wf-head-fail { fill: var(--block); }
+
+  .wf-arrow-loop { fill: none; stroke: var(--faint); stroke-width: 1.25; stroke-dasharray: 4 4; }
+  .wf-head-loop { fill: var(--faint); }
+
+  .wf-human { fill: none; stroke: var(--gold); stroke-width: 1.25; stroke-dasharray: 4 3; }
+  .wf-human-label {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    fill: var(--gold-text);
+    text-anchor: middle;
+  }
+
+  .wf-blocked { fill: var(--block-wash); stroke: var(--block); stroke-width: 1; }
+  .wf-blocked-label {
+    font-family: var(--f-body);
+    font-size: 12px;
+    font-weight: 600;
+    fill: var(--block);
+    text-anchor: middle;
+  }
+
+  .wf-note {
+    font-family: var(--f-body);
+    font-size: 11.5px;
+    font-style: italic;
+    fill: var(--muted);
+    text-anchor: start;
+  }
+  .wf-note-mid { text-anchor: middle; }
+
+
+  .doc { max-width: 760px; padding: 56px 0 84px; }
+  .doc h1 { font-family: 'Instrument Sans', sans-serif; font-size: clamp(32px, 5vw, 48px); line-height: 1.08; letter-spacing: -0.02em; margin: 8px 0 20px; color: var(--ink); max-width: none; }
+  .doc h2 { font-size: 26px; max-width: none; margin: 52px 0 14px; padding-top: 28px; border-top: 1px solid var(--rule); }
+  .doc p, .doc li { color: var(--ink-soft); line-height: 1.65; font-size: 16.5px; }
+  .doc p { margin: 0 0 14px; }
+  .doc ul, .doc ol { padding-left: 22px; margin: 0 0 16px; }
+  .doc li { margin: 4px 0; }
+  .doc strong { color: var(--ink); }
+  .doc a { color: var(--gold-text); }
+  .doc code { font-family: 'IBM Plex Mono', monospace; font-size: 0.88em; background: var(--sunk); padding: 1px 5px; border-radius: 4px; color: var(--ink); overflow-wrap: anywhere; }
+  .doc-note { border-left: 3px solid var(--gold); padding: 10px 16px; background: var(--sunk); border-radius: 0 6px 6px 0; }
+  .doc-table { overflow-x: auto; margin: 6px 0 18px; border: 1px solid var(--rule); border-radius: 8px; }
+  .doc table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  .doc th, .doc td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--rule); color: var(--ink-soft); line-height: 1.5; }
+  .doc th { background: var(--sunk); color: var(--ink); font-weight: 600; }
+  .doc tr:last-child td { border-bottom: none; }
+  .doc-toc { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 8px; font-size: 14px; }
+  .doc-toc a { color: var(--muted); text-decoration: none; }
+  .doc-toc a:hover { color: var(--gold-text); }
+
+</style>
+<div class="shell">
+
+  <nav>
+    <a class="brand" href="/" style="text-decoration:none;color:inherit"><span class="mark"></span>Aveto</a>
+    <div class="nav-links">
+      <a href="/#roles">The team</a>
+      <a href="/#course">From the course</a>
+      <a href="/#how">How it works</a>
+      <a href="/#span">Build · Deploy · Run</a>
+      <a href="/#evidence-runs">Evidence</a>
+      <a href="/#limits">Limits</a>
+      <a href="/#source">Docs</a>
+      <a href="/playbook">Playbook</a>
+    </div>
+    <a class="btn btn-ghost" href="https://github.com/gpatwa/agentic-sdlc-playbook">Get started</a>
+  </nav>
+
+  <main class="doc">
+    <p class="sec-eyebrow">The playbook</p>
+    <h1>The engineering playbook for AI coding agents</h1>
+    <nav class="doc-toc" aria-label="Parts"><a href="#1-principles">1. Principles</a><a href="#2-when-to-use-an-agent">2. When to use an agent</a><a href="#3-roles-delegate-check-own">3. Roles: delegate, check, own</a><a href="#4-the-lifecycle">4. The lifecycle</a><a href="#5-human-approval">5. Human approval</a><a href="#6-context-what-the-agent-reads">6. Context: what the agent reads</a><a href="#7-quality-tests-and-review">7. Quality: tests and review</a><a href="#8-security-and-data">8. Security and data</a><a href="#9-cost-and-capacity">9. Cost and capacity</a><a href="#10-measurement-and-adoption">10. Measurement and adoption</a><a href="#what-this-playbook-is-not">What this playbook is not</a><a href="#where-it-comes-from">Where it comes from</a></nav>
+    <p class="doc-note"><strong>Published 2026-10-20 at <a href="https://aveto.dev/playbook">aveto.dev/playbook</a>.</strong> One entry point to how Aveto runs software work with AI coding agents. Each part is short and links to the document that holds the detail; nothing here overrides those documents. Where something is planned rather than built, it says so.</p>
+    <p><strong>The question every part answers:</strong> for each piece of work, <em>what does the agent do, what checks it, what does the human decide, and what record proves it?</em></p>
+    <h2 id="1-principles">1. Principles</h2>
+    <ol><li><strong>Humans own direction, risk and outcome.</strong> Agents own the work in between.</li><li><strong>The agent that verifies never wrote the change.</strong> Builders and checkers are separate roles, run separately.</li><li><strong>Gates fail closed.</strong> A missing artefact or an unclear result is a failure, not a pass.</li><li><strong>The human decides twice: before the run and after it.</strong> A Charter approved by its hash, and an end review. Anything the Charter does not name stops the run.</li><li><strong>Every claim has evidence, and every bar is set before the test.</strong> A result judged against a bar chosen afterwards is not a result.</li><li><strong>What was not confirmed is marked unconfirmed, with where you looked.</strong></li><li><strong>Budget is checked before the spend, not after.</strong></li></ol>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/pack/AGENTS.md"><code>execution/pack/AGENTS.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/OPERATING_MODEL.md"><code>docs/OPERATING_MODEL.md</code></a>.</p>
+    <h2 id="2-when-to-use-an-agent">2. When to use an agent</h2>
+    <p>Not all work suits an agent equally. Decide per task, before the run.</p>
+    <div class="doc-table"><table><thead><tr><th>Delegate to the agent</th><th>Agent works, human checks closely</th><th>Keep with the human</th></tr></thead><tbody><tr><td>Well-specified features with clear "done means" lines</td><td>New abstractions or architecture</td><td>Product direction: what to build, and why</td></tr><tr><td>Tests, including edge cases from the spec</td><td>Ambiguous requirements (clarify first; an intent with open questions does not start)</td><td>What ships to production (the merge)</td></tr><tr><td>Refactors and migrations with a test suite around them</td><td>Security-sensitive code (auth, permissions, payments, PII)</td><td>Sending anything on a user's behalf</td></tr><tr><td>Docs, release notes, diagrams from the code</td><td>Novel incidents and low-confidence root causes</td><td>Accepting risk: a lower review depth, a new data processor, a model in a deterministic path</td></tr><tr><td>First-pass code review, triage, log reading</td><td>Data and AI evals (the bar must be fixed before the run)</td><td>Commercial and legal commitments</td></tr></tbody></table></div>
+    <p><strong>Signals that a task is not ready for an agent:</strong> no one can write "done means" in one paragraph; success cannot be checked by a command or a reviewer; the change crosses systems no one has mapped. Fix the intent first.</p>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/templates/INTENT_TEMPLATE.md"><code>templates/INTENT_TEMPLATE.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENTIC_SDLC.md"><code>docs/AGENTIC_SDLC.md</code></a> ("When to compress stages").</p>
+    <h2 id="3-roles-delegate-check-own">3. Roles: delegate, check, own</h2>
+    <p>Twenty-eight specialist roles, each with one output, the decisions it owns, and one handoff. Every role states three things:</p>
+    <ul><li><strong>The agent does:</strong> the work delegated to it.</li><li><strong>Checked by:</strong> always another agent or a gate, never a person.</li><li><strong>The human owns:</strong> always a line in the Charter or an item in <code>END_REVIEW.md</code>, so</li></ul>
+    <p>naming it adds no stop.</p>
+    <div class="doc-table"><table><thead><tr><th>Group</th><th>Roles</th></tr></thead><tbody><tr><td>Lead</td><td>Orchestrator, Engineering Manager</td></tr><tr><td>Product</td><td>Market Researcher, Product Manager, UX Researcher, UI Designer</td></tr><tr><td>Build</td><td>Software Architect, Backend Architect, Frontend Developer, AI Engineer, ML Engineer, Tech Writer</td></tr><tr><td>Verify</td><td>QA Evidence, Security &amp; Privacy, Release Manager</td></tr><tr><td>Govern</td><td>AI Governance, Compliance Reviewer, Data Governance, FinOps</td></tr><tr><td>Data</td><td>Analytics Engineer, Data Analyst</td></tr><tr><td>Operate</td><td>Cloud Deployment, Production Verification, SRE, On-Call Engineer</td></tr><tr><td>Customers</td><td>Customer Support, Customer Success, Post-Launch Learning</td></tr></tbody></table></div>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_ROLES.md"><code>docs/AGENT_ROLES.md</code></a> (the full delegate / check / own table), <code>agents/</code>.</p>
+    <h2 id="4-the-lifecycle">4. The lifecycle</h2>
+    <p>A slice moves through stages, each producing an artefact the next one reads:</p>
+    <p><strong>Intent → Scope review → Discovery → UX and UI → Architecture → Implementation → QA evidence → Security review → Release gate → (Deploy → Verify → Operate) → Post-launch learning.</strong></p>
+    <ul><li>Small slices compress stages; the Engineering Manager decides which, and says why.</li><li>Every seam has a gate. Release tiers set how many: <strong>tier 1</strong> local, docs or</li></ul>
+    <p>refactor; <strong>tier 2</strong> behaviour change with no external effect; <strong>tier 3</strong> anything with an external effect.</p>
+    <ul><li>A run ends in a pull request. Merge, deploy and send are separate, named actions.</li></ul>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENTIC_SDLC.md"><code>docs/AGENTIC_SDLC.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/RELEASE_GATES.md"><code>docs/RELEASE_GATES.md</code></a>.</p>
+    <h2 id="5-human-approval">5. Human approval</h2>
+    <p><strong>Six kinds of action always need the human:</strong> sending on a user's behalf; destructive changes to shared state; deploys and releases with an external effect; changes to safety controls; putting a model into a path that was deterministic; a new data processor or data commitment.</p>
+    <p><strong>How it works under a Charter:</strong></p>
+    <ol><li>The Orchestrator drafts <code>runs/&lt;slice&gt;/CHARTER.md</code>: scope, budget, models with their effort level, data processors, safety-text changes, permissions, depths, end actions.</li><li><a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/charter-check.mjs"><code>execution/charter-check.mjs</code></a> refuses blanks, open-ended grants and wildcards before the human sees it.</li><li>The human approves it <strong>by its sha256, in their own words, in the session that runs it.</strong> An approval typed in another session, or relayed by an agent, never counts.</li><li>Each action cites the Charter line that covers it. Anything not named stops the run.</li><li>At the end, <code>END_REVIEW.md</code> opens with <strong>Blocked on me, Changed, Found</strong>.</li></ol>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md"><code>docs/HUMAN_APPROVAL_RULES.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/templates/CHARTER_TEMPLATE.md"><code>templates/CHARTER_TEMPLATE.md</code></a>.</p>
+    <h2 id="6-context-what-the-agent-reads">6. Context: what the agent reads</h2>
+    <p>Agents work from files, not from conversation:</p>
+    <div class="doc-table"><table><thead><tr><th>File</th><th>Holds</th></tr></thead><tbody><tr><td><code>AGENTS.md</code> / <code>CLAUDE.md</code></td><td>the run guide every session loads</td></tr><tr><td><code>.agentic/PROJECT_CONTEXT.md</code></td><td>what the product is and who it serves</td></tr><tr><td><code>.agentic/LOCAL_COMMANDS.md</code></td><td>the exact commands to type-check, test, build</td></tr><tr><td><code>.agentic/SAFETY_INVARIANTS.md</code></td><td>what must hold across every release</td></tr><tr><td><code>REVIEW.md</code></td><td>what this repo's reviewers should and should not flag</td></tr><tr><td><code>runs/&lt;slice&gt;/STATE.md</code></td><td>where the run is, so any session can resume it</td></tr></tbody></table></div>
+    <p>Keep each stage's context thin: an agent reads the artefacts it needs, not the whole history. <strong>Planned, not built:</strong> onboarding a codebase Aveto did not build, which proposes these files from the code and marks every invariant "proposed" until the human confirms it (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/REVIEW_MODE_PLAN.md"><code>docs/REVIEW_MODE_PLAN.md</code></a>, M1).</p>
+    <h2 id="7-quality-tests-and-review">7. Quality: tests and review</h2>
+    <ul><li><strong>Every new test fails first</strong> on the base commit; QA re-runs it there itself.</li><li><strong>Generated tests are filtered:</strong> kept only if they build, pass three runs in a row,</li></ul>
+    <p>and cover a "done means" line or raise coverage. Removals are listed.</p>
+    <ul><li><strong>Review scales with risk.</strong> The diff sets the tier: high for safety text, hooks,</li></ul>
+    <p>permissions, auth and CI; medium for product behaviour; low for the rest.</p>
+    <ul><li><strong>Every finding is recorded</strong> with file and line, how to reproduce it, and a</li></ul>
+    <p>disposition: fixed, rejected or intentional. At most three review rounds, then re-plan.</p>
+    <ul><li><strong>The reviewer is tested too:</strong> past incidents are kept as review cases, and the</li></ul>
+    <p>review step is rescored when its prompt, model or effort changes.</p>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/CODE_REVIEW.md"><code>docs/CODE_REVIEW.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/tree/main/docs/review-evals"><code>docs/review-evals/</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/agents/qa-evidence.md"><code>agents/qa-evidence.md</code></a>.</p>
+    <h2 id="8-security-and-data">8. Security and data</h2>
+    <ul><li>Each agent gets the <strong>fewest tools</strong> its role needs, generated per role.</li><li>Judge-style agents run with <strong>no tools</strong>, a deny list and a hook as a second layer.</li><li>Hostile input is reviewed adversarially when the slice handles untrusted text.</li><li><strong>Agents never handle credentials.</strong> A step that needs one stops the run.</li><li>Every data processor is named in the Charter with exactly what it may receive.</li><li><strong>Planned, not built:</strong> secret paths excluded from what any model sees, with a test</li></ul>
+    <p>that proves it (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/REVIEW_MODE_PLAN.md"><code>docs/REVIEW_MODE_PLAN.md</code></a>, M3b).</p>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/agents/security-privacy.md"><code>agents/security-privacy.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md"><code>docs/HUMAN_APPROVAL_RULES.md</code></a> rules 4 to 6.</p>
+    <h2 id="9-cost-and-capacity">9. Cost and capacity</h2>
+    <ul><li>Each stage has an estimate; a hook checks <code>spent + estimate ≤ budget</code> <strong>before</strong> the</li></ul>
+    <p>step. Over budget means degrade, drop or stop, never raise the budget to fit.</p>
+    <ul><li>The Charter sets a plan total, a ceiling (notice) and a hard cap (stop).</li><li>Model and effort are pinned per role in the Charter.</li><li>Runs checkpoint at every stage, so a run that hits a usage limit resumes where it</li></ul>
+    <p>stopped.</p>
+    <ul><li><strong>Measured so far:</strong> a slice runs four to ten stages at roughly 70k to 130k tokens</li></ul>
+    <p>each; one full greenfield build measured 947k. Review stages have run 1.5 to 3 times their estimates.</p>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/pack/protocols/RUN_ECONOMICS.md"><code>execution/pack/protocols/RUN_ECONOMICS.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/hooks/budget-guard.mjs"><code>execution/hooks/budget-guard.mjs</code></a>.</p>
+    <h2 id="10-measurement-and-adoption">10. Measurement and adoption</h2>
+    <p><strong>Measure the process, not just the output:</strong></p>
+    <div class="doc-table"><table><thead><tr><th>Measure</th><th>Why</th></tr></thead><tbody><tr><td>Owner touches per run, and time to the first touch</td><td>whether "decide twice" is still true</td></tr><tr><td>Gate catches, by gate</td><td>which checks earn their cost</td></tr><tr><td>Escaped defects</td><td>what the gates missed</td></tr><tr><td>Review precision (findings neither rejected nor marked intentional)</td><td>whether review is signal or noise</td></tr><tr><td>Spend against estimate, per stage</td><td>whether budgets can be trusted</td></tr><tr><td>Tests confirmed failing first; generated tests kept and removed</td><td>whether tests prove the change</td></tr></tbody></table></div>
+    <p><strong>Adopting it (a path, not yet walked by a team):</strong></p>
+    <ol><li><strong>One person, one repo, one slice.</strong> Install the pack, write an intent, approve a Charter, read the end review. Measure owner touches.</li><li><strong>Declare bars before widening.</strong> Pick the measures above and their targets before the second repo, not after.</li><li><strong>Existing codebases start read-only.</strong> Review mode reports risk and changes nothing (planned, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/REVIEW_MODE_PLAN.md"><code>docs/REVIEW_MODE_PLAN.md</code></a>).</li><li><strong>Then a team.</strong> Shared gates, a run inventory across developers and an audit export are roadmap, not shipped.</li></ol>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/PIPELINE_ANALYTICS.md"><code>docs/PIPELINE_ANALYTICS.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md"><code>docs/VALIDATION_MATRIX.md</code></a>.</p>
+    <h2 id="what-this-playbook-is-not">What this playbook is not</h2>
+    <ul><li><strong>Not a certification.</strong> It records and reviews; it does not certify the absence of</li></ul>
+    <p>bugs or compliance with any standard.</p>
+    <ul><li><strong>Not proven at team scale.</strong> The evidence is three small apps run by one person</li></ul>
+    <p>(<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md"><code>docs/VALIDATION_MATRIX.md</code></a>).</p>
+    <ul><li><strong>Not tied to one vendor's agent in principle,</strong> but built and tested in Claude Code</li></ul>
+    <p>only. Aveto is independent and is not affiliated with or endorsed by Anthropic.</p>
+    <h2 id="where-it-comes-from">Where it comes from</h2>
+    <p>Aveto's own runs and failures (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/LESSONS.md"><code>docs/LESSONS.md</code></a>), and published guidance read against them: Anthropic's <em>Building effective agents</em> and its course on the AI-native SDLC, OpenAI's <em>Building an AI-Native Engineering Team</em> (delegate, review, own), Google's report on internal code migrations, and Meta's work on filtering generated tests.</p>
+    <p><a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/PLAYBOOK.md">Read this page on GitHub</a>, where every linked document lives.</p>
+  </main>
+
+  <footer>
+    <div class="brand"><span class="mark"></span>Aveto</div>
+    <span class="tag">Great software shouldn't need a big company.</span>
+    <a href="https://github.com/gpatwa/agentic-sdlc-playbook" style="color:var(--muted);text-decoration:none">Source on GitHub &#8599;</a>
+    <p class="indep">Aveto is independent. It is not affiliated with or endorsed by Anthropic. It runs in Claude Code.</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
+
