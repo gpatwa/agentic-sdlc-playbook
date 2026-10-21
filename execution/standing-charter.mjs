@@ -60,7 +60,12 @@ const day = (s) => (/^\d{4}-\d{2}-\d{2}$/.test(s || "") ? new Date(`${s}T00:00:0
 export function parseStanding(text) {
   const s = sections(text);
   const tiers = (field(text, "S1.3") || "").match(/\d/g)?.map(Number) || [];
-  const models = [...(s.get(3) || "").matchAll(/\*\*S3\.\d+\*\*[^`\n]*`([^`]+)`[^\n]*/g)].map((m) => ({ id: m[1], line: m[0] }));
+  // A model line may mention other backticked words (a role name, a class like `sonnet`);
+  // only a full model ID counts as a model the class allows.
+  const models = [];
+  for (const m of (s.get(3) || "").matchAll(/\*\*S3\.\d+\*\*[^\n]*/g)) {
+    for (const id of new Set(m[0].match(/\bclaude-[a-z]+-\d+(?:-\d+)*\b/g) || [])) models.push({ id, line: m[0] });
+  }
   const paths = [...(s.get(4) || "").matchAll(/\*\*S4\.\d+\*\*\s*`([^`]+)`/g)].map((m) => m[1]);
   return {
     repo: (field(text, "S1.1") || "").replace(/`/g, "").trim(),
@@ -126,12 +131,15 @@ function grantHits(planText, re) {
   let skip = false;
   const g = new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags + "g");
   for (const line of planText.split("\n")) {
-    if (/^#{1,6}\s/.test(line)) { skip = /non-goal|out of scope|not in scope/i.test(line); continue; }
+    if (/^#{1,6}\s/.test(line)) { skip = /non-goal|out of scope|not in scope|human-approval scan|approval scan/i.test(line); continue; }
     if (skip) continue;
+    // A table row that answers "No" / "None" / "n/a" is a negative statement
+    // ("| 3 deploy/release | No | pull request only |").
+    if (/^\s*\|.*\|\s*(no|none|n\/a|not applicable)\s*\|/i.test(line)) continue;
     for (const m of line.matchAll(g)) {
       const before = line.slice(0, m.index).split(/[.;:!?]/).pop();
       const after = line.slice(m.index + m[0].length).split(/[.;:!?]/)[0];
-      const negated = /\b(never|not|no|without|don't|do not|won't)\b/i.test(before) || /\b(unchanged|untouched|stays as is)\b/i.test(after);
+      const negated = /\b(never|not|no|nothing|none|without|don't|do not|won't)\b/i.test(before) || /\b(unchanged|untouched|stays as is)\b/i.test(after);
       if (!negated) hits.push(m[0]);
     }
   }

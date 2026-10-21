@@ -143,6 +143,38 @@ describe("standing Charter: fits", () => {
   });
 });
 
+describe("standing Charter: found by the first dry run (2026-10-21)", () => {
+  test("a model line that also names a role or class in backticks still lists the full model ID", () => {
+    const withClass = standing.replace("**S3.1** all stages: `claude-sonnet-5-5`, effort high", "**S3.1** stages the pack routes to `sonnet` (25 roles): `claude-sonnet-5-5`, effort medium");
+    assert.deepEqual(checkStanding(withClass, today).errors, []);
+    assert.equal(checkFits(withClass, plan.replace("Uses", "Uses") + "\nStage 2 runs on claude-sonnet-5-5.", { today }).fits, true);
+  });
+  test("the plan's own human-approval scan table (rows answering No) does not make a plan not routine", () => {
+    const scan = `
+## Human-approval scan
+
+| Rule | Trips? | Reason |
+|------|--------|--------|
+| 1 send/submit | No | no send path |
+| 2 destructive shared state | No | one-line doc edit on a branch |
+| 3 deploy/release | No | pull request only |
+| 6 new data processor | No | none |
+
+Result: no gated action outside the standing Charter's S5.
+`;
+    const r = checkFits(standing, plan + scan, { today });
+    assert.equal(r.fits, true, r.reasons.join("; "));
+  });
+  test('"(nothing deployed)" and similar negations in prose do not stop a plan', () => {
+    const r = checkFits(standing, plan.replace("Release tier: 1.", "Release tier: 1. The security stage is smoke (nothing deployed); no message is sent."), { today });
+    assert.equal(r.fits, true, r.reasons.join("; "));
+  });
+  test("a table row that says Yes still stops the plan", () => {
+    const scan = "\n## Stages\n\n| Rule | Trips? | Reason |\n|---|---|---|\n| 3 deploy/release | Yes | deploy to Azure |\n";
+    assert.ok(checkFits(standing, plan + scan, { today }).reasons.some((x) => /deploy/.test(x)));
+  });
+});
+
 describe("pick-intent", () => {
   const repo = () => {
     const d = mkdtempSync(join(tmpdir(), "pick-"));
