@@ -73,6 +73,11 @@ Do this:
    `APPROVAL_PROTOCOL.md` "A run under a Charter", stop only for the Charter's
    section 9, and finish with `END_REVIEW.md`. Without an approved Charter,
    step 5 below applies as written.
+   **Routine runs (Process v3, pack v27).** When `.agentic/STANDING_CHARTER.md` and its
+   approval file exist and the run was started for an intent in `intents/ready/`,
+   follow `.claude/protocols/STANDING_CHARTER.md` instead of drafting a Charter: the
+   plan is checked with `standing-charter.mjs fits`, and only a plan that fits runs
+   with no human message. A plan that does not fit gets a normal Charter.
    **One session runs the slice.** Start it in the slice's worktree. When
    `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is `1` (installed with `--teams`),
    run each stage as a named teammate using its role's agent type, so it is a

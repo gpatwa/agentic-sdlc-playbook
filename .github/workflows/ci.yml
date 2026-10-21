@@ -53,8 +53,9 @@ jobs:
             # ANALYTICS.md / INDEX.md / STATE.md are generated at run time in the
             # product repo, so their absence here is correct. So are the two
             # mailbox files a driver and a support session use between them, and the
-            # Charter and end review a Process v2 run writes into runs/<slice-id>/.
-            case "$r" in ANALYTICS.md|INDEX.md|STATE.md|SUPPORT_REQUESTS.md|SUPPORT_REPLIES.md|CHARTER.md|END_REVIEW.md) continue ;; esac
+            # Charter and end review a Process v2 run writes into runs/<slice-id>/,
+            # and the standing Charter's approval and fit records (Process v3).
+            case "$r" in ANALYTICS.md|INDEX.md|STATE.md|SUPPORT_REQUESTS.md|SUPPORT_REPLIES.md|CHARTER.md|END_REVIEW.md|STANDING_CHARTER_APPROVAL.md|STANDING_FIT.md) continue ;; esac
             if [ -z "$(find . -name "$r" -not -path './node_modules/*' -print -quit)" ]; then
               echo "::error::dangling reference: $r"
               missing=$((missing + 1))

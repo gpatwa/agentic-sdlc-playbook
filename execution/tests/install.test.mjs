@@ -342,6 +342,16 @@ describe("install.mjs — pack integrity", () => {
     assert.match(econ, /Review stages run about 1\.5 to 3 times their estimate/);
   });
 
+  test("pack v27: routine runs under a standing Charter are in the protocol, the command and the Release Manager", () => {
+    const sc = readFileSync(join(target, ".claude", "protocols", "STANDING_CHARTER.md"), "utf8");
+    assert.match(sc, /standing-charter\.mjs fits/);
+    assert.match(sc, /Orchestrator merges with `gh pr merge` only\s+after the Release Manager has recorded a yes/);
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /Routine runs \(Process v3, pack v27\)/);
+    const rm = readFileSync(join(target, ".claude", "agents", "release-manager.md"), "utf8");
+    assert.match(rm, /tier 1 routine run whose standing Charter's S5\.2 allows auto-merge/);
+  });
+
   test("pack v26: every role says what it does, which agent or gate checks it, and where the human decides", () => {
     const dir = join(target, ".claude", "agents");
     const files = readdirSync(dir).filter((f) => f.endsWith(".md"));
@@ -377,7 +387,7 @@ describe("install.mjs — pack integrity", () => {
     assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
     const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
     assert.match(ag, /Mark what you could not confirm, and say where you looked/);
-    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 26);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 27);
   });
 
   test("the budget guard is installed and wired into settings", () => {
