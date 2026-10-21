@@ -1636,6 +1636,10 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [ ] V3.3 draft streak-seed's first standing Charter; the owner approves it by hash in a
         streak-seed session; create the desktop scheduled task (persistent configuration:
         the owner confirms before it is created); dry run with zero owner messages.
+  - [x] Owner decision 2026-10-21: **streak-seed gets no further investment** (kept only because the
+        site and claims C4, C12, C13 cite it; archive later is the owner's option). Its dry run
+        (`intents/readme-test-count.md`) finishes; further routine-run work goes to aveto-support
+        (docs and tests only; never the public service).
   - [ ] V3.5 OIDC deploy for aveto-support, after the public ask-the-docs run lands.
   - [ ] Bars (§5): five routine runs at 0 touches, none outside the class, no auto-merge a
         later review rejects.
