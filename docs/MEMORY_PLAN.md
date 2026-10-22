@@ -61,13 +61,44 @@ Charter with `use only`, the stage proposes nothing; it only lists candidates in
 `END_REVIEW.md`.
 
 **Who reads:** each stage loads at most the entries whose `type` and paths match its role
-and files, through `memory.mjs list --type convention --path src/` (a small script, not a
-database: a filter over the files).
+and files, through `memory.mjs` (a small script, not a database: a filter over the files),
+in three steps so context stays small: `list` returns one line per match (id, type, one-line
+title, `true_at`); `show <id>` returns one entry in full; and a stage cites the ids it used,
+which `END_REVIEW.md` reports. This borrows the "search, then timeline, then fetch by ID"
+shape from claude-mem (read 2026-10-22; its own claim of about ten times fewer tokens is the
+vendor's, not measured here), without its database, its worker service or its automatic
+injection.
 
 **Why files, not SQL:** the records must be diffable, reviewable in a pull request and
 auditable by a reader; they are small (tens of entries); and a database outside the repo
 has no history (`docs/AGENT_SECURITY_PLAN.md` and the Silo comparison, 2026-10-21). A SQL
 index could later be a derived cache, never the source of truth.
+
+## 3b. Third-party memory tools (added 2026-10-22 after reading claude-mem)
+
+Memory tools for coding agents exist outside Aveto (claude-mem, MCP memory servers, an IDE's own
+memory). A governed run cannot ignore them, because they record and inject without a Charter
+line. claude-mem, as its README describes it, hooks every stage of a session, has a model
+compress what the agent did (a data processor), stores the result in a per-user database
+outside the repo, and injects context at session start. Under Aveto that breaks four rules:
+records hold hashes not contents, a data processor is named in the Charter (rule 6), memory is
+data and never authority, and memory is reviewable in the pull request. So:
+
+1. **A Charter line for external memory (C9.2):** `external memory: none`, or the tool's name with
+   its processor named under C4. A run whose Charter says `none` while such a tool is active is a
+   Charter miss.
+2. **A setup check.** The setup phase scans the user and project settings for known memory hooks
+   and MCP servers (claude-mem and the generic memory servers) and records what it found in the
+   plan's prerequisites table. If the memory mode is `off` or `use only` and one is active, the
+   run stops before any gated stage.
+3. **A held-out set rule.** No memory tool may run in a session that reads a held-out gate set:
+   a tool that records tool output could carry the questions into later sessions, including a
+   builder's. The ask-the-docs gate set is exactly this case. The Charter for any run with a
+   held-out gate says `external memory: none` for the stages that read it, and the setup check
+   enforces it.
+
+This is a control on what runs inside a Charter. It does not stop an operator using such a tool
+in their own sessions outside Aveto, and it makes no claim about any tool's quality.
 
 ## 4. What it costs and what it risks
 
@@ -85,11 +116,13 @@ index could later be a derived cache, never the source of truth.
 | Step | What | Done when | Estimate |
 |---|---|---|---|
 | M1 | Spec, schema, `memory-check.mjs`, `memory.mjs` | tests: each rule above refuses its bad case; the folder cap holds | 250k |
-| M2 | Charter line C9 (memory mode) and `charter-check` support | a Charter with no C9, or `use and learn` in a standing Charter without the owner's own line, is refused | 100k |
+| M2 | Charter line C9 (memory mode, and C9.2 external memory) and `charter-check` support | a Charter with no C9, or `use and learn` in a standing Charter without the owner's own line, or a Charter without C9.2, is refused | 100k |
+| M2b | The setup check for external memory tools (3b) | a fixture repo with a planted memory hook and `use only` stops the run; the same repo with `external memory: <tool>` and its processor under C4 passes | 100k |
 | M3 | Post-Launch Learning proposes; stages read through the filter; `END_REVIEW.md` section | a dry run on a fixture repo adds, reads and reports entries | 200k |
 | M4 | A measured trial: five routine runs with `use only` and a seeded memory set | bars below | one run each |
 
-**Bars, declared now:** over five runs, repeat owner corrections **fall** against the same
+**Bars, declared now:** the setup check catches a planted memory hook in **every** fixture case (no
+misses); over five runs, repeat owner corrections **fall** against the same
 repo's earlier runs (counted from `END_REVIEW.md`), extra context cost per run is reported
 (no target; no data yet), **0** memories used after their `true_at` code changed, **0** entries
 granting anything. If corrections do not fall in five runs, memory is not worth its context
@@ -104,3 +137,5 @@ and the plan stops at M3.
 2. **Repository scope only,** no global memory? (Recommended: yes.)
 3. **Files in `.agentic/memory/`, not a database?** (Recommended: yes.)
 4. **Order:** after the security plan's S1 and S2.
+5. **Third-party memory tools (3b):** refuse them inside a Charter unless named, with the setup
+   check and the held-out set rule? (Recommended: yes.)

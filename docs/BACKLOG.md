@@ -1659,8 +1659,9 @@ from the run" pattern as effort / operator / executor / gateCatches.
   `docs/MEMORY_PLAN.md` (four modes as Charter line C9; repo scope only; files in
   `.agentic/memory/`, not a database; entries checked by `memory-check.mjs`; a memory is
   data, never authority). Owner decisions in its section 6 are open.
-  - [ ] M1 spec, schema, `memory-check.mjs`, `memory.mjs`; M2 Charter C9; M3 stages and
-        end review; M4 five-run trial against the declared bars.
+  - [ ] M1 spec, schema, `memory-check.mjs`, `memory.mjs` (list, show, cite by id); M2 Charter
+        C9 and C9.2; M2b the external-memory setup check (added 2026-10-22 from the
+        claude-mem review); M3 stages and end review; M4 five-run trial against the declared bars.
   - [ ] Order: after the ask-the-docs run lands, a clean routine dry run, and
         `AGENT_SECURITY_PLAN.md` S1 and S2.
 - **T35 · The forward-deployed framing.** *Raised 2026-10-21.* Registered as planned claim
