@@ -115,6 +115,33 @@ describe("external review collector", () => {
     assert.deepEqual(t.byMode, { informed: 1, blind: 1 });
   });
 
+  test("parses the numbered format Codex used on 2026-10-23 (the second review of PR 5)", () => {
+    const text = [
+      "Reviewed local head `dbc8b81`. **96 existing tests passed.**",
+      "",
+      "1. **P1 — Restarting bypasses both spend and visitor limits.** [aveto_service/pipeline.py:181](/Users/x/aveto_service/pipeline.py:181), with scale-to-zero configured at [infra/main.bicep:220](/Users/x/infra/main.bicep:220). Each process creates fresh rate limiters.",
+      "",
+      "2. **P2 — Retries spend beyond the admitted reservation.** [aveto_service/pipeline.py:254](/Users/x/aveto_service/pipeline.py:254), [aveto_service/anthropic_judge.py:136](/Users/x/a.py:136). Admission reserves one attempt.",
+    ].join("\n");
+    const f = parsePasted(text);
+    assert.equal(f.length, 2);
+    assert.deepEqual([f[0].p, f[0].file, f[0].line], ["P1", "aveto_service/pipeline.py", "181"]);
+    assert.match(f[0].claim, /Restarting bypasses both spend and visitor limits/);
+    assert.deepEqual([f[1].p, f[1].file, f[1].line], ["P2", "aveto_service/pipeline.py", "254"]);
+    assert.ok(!f[0].claim.includes("|"));
+  });
+
+  test("a duplicate is neither judged nor real, so a repeat finding does not inflate precision", () => {
+    const rec = (rows) => ({ name: "r.md", text: `Mode: informed. Path: A.\n\n| id | P | file:line | claim | disposition | also |\n|---|---|---|---|---|---|\n${rows.join("\n")}\n` });
+    const row = (id, p, disp, local) => `| ${id} | ${p} | a.py:1 | claim | ${disp} | ${local} |`;
+    const first = rec([row("c01", "P2", "accepted https://x/6", "no")]);
+    const second = rec([row("c01", "P1", "intentional CR-3", "yes (CR-3)"), row("c02", "P2", "duplicate of first (x/6)", "no")]);
+    const t = tally([first, second]);
+    assert.deepEqual([t.total, t.judged, t.real, t.duplicates, t.open], [3, 2, 2, 1, 0]);
+    assert.equal(t.precision, 1);
+    assert.equal(t.newValue, 1); // the duplicate is not counted again
+  });
+
   test("the command line: parse writes a record, tally reads it, and neither needs the network", () => {
     const d = mkdtempSync(join(tmpdir(), "extrev-"));
     writeFileSync(join(d, "codex.md"), CODEX_PR5);
@@ -123,7 +150,7 @@ describe("external review collector", () => {
     assert.equal(p.status, 0, p.stderr.toString());
     const t = spawnSync(process.execPath, [cli, "tally", out]);
     assert.equal(t.status, 0);
-    assert.match(t.stdout.toString(), /findings 1 \(1 open, 0 judged, 0 real\)/);
+    assert.match(t.stdout.toString(), /findings 1 \(1 open, 0 judged, 0 real, 0 duplicate\)/);
     assert.match(t.stdout.toString(), /provisional/);
     assert.equal(spawnSync(process.execPath, [cli]).status, 2);
     rmSync(d, { recursive: true });

@@ -19,7 +19,7 @@ import { execFileSync } from "node:child_process";
 import { basename } from "node:path";
 
 const HEADER = "| id | P | file:line | claim | disposition | also in our local review? |\n|---|---|---|---|---|---|";
-const clean = (s) => s.replace(/!\[[^\]]*\]\([^)]*\)/g, "").replace(/\*\*|__|`/g, "").replace(/\s+/g, " ").replace(/\|/g, "/").trim();
+const clean = (s) => s.replace(/!\[[^\]]*\]\([^)]*\)/g, "").replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/\*\*|__|`/g, "").replace(/\s+/g, " ").replace(/\|/g, "/").trim();
 
 // "* [P2] Title. [file.py, line 254](https://...) Body text"
 export function parsePasted(text) {
@@ -36,6 +36,14 @@ export function parsePasted(text) {
     const title = rest.split(/\s*\[[^\]]+\]\([^)]*\)/)[0].trim();
     const body = loc ? rest.slice(rest.indexOf(loc[0]) + loc[0].length).trim() : "";
     out.push({ p: `P${m[1]}`, file, line, claim: clean(`${title} ${body}`).slice(0, 260) });
+  }
+  // "1. **P1 — Title.** [path/file.py:181](link), body..." (the format the Codex app used on 2026-10-23)
+  for (const l of lines) {
+    const n = l.match(/^\s*\d+\.\s+\*\*P([0-3])\s*[—–-]\s*(.+?)\*\*\s*(.*)$/);
+    if (!n) continue;
+    const loc = n[3].match(/\[([^\]]+?):(\d+)\]\([^)]*\)/);
+    const body = loc ? n[3].slice(n[3].indexOf(loc[0]) + loc[0].length) : n[3];
+    out.push({ p: `P${n[1]}`, file: loc ? loc[1] : "", line: loc ? loc[2] : "", claim: clean(`${n[2]} ${body}`).slice(0, 260) });
   }
   return out;
 }
@@ -71,7 +79,7 @@ export function renderRecord({ pr, source, date, findings, local, mode = "unspec
   return [
     `# External review: ${pr}`, "",
     `Mode: ${mode}. Path: ${path}.`, "",
-    `Source: ${source}. Collected ${date}. Disposition \`open\` means nobody has judged it yet: set each to \`fixed <ref>\`, \`accepted <issue>\` (the finding is correct and is filed to fix later), \`intentional <reason>\` (the finding is correct and the behaviour is deliberate) or \`rejected <reason>\`. "Also in our local review?" is a heuristic (same file, within 15 lines); a person confirms it.`, "",
+    `Source: ${source}. Collected ${date}. Disposition \`open\` means nobody has judged it yet: set each to \`fixed <ref>\`, \`accepted <issue>\` (the finding is correct and is filed to fix later), \`intentional <reason>\` (the finding is correct and the behaviour is deliberate), \`rejected <reason>\`, or \`duplicate of <record>\` (the same defect already counted). "Also in our local review?" is a heuristic (same file, within 15 lines); a person confirms it.`, "",
     findings.length ? HEADER : "0 findings.", ...(findings.length ? rows : []), "",
   ].join("\n");
 }
@@ -95,7 +103,9 @@ export function tally(records, { incidents = 0 } = {}) {
   const rows = records.flatMap((r) => parseRecord(r.text).map((x) => ({ ...x, pr: r.name, mode: recordMode(r.text) })));
   const modes = [...new Set(records.map((r) => recordMode(r.text)))];
   const blind = records.filter((r) => recordMode(r.text) === "blind").length;
-  const judged = rows.filter((r) => r.disposition !== "open");
+  // `duplicate` (the same defect already counted in another review of the same pull request) is excluded
+  // from both sides of the precision figure, so a repeat finding does not inflate it.
+  const judged = rows.filter((r) => r.disposition !== "open" && r.disposition !== "duplicate");
   const real = judged.filter((r) => ["fixed", "accepted", "intentional"].includes(r.disposition));
   const wrongMustFix = judged.filter((r) => r.disposition === "rejected" && /^P[01]$/.test(r.p));
   const newValue = real.filter((r) => r.alsoLocal === "no");
@@ -107,7 +117,8 @@ export function tally(records, { incidents = 0 } = {}) {
     ["Discipline: 0 off-script actions by a review", incidents === 0, `${incidents}`],
     ["Independence: at least 1 blind review", blind >= 1, `${blind}`],
   ];
-  return { modes, byMode: Object.fromEntries(modes.map((m) => [m, rows.filter((r) => r.mode === m).length])), prs: records.length, total: rows.length, open: rows.length - judged.length, judged: judged.length, real: real.length, newValue: newValue.length, wrongMustFix: wrongMustFix.length, precision, bars };
+  const duplicates = rows.filter((r) => r.disposition === "duplicate").length;
+  return { duplicates, modes, byMode: Object.fromEntries(modes.map((m) => [m, rows.filter((r) => r.mode === m).length])), prs: records.length, total: rows.length, open: rows.filter((r) => r.disposition === "open").length, judged: judged.length, real: real.length, newValue: newValue.length, wrongMustFix: wrongMustFix.length, precision, bars };
 }
 
 function gh(args) { return JSON.parse(execFileSync("gh", args, { encoding: "utf8", maxBuffer: 20 * 1024 * 1024 })); }
@@ -138,7 +149,7 @@ if (isMain) {
     emit(renderRecord({ pr: opt("--pr") || basename(pos[0]), source: "a pasted review (not posted to GitHub)", date, findings, local, mode: opt("--mode") || "unspecified", path: opt("--path") || "A" }));
   } else if (cmd === "tally" && pos.length >= 1 && pos.every(existsSync)) {
     const t = tally(pos.map((f) => ({ name: basename(f), text: readFileSync(f, "utf8") })), { incidents: Number(opt("--incidents") || 0) });
-    console.log(`records ${t.prs}; findings ${t.total} (${t.open} open, ${t.judged} judged, ${t.real} real); by mode: ${Object.entries(t.byMode).map(([m, n]) => `${m} ${n}`).join(", ") || "none"}`);
+    console.log(`records ${t.prs}; findings ${t.total} (${t.open} open, ${t.judged} judged, ${t.real} real, ${t.duplicates} duplicate); by mode: ${Object.entries(t.byMode).map(([m, n]) => `${m} ${n}`).join(", ") || "none"}`);
     for (const [name, ok, val] of t.bars) console.log(`  ${ok ? "MET    " : "NOT MET"}  ${name}: ${val}`);
     console.log(t.open ? `  note: ${t.open} finding(s) still open; the bars are provisional until every one is judged` : "  every finding is judged");
   } else usage();
