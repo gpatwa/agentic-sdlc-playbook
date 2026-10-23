@@ -1693,6 +1693,10 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [x] Collector built (`execution/external-review.mjs`: parse, draft, tally; mode and path; 9 tests).
   - [x] Second review (2026-10-23): meant to be blind, was not (same chat); the P2 repeated, the P1 was
         our own known CR-3 / D1. Independence bar still unmet; a blind review needs a new chat.
+  - [x] Third review (2026-10-23), a genuinely blind one in a new chat: re-found the retry issue (aveto-support#6)
+        without our notes, plus one new accounting inconsistency (c03, `open`). All five bars met provisionally,
+        on one pull request. Independence bar met.
+  - [ ] Owner: c03's disposition (accept and file, intentional, or reject).
   - [x] Owner decision 2026-10-23: keep the GitHub connector installed (skip suspend or uninstall).
   - [x] First data point (2026-10-22): Codex reviewed aveto-support PR #5 in its app and found
         one P2 (retries are not reserved against the day's cap); checked against the code, new

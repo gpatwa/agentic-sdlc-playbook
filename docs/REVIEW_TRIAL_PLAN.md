@@ -150,8 +150,12 @@ repository; or if after three reviewed pull requests more than half the findings
 accepted and filed as aveto-support#6 (new relative to our local review). The second, meant to be blind,
 was not (same chat); it re-found that P2 (counted once, as a duplicate) and raised our own known CR-3 /
 decision D1 as a P1 (not new). Bars so far: new value met, precision 2 of 2, safety met, discipline met,
-**independence not met.** Next: a **blind** review in a new chat, which would also be the first honest
-test of whether Codex finds the retry issue without our notes.
+**independence not met** at that point. A third review, in a genuinely new chat, was blind by the plan's
+definition: it **found the retry issue again without our notes** (the same defect as aveto-support#6; no
+mention of it in the files it read), raised the known restart finding (visible to it in the product's own status
+file and the PR description), and added one **new** accounting inconsistency (c03, disposition open; Codex says
+P1, my reading P3). **All five bars read met, provisionally: one finding is still open, and all three reviews are of
+one pull request, so this is one pull request of the five.**
 
 ## 6. After the trial
 
