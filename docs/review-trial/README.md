@@ -65,7 +65,7 @@ owner's to set.
 
 ## Still open
 
-0. **c03's disposition** (accept and file, intentional, or reject), the owner's call; and decision D1.
+0. Decision D1 (the in-service limits reset on restart), the owner's call; three reviews have raised it.
 1. **A first review on the GitHub path:** the owner posts `@codex review` as a **comment on the pull request page** in
    aveto-support (typing it into a Codex chat does not do this; pull request 5 is the suggested one, which also lets us
    compare with the first review). Whether the connector can
@@ -99,7 +99,7 @@ Only that one session was read (`~/.codex/sessions/2026/10/22/…`); `auth.json`
 |---|---|---|---|---|
 | aveto-support#5 (**informed**, path A) | 2026-10-22 | **In the Codex app, not through the GitHub integration** (its own text: "review not posted to GitHub"); it also ran the repo's tests (637 passed, 12 deselected) | 1 (P2) | accepted, filed as aveto-support#6: `pr-aveto-support-5.md` |
 | aveto-support#5 (again) | 2026-10-23 | Code Review **plugin** in the Codex app: panel not accessible, **no review produced** | 0 (none run) | n/a; not counted |
-| aveto-support#5 (**blind**, path A; a new chat) | 2026-10-23 | New thread, blind prompt first; no off-limits file opened (checked in all 8 commands); read-only; checkout checked clean; 212 tests | 3 (all labelled P1) | c01 = known CR-3 / D1 (visible in the status file and PR description, so not independent); c02 = **the same defect as aveto-support#6, found without any notes** (duplicate); c03 = **new**, my reading P3, `open`: `pr-aveto-support-5-blind.md` |
+| aveto-support#5 (**blind**, path A; a new chat) | 2026-10-23 | New thread, blind prompt first; no off-limits file opened (checked in all 8 commands); read-only; checkout checked clean; 212 tests | 3 (all labelled P1) | c01 = known CR-3 / D1 (visible in the status file and PR description, so not independent); c02 = **the same defect as aveto-support#6, found without any notes** (duplicate); c03 = **new**, my reading P3, accepted and filed as aveto-support#7: `pr-aveto-support-5-blind.md` |
 | aveto-support#5 (**informed**, path A; meant to be blind) | 2026-10-23 | The "blind pass" prompt, run **in the same chat** as the first review, so Codex said it "cannot be fully blind"; read-only, checkout checked clean | 2 (one P1, one P2) | P1 = our known CR-3 / D1 (`intentional`, not new); P2 = duplicate of the first review's finding (aveto-support#6): `pr-aveto-support-5-second.md` |
 
 ## Deviations from the plan, stated plainly

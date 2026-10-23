@@ -153,9 +153,9 @@ decision D1 as a P1 (not new). Bars so far: new value met, precision 2 of 2, saf
 **independence not met** at that point. A third review, in a genuinely new chat, was blind by the plan's
 definition: it **found the retry issue again without our notes** (the same defect as aveto-support#6; no
 mention of it in the files it read), raised the known restart finding (visible to it in the product's own status
-file and the PR description), and added one **new** accounting inconsistency (c03, disposition open; Codex says
-P1, my reading P3). **All five bars read met, provisionally: one finding is still open, and all three reviews are of
-one pull request, so this is one pull request of the five.**
+file and the PR description), and added one **new** accounting inconsistency (c03, accepted and filed as
+aveto-support#7; Codex says P1, my reading P3). **All five bars read met; no finding is open. All three reviews are of
+one pull request, so this is one pull request of the five, and the result is provisional on that.**
 
 ## 6. After the trial
 

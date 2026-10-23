@@ -1696,7 +1696,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [x] Third review (2026-10-23), a genuinely blind one in a new chat: re-found the retry issue (aveto-support#6)
         without our notes, plus one new accounting inconsistency (c03, `open`). All five bars met provisionally,
         on one pull request. Independence bar met.
-  - [ ] Owner: c03's disposition (accept and file, intentional, or reject).
+  - [x] c03 accepted and filed as aveto-support#7 (P3), 2026-10-23, on the owner's instruction.
   - [x] Owner decision 2026-10-23: keep the GitHub connector installed (skip suspend or uninstall).
   - [x] First data point (2026-10-22): Codex reviewed aveto-support PR #5 in its app and found
         one P2 (retries are not reserved against the day's cap); checked against the code, new

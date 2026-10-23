@@ -8,7 +8,7 @@ Source: a pasted review (not posted to GitHub). Collected 2026-10-23. Dispositio
 |---|---|---|---|---|---|
 | c01 | P1 | pipeline.py:181 | Restarting resets exhausted spend and rate limits. . Every service instance creates fresh in-memory counters and a new visitor salt. With minReplicas: 0, normal scale-down and restart replenish the allowance within the same day, so the configured monthly cap i | intentional CR-3 (owner decision D1 still open) | yes (CR-3) |
 | c02 | P1 | pipeline.py:254 | Retries spend beyond the admitted reservation. , anthropic_judge.py:136. Admission reserves one attempt, but the adapter retries without another budget check. Additional attempt charges are added only afterward, violating the counter’s cap. Reproduce: leave ex | duplicate of pr-aveto-support-5.md c01 (aveto-support#6) | no |
-| c03 | P1 | pipeline.py:275 | Final unbilled error erases earlier uncertain charges. . The adapter reports only the final error category. If a 503 is followed by a 400, unbilled becomes true and zeroes the entire charge, including the reservation that should remain for the potentially bill | open | no |
+| c03 | P1 | pipeline.py:275 | Final unbilled error erases earlier uncertain charges. . The adapter reports only the final error category. If a 503 is followed by a 400, unbilled becomes true and zeroes the entire charge, including the reservation that should remain for the potentially bill | accepted https://github.com/gpatwa/aveto-support/issues/7 | no |
 
 ## How this review ran (read from the Codex session, 2026-10-23, with the owner's permission)
 
@@ -39,5 +39,4 @@ Source: a pasted review (not posted to GitHub). Collected 2026-10-23. Dispositio
   `connection`), and `if unbilled: charge = 0` then overrides the retry charge, so a 503 followed by a 400 settles at zero
   although the run's own ruling (QA-2) charges a 5xx attempt in full. It is an inconsistency in the accounting, not a
   safety hole; a 503 then 400 is rare, and the amount is at most about one reservation. **Codex's P1 is overstated; my
-  reading is P3.** Disposition left `open`: the owner decides whether to accept it (and file an issue), call the current
-  behaviour intentional, or reject it.
+  reading is P3.** **Accepted and filed as [aveto-support#7](https://github.com/gpatwa/aveto-support/issues/7), labelled `bug` and `P3`,** on the owner's instruction ("file c03 as P3 issue", 2026-10-23). Not fixed; it touches the same lines as #6, so one change would probably fix both.
