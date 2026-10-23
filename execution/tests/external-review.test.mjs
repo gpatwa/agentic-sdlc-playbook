@@ -5,7 +5,7 @@ import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { parsePasted, parseGithubComment, localFindings, matchLocal, renderRecord, parseRecord, tally } from "../external-review.mjs";
+import { parsePasted, parseGithubComment, localFindings, matchLocal, renderRecord, parseRecord, tally, recordMode } from "../external-review.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cli = join(here, "..", "external-review.mjs");
@@ -98,6 +98,21 @@ describe("external review collector", () => {
     assert.equal(t.bars[0][1], false);
     // incidents break the discipline bar
     assert.equal(tally([rec([])], { incidents: 1 }).bars[3][1], false);
+  });
+
+  test("a record carries its mode and path, and the tally reports the independence bar and findings by mode", () => {
+    const mk = (mode, rows) => ({ name: `${mode}.md`, text: renderRecord({ pr: "o/r#1", source: "s", date: "d", findings: rows, mode, path: "A" }) });
+    const f = [{ p: "P2", file: "a.py", line: "1", claim: "x" }];
+    assert.equal(recordMode(mk("blind", f).text), "blind");
+    assert.equal(recordMode(mk("informed", f).text), "informed");
+    assert.equal(recordMode("no mode line here"), "unspecified");
+    assert.match(mk("blind", f).text, /Mode: blind\. Path: A\./);
+    let t = tally([mk("informed", f)]);
+    assert.equal(t.bars[4][1], false); // no blind review yet
+    assert.deepEqual(t.byMode, { informed: 1 });
+    t = tally([mk("informed", f), mk("blind", f)]);
+    assert.equal(t.bars[4][1], true);
+    assert.deepEqual(t.byMode, { informed: 1, blind: 1 });
   });
 
   test("the command line: parse writes a record, tally reads it, and neither needs the network", () => {

@@ -1,7 +1,7 @@
 // External review collector — dependency-free Node ESM except for the `gh` CLI.
 //
-//   node <playbook>/execution/external-review.mjs draft <owner/repo> <pr> [--bot <regex>] [--local <code-review.md>] [--out <file>]
-//   node <playbook>/execution/external-review.mjs parse <pasted-review.md> [--pr <label>] [--local <code-review.md>] [--out <file>]
+//   node <playbook>/execution/external-review.mjs draft <owner/repo> <pr> [--bot <regex>] [--local <code-review.md>] [--mode blind|informed|github] [--out <file>]
+//   node <playbook>/execution/external-review.mjs parse <pasted-review.md> [--pr <label>] [--local <code-review.md>] [--mode blind|informed|github] [--path A|B] [--out <file>]
 //   node <playbook>/execution/external-review.mjs tally <record.md> [more.md ...] [--incidents N]
 //
 // For the Codex trial in docs/REVIEW_TRIAL_PLAN.md. Read-only: it never comments, reacts,
@@ -66,10 +66,11 @@ export function matchLocal(finding, local) {
   return hit ? `possible (${hit.id})` : "no";
 }
 
-export function renderRecord({ pr, source, date, findings, local }) {
+export function renderRecord({ pr, source, date, findings, local, mode = "unspecified", path = "?" }) {
   const rows = findings.map((f, i) => `| c${String(i + 1).padStart(2, "0")} | ${f.p} | ${f.file}${f.line ? `:${f.line}` : ""} | ${f.claim} | open | ${matchLocal(f, local)} |`);
   return [
     `# External review: ${pr}`, "",
+    `Mode: ${mode}. Path: ${path}.`, "",
     `Source: ${source}. Collected ${date}. Disposition \`open\` means nobody has judged it yet: set each to \`fixed <ref>\`, \`accepted <issue>\` (the finding is correct and is filed to fix later), \`intentional <reason>\` (the finding is correct and the behaviour is deliberate) or \`rejected <reason>\`. "Also in our local review?" is a heuristic (same file, within 15 lines); a person confirms it.`, "",
     findings.length ? HEADER : "0 findings.", ...(findings.length ? rows : []), "",
   ].join("\n");
@@ -85,8 +86,15 @@ export function parseRecord(text) {
   return rows;
 }
 
+export function recordMode(text) {
+  const m = text.match(/^Mode:\s*([\w-]+)\./m);
+  return m ? m[1].toLowerCase() : "unspecified";
+}
+
 export function tally(records, { incidents = 0 } = {}) {
-  const rows = records.flatMap((r) => parseRecord(r.text).map((x) => ({ ...x, pr: r.name })));
+  const rows = records.flatMap((r) => parseRecord(r.text).map((x) => ({ ...x, pr: r.name, mode: recordMode(r.text) })));
+  const modes = [...new Set(records.map((r) => recordMode(r.text)))];
+  const blind = records.filter((r) => recordMode(r.text) === "blind").length;
   const judged = rows.filter((r) => r.disposition !== "open");
   const real = judged.filter((r) => ["fixed", "accepted", "intentional"].includes(r.disposition));
   const wrongMustFix = judged.filter((r) => r.disposition === "rejected" && /^P[01]$/.test(r.p));
@@ -96,9 +104,10 @@ export function tally(records, { incidents = 0 } = {}) {
     ["New value: at least 1 real issue our local review missed", newValue.length >= 1, `${newValue.length}`],
     ["Precision: at least 70% real", precision !== null && precision >= 0.7, precision === null ? "nothing judged yet" : `${real.length}/${judged.length} = ${(precision * 100).toFixed(0)}%`],
     ["Safety: 0 wrong must-fix (P0 or P1 rejected)", wrongMustFix.length === 0, `${wrongMustFix.length}`],
-    ["Discipline: 0 off-script actions by the integration", incidents === 0, `${incidents}`],
+    ["Discipline: 0 off-script actions by a review", incidents === 0, `${incidents}`],
+    ["Independence: at least 1 blind review", blind >= 1, `${blind}`],
   ];
-  return { prs: records.length, total: rows.length, open: rows.length - judged.length, judged: judged.length, real: real.length, newValue: newValue.length, wrongMustFix: wrongMustFix.length, precision, bars };
+  return { modes, byMode: Object.fromEntries(modes.map((m) => [m, rows.filter((r) => r.mode === m).length])), prs: records.length, total: rows.length, open: rows.length - judged.length, judged: judged.length, real: real.length, newValue: newValue.length, wrongMustFix: wrongMustFix.length, precision, bars };
 }
 
 function gh(args) { return JSON.parse(execFileSync("gh", args, { encoding: "utf8", maxBuffer: 20 * 1024 * 1024 })); }
@@ -116,20 +125,20 @@ if (isMain) {
   const [cmd, ...rest] = process.argv.slice(2);
   const opt = (k) => { const i = rest.indexOf(k); return i !== -1 ? rest[i + 1] : null; };
   const pos = rest.filter((a, i) => !a.startsWith("--") && !(i > 0 && rest[i - 1].startsWith("--")));
-  const usage = () => { console.error("usage: external-review.mjs draft <owner/repo> <pr> [--bot re] [--local f] [--out f] | parse <file> [--pr label] [--local f] [--out f] | tally <record.md ...> [--incidents N]"); process.exit(2); };
+  const usage = () => { console.error("usage: external-review.mjs draft <owner/repo> <pr> [--bot re] [--local f] [--mode m] [--out f] | parse <file> [--pr label] [--local f] [--mode m] [--path A|B] [--out f] | tally <record.md ...> [--incidents N]"); process.exit(2); };
   const date = new Date().toISOString().slice(0, 10);
   const local = opt("--local") && existsSync(opt("--local")) ? localFindings(readFileSync(opt("--local"), "utf8")) : null;
   const emit = (text) => { if (opt("--out")) { writeFileSync(opt("--out"), text); console.log(`wrote ${opt("--out")}`); } else console.log(text); };
   if (cmd === "draft" && pos.length === 2) {
     const [repo, pr] = pos;
     const findings = fetchBotFindings(repo, pr, new RegExp(opt("--bot") || "codex", "i"));
-    emit(renderRecord({ pr: `${repo}#${pr}`, source: `the pull request's reviews and comments by a login matching /${opt("--bot") || "codex"}/i`, date, findings, local }));
+    emit(renderRecord({ pr: `${repo}#${pr}`, source: `the pull request's reviews and comments by a login matching /${opt("--bot") || "codex"}/i`, date, findings, local, mode: opt("--mode") || "github", path: opt("--path") || "B" }));
   } else if (cmd === "parse" && pos.length === 1 && existsSync(pos[0])) {
     const findings = parsePasted(readFileSync(pos[0], "utf8"));
-    emit(renderRecord({ pr: opt("--pr") || basename(pos[0]), source: "a pasted review (not posted to GitHub)", date, findings, local }));
+    emit(renderRecord({ pr: opt("--pr") || basename(pos[0]), source: "a pasted review (not posted to GitHub)", date, findings, local, mode: opt("--mode") || "unspecified", path: opt("--path") || "A" }));
   } else if (cmd === "tally" && pos.length >= 1 && pos.every(existsSync)) {
     const t = tally(pos.map((f) => ({ name: basename(f), text: readFileSync(f, "utf8") })), { incidents: Number(opt("--incidents") || 0) });
-    console.log(`pull requests ${t.prs}; findings ${t.total} (${t.open} open, ${t.judged} judged, ${t.real} real)`);
+    console.log(`records ${t.prs}; findings ${t.total} (${t.open} open, ${t.judged} judged, ${t.real} real); by mode: ${Object.entries(t.byMode).map(([m, n]) => `${m} ${n}`).join(", ") || "none"}`);
     for (const [name, ok, val] of t.bars) console.log(`  ${ok ? "MET    " : "NOT MET"}  ${name}: ${val}`);
     console.log(t.open ? `  note: ${t.open} finding(s) still open; the bars are provisional until every one is judged` : "  every finding is judged");
   } else usage();
