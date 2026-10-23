@@ -342,6 +342,31 @@ describe("install.mjs — pack integrity", () => {
     assert.match(econ, /Review stages run about 1\.5 to 3 times their estimate/);
   });
 
+  test("pack v28: the event log hooks, secret read-deny rules and gitignore are wired, idempotently", () => {
+    const settingsPath = join(target, ".claude", "settings.json");
+    const read = () => JSON.parse(readFileSync(settingsPath, "utf8"));
+    const s = read();
+    for (const [event, phase] of [["PreToolUse", "pre"], ["PostToolUse", "post"], ["PostToolUseFailure", "fail"]]) {
+      const cmds = (s.hooks[event] || []).flatMap((e) => e.hooks.map((h) => h.command)).filter((c) => c.includes("event-log"));
+      assert.deepEqual(cmds, [`node "$CLAUDE_PROJECT_DIR/.claude/hooks/event-log.mjs" ${phase}`]);
+    }
+    for (const rule of ["Read(./.env)", "Read(./.env.*)", "Read(**/*.pem)", "Read(./.aws/**)"]) assert.ok(s.permissions.deny.includes(rule), rule);
+    assert.ok(existsSync(join(target, ".claude", "hooks", "event-log.mjs")));
+    assert.match(readFileSync(join(target, ".gitignore"), "utf8"), /\.claude\/events\//);
+    // A user's own settings survive, and a second install adds nothing twice.
+    s.permissions.deny.push("Bash(rm -rf *)");
+    writeFileSync(settingsPath, JSON.stringify(s, null, 2));
+    execFileSync(process.execPath, [join(here, "..", "install.mjs"), target], { stdio: "pipe" });
+    const s2 = read();
+    assert.ok(s2.permissions.deny.includes("Bash(rm -rf *)"));
+    assert.equal(s2.permissions.deny.filter((r) => r === "Read(./.env)").length, 1);
+    assert.equal(s2.hooks.PostToolUse.flatMap((e) => e.hooks).filter((h) => h.command.includes("event-log")).length, 1);
+    const pack = readFileSync(join(target, ".claude", "protocols", "EVENT_LOG.md"), "utf8");
+    assert.match(pack, /Aveto-Run: <slice-id>/);
+    assert.match(readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8"), /The event log \(pack v28\)/);
+    assert.match(readFileSync(join(target, ".claude", "agents", "release-manager.md"), "utf8"), /events-verify-output\.txt/);
+  });
+
   test("pack v27: routine runs under a standing Charter are in the protocol, the command and the Release Manager", () => {
     const sc = readFileSync(join(target, ".claude", "protocols", "STANDING_CHARTER.md"), "utf8");
     assert.match(sc, /standing-charter\.mjs fits/);
@@ -387,7 +412,7 @@ describe("install.mjs — pack integrity", () => {
     assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
     const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
     assert.match(ag, /Mark what you could not confirm, and say where you looked/);
-    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 27);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 28);
   });
 
   test("the budget guard is installed and wired into settings", () => {

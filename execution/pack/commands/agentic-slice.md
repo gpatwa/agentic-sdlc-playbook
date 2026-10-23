@@ -73,6 +73,11 @@ Do this:
    `APPROVAL_PROTOCOL.md` "A run under a Charter", stop only for the Charter's
    section 9, and finish with `END_REVIEW.md`. Without an approved Charter,
    step 5 below applies as written.
+   **The event log (pack v28).** `.claude/protocols/EVENT_LOG.md`: verify the session's
+   event log at each stage boundary and put alerts in the notice; before the release stage
+   save the verifier's output to `runs/<slice-id>/events-verify-output.txt` and copy the log
+   to `runs/<slice-id>/EVENTS.jsonl`; report it in `END_REVIEW.md`; every commit carries the
+   trailer `Aveto-Run: <slice-id>`.
    **Routine runs (Process v3, pack v27).** When `.agentic/STANDING_CHARTER.md` and its
    approval file exist and the run was started for an intent in `intents/ready/`,
    follow `.claude/protocols/STANDING_CHARTER.md` instead of drafting a Charter: the

@@ -96,6 +96,7 @@ recorded, the higher tier applies and you say so.
 
 - **The agent does:** Classifies the release tier, checks every gate and lands the slice as the Charter's end action.
 - **Checked by:** the review layer (which re-derives the tier from the diff) and `verify-approvals.mjs` (approval records checked against GitHub).
+- **Event log (pack v28):** the gate fails if `runs/<slice-id>/events-verify-output.txt` is missing, says the chain is broken, or lists a write outside the Charter's paths; any other alert is reported in the gate artefact, not blocking.
 - **The human owns:** the end action and any irreversible action (Charter C8.2, C8.3); a gate bypass is never in the run (Charter section 9); the merge is decided from `END_REVIEW.md`, except a tier 1 routine run whose standing Charter's S5.2 allows auto-merge, where every condition in `STANDING_CHARTER.md` must hold and be recorded.
 
 None of these adds a stop: the human decides in the Charter before the run and in

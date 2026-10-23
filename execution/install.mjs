@@ -218,6 +218,32 @@ if (settings) {
     });
     writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
   }
+  // Event log (pack v28, docs/AGENT_SECURITY_PLAN.md A1): a chained record of every tool
+  // call and which role made it. Observability, so it fails open; one hook entry per
+  // phase, matching every tool.
+  const EVENT_CMD = (phase) => `node "$CLAUDE_PROJECT_DIR/.claude/hooks/event-log.mjs" ${phase}`;
+  let wired = false;
+  for (const [event, phase] of [["PreToolUse", "pre"], ["PostToolUse", "post"], ["PostToolUseFailure", "fail"]]) {
+    settings.hooks[event] ??= [];
+    const have = settings.hooks[event].some((e) => (e?.hooks ?? []).some((h) => h?.command === EVENT_CMD(phase)));
+    if (!have) {
+      settings.hooks[event].push({ matcher: "*", hooks: [{ type: "command", command: EVENT_CMD(phase), timeout: 10 }] });
+      wired = true;
+    }
+  }
+  // Read-deny rules for secret paths (A4). Merged into the tracked settings so every
+  // clone gets them. They bind Claude Code's file tools (Grep and Glob best-effort);
+  // a Bash command is NOT covered by a Read rule: that is the sandbox's job (A5).
+  const SECRET_READ_DENY = [
+    "Read(./.env)", "Read(./.env.*)", "Read(**/*.pem)", "Read(**/*.key)", "Read(**/*.p12)",
+    "Read(**/credentials*)", "Read(./.aws/**)", "Read(./.ssh/**)", "Read(./secrets/**)",
+  ];
+  settings.permissions ??= {};
+  settings.permissions.deny ??= [];
+  const missingDeny = SECRET_READ_DENY.filter((r) => !settings.permissions.deny.includes(r));
+  if (missingDeny.length) { settings.permissions.deny.push(...missingDeny); wired = true; }
+  if (wired) writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
+
   if (teams && settings.env?.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS !== "1") {
     settings.env ??= {};
     settings.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
@@ -230,7 +256,7 @@ if (settings) {
 // desktop app creates under .claude/, and per-user settings. Append only
 // what is missing; never rewrite the user's .gitignore.
 const gitignorePath = join(productDir, ".gitignore");
-const IGNORE = [".claude/worktrees/", ".claude/settings.local.json"];
+const IGNORE = [".claude/worktrees/", ".claude/settings.local.json", ".claude/events/"];
 const existingIgnore = existsSync(gitignorePath) ? readFileSync(gitignorePath, "utf8") : "";
 const haveIgnore = new Set(existingIgnore.split("\n").map((l) => l.trim()));
 const addIgnore = IGNORE.filter((l) => !haveIgnore.has(l));
@@ -254,7 +280,7 @@ writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
 // Pack version. Bump when a regeneration changes what agents *do* — new
 // frontmatter the harness acts on, a changed tool boundary, a protocol whose
 // absence would change a decision. Cosmetic edits do not earn a bump.
-const PACK_VERSION = 27;
+const PACK_VERSION = 28;
 
 // Read the previous install back before overwriting it. Until now this field
 // was written and never read, so a product repo could drift arbitrarily far

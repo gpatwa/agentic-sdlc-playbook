@@ -53,6 +53,13 @@ requires **all** of these, each recorded:
 Any one missing: leave the pull request open for the human, and say which. Never merge
 by bypassing a required check or a branch protection.
 
+## Git identity (pack v28)
+
+A routine run commits as `Aveto routine run <noreply@aveto.dev>`, set through the `env`
+block of `.claude/settings.local.json` in setup (`EVENT_LOG.md`, "Telling agents from people
+in git"), and every commit carries `Aveto-Run: <slice-id>`. The merge, if it happens, is
+the standing Charter's auto-merge rule's, recorded under the same identity.
+
 ## What a routine run never does
 
 Everything in the standing Charter's section 7: send; destroy shared state; deploy;
