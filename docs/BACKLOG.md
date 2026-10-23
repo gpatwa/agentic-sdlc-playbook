@@ -1633,7 +1633,13 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [x] V3.1 standing Charter template and `execution/standing-charter.mjs` (check, fits).
   - [x] V3.2 `execution/pick-intent.mjs` (one run per repo; runs used per standing Charter).
   - [x] V3.4 auto-merge rule (protocol `STANDING_CHARTER.md`, Release Manager, Orchestrator merges).
-  - [ ] V3.3 draft streak-seed's first standing Charter; the owner approves it by hash in a
+  - [x] **Owner decision 2026-10-23: skip the streak-seed routine dry run.** Process v3's machinery
+        (standing Charter, fit check, picker, auto-merge) is built and tested but **not proven in a run**;
+        the scheduled task was never created and nothing runs under the standing Charter. Public
+        wording must say "built, not proven". The streak-seed standing Charter expires 2026-11-20 (the
+        owner may delete it sooner). The paused session and the local `routine-run` branch remain.
+  - [ ] ~~V3.3 draft streak-seed's first standing Charter;~~ (superseded by the decision above)
+        original text: draft streak-seed's first standing Charter; the owner approves it by hash in a
         streak-seed session; create the desktop scheduled task (persistent configuration:
         the owner confirms before it is created); dry run with zero owner messages.
   - [x] Owner decision 2026-10-21: **streak-seed gets no further investment** (kept only because the
@@ -1685,6 +1691,9 @@ from the run" pattern as effort / operator / executor / gateCatches.
         optional (B); each review recorded as blind, informed or github; the bars gain an
         independence bar (at least one blind review among the five). Owner decisions in section 7 open.
   - [x] Collector built (`execution/external-review.mjs`: parse, draft, tally; mode and path; 9 tests).
+  - [x] Second review (2026-10-23): meant to be blind, was not (same chat); the P2 repeated, the P1 was
+        our own known CR-3 / D1. Independence bar still unmet; a blind review needs a new chat.
+  - [x] Owner decision 2026-10-23: keep the GitHub connector installed (skip suspend or uninstall).
   - [x] First data point (2026-10-22): Codex reviewed aveto-support PR #5 in its app and found
         one P2 (retries are not reserved against the day's cap); checked against the code, new
         relative to our local review; accepted and filed as aveto-support#6 (P2). Not through the GitHub integration, so

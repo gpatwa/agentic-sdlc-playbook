@@ -60,7 +60,10 @@ push a commit to the branch; `@codex security review` is a separate research pre
 5. **Blind first, informed second.** Every review is recorded with its **mode**: `blind` (told not to read
    `runs/`, `code-review.md`, `END_REVIEW.md` or any security-review file before reviewing), `informed`
    (it read them), or `github` (path B). **At least one of the five reviews must be blind**, because a
-   review that has read our notes cannot show independence.
+   review that has read our notes cannot show independence. **A blind review must be a new chat** whose
+   first message is the blind prompt: on 2026-10-23 the pass was run in the chat that had already reviewed
+   the pull request, and Codex said it "cannot be fully blind". The transcript decides: a review counts as
+   blind only if no earlier message in its session read an off-limits file.
 6. **Least privilege, recorded.** Path B's permissions are in the trial record; the owner accepted them
    on 2026-10-23, with branch protection on `main` (checked). While path B is not in use, the connector
    should be suspended or uninstalled (section 7), which removes its write access.
@@ -79,8 +82,9 @@ push a commit to the branch; `@codex security review` is a separate research pre
 everyone" is off (read); branch protection on aveto-support `main` is set (read back); the connector's
 permissions and its single-repository access are recorded; the owner gave the go-ahead.
 
-**Path A, per review.** The owner starts it in the Codex desktop app, in a session whose folder is the
-repository checkout, with this prompt (blind pass; edit only the pull request number):
+**Path A, per review.** The owner starts it in the Codex desktop app, **in a new chat** (never one that has
+already reviewed this pull request), in a session whose folder is the repository checkout, with this prompt
+(blind pass; edit only the pull request number):
 
 ```
 Review pull request #<n> in gpatwa/aveto-support for correctness, security and spend-limit bugs. Rules:
@@ -142,9 +146,12 @@ pull request adds findings but not a pull request:
 **Stop early** if a review ever modifies the checkout, pushes a commit, or refers to anything outside the
 repository; or if after three reviewed pull requests more than half the findings are wrong.
 
-**Where it stands (2026-10-23):** pull request 5 has one informed path A review: one P2, accepted and filed
-as aveto-support#6 (new relative to our local review). Next: a **blind** path A review of pull request 5,
-which also tests whether Codex finds the same issue without our notes.
+**Where it stands (2026-10-23):** pull request 5 has two informed path A reviews. The first found one P2,
+accepted and filed as aveto-support#6 (new relative to our local review). The second, meant to be blind,
+was not (same chat); it re-found that P2 (counted once, as a duplicate) and raised our own known CR-3 /
+decision D1 as a P1 (not new). Bars so far: new value met, precision 2 of 2, safety met, discipline met,
+**independence not met.** Next: a **blind** review in a new chat, which would also be the first honest
+test of whether Codex finds the retry issue without our notes.
 
 ## 6. After the trial
 
@@ -160,8 +167,11 @@ site until there are results.
 2. **Suspend or uninstall the GitHub connector while path B is not in use?** It removes the broadest
    permission in the setup (write to code, workflows and actions). In GitHub: Settings, Applications,
    Installed GitHub Apps, the connector, Configure, then Suspend or Uninstall. It can be reinstalled to try
-   path B. (Recommended: yes; reinstall only to run the path B test.)
-3. **Run the blind pass on pull request 5 now?** (Recommended: yes.)
+   path B. (Recommended: yes.) **Decided 2026-10-23, the owner: skip.** The connector stays installed with
+   the permissions in the README; the protections that remain are branch protection on `main`, the rule never
+   to use `@codex fix`, and manual-only use.
+3. **Run the blind pass on pull request 5?** Done once on 2026-10-23, **not blind** (same chat). To do:
+   again, in a new chat. (Recommended: yes.)
 4. **Which `AGENTS.md` route,** if review rules are wanted (section 4, a or b)? (Recommended: a, after the
    blind pass shows what Codex does with the repository's guidance.)
 5. **Give the trial more material:** route pack and code changes in the playbook through pull requests
