@@ -131,7 +131,15 @@ and the plan stops at M3.
 **Order:** after the ask-the-docs run lands, the routine dry run is clean, and
 `docs/AGENT_SECURITY_PLAN.md` S1 and S2 are built (memory entries need the event log).
 
-## 6. What the owner decides
+## 6. What the owner decided (2026-10-22: all five yes as recommended)
+
+1. The four memory modes as Charter line C9, default `use only`. 2. Repository scope only.
+3. Files in `.agentic/memory/`, not a database. 4. Order: after the security plan's S1 and S2.
+5. Refuse third-party memory tools inside a Charter unless named, with the setup check and the
+held-out set rule. The security plan's S1 and S2 (A1 and A2) are built, so M1 can start when a
+run has used the event log.
+
+The questions as they were put:
 
 1. **Adopt the four modes as Charter line C9**, with `use only` as the default?
 2. **Repository scope only,** no global memory? (Recommended: yes.)

@@ -1,10 +1,11 @@
 # Plan: who can do what, and how we would know (agent access control and observability)
 
 > **Status: proposed 2026-10-21 at the owner's request ("is there observability and
-> access control/authorization for all our agents?"); not built.** Section 1 is an audit
-> of what exists, read from the code on that date. Sections 3 to 5 are the plan. Nothing
-> here is a claim about the product until it is built and tested; the playbook's
-> "Security and data" part should carry the limits in section 2 meanwhile.
+> access control/authorization for all our agents?"). The owner answered section 6 on
+> 2026-10-22 ("all nine: yes as recommended"). A1, A2, A3 and A4 are built in pack v28
+> (section 7 records exactly how); A5 (the sandbox) waits for its live check; A6's wording is
+> drafted in `docs/PLAYBOOK.md`.** Section 1 is an audit of what exists, read from the code
+> on 2026-10-21. Nothing here is a claim about the product until a run has used it.
 
 ## 1. What exists today (read from the code, 2026-10-21)
 
@@ -133,7 +134,14 @@ roles in a container or virtual machine, and the plan is re-opened.
 Charter; S6 before any standing Charter is approved for aveto-support or a repo that touches
 real data. The ask-the-docs run lands first and is not disturbed.
 
-## 6. What the owner decides
+## 6. What the owner decided (2026-10-22: all four yes as recommended)
+
+1. Turn on the Bash sandbox for every run in the installed repos, after the subagent check.
+2. Disable the unsandboxed retry.
+3. A distinct git author for routine runs.
+4. Build S1 to S5 now as pack v28; S6 when a session can run the live check.
+
+The questions as they were put:
 
 1. **Turn on the Bash sandbox for every run in the installed repos,** accepting that some
    tools may need an allowed domain or an excluded command? (Recommended: yes, after S6's check.)
@@ -146,3 +154,26 @@ real data. The ask-the-docs run lands first and is not disturbed.
 It does not add per-agent cloud identities beyond the pipeline's, a central log service, an
 anomaly-detection system, or protection against a person with the operator's own account. It
 makes actions attributable and edits detectable; it does not make a compromised session safe.
+
+## 7. What pack v28 built, and where it differs from section 4 (2026-10-22)
+
+- **A1 built** as `execution/hooks/event-log.mjs` (PreToolUse, PostToolUse, PostToolUseFailure,
+  all tools) and `execution/events-verify.mjs`. The log lives at `.claude/events/<session>.jsonl`
+  (gitignored scratch) and the Orchestrator copies it to `runs/<slice>/EVENTS.jsonl`, recording the
+  final chain head in `END_REVIEW.md`. It fails open. A denied call shows as an attempt with no
+  outcome. Verified by 8 tests, including 12 concurrent writers, tampering, and that no secret
+  reaches the log.
+- **A2 built as protocol, not as a hook:** the trailer `Aveto-Run: <slice-id>` on every commit and,
+  for routine runs, a distinct author set through the `env` block of the gitignored
+  `settings.local.json` (`EVENT_LOG.md`). Not yet exercised in a run.
+- **A3 built partly:** the verifier's alerts go into each stage's notice (the Orchestrator runs it
+  at every boundary). A hook cannot send a push notice by itself, so alerts are raised at
+  stage boundaries, not mid-stage.
+- **A4 built, with one change:** the read-deny rules are in the **tracked** `.claude/settings.json`
+  (so every clone has them), not the gitignored local file. They bind Claude Code's file tools,
+  Grep and Glob best-effort, and **not** a shell command. Enforcement is not proved by a test
+  here: a test can check the rules are present and survive a reinstall, but only a live run can
+  show a file tool refusing a planted secret. That live check is part of S6.
+- **A5 not built:** the sandbox waits for the check that subagents inherit it. A6's wording is in
+  the playbook, pending the owner's approval.
+

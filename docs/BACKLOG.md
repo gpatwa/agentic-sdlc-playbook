@@ -1648,10 +1648,15 @@ from the run" pattern as effort / operator / executor / gateCatches.
   Plan: `docs/AGENT_SECURITY_PLAN.md` (audit of what exists; gaps G1 to G6; changes A1 to A6;
   Claude Code facts read from its documentation, with subagent sandbox inheritance explicitly
   unverified). Owner decisions in its section 6 are open.
-  - [ ] S1 playbook and messaging wording for the limits (owner approves the wording).
-  - [ ] S2 hash-chained event log hook and verifier; S3 git identity and trailer; S4 alerts;
-        S5 read deny rules for secret paths (pack v28).
-  - [ ] S6 verify that subagents inherit the Bash sandbox, then enable it (A5).
+  - [x] Owner decided section 6 on 2026-10-22: all four yes as recommended.
+  - [x] **Pack v28 built (2026-10-22):** A1 event log hook and verifier (8 tests); A2 git
+        identity and trailer as protocol; A3 alerts at stage boundaries; A4 read-deny rules in
+        the tracked settings. Not yet used in a run; enforcement of the deny rules needs the
+        live check in S6.
+  - [ ] S1 the playbook wording (drafted in `docs/PLAYBOOK.md` part 8 and claim C15; the owner
+        approves the wording; the site page must then be regenerated and deployed).
+  - [ ] S6 verify that subagents inherit the Bash sandbox, then enable it (A5); in the same
+        live check, plant a secret file and confirm Read, Grep and Glob refuse it (A4).
   - [ ] Order: S1, S2 before the second routine run under any standing Charter; S6 before
         any standing Charter for a repo that touches real data.
 
@@ -1659,6 +1664,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
   `docs/MEMORY_PLAN.md` (four modes as Charter line C9; repo scope only; files in
   `.agentic/memory/`, not a database; entries checked by `memory-check.mjs`; a memory is
   data, never authority). Owner decisions in its section 6 are open.
+  - [x] Owner decided section 6 on 2026-10-22: all five yes as recommended.
   - [ ] M1 spec, schema, `memory-check.mjs`, `memory.mjs` (list, show, cite by id); M2 Charter
         C9 and C9.2; M2b the external-memory setup check (added 2026-10-22 from the
         claude-mem review); M3 stages and end review; M4 five-run trial against the declared bars.

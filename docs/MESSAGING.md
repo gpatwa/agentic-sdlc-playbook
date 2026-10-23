@@ -154,6 +154,7 @@ this repo does not exist. A claim not in the register is not published.
 | C11 | Review mode for existing codebases | **planned, not built** | `docs/REVIEW_MODE_PLAN.md` | never described as available |
 | C13 | A greenfield app built from a one-paragraph brief (StreakKeeper) | shown once | `docs/VALIDATION_MATRIX.md` | one small app; a person approves each gate |
 | C14 | The forward-deployed team you install (onboards to your repo, remembers conventions, works under your Charter) | **planned, not built** | `docs/REVIEW_MODE_PLAN.md`, `docs/MEMORY_PLAN.md` | never published until review mode has pilot results; not a services claim |
+| C15 | Every tool call is recorded in a tamper-evident log with the role that made it | **built, not yet used in a run** | `docs/AGENT_SECURITY_PLAN.md`, `execution/hooks/event-log.mjs` | detects an edited or deleted line after the fact; fails open; a shell role can still reach the file until the sandbox (planned) is on; never "audit-grade" |
 | C12 | Seven traced slices across stash-seed and streak-seed | measured | stash-seed and streak-seed `runs/*/trace.json` (3 + 4) | the site must use this count, not another |
 
 ## 9. Keeping it true
