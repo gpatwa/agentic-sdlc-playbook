@@ -97,8 +97,9 @@ a run): the pull request, the model's date, then one row per Codex comment:
 A pull request with no comments gets one line: "0 findings".
 
 **Definitions, fixed now:**
-- A **real issue** is a comment the owner or the owning role dispositions as **fixed**, or marks
-  "correct, intentional".
+- A **real issue** is a comment the owner or the owning role dispositions as **fixed**,
+  **accepted** (correct, and filed to fix later) or **intentional** (correct, and the behaviour is
+  deliberate). **Rejected** means not real.
 - **Missed by our local review** means the finding is not in that run's `code-review.md`. For a
   pull request with no local review, a local `/code-review` at high effort is run on the same diff
   first, and the cost is reported.

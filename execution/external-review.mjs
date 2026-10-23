@@ -70,7 +70,7 @@ export function renderRecord({ pr, source, date, findings, local }) {
   const rows = findings.map((f, i) => `| c${String(i + 1).padStart(2, "0")} | ${f.p} | ${f.file}${f.line ? `:${f.line}` : ""} | ${f.claim} | open | ${matchLocal(f, local)} |`);
   return [
     `# External review: ${pr}`, "",
-    `Source: ${source}. Collected ${date}. Disposition \`open\` means nobody has judged it yet: set each to \`fixed <ref>\`, \`intentional <reason>\` (the finding is correct and the behaviour is deliberate) or \`rejected <reason>\`. "Also in our local review?" is a heuristic (same file, within 15 lines); a person confirms it.`, "",
+    `Source: ${source}. Collected ${date}. Disposition \`open\` means nobody has judged it yet: set each to \`fixed <ref>\`, \`accepted <issue>\` (the finding is correct and is filed to fix later), \`intentional <reason>\` (the finding is correct and the behaviour is deliberate) or \`rejected <reason>\`. "Also in our local review?" is a heuristic (same file, within 15 lines); a person confirms it.`, "",
     findings.length ? HEADER : "0 findings.", ...(findings.length ? rows : []), "",
   ].join("\n");
 }
@@ -88,7 +88,7 @@ export function parseRecord(text) {
 export function tally(records, { incidents = 0 } = {}) {
   const rows = records.flatMap((r) => parseRecord(r.text).map((x) => ({ ...x, pr: r.name })));
   const judged = rows.filter((r) => r.disposition !== "open");
-  const real = judged.filter((r) => r.disposition === "fixed" || r.disposition === "intentional");
+  const real = judged.filter((r) => ["fixed", "accepted", "intentional"].includes(r.disposition));
   const wrongMustFix = judged.filter((r) => r.disposition === "rejected" && /^P[01]$/.test(r.p));
   const newValue = real.filter((r) => r.alsoLocal === "no");
   const precision = judged.length ? real.length / judged.length : null;

@@ -1684,7 +1684,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [x] Collector built (`execution/external-review.mjs`: parse, draft, tally; 8 tests).
   - [x] First data point (2026-10-22): Codex reviewed aveto-support PR #5 in its app and found
         one P2 (retries are not reserved against the day's cap); checked against the code, new
-        relative to our local review; disposition open. Not through the GitHub integration, so
+        relative to our local review; accepted and filed as aveto-support#6 (P2). Not through the GitHub integration, so
         the GitHub path still needs its first test (`docs/review-trial/`).
 
 ## Decided NO / parked — recorded so they don't return

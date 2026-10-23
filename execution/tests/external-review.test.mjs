@@ -89,6 +89,9 @@ describe("external review collector", () => {
     t = tally([rec([row("c01", "P1", "fixed x", "no"), row("c02", "P2", "intentional y", "possible (CR-1)"), row("c03", "P2", "fixed z", "no"), row("c04", "P1", "rejected w", "no")])]);
     assert.equal(t.bars[1][1], true);
     assert.equal(t.bars[2][1], false);
+    // accepted (correct, filed to fix later) counts as real
+    t = tally([rec([row("c01", "P2", "accepted https://github.com/o/r/issues/6", "no")])]);
+    assert.deepEqual([t.real, t.newValue], [1, 1]);
     // an intentional finding the local review also had is real but not new
     t = tally([rec([row("c01", "P2", "intentional y", "possible (CR-1)")])]);
     assert.equal(t.newValue, 0);

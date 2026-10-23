@@ -14,7 +14,7 @@ Plan and bars: `docs/REVIEW_TRIAL_PLAN.md`. Collector: `execution/external-revie
 
 | Pull request | Date | How the review ran | Findings | Disposition |
 |---|---|---|---|---|
-| aveto-support#5 | 2026-10-22 | **In the Codex app, not through the GitHub integration** (its own text: "review not posted to GitHub"); it also ran the repo's tests (637 passed, 12 deselected) | 1 (P2) | open: `pr-aveto-support-5.md` |
+| aveto-support#5 | 2026-10-22 | **In the Codex app, not through the GitHub integration** (its own text: "review not posted to GitHub"); it also ran the repo's tests (637 passed, 12 deselected) | 1 (P2) | accepted, filed as aveto-support#6: `pr-aveto-support-5.md` |
 
 ## Deviations from the plan, stated plainly
 
