@@ -6,9 +6,16 @@ Plan and bars: `docs/REVIEW_TRIAL_PLAN.md`. Collector: `execution/external-revie
 ## Setup, as the owner stated it (not checked by an agent)
 
 - Owner has a ChatGPT subscription. **Data controls: model improvement turned off** (owner, 2026-10-22).
+- **Branch protection on aveto-support `main`: set 2026-10-23 by the support session, on the
+  owner's word, and read back** (checked, not a statement): a pull request is required with 0
+  approvals (the owner is the only collaborator), no force pushes, no branch deletion, no required
+  status checks (the repo has no CI), **administrators are not bound** (`enforce_admins` false).
+  Because administrators are exempt, this stops an integration with write access that is not an
+  administrator from pushing to `main`; it does **not** stop anything using the owner's own `gh`
+  login, which includes the support session. The risk it covers is the Codex app, not the agents.
 - Not yet recorded: the plan name, the exact GitHub permissions the Codex integration asked for,
-  that automatic review is off, whether Codex has a repository memory setting and that it is off,
-  and branch protection on aveto-support `main`. These are in the plan's section 4 and are still open.
+  that automatic review is off, and whether Codex has a repository memory setting and that it is off.
+  These are in the plan's section 4 and are still open.
 
 ## Records
 
