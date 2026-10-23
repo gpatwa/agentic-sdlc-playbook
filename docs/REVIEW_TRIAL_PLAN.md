@@ -1,8 +1,11 @@
 # Plan: a trial of an external pull request reviewer (Codex)
 
 > **Status: proposed 2026-10-22 at the owner's request ("plan the review trial, I have ChatGPT
-> subscription"); not started.** Nothing here is installed, connected or enabled. It adds a
-> new data processor and a new actor on the repo, so the owner decides section 7 first.
+> subscription"). The owner turned model improvement off and ran a first review of aveto-support
+> pull request 5 in the Codex app (not through the GitHub integration); see
+> `docs/review-trial/README.md`, which also lists the setup items still open.** The collector,
+> `execution/external-review.mjs`, is built. The owner's section 7 decisions are still to be
+> answered.
 
 ## 1. Why, and why Codex first
 
