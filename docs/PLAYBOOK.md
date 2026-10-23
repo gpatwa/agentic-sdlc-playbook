@@ -136,13 +136,22 @@ Detail: `docs/CODE_REVIEW.md`, `docs/review-evals/`, `agents/qa-evidence.md`.
 
 ## 8. Security and data
 
-- Each agent gets the **fewest tools** its role needs, generated per role.
+- Each agent gets the **fewest tools** its role needs, generated per role. **The limit:** roles
+  that plan and review are held to their own folders by a hook; roles with a shell are not
+  technically scoped, only bounded by the Charter's permission rules and review.
 - Judge-style agents run with **no tools**, a deny list and a hook as a second layer.
 - Hostile input is reviewed adversarially when the slice handles untrusted text.
 - **Agents never handle credentials.** A step that needs one stops the run.
 - Every data processor is named in the Charter with exactly what it may receive.
-- **Planned, not built:** secret paths excluded from what any model sees, with a test
-  that proves it (`docs/REVIEW_MODE_PLAN.md`, M3b).
+- **Built, not yet used in a run:** a tamper-evident event log of every tool call and the role
+  that made it, and read-deny rules for secret file paths (`docs/AGENT_SECURITY_PLAN.md`).
+  The log shows an edited or deleted line afterwards; it does not prevent one. The deny rules
+  cover Claude Code's file tools, not a shell command.
+- **Planned, not built:** scoping the shell roles with an operating-system sandbox, and
+  excluding secret paths from review mode's reads with a test that proves it
+  (`docs/AGENT_SECURITY_PLAN.md` A5, `docs/REVIEW_MODE_PLAN.md` M3b).
+- **Not provided:** an identity per agent in cloud logs (a deploy pipeline will have its own),
+  or protection against a person using the operator's own account.
 
 Detail: `agents/security-privacy.md`, `docs/HUMAN_APPROVAL_RULES.md` rules 4 to 6.
 
