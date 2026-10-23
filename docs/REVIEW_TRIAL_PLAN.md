@@ -1,11 +1,11 @@
 # Plan: a trial of an external pull request reviewer (Codex)
 
-> **Status: proposed 2026-10-22 at the owner's request ("plan the review trial, I have ChatGPT
-> subscription"). The owner turned model improvement off and ran a first review of aveto-support
-> pull request 5 in the Codex app (not through the GitHub integration); see
-> `docs/review-trial/README.md`, which also lists the setup items still open.** The collector,
-> `execution/external-review.mjs`, is built. The owner's section 7 decisions are still to be
-> answered.
+> **Status: proposed 2026-10-22; revised 2026-10-23 at the owner's request ("can [we] do same from
+> codex desktop app, instead of github?"). The main path is now the Codex desktop app (path A); the
+> GitHub connector (path B) is optional.** The first review (informed, path A) found one real issue,
+> filed as aveto-support#6. The collector, `execution/external-review.mjs`, is built. What the
+> accounts showed and what is still open is in `docs/review-trial/README.md`. The owner's section 7
+> decisions are still to be answered.
 
 ## 1. Why, and why Codex first
 
@@ -22,122 +22,148 @@ Options read on 2026-10-22 (vendor pages and third-party summaries; none tested 
 | CodeRabbit | A fine zero-setup choice; free tier terms unverified |
 | Greptile | Trains on de-identified customer data by default (opt-out), learns from engineers' comments, caches code on its servers; better kept for review mode's repo-wide context |
 | PR-Agent (open source, MIT) | Needs a metered model key; "legacy", community-maintained and moving to a foundation; kept as the fallback |
-| **Codex code review** | **Chosen:** another model family, included in the owner's ChatGPT subscription (no key, no per-review fee), a comment-only review that does not approve or block |
+| **Codex review** | **Chosen:** another model family, included in the owner's ChatGPT Plus subscription (no key, no per-review fee), and it only reports findings: it does not approve or block |
 
-## 2. What it is, as OpenAI documents it (read 2026-10-22)
+## 2. Two ways to run it
 
-- The owner connects a repository to Codex. Reviews run on a pull request when someone comments
-  `@codex review` (optionally with a focus), or automatically if switched on.
-- On GitHub it flags **only P0 and P1** issues, and posts a standard GitHub review.
-- Rules go in a `## Code Review Rules` section of `AGENTS.md`; nested files refine them.
-  OpenAI says these guide the review and do not replace tests, branch protections or approvals.
-- `@codex security review` is a separate research preview. `@codex fix …` starts a cloud chat that
-  can **push a commit to the branch** if it has permission.
-- The pricing page lists code review under Plus, Pro, Business and Enterprise, with no stated
-  per-review limit. Its "no training on business data by default" is listed for Business,
-  Enterprise and API, not Plus or Pro.
-- **Not stated on the pages read:** the GitHub permissions the integration requests, and whether
-  Codex keeps a memory of a repository. Both are checked at install (section 4).
+| | **Path A: the Codex desktop app (main)** | **Path B: the GitHub connector (optional)** |
+|---|---|---|
+| How | The owner asks Codex in the desktop app to review a pull request | The owner comments `@codex review` on the pull request page |
+| Depth | Works in the owner's local checkout and **runs the tests**; reproduced the retry overshoot with a fake client | Reads the diff; depth not yet seen |
+| GitHub permissions | **None needed** | "ChatGPT Codex Connector" has read and write on code, workflows, actions, pull requests and issues (owner, 2026-10-23), on `aveto-support` only |
+| Where findings land | In the Codex session; the owner pastes them, or the support session reads that one session with the owner's permission | As a review on the pull request |
+| Independence from our notes | **Not blind unless told:** the first review read `code-review.md` and `END_REVIEW.md` first | Probably blind |
+| Cost | Counts against Plus usage limits (the pricing page says reviews run outside GitHub count toward general limits) | "Code review usage"; limits not stated |
+| Main risk | **It runs commands on the owner's machine**, so only our own branches | A bot with write access to the repository |
+| Status | Used twice on pull request 5 (one review, one plugin request that produced none) | **Never tried.** No Codex environment exists, so it may not respond at all |
+
+As OpenAI documents path B (read 2026-10-22): `@codex review` posts a standard GitHub review; on GitHub it
+flags only P0 and P1; rules go in a `## Code Review Rules` section of `AGENTS.md`; `@codex fix …` can
+push a commit to the branch; `@codex security review` is a separate research preview. Plan membership
+(Plus, Pro, Business, Enterprise) is listed on the pricing page, with no stated per-review limit.
 
 ## 3. Rules of use (Aveto's, not OpenAI's)
 
-1. **Manual only.** The owner types `@codex review` on a pull request; automatic review stays off
-   for the whole trial. An agent never posts that comment: posting to GitHub under the owner's
-   name is sending on a user's behalf, which a Charter would have to name.
-2. **Never `@codex fix`, and no `@codex security review` unless the owner asks.** A reviewer
-   never fixes: findings go to the role that owns the code. A push from the cloud would come
-   from a new actor under the owner's identity, and the event log (`AGENT_SECURITY_PLAN.md`)
-   would not see it.
-3. **Comments are findings, never approvals.** Each Codex comment becomes a row in the PR's
-   `external-review.md` (format below) with a disposition; an agent's or bot's approval never
-   counts as a human's.
-4. **Public repositories only,** and only aveto-support for now. The processor, OpenAI, is named
-   in that file. A private repository needs its own Charter line (rule 6) and, on a personal
-   plan, a decision about training data first.
-5. **Least privilege, recorded.** The permissions the GitHub integration asks for are copied into
-   the trial record at install. If it asks for more than reading the pull request and commenting
-   (for example write access to contents), the owner decides whether to proceed, and branch
-   protection on `main` (a pull request and the `qa` check required) must be on first.
-6. **No memory features.** If Codex or ChatGPT has a repository memory or "learning" setting,
-   it is off for the trial, and the owner says so in writing (`MEMORY_PLAN.md` section 3b).
-7. **The owner's own settings are the owner's statements.** "Model improvement is off" and
-   "memory is off" are recorded as the owner's words, not as checked facts, like the console
-   limit in the ask-the-docs run (C6.6).
+1. **Manual only.** The owner starts every review. An agent never posts a trigger comment on GitHub:
+   posting under the owner's name is sending on a user's behalf, which a Charter would have to name.
+   Automatic review stays off.
+2. **Read-only, and checked.** A review never edits, creates, deletes, commits, pushes or comments.
+   After every path A review the support session checks `git status` and HEAD in the checkout it ran in.
+   **Never `@codex fix`**; no `@codex security review` unless the owner asks. A reviewer never fixes:
+   findings go to the role that owns the code.
+3. **Findings, never approvals.** Each finding becomes a row in the pull request's record (section 5)
+   with a disposition. An agent's or bot's approval never counts as a human's.
+4. **Only our own branches and tests.** Path A runs commands on the owner's machine, so a hostile branch
+   could run code there. The review may run the repository's own tests; it makes no live model or network
+   call; it reads the pull request only through its GitHub tools. Public repositories only, and only
+   aveto-support for now. The processor, OpenAI, is named in the record.
+5. **Blind first, informed second.** Every review is recorded with its **mode**: `blind` (told not to read
+   `runs/`, `code-review.md`, `END_REVIEW.md` or any security-review file before reviewing), `informed`
+   (it read them), or `github` (path B). **At least one of the five reviews must be blind**, because a
+   review that has read our notes cannot show independence.
+6. **Least privilege, recorded.** Path B's permissions are in the trial record; the owner accepted them
+   on 2026-10-23, with branch protection on `main` (checked). While path B is not in use, the connector
+   should be suspended or uninstalled (section 7), which removes its write access.
+7. **Memory, as it actually stands.** ChatGPT memory is **on** (read from the owner's settings; the owner
+   chose to leave it on). This is a deviation from the earlier "no memory" rule, accepted by the owner.
+   If any review ever refers to anything outside the repository (the owner's chats, other projects),
+   the trial stops and memory is the first suspect.
+8. **What I read, and when.** The support session reads a Codex session transcript only with the owner's
+   permission each time, only that one session, and never the credentials file; or the owner pastes the
+   result. Settings the support session read itself are recorded as read; settings the owner reports are
+   recorded as the owner's statements.
 
-## 4. Setup (owner's actions, then mine)
+## 4. Setup
 
-**The owner:**
-1. Confirms the ChatGPT plan and, in data controls, turns off using conversations to improve
-   models (a personal-plan setting). Tells me in chat; I record it as the owner's statement.
-2. Connects `gpatwa/aveto-support` to Codex. At the permissions screen, copies what it asks for.
-3. Turns **off** automatic review for the repository.
-4. In GitHub, turns on branch protection for `main` in aveto-support (pull request required, the
-   `qa` check once CI exists; aveto-support has no CI yet, so "pull request required" alone).
+**Done (details in `docs/review-trial/README.md`):** ChatGPT plan is Plus; "Improve the model for
+everyone" is off (read); branch protection on aveto-support `main` is set (read back); the connector's
+permissions and its single-repository access are recorded; the owner gave the go-ahead.
 
-**Me, once those are done:**
-1. Write `docs/review-trial/README.md` with the date, the plan, the permissions as shown, and the
-   owner's statements.
-2. Check how the installer treats `AGENTS.md` (below) and propose the smallest change.
-3. After each reviewed pull request, read the review with `gh`, write `external-review.md` and
-   update the tally. I never comment on the pull request.
+**Path A, per review.** The owner starts it in the Codex desktop app, in a session whose folder is the
+repository checkout, with this prompt (blind pass; edit only the pull request number):
 
-**The `AGENTS.md` problem.** The installer writes the repo's root `AGENTS.md` from the pack on
-every install (`execution/install.mjs`), so a hand-added `## Code Review Rules` section would be
-overwritten. Two ways: (a) add a short `## Code Review Rules` section to the pack's own
-`AGENTS.md`, restating the three durable rules and pointing at `REVIEW.md`; or (b) a nested
-`AGENTS.md` in a folder the installer does not touch. Whether Codex follows a pointer to
-`REVIEW.md` is **unverified**; the trial's first review shows what it did with the rules (section 5).
-Either way is a small tested pack change, made only after the owner chooses.
+```
+Review pull request #<n> in gpatwa/aveto-support for correctness, security and spend-limit bugs. Rules:
+read-only. Do not edit, create, delete, commit, push or comment anywhere, and do not post to GitHub.
+Do not call any model or network service; you may read the PR through your GitHub tools and run the
+repo's existing tests. Do NOT read anything under runs/ or any file named code-review.md, END_REVIEW.md
+or 14-security-review.md: this is a blind review. Report only findings you are confident about, each
+with a severity P0 to P3, file:line, why it is wrong and how to reproduce it. If there are none, say
+"no actionable issues". Finish by listing every command you ran.
+```
+
+An **informed pass** (optional, after the blind one) adds: "Now you may read `runs/` and our review notes;
+say which of your findings were already documented, and whether the notes change any of them."
+
+The owner pastes the result, or says "read the session"; the support session then runs
+`external-review.mjs parse … --mode blind` and checks `git status`.
+
+**Path B, if the owner wants it tried:** comment `@codex review` on the pull request page; a 👀
+reaction within about a minute means the connector responded. If nothing appears in about ten
+minutes, no Codex environment exists behind it and the next step is to read OpenAI's current setup
+steps before changing anything in Codex.
+
+**The `AGENTS.md` question.** The installer writes the repo's root `AGENTS.md` from the pack on every
+install (`execution/install.mjs`), so a hand-added `## Code Review Rules` section would be overwritten.
+The first review shows Codex does load that file and acted on the pack's guidance. Two ways, if rules
+are wanted: (a) add a short `## Code Review Rules` section to the pack's own `AGENTS.md`; or (b) a nested
+`AGENTS.md` in a folder the installer does not touch. Either is a small tested pack change, made only
+after the owner chooses.
 
 ## 5. The record and the bars
 
-**Per pull request,** `runs/<slice>/external-review.md` (or `docs/review-trial/pr-<n>.md` outside
-a run): the pull request, the model's date, then one row per Codex comment:
-`id | P0 or P1 | file:line | the claim | disposition (fixed <commit>, rejected <reason>, intentional <reason>) | also in our local review? yes or no`.
-A pull request with no comments gets one line: "0 findings".
+**Per pull request and per review,** `docs/review-trial/pr-<repo>-<n>.md` (or `runs/<slice>/external-review.md`
+inside a run), written by `external-review.mjs`: the pull request, the **mode** (`blind`, `informed`,
+`github`), the **path** (A or B), the date, then one row per finding:
+`id | P | file:line | the claim | disposition | also in our local review?`. A review with no findings
+gets one line: "0 findings". Dispositions: `fixed <ref>`, `accepted <issue>` (correct, filed to fix later),
+`intentional <reason>` (correct, deliberate), `rejected <reason>`.
 
 **Definitions, fixed now:**
-- A **real issue** is a comment the owner or the owning role dispositions as **fixed**,
-  **accepted** (correct, and filed to fix later) or **intentional** (correct, and the behaviour is
-  deliberate). **Rejected** means not real.
-- **Missed by our local review** means the finding is not in that run's `code-review.md`. For a
-  pull request with no local review, a local `/code-review` at high effort is run on the same diff
-  first, and the cost is reported.
-- A **wrong must-fix** is a P0 or P1 comment that the owner rejects as incorrect.
+- A **real issue** is a finding dispositioned **fixed**, **accepted** or **intentional**; **rejected** is
+  not real.
+- **Missed by our local review** means the finding is not in that run's `code-review.md` (a person confirms
+  the match). For a pull request with no local review, a local `/code-review` at high effort is run on the
+  same diff first, and the cost is reported.
+- A **wrong must-fix** is a P0 or P1 finding that the owner rejects as incorrect.
 
-**Bars, declared before the first review and not moved,** over the first five pull requests
-reviewed (or until 2026-12-31, whichever is first; fewer than five is reported as such):
+**Bars, declared before the first review and not moved,** over the first five pull requests reviewed (or
+until 2026-12-31, whichever is first; fewer than five is reported as such). A second review of the same
+pull request adds findings but not a pull request:
 
 | Bar | Pass |
 |---|---|
 | New value | at least **1** real issue our local review missed |
-| Precision | at least **70%** of Codex's comments are real issues |
-| Safety | **0** wrong must-fix comments |
-| Discipline | **0** times the integration pushed a commit, commented on its own, or acted outside manual mode |
+| Precision | at least **70%** of findings are real issues |
+| Safety | **0** wrong must-fix findings |
+| Discipline | **0** times a review modified the checkout, pushed, posted, or acted outside manual mode |
+| Independence | at least **1** of the five reviews is **blind** |
 
-**Stop early** if the integration ever pushes a commit, asks for permissions the owner did not
-accept, or after three reviewed pull requests more than half its comments are wrong.
+**Stop early** if a review ever modifies the checkout, pushes a commit, or refers to anything outside the
+repository; or if after three reviewed pull requests more than half the findings are wrong.
 
-**First test:** pull request 5 in aveto-support (the ask-the-docs service, about 13,000 added
-lines). It has had the local review and an adversarial security review, so anything Codex adds
-is new. It is also one pull request, so it counts as one of the five, no more.
+**Where it stands (2026-10-23):** pull request 5 has one informed path A review: one P2, accepted and filed
+as aveto-support#6 (new relative to our local review). Next: a **blind** path A review of pull request 5,
+which also tests whether Codex finds the same issue without our notes.
 
 ## 6. After the trial
 
-`docs/review-trial/RESULTS.md` reports every figure, including a miss, the cost in usage, and what
-the model did with the review rules. If the bars pass, `docs/CODE_REVIEW.md` gains an optional,
-manual, public-repository step with the rules above, and nothing else changes. If they fail, the
-integration is disconnected and the finding is recorded. Nothing goes in the README or on the
+`docs/review-trial/RESULTS.md` reports every figure split by mode and path, including a miss, the cost in
+usage, and what Codex did with the repository's guidance. If the bars pass, `docs/CODE_REVIEW.md` gains an
+optional, manual, public-repository step (path A first) with the rules above, and nothing else changes. If
+they fail, the finding is recorded and the connector is uninstalled. Nothing goes in the README or on the
 site until there are results.
 
 ## 7. What the owner decides
 
-1. **Run the trial** on aveto-support, manual mode, public repo only? (Recommended: yes.)
-2. **Turn on branch protection for `main` in aveto-support** first? (Recommended: yes; it is the
-   backstop if the integration holds write access.)
-3. **Which `AGENTS.md` route** (section 4, a or b)? (Recommended: a, after the first review shows
-   whether Codex reads the rules.)
-4. **Give the trial more material:** during the trial, route pack and code changes in the
-   playbook through pull requests instead of direct commits to `main`? It adds a merge click per
-   change but gives the trial five reviews in weeks, not months. (Recommended: yes, for pack
-   changes only.)
+1. **Make path A (the desktop app) the main path,** with the connector optional? (Recommended: yes.)
+2. **Suspend or uninstall the GitHub connector while path B is not in use?** It removes the broadest
+   permission in the setup (write to code, workflows and actions). In GitHub: Settings, Applications,
+   Installed GitHub Apps, the connector, Configure, then Suspend or Uninstall. It can be reinstalled to try
+   path B. (Recommended: yes; reinstall only to run the path B test.)
+3. **Run the blind pass on pull request 5 now?** (Recommended: yes.)
+4. **Which `AGENTS.md` route,** if review rules are wanted (section 4, a or b)? (Recommended: a, after the
+   blind pass shows what Codex does with the repository's guidance.)
+5. **Give the trial more material:** route pack and code changes in the playbook through pull requests
+   instead of direct commits to `main` while the trial runs? It adds a merge click per change but gives the
+   trial five reviews in weeks, not months. (Recommended: yes, for pack changes only.)

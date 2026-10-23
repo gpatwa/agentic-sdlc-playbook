@@ -1,6 +1,6 @@
 # Review trial record (Codex), started 2026-10-23
 
-Plan and bars: `docs/REVIEW_TRIAL_PLAN.md`. Collector: `execution/external-review.mjs`
+Plan and bars: `docs/REVIEW_TRIAL_PLAN.md` (revised 2026-10-23: the Codex desktop app is the main path, the GitHub connector optional; each record carries a mode, blind or informed, and a path). Collector: `execution/external-review.mjs`
 (`parse` for a pasted review, `draft` for a pull request's bot comments, `tally` for the bars).
 
 ## Setup, as the owner stated it (not checked by an agent)
@@ -59,16 +59,39 @@ owner's to set.
 
 ## Still open
 
-1. **A first review on the GitHub path:** the owner comments `@codex review` on a pull request in aveto-support (pull
-   request 5 is the suggested one, which also lets us compare with the first review). Whether the connector can
+1. **A first review on the GitHub path:** the owner posts `@codex review` as a **comment on the pull request page** in
+   aveto-support (typing it into a Codex chat does not do this; pull request 5 is the suggested one, which also lets us
+   compare with the first review). Whether the connector can
    review at all is not established: no Codex cloud environment exists. If nothing appears on the pull request,
    the next step is to connect the repository inside Codex (an environment) and enable code review there.
+
+## How the reviews actually ran (from the Codex session transcript, read on 2026-10-23 with the owner's permission)
+
+Only that one session was read (`~/.codex/sessions/2026/10/22/…`); `auth.json` and every other session were left alone.
+
+- **Both requests were typed into a Codex desktop-app session, not posted as GitHub comments.** The first, at 03:16Z, was the
+  text `@codex review on PR <url>`; the second, at 05:39Z, invoked the bundled **Code Review plugin**. That is why GitHub
+  shows nothing: the GitHub path (a `@codex review` comment on the pull request) has **still not been tried**.
+- **First review (03:16 to 03:18Z), how it worked:** Codex read the repo's `AGENTS.md` (it loaded the pack's run guide) and
+  `docs/HUMAN_APPROVAL_RULES.md`; called its GitHub tools to get the pull request's info and diff (the results are not in
+  what was read, so it is not known whether they succeeded); worked in the **owner's local worktree** of the branch; **read
+  our own `END_REVIEW.md` and `code-review.md` before reviewing**, saying it was checking the documented limitations "so the
+  review adds actionable findings"; ran 168 targeted tests and then the full suite (637 passed); and reproduced the retry
+  overshoot with a fake client in the repo's own virtual environment. No live model call was made, nothing was posted to GitHub.
+  The worktree was checked afterwards: clean, same HEAD, no untracked files.
+- **What that means for the bars.** The finding was not in the documents Codex had read, which makes it more notable, not
+  less. But this review was **not blind to our review notes**, and it ran as an agent inside our repo under our `AGENTS.md`,
+  not as a hosted bot reading a diff. A GitHub-path review will behave differently and must be recorded separately.
+- **Second request (05:39Z), the plugin:** it opened the plugin's panel for pull request 5 (anchored at `pipeline.py:254`) and
+  reported **no CI checks** on the head commit, then stopped: "its review controls aren't accessible in the current panel" and
+  asked the owner to open the Code Review panel beside the chat. **No new review was produced.**
 
 ## Records
 
 | Pull request | Date | How the review ran | Findings | Disposition |
 |---|---|---|---|---|
-| aveto-support#5 | 2026-10-22 | **In the Codex app, not through the GitHub integration** (its own text: "review not posted to GitHub"); it also ran the repo's tests (637 passed, 12 deselected) | 1 (P2) | accepted, filed as aveto-support#6: `pr-aveto-support-5.md` |
+| aveto-support#5 (**informed**, path A) | 2026-10-22 | **In the Codex app, not through the GitHub integration** (its own text: "review not posted to GitHub"); it also ran the repo's tests (637 passed, 12 deselected) | 1 (P2) | accepted, filed as aveto-support#6: `pr-aveto-support-5.md` |
+| aveto-support#5 (again) | 2026-10-23 | Code Review **plugin** in the Codex app: panel not accessible, **no review produced** | 0 (none run) | n/a; not counted |
 
 ## Deviations from the plan, stated plainly
 

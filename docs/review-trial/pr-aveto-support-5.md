@@ -1,5 +1,7 @@
 # External review: gpatwa/aveto-support#5 (Codex, run in the Codex app; not posted to GitHub)
 
+Mode: informed. Path: A.
+
 Source: a pasted review (not posted to GitHub). Collected 2026-10-23. Disposition `open` means nobody has judged it yet: set each to `fixed <ref>`, `intentional <reason>` (the finding is correct and the behaviour is deliberate) or `rejected <reason>`. "Also in our local review?" is a heuristic (same file, within 15 lines); a person confirms it.
 
 | id | P | file:line | claim | disposition | also in our local review? |

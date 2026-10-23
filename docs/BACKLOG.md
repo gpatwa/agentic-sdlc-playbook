@@ -1681,7 +1681,10 @@ from the run" pattern as effort / operator / executor / gateCatches.
   Owner decisions in its section 7 are open.
   - [ ] Owner: plan statements, connect the repo, branch protection, automatic review off.
   - [ ] Me: `docs/review-trial/README.md`; the `AGENTS.md` route; a record per reviewed PR.
-  - [x] Collector built (`execution/external-review.mjs`: parse, draft, tally; 8 tests).
+  - [x] Plan revised 2026-10-23: the Codex desktop app is the main path (A), the GitHub connector
+        optional (B); each review recorded as blind, informed or github; the bars gain an
+        independence bar (at least one blind review among the five). Owner decisions in section 7 open.
+  - [x] Collector built (`execution/external-review.mjs`: parse, draft, tally; mode and path; 9 tests).
   - [x] First data point (2026-10-22): Codex reviewed aveto-support PR #5 in its app and found
         one P2 (retries are not reserved against the day's cap); checked against the code, new
         relative to our local review; accepted and filed as aveto-support#6 (P2). Not through the GitHub integration, so
