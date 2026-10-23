@@ -50,6 +50,13 @@ architecture others will copy; reading the evidence at the end of a run. An
 automated approval is never a person's approval, and a review is never the
 Release Gate or the Security Review.
 
+## External reviewers
+
+A reviewer from another model family would remove our biggest blind spot. A first trial, of
+Codex code review on aveto-support, is planned in `docs/REVIEW_TRIAL_PLAN.md`: manual
+`@codex review` only, comments recorded as findings and never as approvals, no fixes, no
+memory, public repositories only, with bars declared in advance. Nothing is connected yet.
+
 ## Why this and not more
 
 Anthropic's internal data (their research note on employment, October 2026)

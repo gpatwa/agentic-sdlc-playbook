@@ -1674,6 +1674,15 @@ from the run" pattern as effort / operator / executor / gateCatches.
   C14 in `docs/MESSAGING.md`; audience-guide paragraph only. Not in the README, site or a
   headline until review mode has pilot results.
 
+- **T37 · An external PR reviewer trial (Codex).** *Raised 2026-10-22.* Plan:
+  `docs/REVIEW_TRIAL_PLAN.md` (manual `@codex review` on aveto-support, public repo only;
+  bars: at least 1 real issue our local review missed, at least 70% precision, 0 wrong
+  must-fix, 0 off-script actions; stop early on a push or on more than half wrong).
+  Owner decisions in its section 7 are open.
+  - [ ] Owner: plan statements, connect the repo, branch protection, automatic review off.
+  - [ ] Me: `docs/review-trial/README.md`; the `AGENTS.md` route; a record per reviewed PR.
+  - [ ] First test: aveto-support PR #5.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
