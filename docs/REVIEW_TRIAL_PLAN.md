@@ -156,6 +156,9 @@ mention of it in the files it read), raised the known restart finding (visible t
 file and the PR description), and added one **new** accounting inconsistency (c03, accepted and filed as
 aveto-support#7; Codex says P1, my reading P3). **All five bars read met; no finding is open. All three reviews are of
 one pull request, so this is one pull request of the five, and the result is provisional on that.**
+A **second pull request** followed on 2026-10-24: pull request 9 (the fix slice for #6, #7 and #8), reviewed blind in a new
+chat: **no actionable issues**, from a static pass that did not run the tests. That is **two pull requests of the five**; the
+bars are unchanged because it added no findings, and a lighter, static review is weaker evidence than the one on pull request 5.
 
 ## 6. After the trial
 
