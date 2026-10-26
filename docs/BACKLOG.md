@@ -1769,9 +1769,19 @@ from the run" pattern as effort / operator / executor / gateCatches.
   5. **If a stage still needs something unlisted,** the run stops at the stage boundary with a Charter amendment
      request (a new hash) instead of an in-flight prompt, and the end review records it as a defect to fold back
      into the baseline.
+  6. **The budget guard must not ask about the wrong slice.** `execution/hooks/budget-guard.mjs` scans every
+     worktree's `runs/` and asks the human about the most over-budget slice marked `in-progress`. On 2026-10-26 the
+     polished-chat slice asked the owner at every agent spawn about `fix-service-accounting` (919k of 730k), a slice
+     whose pull request 9 had merged on 2026-10-24 but whose `STATE.md` on main still said `in-progress`; a second
+     old slice with an unreadable status added a warning each time. Fix: (a) the guard ignores a slice that is not
+     the one the current branch or worktree is running, or whose pull request has merged; (b) closing a slice
+     (Status `done`) becomes part of the merge step, checked by `charter-check` or the Release Gate, so a merged slice
+     cannot stay `in-progress`; (c) a Charter whose C2 gives one number (the owner's hard cap) sets the ceiling near
+     90% of it, and budget notices go once into the end review, not after every stage. The old state was corrected by
+     hand on 2026-10-26 in four STATE.md copies.
   No bypass or auto-approve mode: the Charter's rule list stays the permission contract the owner approves.
   **Evidence so far:** the fix slice stalled four times on spawn prompts (T38); the polished-chat slice prompted in
-  stage 4 (the prompt's text is to be recorded here when the owner reports it). Build after the polished-chat slice
+  stage 4 (very likely this budget-guard ask, item 6; confirm with the owner). Build after the polished-chat slice
   ends. Not started.
 
 ## Decided NO / parked — recorded so they don't return
