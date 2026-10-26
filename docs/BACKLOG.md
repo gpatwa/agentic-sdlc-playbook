@@ -1746,6 +1746,34 @@ from the run" pattern as effort / operator / executor / gateCatches.
   refusal guarantee and spends from the cap; run records are a second, lower-value candidate). No write tools and no
   approvals over MCP. Not started.
 
+- **T41 · All permissions once, at the start: zero permission prompts during a run (pack v30).** *Raised 2026-10-26
+  from the owner's instruction, "all permissions should be once in the beginning", after the polished-chat slice
+  stopped at a permission prompt in stage 4 although pack v29's check had passed.* v29 only checks that every role the
+  plan spawns has an `Agent(<role>)` rule; nothing checks the rest (reads outside the worktree such as the playbook
+  path, writes to the main checkout, a command written in a form the allowed pattern does not match). **Bar: zero
+  permission prompts after the Charter is approved, measured in `END_REVIEW.md`; any prompt is a defect in the Charter,
+  not a click for the owner.**
+  1. **A baseline permission set** in the Charter template, so each Charter does not re-list the routine ones: reads
+     and writes inside the worktree and `runs/`, reads of the resolved playbook path, local git commands, `uv run`,
+     and the playbook's own scripts.
+  2. **`charter-check` compares the plan with C6.P, not only the spawned roles:** every tool, path outside the
+     worktree and command form that the stage table, the Done-means or the setup mentions must be covered by a rule
+     in C6.P, or the Charter is refused before the owner is asked to approve its hash.
+  3. **A permission rehearsal in setup, before approval is asked for,** that touches each category once, including
+     reads outside the worktree and the gated commands in a form with no effect (`git push --dry-run`, `az deployment
+     group what-if`, `gh pr create --help`; `az acr build` has no dry run, so its rule is checked by pattern only and
+     named as such). A rule that prompts in the rehearsal is fixed before approval.
+  4. **One grant step:** after the owner approves the hash, all allow rules are written once to the gitignored local
+     settings file and deleted after the pull request opens (as C6.P already says). The owner approves the list by
+     its hash, not prompt by prompt.
+  5. **If a stage still needs something unlisted,** the run stops at the stage boundary with a Charter amendment
+     request (a new hash) instead of an in-flight prompt, and the end review records it as a defect to fold back
+     into the baseline.
+  No bypass or auto-approve mode: the Charter's rule list stays the permission contract the owner approves.
+  **Evidence so far:** the fix slice stalled four times on spawn prompts (T38); the polished-chat slice prompted in
+  stage 4 (the prompt's text is to be recorded here when the owner reports it). Build after the polished-chat slice
+  ends. Not started.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A** — parked. Re-checked 2026-10-26: v1.0 is stable, but every Aveto agent runs in one harness, so it buys
