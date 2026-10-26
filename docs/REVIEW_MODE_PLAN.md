@@ -1,5 +1,11 @@
 # Plan: reviewing an existing codebase (review mode)
 
+> **Update 2026-10-25: M0 decided by the owner ("A, spike first").** A spike runs before any build, with its bars
+> fixed in advance: `docs/review-mode-spike/PLAN.md`. M1 to M3b and M5 are deferred to a later milestone; the owner's
+> priority is to review and polish what exists. **One bar below is corrected:** S6 lived in the untracked
+> `.claude/settings.local.json` and is not in any commit, so the "find both S5 and S6" recall test is impossible; only S5
+> can be tested at `c150673`.
+>
 > **Status: proposed 2026-10-17, not started.** Aveto today is built for
 > greenfield and for slices on a repo it already governs. This plan adds a
 > **review-only run** for a codebase Aveto did not build: it reads, maps,

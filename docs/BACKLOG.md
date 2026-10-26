@@ -1596,7 +1596,11 @@ from the run" pattern as effort / operator / executor / gateCatches.
 
 - **T31 · Review mode: review an existing codebase.** *Raised 2026-10-17.* Plan:
   `docs/REVIEW_MODE_PLAN.md` (goal, declared bars, milestones M0 to M6).
-  - [ ] **M0** owner chooses the pilot and approves the bars (recommended pilot:
+  - [x] **M0 decided 2026-10-25 (owner: "A, spike first and rest other we could build with another milestone").**
+        Pilot aveto-support at `c150673`; a spike runs first (`docs/review-mode-spike/PLAN.md`, bars fixed in
+        advance); S6 corrected as untestable (never committed). M1 to M3b and M5 deferred. Next: the owner runs the two
+        review sessions; then the same reviewer on current `main` (the polish pass) if the spike passes.
+  - [ ] (original M0 text:) owner chooses the pilot and approves the bars (recommended pilot:
         aveto-support at `c150673`, where S5 and S6 give a recall test).
   - [ ] **M1** `install.mjs --existing` and `/agentic-onboard` (proposed, unconfirmed invariants).
   - [ ] **M2** `execution/repo-map.mjs`: deterministic map with a risk tier per path.
