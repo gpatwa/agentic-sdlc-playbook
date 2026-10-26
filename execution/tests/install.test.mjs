@@ -342,6 +342,12 @@ describe("install.mjs — pack integrity", () => {
     assert.match(econ, /Review stages run about 1\.5 to 3 times their estimate/);
   });
 
+  test("pack v29: the run instructions and the Charter template say a spawned role needs an Agent allow rule", () => {
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /one `Agent\(<role>\)` allow rule for every\s+role the plan's stage table spawns/);
+    assert.match(readFileSync(join(here, "..", "..", "templates", "CHARTER_TEMPLATE.md"), "utf8"), /one `Agent\(<role>\)` rule for every role the plan's stage table spawns/);
+  });
+
   test("pack v28: the event log hooks, secret read-deny rules and gitignore are wired, idempotently", () => {
     const settingsPath = join(target, ".claude", "settings.json");
     const read = () => JSON.parse(readFileSync(settingsPath, "utf8"));
@@ -412,7 +418,7 @@ describe("install.mjs — pack integrity", () => {
     assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
     const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
     assert.match(ag, /Mark what you could not confirm, and say where you looked/);
-    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 28);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 29);
   });
 
   test("the budget guard is installed and wired into settings", () => {

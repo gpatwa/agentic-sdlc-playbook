@@ -132,4 +132,34 @@ describe("charter-check", () => {
     assert.ok(noR.errors.some((e) => /C3\.R/.test(e)), noR.errors.join("; "));
     assert.equal(checkCharter(complete).errors.length, 0);
   });
+
+  test("pack v29: with --plan, C6.P needs an Agent(<role>) allow rule for every role the plan's stage table spawns", () => {
+    const plan = [
+      "| # | Stage | Owner | Depth |",
+      "|---|---|---|---|",
+      "| 1 | Scope | Engineering Manager | standard |",
+      "| 2 | Spec | Software Architect | high |",
+      "| 3 | Sec | Security & Privacy | standard |",
+      "| 4 | Deploy and verify | Orchestrator, Production Verification | standard |",
+      "| 5 | Sign-off | Human | - |",
+      "",
+    ].join("\n");
+    const bare = checkCharter(complete, plan);
+    for (const slug of ["engineering-manager", "software-architect", "security-privacy", "production-verification"]) {
+      assert.ok(bare.errors.some((e) => e.includes(`Agent(${slug})`)), `${slug}: ${bare.errors.join("; ")}`);
+    }
+    assert.ok(!bare.errors.some((e) => /Agent\((orchestrator|human)/.test(e)), "the Orchestrator and Human are not spawned");
+    const rules = ["engineering-manager", "software-architect", "security-privacy", "production-verification"].map((r) => `\`Agent(${r})\``).join(", ");
+    const withRules = complete.replace("`Bash(uv run pytest *)`,", `\`Bash(uv run pytest *)\`, ${rules},`);
+    const ok = checkCharter(withRules, plan);
+    assert.ok(!ok.errors.some((e) => /Agent\(/.test(e)), ok.errors.join("; "));
+  });
+
+  test("a plan with no stage table, or only unknown owners, asks for no Agent rule; Agent(*) is refused", () => {
+    assert.ok(!checkCharter(complete, "Stage 3 uses claude-sonnet-5-5.").errors.some((e) => /Agent\(/.test(e)));
+    const odd = "| # | Stage | Owner |\n|---|---|---|\n| 1 | x | the vendor |\n";
+    assert.ok(!checkCharter(complete, odd).errors.some((e) => /Agent\(/.test(e)));
+    const wild = complete.replace("`Bash(uv run pytest *)`,", "`Bash(uv run pytest *)`, `Agent(*)`,");
+    assert.ok(checkCharter(wild).errors.some((e) => /permission rule allows any command/.test(e)));
+  });
 });

@@ -10,8 +10,10 @@
 // a model ID or invariant the plan names that the Charter does not.
 //
 // It prints the file's sha256 on success. Exit 0 = complete, 1 = not, 2 = usage.
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const REQUIRED_SECTIONS = [
   [1, "Scope"],
@@ -28,7 +30,47 @@ const REQUIRED_SECTIONS = [
 const GRANTING = new Set([3, 4, 5, 6, 8]);
 const WILDCARD = /(^|[\s`(])\*($|[\s`)])|\band similar\b|\betc\.?(\s|$)|\bany (file|model|processor|invariant)\b/i;
 
-export function checkCharter(text, planText = null) {
+// Roles a plan spawns, read from its stage table's Owner column and mapped to agent slugs
+// through the playbook's own briefs ("# Software Architect Agent" -> software-architect).
+// An Agent spawn that no allow rule names stops the run at a permission prompt, which a
+// run under a Charter must not need (observed four times on 2026-10-23).
+const HERE = dirname(fileURLToPath(import.meta.url));
+const ALIASES = { "security & privacy": "security-privacy", "security and privacy": "security-privacy", "security": "security-privacy", "sre": "sre", "site reliability engineer": "sre" };
+const NOT_SPAWNED = /^(orchestrator|human|owner|operator|the owner|me)\b/i;
+
+export function roleSlugs(agentsDir = join(HERE, "..", "agents")) {
+  const map = new Map(Object.entries(ALIASES));
+  if (!existsSync(agentsDir)) return map;
+  for (const f of readdirSync(agentsDir).filter((x) => x.endsWith(".md"))) {
+    const slug = f.slice(0, -3);
+    const head = (readFileSync(join(agentsDir, f), "utf8").split("\n")[0] || "").replace(/^#\s*/, "").replace(/\s+Agent\s*$/i, "").trim().toLowerCase();
+    map.set(slug, slug);
+    if (head) map.set(head, slug);
+  }
+  return map;
+}
+
+export function rolesSpawnedByPlan(planText, agentsDir) {
+  const map = roleSlugs(agentsDir);
+  const slugs = new Set();
+  const lines = planText.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i].startsWith("|")) continue;
+    const head = lines[i].split("|").map((c) => c.trim());
+    const col = head.findIndex((c) => /^owner/i.test(c));
+    if (col === -1) continue;
+    for (let j = i + 2; j < lines.length && lines[j].startsWith("|"); j++) {
+      const cell = (lines[j].split("|")[col] || "").replace(/\([^)]*\)/g, " ");
+      for (const tok of cell.split(/,|\/|\+|\band\b/i).map((t) => t.trim().toLowerCase()).filter(Boolean)) {
+        if (NOT_SPAWNED.test(tok)) continue;
+        if (map.has(tok)) slugs.add(map.get(tok));
+      }
+    }
+  }
+  return [...slugs].sort();
+}
+
+export function checkCharter(text, planText = null, agentsDir = undefined) {
   const errors = [];
   const sections = new Map();
   const heads = [...text.matchAll(/^##\s+(\d+)\.\s+([^\n]+)$/gm)];
@@ -111,6 +153,10 @@ export function checkCharter(text, planText = null) {
   if (planText) {
     const models = new Set(planText.match(/\bclaude-[a-z]+-\d+(?:-\d+)*\b/g) || []);
     for (const id of models) if (!(sections.get(3)?.body || "").includes(id)) errors.push(`the plan names model ${id}; section 3 does not`);
+    const c6p = (sections.get(6)?.body || "").split("\n").find((l) => /\|\s*C6\.P\s*\|/.test(l)) || "";
+    for (const slug of rolesSpawnedByPlan(planText, agentsDir)) {
+      if (!c6p.includes(`Agent(${slug})`)) errors.push(`C6.P has no Agent(${slug}) allow rule, and the plan spawns that role: without it the run stops at a permission prompt`);
+    }
     const invs = new Set(planText.match(/\bINV-\d+\b/g) || []);
     for (const inv of invs) if (!(sections.get(5)?.body || "").includes(inv)) errors.push(`the plan names ${inv}; section 5 does not grant a change to it (write it, or state the plan leaves it unchanged)`);
   }

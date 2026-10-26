@@ -1704,6 +1704,12 @@ from the run" pattern as effort / operator / executor / gateCatches.
         relative to our local review; accepted and filed as aveto-support#6 (P2). Not through the GitHub integration, so
         the GitHub path still needs its first test (`docs/review-trial/`).
 
+- **T38 · Agent-spawn permission prompts (pack v29).** *Raised 2026-10-24 after the fix slice stalled four times on
+  agent-spawn prompts, each needing the owner's click.* `charter-check --plan` now refuses a C6.P that lacks an
+  `Agent(<role>)` allow rule for any role the plan's stage table spawns (the Orchestrator and Human are exempt;
+  `Agent(*)` is refused); the Charter template and the run instructions say so. Checked against the fix slice's real
+  Charter and plan (see the result in the commit). **Not yet proven in a run.**
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs

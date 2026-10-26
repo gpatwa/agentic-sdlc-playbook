@@ -44,9 +44,10 @@ against these bounds and shown to the human in the end-of-run review.
 ## 6. Prerequisites (set once in the setup phase, each with its dry run)
 | id | What | Why | Dry run that proves it |
 |---|---|---|---|
-| C6.P | <Permissions: how no app permission prompt interrupts the run: the exact allow rules written to `.claude/settings.local.json`, which is gitignored (never the tracked `.claude/settings.json`, or they ship to `main`); a fixed command prefix, a wildcard only at the end, for example `Bash(npm test *)`), or the permission mode the session runs in> | <every stage> | <each allowed command run once in setup, no prompt shown> |
+| C6.P | <Permissions: how no app permission prompt interrupts the run: the exact allow rules written to `.claude/settings.local.json`, which is gitignored (never the tracked `.claude/settings.json`, or they ship to `main`); a fixed command prefix, a wildcard only at the end, for example `Bash(npm test *)`; **and one `Agent(<role>)` rule for every role the plan's stage table spawns**, for example `Agent(qa-evidence)`, because an agent spawn with no rule stops the run at a permission prompt), or the permission mode the session runs in> | <every stage> | <each allowed command run once in setup, no prompt shown> |
 | C6.1 | <setting, folder shortcut, or other prerequisite> | <stage that needs it> | <command and expected result> |
 
+> `charter-check --plan` refuses a C6.P that lacks an `Agent(<role>)` rule for a role the plan spawns.
 > C6.P is required. A permission prompt during the run is a Charter miss, recorded
 > in the end review. A rule with a wildcard before or inside the command (for
 > example `Bash(uv run * python * x.py *)`) is refused by `charter-check`: it can

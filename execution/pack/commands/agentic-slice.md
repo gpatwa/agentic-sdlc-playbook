@@ -49,7 +49,9 @@ Do this:
    permission rule and script the gated stages will need, and record each dry
    run in the plan's Prerequisites table. A gated stage never changes a
    definition it then has to reload. The setup phase also writes the Charter's
-   C6.P permission rules to `.claude/settings.local.json` (gitignored; never the
+   C6.P permission rules (which must include one `Agent(<role>)` allow rule for every
+   role the plan's stage table spawns, or the first spawn of that role stops the run at
+   a permission prompt; `charter-check --plan` enforces it) to `.claude/settings.local.json` (gitignored; never the
    tracked `.claude/settings.json`, or they ship to `main`; only after the Charter
    is approved, and only the exact rules it lists; delete the file after the pull
    request is opened) and runs each allowed command
