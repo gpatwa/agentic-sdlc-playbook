@@ -1779,6 +1779,12 @@ from the run" pattern as effort / operator / executor / gateCatches.
      cannot stay `in-progress`; (c) a Charter whose C2 gives one number (the owner's hard cap) sets the ceiling near
      90% of it, and budget notices go once into the end review, not after every stage. The old state was corrected by
      hand on 2026-10-26 in four STATE.md copies.
+     (d) **The guard also asks about the right slice for the wrong limit.** On 2026-10-26 it asked the owner at stage 11
+     of the polished-chat slice ("1350k spent of a 1000k budget (135%)") although the approved Charter allows the run to
+     continue between the 1,300k ceiling and the 2,000k hard cap with a notice (C2.2, C2.3). The guard reads the plan
+     total from STATE.md and knows nothing of the Charter's hard cap. Fix: when the Charter's hard cap is recorded in
+     STATE.md, the guard asks only when spent plus the next estimate would pass the hard cap; between the plan total
+     and the cap it passes silently and leaves the notice to the Orchestrator.
   No bypass or auto-approve mode: the Charter's rule list stays the permission contract the owner approves.
   **Evidence so far:** the fix slice stalled four times on spawn prompts (T38); the polished-chat slice prompted in
   stage 4 (very likely this budget-guard ask, item 6; confirm with the owner). Build after the polished-chat slice
