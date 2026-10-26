@@ -1714,6 +1714,23 @@ from the run" pattern as effort / operator / executor / gateCatches.
   `Agent(*)` is refused); the Charter template and the run instructions say so. Checked against the fix slice's real
   Charter and plan (see the result in the commit). **Not yet proven in a run.**
 
+- **T39 · A read-only run dashboard now; a control plane only on a trigger (first step of T23).** *Raised 2026-10-26
+  from the owner's question "control plane or the Claude Code desktop app?"* **Decision: keep the desktop app as the
+  operator surface.** The hash approval of a Charter stays typed by the owner in the driving session; a control plane
+  that held approval authority would be the most sensitive system Aveto owns (login, roles, sessions, its own audit
+  trail) and would add a second source of truth next to the repo records.
+  - **Build later (after the polished-chat slice):** a **read-only** dashboard generated from `runs/`, the event logs
+    and the existing CLIs (`analyze.mjs`, `usage.mjs`, `RUN_INVENTORY.md`, `events-verify.mjs`): runs and stage, cost
+    against the cap, open decisions and findings, event-chain integrity, and each product's scorecard. No authority,
+    no credentials; it may be published in part as evidence. It is T23's console without the approval queue, and it
+    must show unmeasured and self-reported figures as such.
+  - **Build a real control plane (T23 with approvals) only when one of these is true:** (1) more than one human must
+    approve or review, or approvals must be recorded against named identities; (2) Process v3 runs unattended at
+    scale and someone needs fleet-level alerts and a kill switch across repos; (3) customers who do not use the
+    desktop app need to run Aveto; (4) a customer asks for audit exports tied to roles.
+  - **Watch:** the workflow leans on the desktop app's session handling and Claude Code is the only adapter. That is
+    fine until a second harness adapter has a concrete need (see the parked item below).
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
