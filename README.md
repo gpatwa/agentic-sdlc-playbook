@@ -253,9 +253,14 @@ not answer) before an attended judge, run in the operator's own Claude Code
 session, passed a set it had never seen: 24 of 24 unanswerable questions refused
 and 16 of 19 answerable ones kept, the second bar by one question, with retrieval
 finding the right file for 19 of 24 (79.2%, under its own bar). It reached `main`
-through the first run under a Charter (one typed approval, then a pull request) as
-an internal, tier 3 feature with no data-processing agreement and nothing deployed.
-See `docs/LESSONS.md` L47 to L51.
+through the first run under a Charter (one typed approval, then a pull request).
+A second Charter run then put it live as a public service on Azure, with a
+$10 monthly limit on the model's API use: scored once on 20 new questions, it refused
+all 10 it should and kept 8 of 10 answerable, exactly at its bar. A third run fixed
+three accounting flaws found after launch (two by an outside model's review, one by
+checking the price list). The service's
+spend limits reset when it restarts, so the monthly limit is the only lasting cap.
+Try it from [aveto.dev](https://aveto.dev/#try). See `docs/LESSONS.md` L47 to L51.
 
 *(An earlier pointer here named `agentic-job-ops` as "the first reference
 implementation." That repo has a `.agentic/` folder and zero runs — it was

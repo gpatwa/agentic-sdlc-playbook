@@ -932,7 +932,7 @@
         <div class="hold-mark">03</div>
         <div>
           <h4>Ship an AI feature with the bar set before the test.</h4>
-          <p>Our own support agent&rsquo;s judge refused 24 of 24 questions the docs do not answer and kept 16 of 19 that they do, on a set it had never seen. Four earlier checks failed and are on the record. <strong>Shown once, narrowly:</strong> the second bar passed by one question, and it is an attended, internal feature.</p>
+          <p>Our own support agent&rsquo;s judge refused 24 of 24 questions the docs do not answer and kept 16 of 19 that they do, on a set it had never seen. Four earlier checks failed and are on the record. It now runs as a live public service: scored once on 20 new questions it refused all 10 it should and kept 8 of 10 answerable. <strong>Shown twice, narrowly:</strong> both second bars were passed with no margin (by one question, then exactly at the bar).</p>
         </div>
       </div>
       <div class="hold">
@@ -949,6 +949,39 @@
           <p>Review mode reads and reports and changes nothing, with its success bars declared before any run. <strong>Planned, not built.</strong></p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section id="try">
+    <p class="sec-eyebrow">Try it</p>
+    <h2>Ask Aveto&rsquo;s docs, live.</h2>
+    <p class="sec-lede">The support agent Aveto built about itself now runs as a public service on Azure. It answers with passages copied word for word from these docs, each with its file and line numbers, or says the docs do not answer. A model decides only whether the passages answer; nothing on the page is written by a model.</p>
+    <div class="holds">
+      <div class="hold">
+        <div class="hold-mark">01</div>
+        <div>
+          <h4>How it did on a test it had not seen.</h4>
+          <p>Twenty new questions, written before the run and kept out of the repository until the method froze, scored once through the live service. All 10 questions the docs do not answer, or that try to trick it, were refused with no passage shown. For the answerable ones, 8 of 10 got a passage from a listed source: <strong>exactly the bar</strong>, with no margin. Two answerable questions got &ldquo;no confident match.&rdquo; <a href="https://github.com/gpatwa/aveto-support/blob/main/runs/public-ask-the-docs/18-gate/RESULT.md">The full result is public.</a></p>
+        </div>
+      </div>
+      <div class="hold">
+        <div class="hold-mark">02</div>
+        <div>
+          <h4>What to know before you use it.</h4>
+          <p>It is early. Ten answerable questions cannot tell &ldquo;meets 80%&rdquo; from &ldquo;a little below it.&rdquo; Each question and the passages found are sent to Anthropic, which makes the model; the service does not store your question, so please do not put personal information in it. It keeps a scrambled form of your address, the time and the outcome for 7 days, and runs in the United States. Limits: 10 questions an hour, 500 characters, and the service pauses for the day after about 33 questions (an estimate). Those day limits reset when the service restarts, and the first load can take half a minute.</p>
+        </div>
+      </div>
+      <div class="hold">
+        <div class="hold-mark">03</div>
+        <div>
+          <h4>How it was built.</h4>
+          <p>By Aveto, in public, under a Charter one person approved by its hash. The record of every stage, the failures and the fixes is in the <a href="https://github.com/gpatwa/aveto-support">aveto-support</a> repository, including the three accounting flaws found after launch (two by an outside model&rsquo;s review, one by checking the price list) and the pull request that fixed them.</p>
+        </div>
+      </div>
+    </div>
+    <div class="cta-row" style="margin-top:28px">
+      <a class="btn btn-primary" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io" rel="noopener">Open the live service</a>
+      <a class="btn btn-ghost" href="https://github.com/gpatwa/aveto-support/blob/main/runs/public-ask-the-docs/18-gate/RESULT.md">See the gate result</a>
     </div>
   </section>
 
@@ -1329,7 +1362,7 @@
       <div>
         <div class="cap-num">A third app, built in public</div>
         <h3>It failed four of its own checks, and said so.</h3>
-        <p>Aveto&rsquo;s support agent (<a href="https://github.com/gpatwa/aveto-support">aveto-support</a>) was built slice by slice with the question &ldquo;when do the docs <em>not</em> answer?&rdquo; held out in advance. Four pre-registered checks failed and were recorded as results, not tuned away: two held-out retrieval gates, then two attempts to know when the docs do not answer (a small model at 2 of 20, and a first judge that missed its bar by one question). Two other retrieval gates passed. A seventh slice, an attended judge on a Claude subscription, then passed on a set it had never seen: <strong>24 of 24</strong> unanswerable questions refused, <strong>16 of 19</strong> answerable ones kept. It passed the second bar by one question, and the page says so.</p>
+        <p>Aveto&rsquo;s support agent (<a href="https://github.com/gpatwa/aveto-support">aveto-support</a>) was built slice by slice with the question &ldquo;when do the docs <em>not</em> answer?&rdquo; held out in advance. Four pre-registered checks failed and were recorded as results, not tuned away: two held-out retrieval gates, then two attempts to know when the docs do not answer (a small model at 2 of 20, and a first judge that missed its bar by one question). Two other retrieval gates passed. A seventh slice, an attended judge on a Claude subscription, then passed on a set it had never seen: <strong>24 of 24</strong> unanswerable questions refused, <strong>16 of 19</strong> answerable ones kept. It passed the second bar by one question, and the page says so. That judge now runs as a live public service on Azure; scored once through it on 20 new questions, it refused all 10 it should and kept 8 of 10 answerable, exactly at its bar.</p>
       </div>
       <div>
         <div class="cap-num">One approval, then a review</div>
@@ -1406,14 +1439,14 @@
         <div class="hold-mark">04</div>
         <div>
           <h4>Not yet proven.</h4>
-          <p>Real-cloud deploy against a live subscription and production SLOs, enterprise multi-tenancy, and a real model running unattended inside a shipped feature. (A real model does run in one attended, internal feature: the answerability judge, started by a person.) The deployment and production-verification roles exist and are specified; they have not been run against live infrastructure. Each is listed as open in the validation matrix &mdash; none are claimed here.</p>
+          <p>Production SLOs, enterprise multi-tenancy, and a real model running unattended at scale. What has now run: real deploys of the support service to Azure, in two Charter runs (the Orchestrator ran the commands, because the deploy role has no shell), a live smoke test, and a production-verification stage that read the saved results. A real model decides, one question at a time, inside that live public feature, behind a $10 monthly limit. Each open item is listed in the validation matrix &mdash; none are claimed here.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">05</div>
         <div>
           <h4>The newest evidence is small.</h4>
-          <p>Process v2 has two runs behind it, one tiny and one real. The judge step passes its gate by a single question on a 19-question denominator, and retrieval itself finds the right file for 79.2% of answerable questions, just under its own bar. There is no data-processing agreement with the model provider, so the step is for public docs and internal use. A person still starts each run and decides the merge. Review mode for an existing codebase is planned, not built.</p>
+          <p>Process v2 has four runs behind it, one tiny and three real, and each needed the owner for something beyond the first Charter approval: a message, a credential step, a permission prompt or a usage limit. Both of the judge&rsquo;s gates were passed with no margin (by one question, then exactly at the bar), and retrieval itself finds the right file for 79.2% of answerable questions, just under its own bar. The service uses Anthropic&rsquo;s API under its commercial terms, which incorporate a data-processing addendum by reference; no agent read that text, and the page asks visitors not to enter personal information. Its spend limits reset when the service restarts, so the $10 monthly limit is the only lasting cap. A person still starts each run and decides the merge. Review mode for an existing codebase is planned, not built.</p>
         </div>
       </div>
     </div>
