@@ -15,8 +15,9 @@ small fraction of the cost. If the answer is no, the 1.4M is saved.
 A history-free copy of aveto-support's product code and tooling at `c150673` (the commit before the fix for S5):
 `~/opt/aveto-review-spike/aveto-support-c150673/`. 77 files, about 15,000 lines: `.claude/` (agents, commands,
 skills, hooks, settings), `aveto_support/`, `tools/`, `prompts/`, `tests/`, `pyproject.toml`, `uv.lock`,
-`docs-source.toml`. An empty base commit, with the whole tree staged on top, so a review of "the current diff" sees
-the entire tree. **Left out on purpose:** `runs/`, `docs/`, `evals/`, the README, and all history, so no record or
+`docs-source.toml`. An empty base commit on `main`, and the whole tree committed once on a branch `spike` (HEAD), so
+`git diff main...HEAD` is the entire tree. (The files were first only staged; a session started from the folder
+gets a fresh worktree made from the committed state, which would have been empty, so the snapshot is committed.) **Left out on purpose:** `runs/`, `docs/`, `evals/`, the README, and all history, so no record or
 commit message can tell a reviewer what was found later. The copy was searched for any mention of the incidents (none).
 The real repository is not touched.
 
@@ -34,7 +35,7 @@ One known incident is a very small recall test. The report says so.
 - **R1:** Claude Code's local `/code-review` at high effort, in a fresh session whose folder is the spike copy, run on
   each area in turn (`.claude`, `aveto_support`, `tools`, `prompts`). Never `--fix`, never `ultra`.
 - **R2:** the Codex desktop app, in a new chat (not one that has seen this repository), asked for a blind review of the
-  same tree, with the same rules as the trial's blind prompt.
+  same tree (`git diff main...HEAD`), with the same rules as the trial's blind prompt.
 
 ## Bars (per reviewer, reported separately)
 
