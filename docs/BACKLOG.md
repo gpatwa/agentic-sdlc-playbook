@@ -1731,10 +1731,28 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - **Watch:** the workflow leans on the desktop app's session handling and Claude Code is the only adapter. That is
     fine until a second harness adapter has a concrete need (see the parked item below).
 
+- **T40 · Agent interface: a designed contract for software Aveto builds, then MCP on top.** *Raised 2026-10-26 from
+  the owner's question on how software like aveto-support interacts with agents.* aveto-support's `POST /ask` already
+  takes and returns JSON, but there is no published contract. Add one question to the intent template: **who or what
+  consumes this, people, agents or both?** If agents, the slice gets an agent-interface bar checked at the Release Gate:
+  (1) a versioned OpenAPI file with stable fields and a documented error shape; (2) `Retry-After` and a reason on every
+  refusal (rate limit, daily pause, kill switch, bad input); (3) retrieved text marked as untrusted data, with the docs
+  telling agent builders to treat it so; (4) predictable behaviour (stable ordering, documented timeout and cold start,
+  nothing needing a browser or JavaScript); (5) a contract test: a small client written only from the published
+  contract exercising an answer, a refusal and a rate limit; (6) per-caller limits that keep "no identifiers stored"
+  (scrambled address only). **First application: a small slice on aveto-support, after the polished-chat slice
+  (not added to its scope).** Then, only on a customer's need, a **read-only** MCP wrapper (docs search returns
+  candidates without the judge, which costs nothing against the cap but cannot refuse; with the judge it keeps the
+  refusal guarantee and spends from the cap; run records are a second, lower-value candidate). No write tools and no
+  approvals over MCP. Not started.
+
 ## Decided NO / parked — recorded so they don't return
 
-- **A2A / MCP adoption** — wait for the Q3 2026 interop spec; every agent runs
-  in one harness, so it buys nothing yet. Watch, not build.
+- **A2A** — parked. Re-checked 2026-10-26: v1.0 is stable, but every Aveto agent runs in one harness, so it buys
+  nothing internally, and it has no approval semantics (the hash approval stays a human step outside it). Trigger:
+  a customer's agent needs to delegate a slice to Aveto. See `docs/STANDARDS_WATCH.md`.
+- **MCP** — no longer "wait for an interop spec" (none has shipped, and none is needed). Build a **read-only**
+  docs-search MCP server only after T40 and after the polished chat has real users; see T40.
 - **A second harness adapter** (DeepSeek `dsh`, etc.) — the adapter *pattern* is
   validated by their existence, but we have one unproven adapter (Claude Code)
   and `dsh` is developer-preview with breaking changes. Revisit only when the
