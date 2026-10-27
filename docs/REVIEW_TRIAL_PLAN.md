@@ -160,6 +160,7 @@ A **second pull request** followed on 2026-10-24: pull request 9 (the fix slice 
 chat: **no actionable issues**, from a static pass that did not run the tests. That is **two pull requests of the five**; the
 bars are unchanged because it added no findings, and a lighter, static review is weaker evidence than the one on pull request 5.
 A **third pull request** followed on 2026-10-26: pull request 11 (the polished chat experience), reviewed blind in a new chat. One P2 (an unlimited retry of a failed `/warm` search), already known as security-review advisory A1, **deferred by the owner** (recorded `intentional`, counted as real, not new). That is **three pull requests of the five**; all five bars still read met (precision 5 of 5), and the review ran only part of the tests, so it is again weaker evidence than the review of pull request 5.
+A **fourth pull request** followed on 2026-10-27: pull request 12 (the result page clarity slice), reviewed blind in a new chat: **no actionable issues**, from a static read plus 164 tests; no browser or screen reader was exercised. That is **four pull requests of the five**; the bars are unchanged because it added no findings (precision 5 of 5, new value 2, safety 0, discipline 0, four blind reviews in all).
 
 ## 6. After the trial
 
