@@ -1600,6 +1600,12 @@ from the run" pattern as effort / operator / executor / gateCatches.
         Pilot aveto-support at `c150673`; a spike runs first (`docs/review-mode-spike/PLAN.md`, bars fixed in
         advance); S6 corrected as untestable (never committed). M1 to M3b and M5 deferred. Next: the owner runs the two
         review sessions; then the same reviewer on current `main` (the polish pass) if the spike passes.
+  - [x] **Spike passed 2026-10-26 and the package is un-deferred 2026-10-27 (owner: assess an existing repo, recommend,
+        fix the gaps).** Codex blind found S5; Claude `/code-review` missed it and edited files, so read-only is made
+        mechanical (M1/M3b). The plan now reads assess -> report -> proposed backlog of Charter-ready intents -> one
+        slice per gap -> **M7 re-assessment** (before and after on the same scope). Pilot order: aveto-support, one
+        internal customer repo with permission, one open-source repo. Wording: "assessment", never "certified" or
+        "compliant". Nothing is built yet; build order M1/M2, M3 with M3b, M5, M4, M7, M6.
   - [ ] (original M0 text:) owner chooses the pilot and approves the bars (recommended pilot:
         aveto-support at `c150673`, where S5 and S6 give a recall test).
   - [ ] **M1** `install.mjs --existing` and `/agentic-onboard` (proposed, unconfirmed invariants).
@@ -1608,6 +1614,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [ ] **M3b** confidentiality and scale controls: secret-path exclusion (tested), data classification and processor as required Charter lines, scoped runs for monorepos.
   - [ ] **M5** review-mode Charter template and report format.
   - [ ] **M4** calibration run: recall on S5/S6, seeded bugs by a different agent, precision on a 30-finding sample.
+  - [ ] **M7** re-assessment: the same review on the same scope after fixes land, with a closed / still open / regressed / new table keyed on the first report's ids.
   - [ ] **M6** pilots on aveto-support, then two or more repos of other stacks and sizes (one not ours); only then README and site, as pilot results.
   - **Stops after M4** if recall or precision misses its declared bar.
 

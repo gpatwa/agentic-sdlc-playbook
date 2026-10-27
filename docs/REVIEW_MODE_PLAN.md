@@ -1,5 +1,27 @@
 # Plan: reviewing an existing codebase (review mode)
 
+> **Update 2026-10-27: the spike passed and the owner wants the whole loop: assess an existing repo, recommend, fix the
+> gaps.** Spike result (`docs/review-mode-spike/RESULTS.md`): Codex, blind, found the planted S5 unprompted (3 of 5 as
+> scored, 3 of 3 excluding two artifacts of my copy); Claude `/code-review` missed S5 and edited seven files. So the
+> deferred milestones are **un-deferred as one package, "assessment mode"**, in this order: **M1 and M2, then M3 with
+> M3b, then M5, then M7 (new), then pilots (M6).** Three things the spike changes:
+> 1. **Read-only must be mechanical, not a prompt.** R1 changed files although told not to. M1 and M3b run the review in
+>    a clean copy with Edit, Write and any push denied by permission rules, and the run fails if `git status` or HEAD
+>    differ afterwards.
+> 2. **Codex is the independent reviewer; Claude is the mapper, the runner and the fixer.** The report records which
+>    reviewer found what.
+> 3. **The word is "assessment", never "certified" or "compliant"** (`docs/MESSAGING.md`): we record and review, and we
+>    do not certify. Reports say "assessed against Aveto's gates on <date>".
+>
+> **The loop, end to end:** assess (read-only run, one Charter) -> `reviews/REPORT.md` with findings and evidence ->
+> **proposed backlog, each fix a Charter-ready intent** -> the owner picks -> **one normal slice per gap** (Charter, tests,
+> review, release gate, pull request, the owner merges) -> **M7, re-assessment** on the same scope, showing each finding
+> closed, still open, or new. Nothing is fixed silently, and the assessment run itself still changes nothing.
+> **Pilot order:** aveto-support (ours, low risk; the spike target is the recall check), then **one internal customer's
+> repo with that team's explicit permission**, then one open-source project of another stack with a known history of fixed
+> bugs. **Findings triage** follows the owner's rule: below P0 or P1 with high value, a finding is recorded and deferred,
+> not filed or fixed, so the backlog stays short.
+>
 > **Update 2026-10-25: M0 decided by the owner ("A, spike first").** A spike runs before any build, with its bars
 > fixed in advance: `docs/review-mode-spike/PLAN.md`. M1 to M3b and M5 are deferred to a later milestone; the owner's
 > priority is to review and polish what exists. **One bar below is corrected:** S6 lived in the untracked
@@ -153,9 +175,18 @@ and site, with the measured numbers, the limits, and the words "pilot results", 
 the playbook. *Estimate:* 600k for the first, and about 400k to 1M for each further
 repo, by size.
 
+### M7 — Re-assessment (new, 2026-10-27)
+After the chosen fixes land, the same review runs on the same scope and the report gains a **before and after**
+table: every earlier finding is `closed` (with the pull request), `still open` (deferred by the owner's rule, with the
+reason) or `regressed`, and any `new` finding is listed separately. It uses the first report's ids so the comparison is
+mechanical, and it reports its own cost and what it did not review, as the first run does. This is the step that makes
+"fix the gaps" visible to someone who was not there, and it is cheap because the map and the area list already exist.
+*Done when:* a re-assessment of the aveto-support pilot shows its findings with a disposition each and the numbers
+reconcile. *Estimate:* 120k to build; about 40% of a first review per run.
+
 ## Order, cost, touches
 
-M0 → M1 → M2 → M3 → M3b → M5 → M4 → M6. M2 can be built before M1 is finished. The
+M0 → M1 → M2 → M3 → M3b → M5 → M4 → M7 → M6. M2 can be built before M1 is finished. The
 playbook engineering (M1, M2, M3, M3b, M5) is about 1.4M of agent work and needs
 the owner only to confirm commits. M4 and M6 are Charter runs: **two touches
 each** (the Charter, the end review). Cost figures are peak-sum estimates, and
@@ -184,6 +215,6 @@ high side.
 
 ## What this plan does not do
 
-It does not fix anything, merge anything, deploy anything or replace a human
+The assessment run does not fix anything, merge anything, deploy anything or replace a human
 reading the riskiest code. Fixes are separate Charter runs, chosen from the
-proposed backlog.
+proposed backlog, and M7 then re-assesses (see the update at the top).
