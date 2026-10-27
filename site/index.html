@@ -865,6 +865,7 @@
       <a href="#course">From the course</a>
       <a href="#how">How it works</a>
       <a href="#span">Build · Deploy · Run</a>
+    <a href="#try">Try it</a>
       <a href="#evidence-runs">Evidence</a>
       <a href="#limits">Limits</a>
       <a href="#source">Docs</a>
@@ -881,6 +882,7 @@
     <div class="cta-row">
       <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
       <a class="btn btn-ghost" href="https://github.com/gpatwa/streak-seed/tree/main/runs/health-version">See a real run</a>
+      <a class="btn btn-ghost" href="#try">Try it live</a>
       <a class="btn btn-ghost" href="#roles">Meet the 28</a>
     </div>
 
@@ -955,7 +957,7 @@
   <section id="try">
     <p class="sec-eyebrow">Try it</p>
     <h2>Ask Aveto&rsquo;s docs, live.</h2>
-    <p class="sec-lede">The support agent Aveto built about itself now runs as a public service on Azure. It answers with passages copied word for word from these docs, each with its file and line numbers, or says the docs do not answer. A model decides only whether the passages answer; nothing on the page is written by a model.</p>
+    <p class="sec-lede">The support agent Aveto built about itself now runs as a public service on Azure. It answers with passages copied word for word from these docs, each with its file and line numbers, or says the docs do not answer. A model decides only whether the passages answer; nothing on the page is written by a model. When the docs do not answer, it says so and shows no passage.</p>
     <div class="holds">
       <div class="hold">
         <div class="hold-mark">01</div>
@@ -978,10 +980,18 @@
           <p>By Aveto, in public, under a Charter one person approved by its hash. The record of every stage, the failures and the fixes is in the <a href="https://github.com/gpatwa/aveto-support">aveto-support</a> repository, including the three accounting flaws found after launch (two by an outside model&rsquo;s review, one by checking the price list) and the pull request that fixed them.</p>
         </div>
       </div>
+      <div class="hold">
+        <div class="hold-mark">04</div>
+        <div>
+          <h4>The chat itself, built the same way.</h4>
+          <p>The answer and refusal cards, the suggested questions, the waiting and resting views, the receipts view and the scorecard were one more Aveto run, and <a href="https://github.com/gpatwa/aveto-support/tree/main/runs/polished-chat-experience">its Charter and record are public</a>. Measured: 731 tests pass (668 before); an automated accessibility check found no serious issue on five views, and the page was tried at phone width and by keyboard alone. Not tested: touch devices. On the live service the first load after idle took 25.8 seconds, a warm answer about 1.4 seconds (median of six), and a question cost about $0.0086 (seven live questions, $0.06). Before release, a rollback to the previous version was rehearsed: it served again about 65 seconds after the command. The <a href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io/scorecard" rel="noopener">scorecard</a> shows these figures; the visit and question counts on it are raw totals since the last restart, not verified visitors, and never include what was asked.</p>
+        </div>
+      </div>
     </div>
     <div class="cta-row" style="margin-top:28px">
       <a class="btn btn-primary" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io" rel="noopener">Open the live service</a>
       <a class="btn btn-ghost" href="https://github.com/gpatwa/aveto-support/blob/main/runs/public-ask-the-docs/18-gate/RESULT.md">See the gate result</a>
+      <a class="btn btn-ghost" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io/scorecard" rel="noopener">See the scorecard</a>
     </div>
   </section>
 
