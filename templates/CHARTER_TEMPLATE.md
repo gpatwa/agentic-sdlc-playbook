@@ -19,6 +19,7 @@
 - **C2.1 Plan total:** <n>k
 - **C2.2 Ceiling:** <n>k. Above it the run continues and sends a notice.
 - **C2.3 Hard cap:** <n>k. Above it the run stops. The run never raises it.
+  If the owner gives one number, it is C2.3; set C2.2 at about 90% of it. The run sends one notice when the projection first passes C2.2, and another only above 90% of C2.3. The hard cap is copied into STATE.md (`- **Hard cap:**`), where the budget guard reads it.
 
 ## 3. Models (rule 5)
 One line per role that calls a model in the product or the run, with the full model ID

@@ -342,6 +342,16 @@ describe("install.mjs — pack integrity", () => {
     assert.match(econ, /Review stages run about 1\.5 to 3 times their estimate/);
   });
 
+  test("pack v30: one budget number is the hard cap, the guard reads it, and a slice is set done when the pull request opens", () => {
+    const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
+    assert.match(cmd, /One number from the human is the hard cap \(C2\.3\)/);
+    assert.match(cmd, /count every hook "ask" the human answered/);
+    const st = readFileSync(join(target, ".claude", "protocols", "SLICE_STATE.md"), "utf8");
+    assert.match(st, /\*\*Hard cap:\*\* <n>k tokens/);
+    assert.match(st, /Set it as the last act of the run, when the pull request is opened/);
+    assert.match(readFileSync(join(here, "..", "..", "templates", "CHARTER_TEMPLATE.md"), "utf8"), /If the owner gives one number, it is C2\.3/);
+  });
+
   test("pack v29: the run instructions and the Charter template say a spawned role needs an Agent allow rule", () => {
     const cmd = readFileSync(join(target, ".claude", "commands", "agentic-slice.md"), "utf8");
     assert.match(cmd, /one `Agent\(<role>\)` allow rule for every\s+role the plan's stage table spawns/);
@@ -418,7 +428,7 @@ describe("install.mjs — pack integrity", () => {
     assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
     const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
     assert.match(ag, /Mark what you could not confirm, and say where you looked/);
-    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 29);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 30);
   });
 
   test("the budget guard is installed and wired into settings", () => {

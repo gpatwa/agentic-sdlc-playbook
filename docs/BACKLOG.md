@@ -1786,6 +1786,16 @@ from the run" pattern as effort / operator / executor / gateCatches.
      STATE.md, the guard asks only when spent plus the next estimate would pass the hard cap; between the plan total
      and the cap it passes silently and leaves the notice to the Orchestrator.
   No bypass or auto-approve mode: the Charter's rule list stays the permission contract the owner approves.
+  **Built in pack v30 (2026-10-27), the part the evidence supports:** item 6 only. The budget guard now follows the
+  session's own worktree (a finished slice left `in-progress` elsewhere no longer asks), asks against the Charter's
+  hard cap when `- **Hard cap:**` is recorded in the Budget block (silent between the plan total and the cap; warns at
+  90% of the cap), the run command says one number from the owner is the hard cap with one notice, a slice is set
+  `done` when the pull request opens, and the end review counts every hook "ask" the owner answered. Tests: the guard
+  suite 36 to 44 (four of the new ones fail on the old guard); the whole execution suite 293 passed. **Items 1 to 5
+  (baseline permission set, plan versus C6.P comparison, permission rehearsal, one grant step, stop-and-amend) are
+  deferred:** the one prompt the owner saw in the polished-chat slice was very likely the budget guard, and no
+  other permission prompt has been reported, so they would be built on a guess. Revisit if a real non-budget
+  prompt appears in a run under v30. Not yet proven in a run.
   **Evidence so far:** the fix slice stalled four times on spawn prompts (T38); the polished-chat slice prompted in
   stage 4 (very likely this budget-guard ask, item 6; confirm with the owner). Build after the polished-chat slice
   ends. Not started.

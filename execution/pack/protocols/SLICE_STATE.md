@@ -56,6 +56,7 @@ the originating conversation.
 Per `RUN_ECONOMICS.md`. Checked **before every spawn** — never reconciled after.
 
 - **Budget:** <n>k tokens  ·  **Depth:** <smoke / standard / adversarial>
+- **Hard cap:** <n>k tokens (copy the Charter's C2.3 here; the budget guard then asks only about the cap, not the plan total)
 - **Spent:** <n>k (<pct>%)  ·  **Remaining:** <n>k
 - **Next stage:** <stage> (<archetype>) est. <n>k → **<PROCEED / DEGRADE / STOP-AND-ASK>**
 
@@ -256,4 +257,4 @@ from all traces via `execution/analyze.mjs` at slice close.
   paused and MUST NOT proceed (see `APPROVAL_PROTOCOL.md`).
 - **blocked-on-failure** — a gate failed and the retry budget is spent;
   escalated to the human (see `FAILURE_LOOP.md`).
-- **done** — the slice landed and Post-Launch is complete.
+- **done** — the slice landed and Post-Launch is complete. **Set it as the last act of the run, when the pull request is opened** (write `done (pull request <n> opened; owner merges)`), not after the merge: a slice left `in-progress` makes the budget guard treat it as running. The guard reads only the word `done` at the start of the value.

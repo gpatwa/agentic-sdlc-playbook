@@ -41,6 +41,23 @@ try {
   ].filter((d) => existsSync(d));
   if (!runsDirs.length) allow(); // not a slice-running repo
 
+  // Which slice is THIS session running? The payload's cwd says: a session in a
+  // desktop-app worktree is running that worktree's slice. Scanning every
+  // worktree (the old behaviour) made a finished slice whose STATE.md still read
+  // in-progress ask the owner at every spawn of a different, healthy slice (found
+  // 2026-10-26: a merged slice at 919k of 730k blocked the next slice's spawns).
+  // Scope to the current worktree's runs/ (or, outside a worktree, the project's);
+  // fall back to scanning all only when that finds no guardable slice.
+  let cwd = process.cwd();
+  try {
+    if (!process.stdin.isTTY) {
+      const pl = JSON.parse(readFileSync(0, "utf8") || "{}");
+      if (typeof pl.cwd === "string" && pl.cwd) cwd = pl.cwd;
+    }
+  } catch { /* no payload: scan as before */ }
+  const inWt = cwd.match(/^(.*?[\\/]\.claude[\\/]worktrees[\\/][^\\/]+)/);
+  const scoped = [join(inWt ? inWt[1] : projectDir, "runs")].filter((d) => existsSync(d));
+
   // Accept "600k", "600,000", "0.6M".
   const num = (s) => {
     if (!s) return null;
@@ -66,9 +83,10 @@ try {
   // agent that rewrote the Status value or the Budget line into prose used to
   // take its slice out of the guard without a word; now the spawn goes ahead
   // with a message naming the slice and the line to restore.
+  const scan = (dirs) => {
   let active = null;
   const unguarded = [];
-  for (const runsDir of runsDirs) for (const d of readdirSync(runsDir)) {
+  for (const runsDir of dirs) for (const d of readdirSync(runsDir)) {
     const p = join(runsDir, d, "STATE.md");
     if (!existsSync(p) || !statSync(join(runsDir, d)).isDirectory()) continue;
     const text = readFileSync(p, "utf8");
@@ -89,9 +107,18 @@ try {
     // still spawned, because only spent >= budget asked. Found by a product
     // repo's Orchestrator comparing the hook against the rule it cites.
     const e = num((text.match(/\*\*Next stage:\*\*[^\n]*?\best\.?\s*([\d.,]+\s*[kKmM]?)/i) || [])[1]) || 0;
-    const ratio = (s + e) / b;
-    if (!active || ratio > active.ratio) active = { slice: d, budget: b, spent: s, est: e, ratio };
+    // A recorded hard cap (the Charter's C2.3, copied into the Budget block) is the
+    // real limit: between the plan total and the cap the Charter lets the run
+    // continue with a notice, so the guard asks only about the cap.
+    const hc = num((text.match(/\*\*Hard cap:\*\*\s*([\d.,]+\s*[kKmM]?)/i) || [])[1]);
+    const limit = hc && hc > b ? hc : b;
+    const ratio = (s + e) / limit;
+    if (!active || ratio > active.ratio) active = { slice: d, budget: limit, plan: b, hardCap: limit !== b, spent: s, est: e, ratio };
   }
+  return { active, unguarded };
+  };
+  let { active, unguarded } = scan(scoped.length ? scoped : runsDirs);
+  if (!active && scoped.length) ({ active, unguarded } = scan(runsDirs));
   const notice = unguarded.length
     ? `Budget guard could not check ${unguarded.length === 1 ? "a slice" : "some slices"} ` +
       `(${unguarded.join("; ")}). Restore the exact SLICE_STATE.md format so the ` +
@@ -116,8 +143,8 @@ try {
     const pct = spent / budget;
     const what = est && spent < budget
       ? `The next stage (est. ${k(est)}) would take slice "${active.slice}" to ${k(spent + est)} ` +
-        `of a ${k(budget)} budget — ${k(spent)} spent so far.`
-      : `Budget exceeded on slice "${active.slice}": ${k(spent)} spent of a ${k(budget)} budget ` +
+        `of a ${k(budget)} ${active.hardCap ? "hard cap" : "budget"} — ${k(spent)} spent so far.`
+      : `Budget exceeded on slice "${active.slice}": ${k(spent)} spent of a ${k(budget)} ${active.hardCap ? "hard cap" : "budget"} ` +
         `(${Math.round(pct * 100)}%).`;
     say({
       hookSpecificOutput: {
@@ -131,7 +158,7 @@ try {
     });
   }
 
-  if ((spent + est) / budget >= 0.8) {
+  if ((spent + est) / budget >= (active.hardCap ? 0.9 : 0.8)) {
     say({
       systemMessage:
         est

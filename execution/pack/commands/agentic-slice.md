@@ -94,7 +94,8 @@ Do this:
    needs a session the human starts. Never ask the human to open a session
    during a Charter run; if one is truly needed, that is a Charter stop.
    `END_REVIEW.md` also reports **questions asked of the human after the
-   Charter** (the target is 0) and the **spend against each stage's estimate**.
+   Charter** (the target is 0; count every hook "ask" the human answered, such as a budget-guard prompt, even if
+   the session was not told of it) and the **spend against each stage's estimate**.
 5b. **Confirm intent and plan together, once.** Show the human both files.
    Nothing past Scope Review starts until they confirm. A line still marked
    (inferred) after confirmation is dropped, not kept — it never becomes an
@@ -104,6 +105,10 @@ Do this:
    adversarial Security Review or a model proposal, about 1.3× otherwise).
    Carry any depth the intent names into the plan as written; it binds (see
    `RUN_ECONOMICS.md` §3).
+   **One number from the human is the hard cap (C2.3):** set the ceiling at about 90% of it and the
+   plan total from the plan; copy the cap into the STATE.md Budget block as `- **Hard cap:** <n>k`. Send
+   **one** budget notice when the projection first passes the ceiling, and another only if it passes 90% of the
+   hard cap; record the figures in `END_REVIEW.md`, not after every stage.
    The human types the ceiling once. After that, stop and ask only when a
    stage would pass the ceiling, a pre-registered check fails, or a gate
    would have to be compressed. You never raise a budget yourself.
