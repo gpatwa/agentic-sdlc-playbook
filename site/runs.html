@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aveto runs, read from the records</title>
+<meta name="description" content="Every Aveto run in aveto-support: status, spend against plan and cap, Charter hash, event-log result, pull request. Read from each run's own records; a read-only snapshot.">
+<style>
+:root{--ground:#FBFAF7;--surface:#fff;--ink:#14161A;--soft:#3A4048;--muted:#626B77;--rule:#E2DFD8;--gold:#85590C;--bad:#9B1C1C;--good:#1F6B3A;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#14161A;--surface:#1C1F24;--ink:#F1EFE9;--soft:#C9CDD3;--muted:#9AA3AF;--rule:#2C3037;--gold:#E0A83B;--bad:#F08080;--good:#7FD49B;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1180px;margin:0 auto;padding:32px 16px 64px}a{color:var(--gold)}h1{font-size:1.9rem;line-height:1.2;margin:.2em 0}
+.eyebrow{font:600 .75rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.lede{color:var(--soft);max-width:70ch}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:24px 0}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:14px 16px}.card b{display:block;font-size:1.6rem}.card span{color:var(--muted);font-size:.85rem}
+.wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}table{border-collapse:collapse;width:100%;min-width:980px;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:top}th{font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}tr:last-child td{border-bottom:0}
+.muted{color:var(--muted);font-size:.8rem}.nr{color:var(--muted);font-style:italic}.over{color:var(--bad);font-weight:600}.ok{color:var(--good)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;border:1px solid var(--rule);font-size:.78rem;font-weight:600}.badge.done{color:var(--good);border-color:var(--good)}.badge.in-progress{color:var(--gold);border-color:var(--gold)}
+code{font:.82rem ui-monospace,monospace}.notes{margin-top:28px;color:var(--soft);max-width:78ch}.notes li{margin:.5em 0}
+</style>
+</head>
+<body>
+<main>
+<p class="eyebrow">Aveto runs</p>
+<h1>Every run, read from its own records.</h1>
+<p class="lede">One row per run in <a href="https://github.com/gpatwa/aveto-support">gpatwa/aveto-support</a>. A script reads each run's state file, trace, end review and event log; nothing here is typed by hand, and nothing on this page can change a run. A figure a run's records do not state is shown as <span class="nr">not recorded</span>.</p>
+<div class="cards">
+<div class="card"><b>13</b><span>runs recorded</span></div>
+<div class="card"><b>13</b><span>marked done</span></div>
+<div class="card"><b>11,941k</b><span>tokens, peak context summed per spawn (self-reported)</span></div>
+<div class="card"><b>6</b><span>ended over their plan total</span></div>
+</div>
+<div class="wrap"><table>
+<thead><tr><th>Run</th><th>Status</th><th>Spend</th><th>Cap</th><th>Tier</th><th>Charter</th><th>Event log</th><th>Pull request</th><th>Asked after Charter</th><th>Open for owner</th></tr></thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/result-page-clarity">result-page-clarity</a><div class="muted">2026-10-27</div></td>
+<td><span class="badge done">done</span><div class="muted">pull request opened 2026-10-27; live on revision ca-aveto-ask--0000014; owner reviews and merges</div></td>
+<td>581k of 400k <span class="over">(145% of plan)</span><div class="muted">self-reported</div></td>
+<td>800k <span class="muted">hard cap</span></td>
+<td>3</td>
+<td><code>8eacc4078037</code><div class="muted">approved 2026-10-27</div></td>
+<td>intact · 387 lines</td>
+<td><span class="nr">not recorded</span></td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/polished-chat-experience">polished-chat-experience</a><div class="muted">2026-10-26</div></td>
+<td><span class="badge done">done</span><div class="muted">pull request 11 merged 2026-10-27; live on revision ca-aveto-ask--0000011</div></td>
+<td>1,570k of 1,000k <span class="over">(157% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>3</td>
+<td><code>a24c3c56e430</code><div class="muted">approved 2026-10-26</div></td>
+<td>intact · 1043 lines</td>
+<td><a href="https://github.com/gpatwa/aveto-support/pull/11">#11</a></td>
+<td>0</td>
+<td>6</td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/fix-service-accounting">fix-service-accounting</a><div class="muted">2026-10-23</div></td>
+<td><span class="badge done">done</span><div class="muted">pull request 9 merged 2026-10-24</div></td>
+<td>919k of 730k <span class="over">(126% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>3</td>
+<td><code>afc984d1</code><div class="muted">approved 2026-10-23</div></td>
+<td>intact · 533 lines</td>
+<td><a href="https://github.com/gpatwa/aveto-support/pull/9">#9</a></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/public-ask-the-docs">public-ask-the-docs</a><div class="muted">2026-10-20</div></td>
+<td><span class="badge done">done</span><div class="muted">pull request #5 open; the merge is the owner's act</div></td>
+<td>2,496k of 2,000k <span class="over">(125% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>3</td>
+<td><code>e04b82539e1f</code><div class="muted">approved 2026-10-23</div></td>
+<td><span class="muted">no event log</span></td>
+<td><a href="https://github.com/gpatwa/aveto-support/pull/5">#5</a></td>
+<td><span class="nr">not recorded</span></td>
+<td>3</td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/land-answerability">land-answerability</a><div class="muted">2026-10-17</div></td>
+<td><span class="badge done">done</span><div class="muted">PR opened; owner merges</div></td>
+<td>651k of 450k <span class="over">(145% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>3</td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="muted">no event log</span></td>
+<td><a href="https://github.com/gpatwa/aveto-support/pull/4">#4</a></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/docs-answerability-2">docs-answerability-2</a><div class="muted">2026-10-12</div></td>
+<td><span class="badge done">done</span></td>
+<td>2,773k of 2,600k <span class="over">(107% of plan)</span><div class="muted">self-reported</div></td>
+<td>3,400k <span class="muted">ceiling</span></td>
+<td>3</td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="muted">no event log</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/docs-abstention">docs-abstention</a><div class="muted">2026-10-09</div></td>
+<td><span class="badge done">done</span></td>
+<td>672k of 780k <span class="ok">(86% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>2</td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="muted">no event log</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/docs-retrieval-4">docs-retrieval-4</a><div class="muted">2026-10-03</div></td>
+<td><span class="badge done">done</span></td>
+<td>581k of 585k <span class="ok">(99% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>2</td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="muted">no event log</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/docs-retrieval-3">docs-retrieval-3</a><div class="muted">2026-10-01</div></td>
+<td><span class="badge done">done</span></td>
+<td>314k of 360k <span class="ok">(87% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>2</td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="muted">no event log</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/docs-retrieval-3-proof">docs-retrieval-3-proof</a><div class="muted">2026-10-01</div></td>
+<td><span class="badge done">done</span></td>
+<td>143k of 240k <span class="ok">(60% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>2</td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="muted">no event log</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/docs-retrieval-2">docs-retrieval-2</a><div class="muted">2026-09-29</div></td>
+<td><span class="badge done">done</span></td>
+<td>312k of 460k <span class="ok">(68% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>2</td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="muted">no event log</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/docs-retrieval-2-proof">docs-retrieval-2-proof</a><div class="muted">2026-09-29</div></td>
+<td><span class="badge done">done</span></td>
+<td>75k of 430k <span class="ok">(17% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>2</td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="muted">no event log</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+<tr>
+<td><a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67/runs/docs-retrieval">docs-retrieval</a><div class="muted">2026-09-27</div></td>
+<td><span class="badge done">done</span></td>
+<td>854k of 1,130k <span class="ok">(76% of plan)</span><div class="muted">self-reported</div></td>
+<td><span class="nr">not recorded</span></td>
+<td>2</td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="muted">no event log</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+<td><span class="nr">not recorded</span></td>
+</tr>
+</tbody></table></div>
+<ul class="notes">
+<li><b>Spend</b> is what the run's state file says, in tokens. &ldquo;Self-reported&rdquo; means the model reported its own token use; it is not a bill. 6 of 13 runs ended over their plan total; a Charter's hard cap, where one is recorded, is what stops a run.</li>
+<li><b>Event log: intact</b> means the hash chain verified when the run closed. It shows tampering after the fact; it does not prevent it. Runs before the event log existed show &ldquo;no event log&rdquo;.</li>
+<li><b>Asked after Charter</b> and <b>Open for owner</b> are the counts in each run's own end review, as the run reported them. A run cannot see every prompt the app shows its owner, so the first can read lower than the truth.</li>
+<li>A snapshot, generated 2026-10-27 from <a href="https://github.com/gpatwa/aveto-support/tree/f7e3575f74d6b6332e7ef9fa5266ee234316ae67">gpatwa/aveto-support at <code>f7e3575</code></a>. It holds no approvals or credentials. Charter approval is typed by the owner in the session that drives a run, never on this page.</li>
+</ul>
+</main>
+</body>
+</html>
