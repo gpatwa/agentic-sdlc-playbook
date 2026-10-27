@@ -215,6 +215,12 @@
 
   .hero-sub strong { color: var(--ink); font-weight: 600; }
 
+  .try-steps { margin: 20px 0 8px; padding-left: 22px; color: var(--ink-soft); }
+  .try-steps li { margin: 6px 0; }
+  .try-shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 22px 0 6px; }
+  .try-shots figure { margin: 0; }
+  .try-shots img { display: block; width: 100%; height: auto; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--surface); }
+  .try-shots figcaption { font-size: 0.875rem; color: var(--muted); margin-top: 8px; }
   .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 
   /* ---------- lifecycle rail ---------- */
@@ -865,7 +871,7 @@
       <a href="#course">From the course</a>
       <a href="#how">How it works</a>
       <a href="#span">Build · Deploy · Run</a>
-    <a href="#try">Try it</a>
+    <a href="#try">Live demo</a>
       <a href="#evidence-runs">Evidence</a>
       <a href="#limits">Limits</a>
       <a href="#source">Docs</a>
@@ -882,7 +888,7 @@
     <div class="cta-row">
       <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
       <a class="btn btn-ghost" href="https://github.com/gpatwa/streak-seed/tree/main/runs/health-version">See a real run</a>
-      <a class="btn btn-ghost" href="#try">Try it live</a>
+      <a class="btn btn-ghost" href="#try">Try the live app</a>
       <a class="btn btn-ghost" href="#roles">Meet the 28</a>
     </div>
 
@@ -958,6 +964,25 @@
     <p class="sec-eyebrow">Try it</p>
     <h2>Ask Aveto&rsquo;s docs, live.</h2>
     <p class="sec-lede">The support agent Aveto built about itself now runs as a public service on Azure. It answers with passages copied word for word from these docs, each with its file and line numbers, or says the docs do not answer. A model decides only whether the passages answer; nothing on the page is written by a model. When the docs do not answer, it says so and shows no passage.</p>
+    <div class="cta-row" style="margin-top:20px">
+      <a class="btn btn-primary" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io" rel="noopener">Open the live app and ask a question</a>
+    </div>
+    <ol class="try-steps">
+      <li>Open the live app. The first load after a quiet spell can take about half a minute.</li>
+      <li>Click one of the first three suggested questions and press Ask. You get passages quoted from the docs, each with its file and lines.</li>
+      <li>Then click the last suggestion, &ldquo;Does it support right-to-left languages?&rdquo;. The docs do not answer it, and the app says so instead of guessing.</li>
+    </ol>
+    <div class="try-shots">
+      <figure>
+        <img src="assets/chat-answer.png" width="700" height="500" loading="lazy" alt="The live app after a question the docs answer: a green box reading &quot;The docs answer this&quot;, then a quoted passage from docs/DEPLOYMENT.md with its section, line numbers, a link to the lines on GitHub and a Copy link button.">
+        <figcaption>A question the docs answer: the passage is quoted word for word, with its file and lines.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/chat-refusal.png" width="700" height="535" loading="lazy" alt="The live app after a question the docs do not answer: a box reading &quot;The docs don't answer this&quot; with a hint to rephrase, links to open a GitHub issue or read the docs, and the three questions the docs do answer.">
+        <figcaption>A question the docs do not answer: no passage is shown, and it offers ways to go on.</figcaption>
+      </figure>
+    </div>
+    <p style="font-size:0.875rem;color:var(--muted);margin-top:6px">Screenshots of the live app taken on 2026-10-27.</p>
     <div class="holds">
       <div class="hold">
         <div class="hold-mark">01</div>
@@ -989,7 +1014,7 @@
       </div>
     </div>
     <div class="cta-row" style="margin-top:28px">
-      <a class="btn btn-primary" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io" rel="noopener">Open the live service</a>
+      <a class="btn btn-ghost" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io" rel="noopener">Open the live app</a>
       <a class="btn btn-ghost" href="https://github.com/gpatwa/aveto-support/blob/main/runs/public-ask-the-docs/18-gate/RESULT.md">See the gate result</a>
       <a class="btn btn-ghost" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io/scorecard" rel="noopener">See the scorecard</a>
     </div>
