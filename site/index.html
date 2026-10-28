@@ -1502,60 +1502,49 @@
     <div class="narrow">
       <details open>
         <summary>Is this a coding agent?</summary>
-        <p>No. Aveto directs the agents you already use rather than replacing them. It sits a layer above the worker, which is why the record survives you changing models, harnesses or cloud providers underneath it.</p>
+        <p>No. Aveto directs the agents you already use rather than replacing them. It sits a layer above the worker; today that worker is Claude Code.</p>
       </details>
       <details>
         <summary>Do I have to approve every step?</summary>
-        <p>No. You approve one <strong>Charter</strong> at the start: the exact models, data processors, safety-control changes, permission rules, budget and end actions the run may use, checked for completeness and approved by its hash. After that the run asks nothing; it stops only for an action the Charter does not name, for spend past its hard cap, or for a credential. At the end you review what was done under each line.</p>
-        <p>The default Charter allows no merge, no deploy and no send: a run ends by opening a pull request for you. An approval typed in another session still does not count, and a review by an agent is never a person&rsquo;s approval. Process v2 is new: it has two runs behind it, and the page above says what is not yet proven.</p>
+        <p>No. You approve one Charter at the start: the models, data processors, safety-control changes, permissions, budget and end actions the run may use, approved by its hash. The run is built to ask nothing after that; it stops only for an action the Charter does not name, for spend past its hard cap, or for a credential. At the end you review what was done under each line. The default Charter allows no merge, no deploy and no send: a run ends with a pull request for you. An approval typed in another session does not count, and an agent&rsquo;s review is never a person&rsquo;s approval. Seven runs have used a Charter (five on the support agent, two on a small test app); early ones still stopped to ask about a budget set against the wrong limit, which the latest pack fixed.</p>
       </details>
       <details>
         <summary>Is code review part of it?</summary>
-        <p>Yes, as a layer around the review Claude Code already provides, not a new reviewer. Every Charter run reviews its own diff with a reviewer that did not write it, sets a risk tier from the change (safety text, permissions, hooks and CI are always high), bounds the fix-and-review rounds at three, and records each finding as fixed, rejected or intentional. Past mistakes become test cases for the review step. The playbook is <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/CODE_REVIEW.md">docs/CODE_REVIEW.md</a>.</p>
-      </details>
-      <details>
-        <summary>How does this relate to Anthropic&rsquo;s AI-Native SDLC course?</summary>
-        <p>The course teaches the practice: six stages, an <code>intent.md</code>, plan mode, subagents, hooks as approval gates. Aveto is an open implementation of that practice you install into a repo &mdash; 28 roles with their tool limits, gates that fail closed, a named approver on the actions you can&rsquo;t undo, and QA that checks your own acceptance criteria.</p>
-        <p>Aveto is independent. It is not affiliated with or endorsed by Anthropic; it runs on Claude Code because that is where the subscription, the subagents and the hooks it needs already are.</p>
-      </details>
-      <details>
-        <summary>Our agents already run under scoped credentials &mdash; isn't that enough?</summary>
-        <p>Scoped credentials answer a different question. They decide <em>what an agent is able to touch</em>. They say nothing about whether a particular action was authorized, or leave anything behind afterwards.</p>
-        <p>Give an agent a senior engineer's permissions and it can do everything that engineer can do &mdash; autonomously, at machine speed, without anyone sanctioning any individual action. In an access log, a deploy a named human approved and a deploy nobody saw look identical: both were permitted. Permission is a <strong>capability</strong> boundary; accountability is a <strong>record</strong> of who decided, when, and against which rule.</p>
-        <p>Aveto assumes your credential scoping is already correct and adds the layer above it &mdash; the one an auditor asks for when scoping alone turns out not to have been the question.</p>
+        <p>Yes, as a layer around the review Claude Code already provides, not a new reviewer. Every Charter run reviews its own diff with a reviewer that did not write it, sets a risk tier (safety text, permissions, hooks and CI are always high), limits fix-and-review rounds to three, and records each finding as fixed, rejected or intentional. The playbook is <code>docs/CODE_REVIEW.md</code>.</p>
       </details>
       <details>
         <summary>Why a subscription instead of an API key?</summary>
-        <p>Because it changes who carries the cost. Aveto never resells inference &mdash; it runs on the Claude Code subscription you already pay for, so it adds no separate API bill. The scarce resource is that plan&rsquo;s usage window, and a long run counts against it, which is why every stage is costed before it spends and written to disk as it goes.</p>
-        <p>It also means falling token prices make Aveto cheaper to run without anything changing here.</p>
+        <p>Because it changes who carries the cost. Aveto never resells inference: it runs on the Claude Code plan you already pay for, so it adds no separate API bill. The scarce resource is that plan&rsquo;s usage window, and a long run counts against it, which is why every stage is costed before it spends and written to disk as it goes. What it runs on, part by part, is in the table above.</p>
+      </details>
+      <details>
+        <summary>Can I use it with Cursor, Codex or Copilot?</summary>
+        <p>Not yet. Aveto&rsquo;s run rules live in an <code>AGENTS.md</code> file that tools such as Codex, Cursor and Copilot can read, but the agents, hooks and commands that enforce them are built for Claude Code only. A second adapter is on the backlog and starts when there is a real need. Codex is used today only as an optional, manual second reviewer.</p>
+      </details>
+      <details>
+        <summary>Is the live chat an AI agent?</summary>
+        <p>No. The live chat is a small app Aveto built. It finds passages in the docs, one model call decides whether they answer the question, and it shows the passages word for word or says the docs do not answer. It never writes text of its own and takes no actions. What is autonomous is the build: agents built and released it under a Charter anyone can read.</p>
+      </details>
+      <details>
+        <summary>Our agents already run under scoped credentials &mdash; isn&rsquo;t that enough?</summary>
+        <p>Scoped credentials answer a different question: what an agent is able to touch. They say nothing about whether a particular action was authorized, or what was left behind. In an access log, a deploy a named human approved and a deploy nobody saw look identical, because both were permitted. Permission is a capability boundary; accountability is a record of who decided, when, and against which rule. Aveto assumes your credential scoping is already correct and adds the record on top.</p>
+      </details>
+      <details>
+        <summary>How is this different from other tools?</summary>
+        <p>They sit at different layers. Spec-driven tools structure how software gets written, and toolkits such as ECC make an agent work better with libraries of skills, hooks and memory. Aveto governs whether the work can be trusted: every stage is costed before it spends, the agent that verifies never wrote the code, gates fail closed, and a named human approves one Charter by its hash and reviews the result. The trade is breadth: Aveto is narrower, Claude Code only, built for one person on one subscription. It can be used alongside the others. Aveto is independent and not affiliated with ECC or Anthropic.</p>
       </details>
       <details>
         <summary>Does this work for a team, or an enterprise?</summary>
-        <p>Today it is built for one person on one subscription, and that is where it is proven. Each developer running their own slices on their own subscription works now.</p>
-        <p>Shared gates across a team, a run inventory spanning developers, and the conformity export an auditor asks for are on the roadmap, not shipped &mdash; several of the 28 roles already carry the enterprise overlay they will build on. The validation matrix in the repo marks exactly what has and hasn't been run at that scale.</p>
-      </details>
-      <details>
-        <summary>How is this different from spec-driven development?</summary>
-        <p>Spec-driven tools structure how software gets written, and several good ones exist. All of them end at the merge. Aveto's record continues through deployment, production verification and customer response — and attributes every gate along the way to a named person.</p>
-      </details>
-      <details>
-        <summary>How is this different from toolkits like ECC?</summary>
-        <p>They sit at different layers. Toolkits such as <a href="https://github.com/affaan-m/ECC">ECC</a> make an agent work better: a large library of skills, hooks, rules and memory, across many editors and harnesses. That is useful, and it is a different job from this one.</p>
-        <p>Aveto governs whether the work can be trusted. Every stage is costed and checked against a budget before it spends. The agent that verifies never wrote the code, and the gates fail closed. A named human approves one Charter before the run, by its hash, and reviews the result after it; the run acts only within that Charter, and an approval typed in another session still doesn&rsquo;t count. Evidence for AI features comes from a held-out set the builder didn&rsquo;t write, run once, with the bar fixed in advance.</p>
-        <p>The trade is breadth: Aveto is narrower, Claude Code only, built for one person on one subscription. The two can be used together. Aveto is independent and not affiliated with ECC.</p>
-      </details>
-      <details>
-        <summary>Doesn't adding gates slow teams down?</summary>
-        <p>It's the opposite trade. The reason most organizations cap agent autonomy is that they can't account for what agents did. Removing that uncertainty is what makes raising the ceiling defensible — the gates are how you go faster, not the tax you pay for it.</p>
+        <p>Today it is built for one person on one subscription, and that is where it is proven. Each developer running their own slices on their own subscription works now. Shared gates across a team, a run inventory spanning developers, and the conformity export an auditor asks for are on the roadmap, not shipped; a read-only page of every run exists at <a href="/runs">/runs</a>. The validation matrix in the repo marks exactly what has and hasn&rsquo;t been run at that scale.</p>
       </details>
       <details>
         <summary>Which clouds are supported?</summary>
-        <p>Azure today, AWS and GCP next, each wrapping the deployment engine you already use rather than replacing it. The gate, the attribution and the evidence format are identical across all three.</p>
+        <p>Azure is the one proven end to end: the live demo runs on it, deployed by an Aveto run. AWS and GCP are planned, not tested. Each would wrap the deployment engine you already use rather than replacing it.</p>
       </details>
       <details>
         <summary>What happens when a deployment goes wrong?</summary>
-        <p>Production verification checks the live service against the invariants the spec named and executes the rollback plan that was approved at spec review — no second approval round-trip, because that decision was already made deliberately. The executed rollback is itself surfaced as an audit event.</p>
+        <p>Production verification checks the live service against the invariants the spec named, and the rollback plan approved at spec review is the one that runs, with no second approval round trip because that decision was already made. In the last two releases the rollback was rehearsed before release: the previous version served again about 65 to 70 seconds after the command, then the new version was restored. That is two samples, not a guarantee.</p>
       </details>
+    
     </div>
   </section>
 
