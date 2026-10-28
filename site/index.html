@@ -141,7 +141,9 @@
     top: 3px; right: 3px;
   }
 
-  .nav-links { display: flex; gap: 26px; font-size: .9rem; color: var(--muted); flex-wrap: wrap; }
+  .nav-links { display: flex; gap: 20px; font-size: .88rem; color: var(--muted); flex-wrap: wrap; }
+  nav > .btn { white-space: nowrap; }
+  @media (min-width: 1100px) { nav { flex-wrap: nowrap; } .nav-links { flex-wrap: nowrap; white-space: nowrap; } }
   .nav-links a { color: inherit; text-decoration: none; }
   .nav-links a:hover { color: var(--ink); }
 
@@ -222,6 +224,38 @@
   .try-shots img { display: block; width: 100%; height: auto; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--surface); }
   .try-shots figcaption { font-size: 0.875rem; color: var(--muted); margin-top: 8px; }
   .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* ---------- hero: copy beside a replayed run ---------- */
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+  .hero-grid h1 { max-width: 15ch; font-size: clamp(2.3rem, 4.6vw, 3.7rem); }
+  .install-cmd { display: block; margin: 22px 0 0; padding: 12px 16px; border-radius: 10px; background-color: #14161A; color: #E8E6E0; font-family: var(--f-mono); font-size: .84rem; overflow-x: auto; white-space: nowrap; }
+  .install-cmd b { color: #5BD08A; font-weight: 600; margin-right: 8px; }
+  .run-panel { margin: 0; background-color: #14161A; border: 1px solid #2C3037; border-radius: 16px; color: #E8E6E0; overflow: hidden; box-shadow: 0 30px 70px -34px rgba(0,0,0,.5); }
+  .run-bar { display: flex; gap: 7px; align-items: center; padding: 12px 16px; background-color: #1D2026; border-bottom: 1px solid #2C3037; font-family: var(--f-mono); font-size: .74rem; color: #9AA3AF; }
+  .run-bar i { width: 10px; height: 10px; border-radius: 50%; background-color: #3A3F47; display: inline-block; }
+  .run-bar span { margin-left: 8px; }
+  .run-hash { margin: 16px 18px 6px; padding: 10px 14px; border: 1px solid #2C3037; border-radius: 9px; font-family: var(--f-mono); font-size: .76rem; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .run-hash .ok { color: #5BD08A; opacity: 0; animation: run-pop .5s .6s forwards; }
+  .run-stages { list-style: none; margin: 6px 0 0; padding: 6px 18px 14px; }
+  .run-stages li { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px solid #20242A; opacity: 0; transform: translateY(6px); animation: run-in .5s calc(1.1s + var(--i) * .38s) forwards; }
+  .run-stages li:last-child { border-bottom: 0; }
+  .run-stages .dot { width: 10px; height: 10px; border-radius: 50%; background-color: #3A3F47; animation: run-dot .4s calc(1.4s + var(--i) * .38s) forwards; }
+  .run-stages b { font-weight: 600; font-size: .9rem; }
+  .run-stages em { font-family: var(--f-mono); font-size: .72rem; font-style: normal; color: #7D8794; }
+  .run-meter { padding: 12px 18px 16px; border-top: 1px solid #2C3037; font-family: var(--f-mono); font-size: .74rem; color: #9AA3AF; }
+  .run-meter a { color: #E0A83B; }
+  .run-bar-fill { height: 8px; background-color: #242830; border-radius: 9px; margin: 8px 0; overflow: hidden; }
+  .run-bar-fill span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #C68D22, #E0A83B); border-radius: 9px; animation: run-fill 4.4s 1.2s ease-out forwards; }
+  @keyframes run-in { to { opacity: 1; transform: none; } }
+  @keyframes run-dot { to { background-color: #5BD08A; box-shadow: 0 0 0 4px rgba(91,208,138,.15); } }
+  @keyframes run-pop { to { opacity: 1; } }
+  @keyframes run-fill { to { width: 73%; } }
+  @media (prefers-reduced-motion: reduce) {
+    .run-hash .ok, .run-stages li { animation: none; opacity: 1; transform: none; }
+    .run-stages .dot { animation: none; background-color: #5BD08A; }
+    .run-bar-fill span { animation: none; width: 73%; }
+  }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; } .hero-grid h1 { max-width: 17ch; } }
 
   /* ---------- lifecycle rail ---------- */
 
@@ -883,14 +917,38 @@
 
   <header class="hero">
     <a class="announce" href="#course"><span class="pill">New</span><span>Anthropic published the AI-Native SDLC Playbook. Here is how Aveto runs it &rarr;</span></a>
-    <p class="brandline">Agentic engineering you can verify.</p>
-    <h1>Move beyond supervising agents to <span class="em">reviewing outcomes.</span></h1>
-    <p class="hero-sub"><strong>From spec to reviewed pull request, with the record.</strong> Aveto turns a paragraph into a tested, security-reviewed pull request, run by 28 specialist agents in your own Claude Code session on the plan you already pay for &mdash; not a metered API bill. You approve one Charter at the start and review the result at the end; the record shows who decided what in between. At FAANG scale, nothing reaches production until an architect, an independent reviewer, security and a release gate have all signed off. Aveto hands you that process. The agent that verifies never wrote the code, gates fail closed, and every run is costed against a budget before it spends, so long work finishes instead of stalling out and starting over.</p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
-      <a class="btn btn-ghost" href="https://github.com/gpatwa/streak-seed/tree/main/runs/health-version">See a real run</a>
-      <a class="btn btn-ghost" href="#try">Try the live app</a>
-      <a class="btn btn-ghost" href="#roles">Meet the 28</a>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="brandline">Agentic engineering you can verify.</p>
+        <h1>Move beyond supervising agents to <span class="em">reviewing outcomes.</span></h1>
+        <p class="hero-sub"><strong>From spec to reviewed pull request, with the record.</strong> Aveto turns a paragraph into a tested, security-reviewed pull request, run by 28 specialist agents in your own Claude Code session on the plan you already pay for. You approve one Charter at the start and review the result at the end.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
+          <a class="btn btn-ghost" href="#try">Try the live app</a>
+          <a class="btn btn-ghost" href="/runs">See every run</a>
+        </div>
+        <code class="install-cmd"><b>$</b>node execution/install.mjs &lt;your-repo&gt;</code>
+      </div>
+      <figure class="run-panel">
+        <div class="run-bar" aria-hidden="true"><i></i><i></i><i></i><span>runs/result-page-clarity &middot; stages simplified from the record</span></div>
+        <div class="run-hash"><span>Charter sha256 8eacc4078037&hellip;</span><span class="ok">approved by the owner</span></div>
+        <ol class="run-stages">
+          <li style="--i:0"><span class="dot"></span><b>Charter approved</b><em>owner, by hash</em></li>
+          <li style="--i:1"><span class="dot"></span><b>Scope review</b><em>engineering-manager</em></li>
+          <li style="--i:2"><span class="dot"></span><b>Tech spec</b><em>software-architect</em></li>
+          <li style="--i:3"><span class="dot"></span><b>Build</b><em>frontend-developer</em></li>
+          <li style="--i:4"><span class="dot"></span><b>Code review</b><em>independent reviewer</em></li>
+          <li style="--i:5"><span class="dot"></span><b>QA evidence</b><em>qa-evidence</em></li>
+          <li style="--i:6"><span class="dot"></span><b>Security review</b><em>security-privacy</em></li>
+          <li style="--i:7"><span class="dot"></span><b>Release gate</b><em>release-manager</em></li>
+          <li style="--i:8"><span class="dot"></span><b>Deploy + rollback gate</b><em>cloud-deployment</em></li>
+          <li style="--i:9"><span class="dot"></span><b>Live checks</b><em>production-verification</em></li>
+          <li style="--i:10"><span class="dot"></span><b>Pull request</b><em>you review and merge</em></li>
+        </ol>
+        <figcaption class="run-meter">581k of an 800k hard cap &middot; 738 tests passed &middot; event log chain intact
+          <div class="run-bar-fill" aria-hidden="true"><span></span></div>
+          One real run, simplified. <a href="/runs">Every run, read from its records &rarr;</a></figcaption>
+      </figure>
     </div>
 
     <div class="rail-block">
