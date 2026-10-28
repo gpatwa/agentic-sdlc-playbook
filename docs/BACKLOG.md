@@ -1721,7 +1721,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
   `Agent(*)` is refused); the Charter template and the run instructions say so. Checked against the fix slice's real
   Charter and plan (see the result in the commit). **Not yet proven in a run.**
 
-- **T39 · A read-only run dashboard now; a control plane only on a trigger (first step of T23).** *Raised 2026-10-26
+- **T39 · A read-only run dashboard now; a control plane only on a trigger (first step of T23).** ✅ *Dashboard done and deployed 2026-10-27 (`fc15bb1`): `execution/runs-dashboard.mjs` (13 tests) renders https://aveto.dev/runs from each run's own records, claim C18. Regenerate it by hand after each run (`node execution/runs-dashboard.mjs ~/opt/aveto-support --repo gpatwa/aveto-support --out site/runs.html`, listed in `execution/README.md`). The control-plane triggers below are unchanged.* *Raised 2026-10-26
   from the owner's question "control plane or the Claude Code desktop app?"* **Decision: keep the desktop app as the
   operator surface.** The hash approval of a Charter stays typed by the owner in the driving session; a control plane
   that held approval authority would be the most sensitive system Aveto owns (login, roles, sessions, its own audit

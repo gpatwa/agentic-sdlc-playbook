@@ -12,6 +12,7 @@ resumable state, the human-approval interrupt, and bounded failure loops.
 execution/
   install.mjs              ← generates .claude/agents/ from briefs, installs the pack
   analyze.mjs              ← renders ANALYTICS.md + dashboard.html from runs/*/trace.json
+  runs-dashboard.mjs       ← renders a read-only page of every run (status, spend vs plan and cap, Charter hash, event log, PR) from runs/*; `node execution/runs-dashboard.mjs <repo> --repo <owner/name> --out site/runs.html`
   conformity.mjs           ← renders CONFORMITY.md — who authorized what, mapped to SOC 2
   verify-approvals.mjs     ← checks a conformity claim's GitHub PR references against GitHub itself
   charter-check.mjs        ← checks a Charter is complete (and covers the plan) and prints its sha256, the hash the human approves
