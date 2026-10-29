@@ -1075,15 +1075,15 @@
   <section id="try">
     <p class="sec-eyebrow">Try it</p>
     <h2>Ask Aveto&rsquo;s docs, live.</h2>
-    <p class="sec-lede">The support agent Aveto built about itself now runs as a public service on Azure. It answers with passages copied word for word from these docs, each with its file and line numbers, or says the docs do not answer. A model decides only whether the passages answer; nothing on the page is written by a model. When the docs do not answer, it says so and shows no passage.</p>
+    <p class="sec-lede">The support agent Aveto built about itself, running on Azure. It answers with passages copied word for word from these docs, with file and line numbers, or says the docs do not answer. A model only decides whether the passages answer. Nothing on the page is written by one.</p>
     <div class="cta-row" style="margin-top:20px">
       <a class="btn btn-primary" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io" rel="noopener">Open the live app and ask a question</a>
     </div>
-    <ol class="try-steps">
-      <li>Open the live app. The first load after a quiet spell can take about half a minute.</li>
-      <li>Click one of the first three suggested questions and press Ask. You get passages quoted from the docs, each with its file and lines.</li>
-      <li>Then click the last suggestion, &ldquo;Does it support right-to-left languages?&rdquo;. The docs do not answer it, and the app says so instead of guessing.</li>
-    </ol>
+    <div class="how-cards">
+      <div class="how-card"><h3>1. Open it</h3><p>The first load after a quiet spell takes about half a minute.</p></div>
+      <div class="how-card"><h3>2. Ask something the docs answer</h3><p>Click one of the first three suggestions. You get quoted passages, each with its file and lines.</p></div>
+      <div class="how-card"><h3>3. Ask something they do not</h3><p>Click &ldquo;Does it support right-to-left languages?&rdquo; The app says so instead of guessing.</p></div>
+    </div>
     <div class="try-shots">
       <figure>
         <img src="assets/chat-answer.png" width="700" height="500" loading="lazy" alt="The live app after a question the docs answer: a green box reading &quot;The docs answer this&quot;, then a quoted passage from docs/DEPLOYMENT.md with its section, line numbers, a link to the lines on GitHub and a Copy link button.">
@@ -1095,36 +1095,20 @@
       </figure>
     </div>
     <p style="font-size:0.875rem;color:var(--muted);margin-top:6px">Screenshots of the live app taken on 2026-10-27.</p>
-    <div class="holds">
-      <div class="hold">
-        <div class="hold-mark">01</div>
-        <div>
-          <h4>How it did on a test it had not seen.</h4>
-          <p>Twenty new questions, written before the run and kept out of the repository until the method froze, scored once through the live service. All 10 questions the docs do not answer, or that try to trick it, were refused with no passage shown. For the answerable ones, 8 of 10 got a passage from a listed source: <strong>exactly the bar</strong>, with no margin. Two answerable questions got &ldquo;no confident match.&rdquo; <a href="https://github.com/gpatwa/aveto-support/blob/main/runs/public-ask-the-docs/18-gate/RESULT.md">The full result is public.</a></p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">02</div>
-        <div>
-          <h4>What to know before you use it.</h4>
-          <p>It is early. Ten answerable questions cannot tell &ldquo;meets 80%&rdquo; from &ldquo;a little below it.&rdquo; Each question and the passages found are sent to Anthropic, which makes the model; the service does not store your question, so please do not put personal information in it. It keeps a scrambled form of your address, the time and the outcome for 7 days, and runs in the United States. Limits: 10 questions an hour, 500 characters, and the service pauses for the day after about 33 questions (an estimate). Those day limits reset when the service restarts, and the first load can take half a minute.</p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">03</div>
-        <div>
-          <h4>How it was built.</h4>
-          <p>By Aveto, in public, under a Charter one person approved by its hash. The record of every stage, the failures and the fixes is in the <a href="https://github.com/gpatwa/aveto-support">aveto-support</a> repository, including the three accounting flaws found after launch (two by an outside model&rsquo;s review, one by checking the price list) and the pull request that fixed them. <a href="/runs">Every run, read from its own records.</a></p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">04</div>
-        <div>
-          <h4>The chat itself, built the same way.</h4>
-          <p>The answer and refusal cards, the suggested questions, the waiting and resting views, the receipts view and the scorecard were one more Aveto run, and <a href="https://github.com/gpatwa/aveto-support/tree/main/runs/polished-chat-experience">its Charter and record are public</a>. Measured: 731 tests pass (668 before); an automated accessibility check found no serious issue on five views, and the page was tried at phone width and by keyboard alone. Not tested: touch devices. On the live service the first load after idle took 25.8 seconds, a warm answer about 1.4 seconds (median of six), and a question cost about $0.0086 (seven live questions, $0.06). Before release, a rollback to the previous version was rehearsed: it served again about 65 seconds after the command. The <a href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io/scorecard" rel="noopener">scorecard</a> shows these figures; the visit and question counts on it are raw totals since the last restart, not verified visitors, and never include what was asked.</p>
-        </div>
-      </div>
+    <div class="stats" style="margin-top:28px">
+      <div class="stat"><span class="fig">10 of 10</span><p>Unanswerable or tricky questions refused with no passage, on 20 questions it had not seen.</p><cite><a href="https://github.com/gpatwa/aveto-support/blob/main/runs/public-ask-the-docs/18-gate/RESULT.md">The full result is public</a></cite></div>
+      <div class="stat"><span class="fig">8 of 10</span><p>Answerable questions that got a passage from a listed source. Exactly the bar, with no margin.</p><cite>Two got &ldquo;no confident match&rdquo;</cite></div>
+      <div class="stat"><span class="fig">731</span><p>Tests pass (668 before). No serious accessibility issue on five views. Touch devices not tested.</p><cite><a href="https://github.com/gpatwa/aveto-support/tree/main/runs/polished-chat-experience">Its Charter and record are public</a></cite></div>
+      <div class="stat"><span class="fig">25.8 s</span><p>First load after idle. A warm answer took about 1.4 s (median of six), a question about $0.0086, and a rehearsed rollback served again in about 65 s.</p><cite><a href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io/scorecard" rel="noopener">Scorecard</a>: counts are raw totals since the last restart, never what was asked</cite></div>
     </div>
+    <h3 style="margin:34px 0 8px">Before you use it</h3>
+    <ul class="try-steps" style="margin-top:0">
+      <li>It is early. Ten answerable questions cannot tell &ldquo;meets 80%&rdquo; from &ldquo;a little below it.&rdquo;</li>
+      <li>Your question and the passages found are sent to Anthropic, which makes the model. The service does not store your question, so please do not put personal information in it.</li>
+      <li>It keeps a scrambled form of your address, the time and the outcome for 7 days, and runs in the United States.</li>
+      <li>Limits: 10 questions an hour, 500 characters, and a pause for the day after about 33 questions (an estimate). Day limits reset when the service restarts.</li>
+    </ul>
+    <p style="margin-top:18px">Built by Aveto, in public, under a Charter one person approved by its hash, including the three accounting flaws found after launch. The record is in <a href="https://github.com/gpatwa/aveto-support">aveto-support</a>. <a href="/runs">Every run, read from its own records.</a></p>
     <div class="cta-row" style="margin-top:28px">
       <a class="btn btn-ghost" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io" rel="noopener">Open the live app</a>
       <a class="btn btn-ghost" href="https://github.com/gpatwa/aveto-support/blob/main/runs/public-ask-the-docs/18-gate/RESULT.md">See the gate result</a>
@@ -1383,36 +1367,18 @@
   <section id="evidence-runs">
     <p class="sec-eyebrow">Evidence</p>
     <h2>Validated on live runs, not a slide.</h2>
-    <p class="sec-lede">The pipeline has carried slices to merged pull requests on a reference app, then built a second app from a one-paragraph brief &mdash; market research through to a shipped, tested service. Tiers 2 and 3, deterministic-first AI, a greenfield 0&rarr;1, and a security gate that stopped its own release.</p>
+    <p class="sec-lede">Slices carried to merged pull requests on a reference app, a second app built from a one-paragraph brief, and a security gate that stopped its own release.</p>
     <div class="stats">
 <div class="stat"><span class="fig">13</span><p>Runs recorded for the support agent, each with its Charter hash, spend and review. Some records leave things out, and the page says which.</p><cite><a href="/runs">aveto.dev/runs</a>, read from the run records</cite></div>
 <div class="stat"><span class="fig">738</span><p>Tests pass on the latest run (668 two runs before), with the new tests failing on the old code first.</p><cite>runs/result-page-clarity, test count record</cite></div>
 <div class="stat"><span class="fig">~65 s</span><p>For a rehearsed rollback to serve the previous version again. One sample, run before release.</p><cite>runs/result-page-clarity, rollback rehearsal</cite></div>
 <div class="stat"><span class="fig">4</span><p>Pull requests reviewed blind by a second model. The trial plans five, so the result is provisional.</p><cite>docs/review-trial, four records</cite></div>
 </div>
-<div class="cap" style="border-bottom:none;padding-bottom:0">
-      <div>
-        <div class="cap-num">What that looked like</div>
-        <h3>The runs correct themselves &mdash; and sometimes their author.</h3>
-        <p>Security review caught a finished slice quietly listening on <em>every network interface</em> instead of loopback, reached a user's data across the LAN to prove it, and sent the work back. The same flaw was then found and fixed in the older app it came from.</p>
-      </div>
-      <div>
-        <div class="cap-num">And the hard cases</div>
-        <h3>Refusal and bounded failure, both tested neutrally.</h3>
-        <p>Shown an unsafe ask, it refused at intake. Shown an impossible one, it bounded the failure and escalated &mdash; without weakening a gate. Earlier, discovery caught a correctness trap before a line of code existed, and QA found a bug whose proposed fix Security then proved insufficient.</p>
-      </div>
-    </div>
-    <div class="cap" style="border-bottom:none;padding-bottom:0">
-      <div>
-        <div class="cap-num">A third app, built in public</div>
-        <h3>It failed four of its own checks, and said so.</h3>
-        <p>Aveto&rsquo;s support agent (<a href="https://github.com/gpatwa/aveto-support">aveto-support</a>) was built slice by slice with the question &ldquo;when do the docs <em>not</em> answer?&rdquo; held out in advance. Four pre-registered checks failed and were recorded as results, not tuned away: two held-out retrieval gates, then two attempts to know when the docs do not answer (a small model at 2 of 20, and a first judge that missed its bar by one question). Two other retrieval gates passed. A seventh slice, an attended judge on a Claude subscription, then passed on a set it had never seen: <strong>24 of 24</strong> unanswerable questions refused, <strong>16 of 19</strong> answerable ones kept. It passed the second bar by one question, and the page says so. That judge now runs as a live public service on Azure; scored once through it on 20 new questions, it refused all 10 it should and kept 8 of 10 answerable, exactly at its bar.</p>
-      </div>
-      <div>
-        <div class="cap-num">One approval, then a review</div>
-        <h3>A Charter replaces a prompt at every step.</h3>
-        <p>In Process v2 the human approves one bounded Charter by its hash &mdash; the models, data, safety changes and end actions a run may use &mdash; and reviews the result. A real run landed that judge step through a tier 3 gate and opened a pull request after <strong>one typed message</strong>. Its own code review caught the run&rsquo;s permission rules about to ship in a tracked file, and fixed them before the PR.</p>
-      </div>
+<div class="how-cards">
+      <div class="how-card"><h3>The runs correct themselves</h3><p>Security review found a finished slice listening on <em>every network interface</em>, proved it across the LAN, and sent the work back. The same flaw was then fixed in the older app it came from.</p></div>
+      <div class="how-card"><h3>Hard cases, tested neutrally</h3><p>Shown an unsafe ask, it refused at intake. Shown an impossible one, it bounded the failure and escalated without weakening a gate.</p></div>
+      <div class="how-card"><h3>It failed four of its own checks, and said so</h3><p>Four pre-registered checks on the support agent failed and were recorded as results. A later judge then refused <strong>24 of 24</strong> unanswerable questions and kept <strong>16 of 19</strong> answerable ones, passing the second bar by one question.</p><p class="aside"><a href="https://github.com/gpatwa/aveto-support">Read the full record</a></p></div>
+      <div class="how-card"><h3>One approval, then a review</h3><p>A real run landed a tier 3 gate and opened a pull request after <strong>one typed message</strong>. Its own code review caught the run&rsquo;s permission rules about to ship in a tracked file.</p></div>
     </div>
   </section>
 
