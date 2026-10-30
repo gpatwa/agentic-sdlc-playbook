@@ -2,7 +2,7 @@
 
 > **Assessed against Aveto's gates on 2026-10-30. This is an assessment, not a certification.** It records what one reviewer
 > found in the parts listed below. It does not say the code is secure or compliant.
-> **Target:** `~/opt/hr-timeoff-agent`, commit `5c4098f884fc85b586a1a8f0e68706adb68a3853` (main), clean working tree before and after
+> **Target:** `~/opt/hr-timeoff-agent`, commit `5c4098f884fc85b586a1a8f0e68706adb68a3853` (checked-out branch `claude/docs-index`; I first wrote "main", which was wrong), clean working tree before and after
 > (`git status` empty, HEAD unchanged). Tests ran in a throwaway clone, not in the target.
 > **Reviewer:** one (Claude, the support session). **No independent second reviewer ran**, which `docs/REVIEW_MODE_PLAN.md` requires
 > for a real assessment (Codex is meant to be the independent one). Treat this as a first pass.

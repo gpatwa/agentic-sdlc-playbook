@@ -1608,10 +1608,20 @@ from the run" pattern as effort / operator / executor / gateCatches.
         "compliant". Nothing is built yet; build order M1/M2, M3 with M3b, M5, M4, M7, M6.
   - [ ] (original M0 text:) owner chooses the pilot and approves the bars (recommended pilot:
         aveto-support at `c150673`, where S5 and S6 give a recall test).
-  - [ ] **M1** `install.mjs --existing` and `/agentic-onboard` (proposed, unconfirmed invariants).
-  - [ ] **M2** `execution/repo-map.mjs`: deterministic map with a risk tier per path.
-  - [ ] **M3** area runner: diff-against-empty-tree reviews in tier order, findings record, hard cap with a not-reviewed list.
-  - [ ] **M3b** confidentiality and scale controls: secret-path exclusion (tested), data classification and processor as required Charter lines, scoped runs for monorepos.
+  - [~] **M1** *(2026-10-30, partly built.)* `install.mjs --existing` writes proposed, unconfirmed `.agentic/` files from the repo itself
+        (`execution/onboard.mjs`, never overwrites); `execution/assess-guard.mjs` makes read-only mechanical (clone with no remote,
+        secret paths removed, the repo's own hooks and MCP servers moved aside, write tools and pushes denied, `verify` fails on any
+        change). 17 tests. **Not done:** the `/agentic-onboard` command (waits for M8), a proof that the permission rules hold in a live
+        Claude Code session.
+  - [x] **M2** `execution/repo-map.mjs` *(2026-10-30)*: deterministic map, risk tier per path, churn, owners, commands, entry points, and
+        "was this governed by Aveto?" answered from records. 15 tests (one mutation-checked); 0.4 s on aveto-support.
+  - [~] **M3** *(2026-10-30, planner built.)* `execution/assess-plan.mjs` splits files into areas, orders by risk then churn, stops at a
+        token cap and lists the rest as not reviewed, writes one prompt per area and an empty `FINDINGS.md`; `docs/ASSESSMENT_RUNBOOK.md`
+        is the manual protocol. 10 tests. **Not done:** running the reviews automatically (a person opens Claude Code in the copy), the
+        independent second reviewer.
+  - [~] **M3b** *(partly built 2026-10-30.)* Done and tested: secret-path exclusion (map, copy and plan), a secret-pattern scan that holds files
+        back, `--scope` for subdirectories. **Not done:** data classification and processor as required Charter lines (the template does not
+        yet refuse a blank), a hook-level read deny proven in a live session, a configurable records location.
   - [ ] **M5** review-mode Charter template and report format.
   - [ ] **M4** calibration run: recall on S5/S6, seeded bugs by a different agent, precision on a 30-finding sample.
   - [ ] **M7** re-assessment: the same review on the same scope after fixes land, with a closed / still open / regressed / new table keyed on the first report's ids.

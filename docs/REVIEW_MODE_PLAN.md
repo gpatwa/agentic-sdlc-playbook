@@ -1,5 +1,11 @@
 # Plan: reviewing an existing codebase (review mode)
 
+> **Update 2026-10-30: M2 built; M1, M3 and part of M3b built.** `execution/repo-map.mjs` (M2), `execution/assess-guard.mjs` and
+> `install.mjs --existing` (M1), `execution/assess-plan.mjs` and `docs/ASSESSMENT_RUNBOOK.md` (M3), with the secret exclusions of M3b.
+> 42 new tests, none of which run a model. **Nothing here has been run on a private repo or measured for recall or precision.**
+> Still open: the report writer (M5), calibration (M4), re-assessment (M7), pilots (M6), the Charter lines of M3b, the plugin (M8).
+> First use: a dry run of the chain on `hr-timeoff-agent` (copy, map, plan, verify) passed; the review itself was the manual trial.
+>
 > **Update 2026-10-27: the spike passed and the owner wants the whole loop: assess an existing repo, recommend, fix the
 > gaps.** Spike result (`docs/review-mode-spike/RESULTS.md`): Codex, blind, found the planted S5 unprompted (3 of 5 as
 > scored, 3 of 3 excluding two artifacts of my copy); Claude `/code-review` missed S5 and edited seven files. So the
