@@ -82,6 +82,19 @@ For any slice with a visible UI change:
    non-trivial.
 5. Check console for new errors / warnings.
 
+## Design implementation checks (pack v31)
+
+For any change a user can see, before handing off to QA:
+
+- Use the project's tokens and components. No new hex values, pixel sizes or fonts inline
+  where a token exists.
+- Build every state in the UX spec (empty, loading, error, success, focus, disabled).
+- Check the page at 375, 768 and 1280 px wide: no sideways scroll, nothing clipped.
+- Operate it by keyboard alone: reachable, visible focus, sensible order.
+- Honour `prefers-reduced-motion`.
+- For mobile work, build and screenshot in a simulator or emulator. If you cannot, say so;
+  do not report mobile as verified.
+
 ## Delegate, check, own
 
 - **The agent does:** Implements the UI to the spec within existing patterns, with targeted tests recorded failing before the change.

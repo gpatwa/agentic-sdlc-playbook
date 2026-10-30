@@ -138,6 +138,17 @@ So, before handing off:
 Judgment, not volume: 100 probes should not become 100 tests. Crystallize the
 load-bearing ones.
 
+## Design evidence (pack v31)
+
+For a visible change, attach evidence for each of these, or record that it was not checked:
+
+- A screenshot of every state in the UX spec (empty, loading, error, success).
+- Screenshots at 375, 768 and 1280 px wide (web), or on a simulator or emulator (mobile).
+  Mobile has not been verified in any Aveto run; never write "verified" for it without them.
+- Keyboard-only operation and visible focus.
+- Contrast of body text and status colours, in light and dark where the app has both.
+- The slop list from the UI Designer brief: none present, or each justified.
+
 ## Delegate, check, own
 
 - **The agent does:** Verifies every "Done means" line, runs the regression sequence, confirms new tests fail on the base commit, and keeps only generated tests that pass the acceptance filter.

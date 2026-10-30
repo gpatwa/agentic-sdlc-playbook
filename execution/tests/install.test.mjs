@@ -428,7 +428,18 @@ describe("install.mjs — pack integrity", () => {
     assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
     const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
     assert.match(ag, /Mark what you could not confirm, and say where you looked/);
-    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 30);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 31);
+  });
+
+  test("pack v31: the design rules and the platform split reach the installed agents", () => {
+    for (const [role, needle] of [
+      ["ui-designer", /Mobile \(iOS and Android\)\. Guidance only/],
+      ["frontend-developer", /375, 768 and 1280 px/],
+      ["qa-evidence", /never write "verified" for it without them/],
+    ]) {
+      const text = readFileSync(join(target, ".claude", "agents", `${role}.md`), "utf8");
+      assert.match(text, needle, role);
+    }
   });
 
   test("the budget guard is installed and wired into settings", () => {

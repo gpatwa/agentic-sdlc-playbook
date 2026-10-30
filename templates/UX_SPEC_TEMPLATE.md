@@ -55,6 +55,14 @@ Final copy for every text element. No placeholders.
 | `<existing component>` | extend | add `<prop>` |
 | `<new component>` | new | justified by <reason> |
 
+## Design checks
+
+- Platform: <web / mobile (unverified in this pack)>
+- Breakpoints or devices checked: <375 / 768 / 1280 px, or simulator / emulator>
+- Tokens used: <names>; new tokens: <none / list>
+- Contrast, keyboard and reduced-motion handled: <yes / how>
+- Slop list reviewed: <none present / exceptions and reasons>
+
 ## Hand off
 
 Next agent: Software Architect.

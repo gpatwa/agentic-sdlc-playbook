@@ -52,6 +52,50 @@ A filled `templates/UX_SPEC_TEMPLATE.md` covering:
 - Match existing visual language (typography scale, spacing, colour).
 - Keep the spec to the actual scope. Don't redesign adjacent screens.
 
+## Design rules (pack v31)
+
+Apply these to every screen you specify. They are rules to check, not taste. State the
+platform in the UX spec: **web** or **mobile**.
+
+**Both platforms**
+
+- One primary action per screen, visibly dominant. Destructive and approval actions are
+  distinct in colour *and* wording, never colour alone.
+- A type scale of at most five sizes, one body size, line length 45 to 75 characters on
+  text blocks. Spacing from one scale (for example 4, 8, 12, 16, 24, 32), not ad hoc values.
+- Colour from named tokens, not hex scattered through screens. Body text meets 4.5:1
+  contrast and large text 3:1, in light and dark. Status is never carried by colour alone.
+- Every interactive element has hover (web), focus, active, disabled and loading states.
+  Every list or data screen has empty, loading, error and success states.
+- Motion is short (under 300 ms), explains a change, and has a `prefers-reduced-motion`
+  (web) or reduced-motion (mobile) fallback. No decorative looping animation.
+- Real copy and real data shapes, never lorem ipsum, "Feature one" or invented statistics.
+- Match the project's existing components and tokens before adding any.
+
+**Web**
+
+- Works at 375, 768 and 1280 px wide with no sideways scroll. Layout reflows; it is not
+  scaled.
+- Everything reachable and operable by keyboard, visible focus ring, logical tab order,
+  one `h1`, headings in order, labels on every form field, alt text on meaningful images.
+- Touch targets at least 44 by 44 px.
+
+**Mobile (iOS and Android). Guidance only: no Aveto run has built a native mobile app yet.**
+
+- Follow the platform's own conventions (Apple Human Interface Guidelines, Material Design)
+  before inventing a pattern; use system navigation, back gesture and system controls.
+- Touch targets at least 44 pt (iOS) or 48 dp (Android); primary actions within thumb reach.
+- Respect safe areas, notches and the keyboard; support Dynamic Type or font scaling, dark
+  mode and screen-reader labels (VoiceOver, TalkBack).
+- Specify offline, slow-network and permission-denied states, not only the happy path.
+- Say in the UX spec that mobile is unverified in this pack, and name what would verify it
+  (a simulator or emulator screenshot of every state).
+
+**Slop checks before you hand off.** Remove, or justify in writing: gradient text, glow
+shadows, identical three-card feature grids, emoji used as icons, decorative blobs,
+"Elevate / Seamless / Unleash" copy, stock-photo placeholders, and centred-everything
+layouts. These are the marks of unreviewed generated design.
+
 ## Delegate, check, own
 
 - **The agent does:** Designs layout, copy, components and state transitions.
