@@ -23,6 +23,8 @@ const packDir = join(here, "pack");
 
 const args = process.argv.slice(2);
 const greenfield = args.includes("--greenfield");
+// --existing (assessment mode, M1): a repo Aveto did not build. Proposes .agentic/ from the repo itself (execution/onboard.mjs).
+const existing = args.includes("--existing");
 // --teams (Process v2, pack v20): turn on Claude Code agent teams for this repo
 // only, so the Orchestrator can run each stage as a fresh teammate session and
 // the human never starts a session by hand. Experimental in Claude Code; off
@@ -30,7 +32,11 @@ const greenfield = args.includes("--greenfield");
 const teams = args.includes("--teams");
 const productDir = args.find((a) => !a.startsWith("--"));
 if (!productDir) {
-  console.error("usage: node <playbook>/execution/install.mjs <product-dir> [--greenfield] [--teams]");
+  console.error("usage: node <playbook>/execution/install.mjs <product-dir> [--greenfield | --existing] [--teams]");
+  process.exit(1);
+}
+if (greenfield && existing) {
+  console.error("! --greenfield and --existing exclude each other: a repo is either new or already has code.");
   process.exit(1);
 }
 
@@ -46,10 +52,23 @@ const AGENTIC_STUBS = {
   "CURRENT_MVP_STATUS.md": `# Current MVP Status — TODO\n\n> **STUB — written by \`install.mjs --greenfield\`. Replace as the slice lands.**\n> What exists today, what this slice adds, what is explicitly out of scope.\n`,
 };
 
-if (!existsSync(join(productDir, ".agentic"))) {
+if (existing) {
+  // Propose, never overwrite: a file the owner already wrote stays exactly as it is.
+  const { buildMap } = await import("./repo-map.mjs");
+  const { proposeAgentic } = await import("./onboard.mjs");
+  mkdirSync(join(productDir, ".agentic"), { recursive: true });
+  const proposed = proposeAgentic(buildMap(productDir));
+  for (const [f, body] of Object.entries(proposed)) {
+    const dest = join(productDir, ".agentic", f);
+    if (existsSync(dest)) { console.log(`  .agentic/${f}: exists, left alone`); continue; }
+    writeFileSync(dest, body);
+    console.log(`  .agentic/${f}: PROPOSED (not confirmed) from the repo itself`);
+  }
+} else if (!existsSync(join(productDir, ".agentic"))) {
   if (!greenfield) {
     console.error(`! ${productDir} has no .agentic/ — is it a product repo?`);
     console.error(`  new/greenfield repo? re-run with --greenfield to scaffold stub .agentic/ files.`);
+    console.error(`  existing code Aveto did not build? re-run with --existing to propose .agentic/ from the repo.`);
     process.exit(1);
   }
   mkdirSync(join(productDir, ".agentic"), { recursive: true });
