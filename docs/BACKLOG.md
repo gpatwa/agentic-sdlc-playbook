@@ -1617,6 +1617,15 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [ ] **M7** re-assessment: the same review on the same scope after fixes land, with a closed / still open / regressed / new table keyed on the first report's ids.
   - [ ] **M6** pilots on aveto-support, then two or more repos of other stacks and sizes (one not ours); only then README and site, as pilot results.
   - **Stops after M4** if recall or precision misses its declared bar.
+  - [x] **First manual trial 2026-10-30** on `hr-timeoff-agent` (not Aveto-governed; one reviewer, no Codex):
+        `docs/research/2026-10-assessment-hr-timeoff-agent.md`. One P1 (sign-in fails open to a demo mode), two P2,
+        read-only held in a clone. Shows M1 must enforce read-only mechanically and M2 must look for Charter and run
+        records first. Not a measure of recall or precision.
+  - [ ] **M8 · Entry points as a Claude Code plugin** *(added 2026-10-30, after M5; not before the engine exists).*
+        Commands `/aveto-init` (new project, wraps `install.mjs --greenfield`), `/aveto-assess` (M1 to M5),
+        `/aveto-onboard`, `/aveto-reassess` (M7), plus the skills and hooks the pack already has, pinned to the pack
+        version with a readable manifest. Check current plugin manifest rules and the org catalog first. A plugin runs
+        hooks on the installer's machine, so it carries the same trust bar as the Charter.
 
 - **T32 · Roles against the industry's guidance (pack v26).** *Raised 2026-10-20.*
   Compared the 28 roles with OpenAI's *Building an AI-Native Engineering Team*,

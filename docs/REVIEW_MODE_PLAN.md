@@ -184,6 +184,20 @@ mechanical, and it reports its own cost and what it did not review, as the first
 *Done when:* a re-assessment of the aveto-support pilot shows its findings with a disposition each and the numbers
 reconcile. *Estimate:* 120k to build; about 40% of a first review per run.
 
+### M8 — Entry points as a Claude Code plugin (new, 2026-10-30)
+Package the commands as one plugin so a team installs Aveto once instead of cloning the playbook and running a node
+script: `/aveto-init` (a new project, wrapping `install.mjs --greenfield`), `/aveto-assess` (M1 to M5),
+`/aveto-onboard` (adopt a repo under Charters), `/aveto-reassess` (M7), with the skills and hooks the pack already
+ships. **Built last, on purpose:** a plugin only repackages commands, so it waits for the engine behind them. Pinned to
+the pack version; the manifest must be readable, since a plugin runs hooks on the installer's machine.
+*Before building:* check the current plugin manifest rules and the org catalog; I have not.
+*Done when:* a clean machine installs the plugin, `/aveto-assess` runs on a fixture repo and changes nothing, and the
+plugin's version equals `PACK_VERSION`. *Estimate:* not set.
+
+**First trial (2026-10-30):** a manual assessment of `hr-timeoff-agent`
+(`docs/research/2026-10-assessment-hr-timeoff-agent.md`). Lessons: read-only needs a mechanical check (M1); the map
+should find Charter and run records to answer "was this built under Aveto?" (M2); one reviewer is not enough (M3).
+
 ## Order, cost, touches
 
 M0 → M1 → M2 → M3 → M3b → M5 → M4 → M7 → M6. M2 can be built before M1 is finished. The
