@@ -294,6 +294,37 @@
   .hold h3 { margin: 0 0 8px; font-family: var(--f-display); font-size: 1.12rem; line-height: 1.3; }
   .hold p { margin: 0; color: var(--ink-soft); max-width: 72ch; }
 
+  /* ---------- roles as chips ---------- */
+  .role-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 26px; }
+  .role-group { --gc: var(--gold); margin: 0; background-color: var(--surface); border: 1px solid var(--rule); border-top: 3px solid var(--gc); border-radius: 10px; padding: 16px 18px 18px; }
+  .role-group.g-build { --gc: var(--ink-soft); }
+  .role-group.g-verify { --gc: var(--pass); }
+  .role-group.g-ship { --gc: var(--gold-bright); }
+  .role-group.g-run { --gc: var(--ink); }
+  .role-group .role-label { margin: 0 0 12px; }
+  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips li { font-size: .88rem; padding: 5px 11px; border-radius: 99px; border: 1px solid var(--rule-strong); background-color: var(--ground); color: var(--ink); }
+  .role-group { animation: grp-hi 15s ease-in-out infinite; }
+  .role-group.g-build { animation-delay: 3s; }
+  .role-group.g-verify { animation-delay: 6s; }
+  .role-group.g-ship { animation-delay: 9s; }
+  .role-group.g-run { animation-delay: 12s; }
+  @keyframes grp-hi { 0%, 18% { box-shadow: 0 12px 28px -16px var(--gc); transform: translateY(-3px); } 22%, 100% { box-shadow: none; transform: none; } }
+  .role-groups:hover .role-group { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) { .role-group { animation: none; } }
+
+  /* ---------- dark band ---------- */
+  .band-dark {
+    --ink: #E8E6E0; --ink-soft: #C9CED6; --muted: #A3ACB8; --faint: #8E97A3;
+    --surface: #1D2026; --ground: #14161A; --sunk: #1B1F26; --rule: #2C3037; --rule-strong: #3A4048;
+    --gold: #D9A441; --gold-text: #E3B45A; --gold-wash: #2A210F;
+    --pass: #5FBE92; --pass-wash: #10231A; --block: #E27C74; --block-wash: #26100E;
+    background-color: #14161A; color: #E8E6E0;
+    box-shadow: 0 0 0 100vmax #14161A; clip-path: inset(0 -100vmax);
+    padding-top: 56px; padding-bottom: 56px; margin-top: 40px; margin-bottom: 40px;
+  }
+  .band-dark a { color: var(--gold-text); }
+
   /* ---------- what it runs on ---------- */
   .runs-tbl { border: 1px solid var(--rule); border-radius: 14px; background-color: var(--surface); overflow: hidden; margin-top: 26px; }
   .runs-tr { display: grid; grid-template-columns: 1.1fr 1.5fr 1.6fr; gap: 18px; padding: 16px 20px; border-bottom: 1px solid var(--rule); align-items: start; }
@@ -302,7 +333,9 @@
   .runs-tr b { display: block; font-family: var(--f-display); }
   .runs-tr span { color: var(--ink-soft); font-size: .93rem; }
   .runs-tag { display: inline-block; margin-top: 6px; font-family: var(--f-mono); font-size: .68rem; padding: 3px 9px; border-radius: 99px; border: 1px solid var(--rule-strong); color: var(--muted); }
-  .runs-tag.ok { color: var(--gold-text); border-color: var(--gold); }
+  .runs-tag.ok { color: var(--pass); border-color: var(--pass); background-color: var(--pass-wash); }
+  .runs-tag.part { color: var(--gold-text); border-color: var(--gold); background-color: var(--gold-wash); }
+  .runs-tag.no { color: var(--block); border-color: var(--block); background-color: var(--block-wash); }
   @media (max-width: 860px) { .runs-tr { grid-template-columns: minmax(0, 1fr); gap: 6px; } .runs-tr.h { display: none; } }
 
   /* ---------- moving around the page ---------- */
@@ -965,14 +998,14 @@
   <nav>
     <div class="brand"><span class="mark"></span>Aveto</div>
     <div class="nav-links">
-      <a href="#roles">The team</a>
-      <a href="#course">From the course</a>
       <a href="#how">How it works</a>
+      <a href="#try">Live demo</a>
+      <a href="#roles">The team</a>
       <a href="#span">Build · Deploy · Run</a>
-    <a href="#try">Live demo</a>
       <a href="#evidence-runs">Evidence</a>
-    <a href="/runs">Runs</a>
+      <a href="/runs">Runs</a>
       <a href="#limits">Limits</a>
+      <a href="#course">From the course</a>
       <a href="#source">Docs</a>
       <a href="/playbook">Playbook</a>
     </div>
@@ -1041,6 +1074,66 @@
     </div>
   </header>
 
+  <section id="why">
+    <p class="sec-eyebrow">Why now</p>
+    <h2>The code was never the hard part.</h2>
+    <p class="sec-lede">An agent writes the feature in minutes. What it cannot do alone is everything that makes the feature safe to ship — the architecture review, the verification by someone who didn't write it, the security pass, the release gate. That process is what separates a demo from production, it lives inside large engineering orgs, and it never shipped with the models.</p>
+    <div class="stats">
+      <div class="stat">
+        <span class="fig">96%</span>
+        <p>of developers say they do not fully trust AI-generated code to be functionally correct.</p>
+        <cite>Developer survey, 2026</cite>
+      </div>
+      <div class="stat">
+        <span class="fig">33%</span>
+        <p>of AI-written code clears review unmodified &mdash; against 84% for the code a person wrote.</p>
+        <cite>Industry analysis, 2026</cite>
+      </div>
+      <div class="stat">
+        <span class="fig">43%</span>
+        <p>of AI-written changes still require manual debugging in production — after passing QA and staging.</p>
+        <cite>Survey of 100 engineering directors and VPs, 2026</cite>
+      </div>
+      <div class="stat">
+        <span class="fig">88%</span>
+        <p>of agent pilots never reach production at all. The gap is rarely the model — it is everything between a working demo and a change someone will sign.</p>
+        <cite>Industry analysis, 2026</cite>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <p class="sec-eyebrow">How it works</p>
+    <h2>One approval at the start. One review at the end.</h2>
+    <p class="sec-lede">Not guardrail text an agent is asked politely to follow. Structural properties of the lifecycle, each producing an artifact you can hand to someone who wasn't there.</p>
+    <ol class="flow" aria-label="How one slice runs, in seven steps">
+      <li class="" style="--i:0"><span class="n">1</span><b>Ask</b><span class="d">A paragraph, free-form.</span></li>
+      <li class="" style="--i:1"><span class="n">2</span><b>Intake</b><span class="d">Checked against your recorded safety invariants. A conflict is refused and no slice opens.</span></li>
+      <li class="human" style="--i:2"><span class="n">3</span><b>Charter</b><span class="d">One document: scope, budget, models, permissions. Approved by its hash.</span><span class="you">you</span></li>
+      <li class="" style="--i:3"><span class="n">4</span><b>Build</b><span class="d">Specialist agents, each with its own tools. The verifier never wrote the code.</span></li>
+      <li class="" style="--i:4"><span class="n">5</span><b>Verify</b><span class="d">Code review, QA, security. A failed gate goes back, never forward.</span></li>
+      <li class="" style="--i:5"><span class="n">6</span><b>Release</b><span class="d">A gate by risk tier, a deploy, and a rollback rehearsed first.</span></li>
+      <li class="human" style="--i:6"><span class="n">7</span><b>Review</b><span class="d">A pull request and the run's record. You merge.</span><span class="you">you</span></li>
+    </ol>
+    <div class="flow-notes"><span>A failed gate goes back to Build, never forward.</span><span>Post-launch findings carry into the next ask.</span><span>The highlight loops; hover to pause it.</span></div>
+
+    <div class="how-cards">
+      <div class="how-card">
+        <h3>It refuses work it shouldn&rsquo;t build.</h3>
+        <p>Intake checks a request against your recorded safety invariants and blocks a conflict, naming it and offering a safe reframe. Given a request to auto-purge user data with no confirmation, a run stopped before any code was written.</p>
+      </div>
+      <div class="how-card">
+        <h3>The verifier never wrote it.</h3>
+        <p>QA, security and the release gate are separate roles from the one that wrote the code, and a deploy agent cannot mark its own plan validated.</p>
+        <p class="aside">One test, so an example and not a rate: in a spike on a copy of the support agent, a second model&rsquo;s blind review found a planted bug that a review by the same model family missed.</p>
+      </div>
+      <div class="how-card">
+        <h3>The record names who decided.</h3>
+        <p>Each run keeps its Charter hash, who approved it and when, its spend against a hard cap, and a hash-chained event log. <a href="/runs">Every run is listed, including what its records leave out.</a></p>
+      </div>
+    </div>
+  </section>
+
   <section id="use">
     <p class="sec-eyebrow">What you can do</p>
     <h2>Five things, and how far each is proven.</h2>
@@ -1056,7 +1149,7 @@
         <div class="hold-mark">02</div>
         <div>
           <h3>Add a feature and get it back reviewed, tested and security-checked.</h3>
-          <p>Every run ends in a pull request after independent QA, a security pass and a release gate. Seven traced slices across two apps, and nine more on a third built in public. <strong>Shown repeatedly.</strong> The merge stays yours.</p>
+          <p>Every run ends in a pull request after independent QA, a security pass and a release gate. Seven traced slices across two apps, and thirteen more on a third built in public. <strong>Shown repeatedly.</strong> The merge stays yours.</p>
         </div>
       </div>
       <div class="hold">
@@ -1127,171 +1220,6 @@
     </div>
   </section>
 
-  <section id="why">
-    <p class="sec-eyebrow">Why now</p>
-    <h2>The code was never the hard part.</h2>
-    <p class="sec-lede">An agent writes the feature in minutes. What it cannot do alone is everything that makes the feature safe to ship — the architecture review, the verification by someone who didn't write it, the security pass, the release gate. That process is what separates a demo from production, it lives inside large engineering orgs, and it never shipped with the models.</p>
-    <div class="stats">
-      <div class="stat">
-        <span class="fig">96%</span>
-        <p>of developers say they do not fully trust AI-generated code to be functionally correct.</p>
-        <cite>Developer survey, 2026</cite>
-      </div>
-      <div class="stat">
-        <span class="fig">33%</span>
-        <p>of AI-written code clears review unmodified &mdash; against 84% for the code a person wrote.</p>
-        <cite>Industry analysis, 2026</cite>
-      </div>
-      <div class="stat">
-        <span class="fig">43%</span>
-        <p>of AI-written changes still require manual debugging in production — after passing QA and staging.</p>
-        <cite>Survey of 100 engineering directors and VPs, 2026</cite>
-      </div>
-      <div class="stat">
-        <span class="fig">88%</span>
-        <p>of agent pilots never reach production at all. The gap is rarely the model — it is everything between a working demo and a change someone will sign.</p>
-        <cite>Industry analysis, 2026</cite>
-      </div>
-    </div>
-  </section>
-
-  <section id="roles">
-    <p class="sec-eyebrow">The team</p>
-    <h2>Twenty-eight specialists, not one generalist.</h2>
-    <p class="sec-lede">One agent asked to build a product makes every decision from the same context, with the same blind spots. Aveto splits the work the way a large engineering org does — every role is a written brief with its own scope, its own tools, and one artefact it must hand to the next. This is the org chart, and it ships in the repo.</p>
-
-    <div class="role-group">
-      <p class="role-label"><span>Shape the work</span><span class="count">6 roles</span></p>
-      <div class="fw-grid">
-        <div class="fw"><span class="name">Orchestrator</span><span class="role">Plans the slice, routes every stage, owns the record</span></div>
-        <div class="fw"><span class="name">Market Researcher</span><span class="role">Turns a raw ask into a discovery brief</span></div>
-        <div class="fw"><span class="name">Engineering Manager</span><span class="role">Scopes the slice and refuses work that is too big for one pass</span></div>
-        <div class="fw"><span class="name">Product Manager</span><span class="role">Scoped work item into a PRD</span></div>
-        <div class="fw"><span class="name">UX Researcher</span><span class="role">PRD into a feature spec</span></div>
-        <div class="fw"><span class="name">UI Designer</span><span class="role">Feature spec into a UX spec</span></div>
-      </div>
-    </div>
-
-    <div class="role-group">
-      <p class="role-label"><span>Design and build</span><span class="count">7 roles</span></p>
-      <div class="fw-grid">
-        <div class="fw"><span class="name">Software Architect</span><span class="role">Feature and UX specs into a tech spec</span></div>
-        <div class="fw"><span class="name">Backend Architect</span><span class="role">Server-side code with targeted tests</span></div>
-        <div class="fw"><span class="name">Frontend Developer</span><span class="role">Client-side code with targeted tests</span></div>
-        <div class="fw"><span class="name">AI Engineer</span><span class="role">Model-backed features, shipped with evals</span></div>
-        <div class="fw"><span class="name">ML Engineer</span><span class="role">Model, dataset, model card, monitoring contract</span></div>
-        <div class="fw"><span class="name">Analytics Engineer</span><span class="role">Event contract and metric definitions</span></div>
-        <div class="fw"><span class="name">Data Analyst</span><span class="role">Experiment and post-launch readouts</span></div>
-      </div>
-    </div>
-
-    <div class="role-group">
-      <p class="role-label"><span>Verify &mdash; none of these wrote the code</span><span class="count">5 roles</span></p>
-      <div class="fw-grid">
-        <div class="fw"><span class="name">QA Evidence</span><span class="role">An evidence document, never a green tick on its own</span></div>
-        <div class="fw"><span class="name">Security &amp; Privacy</span><span class="role">Adversarial pass over the diff; pass or fail, with findings</span></div>
-        <div class="fw"><span class="name">Compliance Reviewer</span><span class="role">Maps the change to controls, and the evidence for each</span></div>
-        <div class="fw"><span class="name">AI Governance</span><span class="role">Risk tier and eval coverage for model-backed work</span></div>
-        <div class="fw"><span class="name">Data Governance</span><span class="role">Classification, retention and catalog for data changes</span></div>
-      </div>
-    </div>
-
-    <div class="role-group">
-      <p class="role-label"><span>Ship it</span><span class="count">3 roles</span></p>
-      <div class="fw-grid">
-        <div class="fw"><span class="name">Release Manager</span><span class="role">Go or no-go, read against every artefact the slice produced</span></div>
-        <div class="fw"><span class="name">Cloud Deployment</span><span class="role">Plans and runs the deploy; validation is never self-certified</span></div>
-        <div class="fw"><span class="name">Tech Writer</span><span class="role">Doc delta and release notes</span></div>
-      </div>
-    </div>
-
-    <div class="role-group">
-      <p class="role-label"><span>Run it &mdash; the part most tools skip</span><span class="count">7 roles</span></p>
-      <div class="fw-grid">
-        <div class="fw"><span class="name">Production Verification</span><span class="role">Checks the live service against the invariants the spec named</span></div>
-        <div class="fw"><span class="name">Site Reliability Engineer</span><span class="role">SLOs, runbooks, incident reviews</span></div>
-        <div class="fw"><span class="name">On-call Engineer</span><span class="role">First response when production misbehaves</span></div>
-        <div class="fw"><span class="name">FinOps</span><span class="role">Cost model, budget and kill-switch before the bill arrives</span></div>
-        <div class="fw"><span class="name">Post-Launch Learning</span><span class="role">Turns what shipped into what changes next</span></div>
-        <div class="fw"><span class="name">Customer Success</span><span class="role">Live customer signal into a review</span></div>
-        <div class="fw"><span class="name">Customer Support</span><span class="role">Drafts the response &mdash; a human sends it</span></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="course">
-    <p class="sec-eyebrow">From the course to your repo</p>
-    <h2>Anthropic teaches the AI&#8209;native SDLC. Aveto installs it.</h2>
-    <p class="sec-lede">Anthropic&rsquo;s <a href="https://academy.claude.com/courses/ai-native-sdlc-playbook">AI-Native SDLC Playbook</a> walks through six stages in about an hour: plan, design, build, test, deploy, maintain. It teaches the practice. Aveto is that practice as software &mdash; one install puts every stage into your repo, with its roles, its gates and its record, on the Claude Code subscription you already have.</p>
-
-    <div class="map">
-      <div class="map-row map-head"><span>Stage</span><span>The course teaches</span><span>Aveto installs</span></div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">01</span>Plan</div>
-        <div class="map-course">Capture requirements and constraints in an <code>intent.md</code>.</div>
-        <div class="map-aveto">The same <code>intent.md</code>, as a one-page template. Give Aveto a one-line ask and it drafts the file for you, marking every guess as <em>(inferred)</em> until you confirm it.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">02</span>Design</div>
-        <div class="map-course">Turn intent into requirements and a design.</div>
-        <div class="map-aveto">Product, UX, UI and an Architect &mdash; plus a short path that skips the stages your intent already answered. Real user data, money, or anything irreversible still gets the full chain.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">03</span>Build</div>
-        <div class="map-course">Plan mode, <code>CLAUDE.md</code>, parallel sessions and subagents.</div>
-        <div class="map-aveto">One least-privilege subagent per role, generated from 28 written briefs, plus the <code>CLAUDE.md</code> and <code>AGENTS.md</code> that run them. The Architect&rsquo;s plan is on disk before a line of code is written.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">04</span>Test</div>
-        <div class="map-course">Give Claude a feedback loop; run continuous evals in CI.</div>
-        <div class="map-aveto">QA checks every &ldquo;done means&rdquo; line from your intent, word for word &mdash; and QA never built the change it is checking. AI slices add an eval gate that blocks the merge like a failing test.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">05</span>Deploy</div>
-        <div class="map-course">AI in the PR review loop; hooks as approval gates.</div>
-        <div class="map-aveto">A security review and a release gate that fail closed, and a named human on every deploy. A hook checks the budget before every agent is allowed to start.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">06</span>Maintain</div>
-        <div class="map-course">Close the loop on metrics.</div>
-        <div class="map-aveto">Production verification, SRE, on-call and post-launch roles &mdash; and measured token use for every stage, read from Claude Code&rsquo;s own logs rather than from the agents.</div>
-      </div>
-    </div>
-    <p class="map-foot">Course stages summarised from its public outline. Aveto is independent and is not affiliated with or endorsed by Anthropic.</p>
-  </section>
-
-  <section id="how">
-    <p class="sec-eyebrow">How it works</p>
-    <h2>One approval at the start. One review at the end.</h2>
-    <p class="sec-lede">Not guardrail text an agent is asked politely to follow. Structural properties of the lifecycle, each producing an artifact you can hand to someone who wasn't there.</p>
-    <ol class="flow" aria-label="How one slice runs, in seven steps">
-      <li class="" style="--i:0"><span class="n">1</span><b>Ask</b><span class="d">A paragraph, free-form.</span></li>
-      <li class="" style="--i:1"><span class="n">2</span><b>Intake</b><span class="d">Checked against your recorded safety invariants. A conflict is refused and no slice opens.</span></li>
-      <li class="human" style="--i:2"><span class="n">3</span><b>Charter</b><span class="d">One document: scope, budget, models, permissions. Approved by its hash.</span><span class="you">you</span></li>
-      <li class="" style="--i:3"><span class="n">4</span><b>Build</b><span class="d">Specialist agents, each with its own tools. The verifier never wrote the code.</span></li>
-      <li class="" style="--i:4"><span class="n">5</span><b>Verify</b><span class="d">Code review, QA, security. A failed gate goes back, never forward.</span></li>
-      <li class="" style="--i:5"><span class="n">6</span><b>Release</b><span class="d">A gate by risk tier, a deploy, and a rollback rehearsed first.</span></li>
-      <li class="human" style="--i:6"><span class="n">7</span><b>Review</b><span class="d">A pull request and the run's record. You merge.</span><span class="you">you</span></li>
-    </ol>
-    <div class="flow-notes"><span>A failed gate goes back to Build, never forward.</span><span>Post-launch findings carry into the next ask.</span><span>The highlight loops; hover to pause it.</span></div>
-
-    <div class="how-cards">
-      <div class="how-card">
-        <h3>It refuses work it shouldn&rsquo;t build.</h3>
-        <p>Intake checks a request against your recorded safety invariants and blocks a conflict, naming it and offering a safe reframe. Given a request to auto-purge user data with no confirmation, a run stopped before any code was written.</p>
-      </div>
-      <div class="how-card">
-        <h3>The verifier never wrote it.</h3>
-        <p>QA, security and the release gate are separate roles from the one that wrote the code, and a deploy agent cannot mark its own plan validated.</p>
-        <p class="aside">One test, so an example and not a rate: in a spike on a copy of the support agent, a second model&rsquo;s blind review found a planted bug that a review by the same model family missed.</p>
-      </div>
-      <div class="how-card">
-        <h3>The record names who decided.</h3>
-        <p>Each run keeps its Charter hash, who approved it and when, its spend against a hard cap, and a hash-chained event log. <a href="/runs">Every run is listed, including what its records leave out.</a></p>
-      </div>
-    </div>
-  </section>
-
   <section id="runs-on">
     <p class="sec-eyebrow">What it runs on</p>
     <h2>A subscription to build. An API for what you run.</h2>
@@ -1301,14 +1229,42 @@
       <div class="runs-tr"><div><b>Building a slice</b><span>28 specialist agents, gates, the record</span></div><div><b>Claude Code</b><span>The only runtime the pack is built and proven on.</span><br><span class="runs-tag ok">supported</span></div><div><span>Your Claude Code plan, not an API key. It counts against that plan&rsquo;s usage limits, so a long run can hit them.</span></div></div>
       <div class="runs-tr"><div><b>Independent review</b><span>A different model checks the work</span></div><div><b>Codex</b><span>Optional and manual, read-only, in a new chat. Trial: 4 pull requests so far.</span><br><span class="runs-tag">optional trial</span></div><div><span>Your ChatGPT plan. Findings are never approvals.</span></div></div>
       <div class="runs-tr"><div><b>Running in production</b><span>The product you ship</span></div><div><b>Your product&rsquo;s own model API</b><span>Our live demo calls the Anthropic API once per question and never writes text itself.</span><br><span class="runs-tag ok">in use</span></div><div><span>Metered API billing. The demo has a $10 limit set in the provider&rsquo;s console. Real model use in a product needs your approval in the Charter.</span></div></div>
-      <div class="runs-tr"><div><b>Other coding agents</b><span>Cursor, Copilot, Codex, others</span></div><div><b>Read the same run rules</b><span>The rules live in AGENTS.md, but the pack&rsquo;s agents, hooks and commands are Claude Code only.</span><br><span class="runs-tag">not supported yet</span></div><div><span>A second adapter is on the backlog and starts when a real need appears.</span></div></div>
+      <div class="runs-tr"><div><b>Other coding agents</b><span>Cursor, Copilot, Codex, others</span></div><div><b>Read the same run rules</b><span>The rules live in AGENTS.md, but the pack&rsquo;s agents, hooks and commands are Claude Code only.</span><br><span class="runs-tag no">not supported yet</span></div><div><span>A second adapter is on the backlog and starts when a real need appears.</span></div></div>
     </div>
   </section>
 
-  <section id="span">
+  <section id="roles">
+    <p class="sec-eyebrow">The team</p>
+    <h2>Twenty-eight specialists, not one generalist.</h2>
+    <p class="sec-lede">One agent asked to build a product makes every decision from the same context, with the same blind spots. Aveto splits the work into 28 written briefs, each with its own scope, its own tools and one artefact it must hand to the next. They ship in the repo.</p>
+    <div class="role-groups">
+      <div class="role-group g-shape">
+        <p class="role-label"><span>Shape the work</span><span class="count">6 roles</span></p>
+        <ul class="chips"><li>Orchestrator</li><li>Market Researcher</li><li>Engineering Manager</li><li>Product Manager</li><li>UX Researcher</li><li>UI Designer</li></ul>
+      </div>
+      <div class="role-group g-build">
+        <p class="role-label"><span>Design and build</span><span class="count">7 roles</span></p>
+        <ul class="chips"><li>Software Architect</li><li>Backend Architect</li><li>Frontend Developer</li><li>AI Engineer</li><li>ML Engineer</li><li>Analytics Engineer</li><li>Data Analyst</li></ul>
+      </div>
+      <div class="role-group g-verify">
+        <p class="role-label"><span>Verify &mdash; none of these wrote the code</span><span class="count">5 roles</span></p>
+        <ul class="chips"><li>QA Evidence</li><li>Security &amp; Privacy</li><li>Compliance Reviewer</li><li>AI Governance</li><li>Data Governance</li></ul>
+      </div>
+      <div class="role-group g-ship">
+        <p class="role-label"><span>Ship it</span><span class="count">3 roles</span></p>
+        <ul class="chips"><li>Release Manager</li><li>Cloud Deployment</li><li>Tech Writer</li></ul>
+      </div>
+      <div class="role-group g-run">
+        <p class="role-label"><span>Run it &mdash; the part most tools skip</span><span class="count">7 roles</span></p>
+        <ul class="chips"><li>Production Verification</li><li>Site Reliability Engineer</li><li>On-call Engineer</li><li>FinOps</li><li>Post-Launch Learning</li><li>Customer Success</li><li>Customer Support</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="span" class="band-dark">
     <p class="sec-eyebrow">The span</p>
     <h2>The record doesn't stop at the merge.</h2>
-    <p class="sec-lede">Spec-driven tools end when code lands. Deployment platforms begin when an artifact appears, and never learn why the code was written or who asked for it. Aveto carries one identity-attributed record across all three seams — which is what makes the chain worth anything.</p>
+    <p class="sec-lede">Spec-driven tools end when code lands. Deployment platforms begin when an artifact appears. Aveto carries one identity-attributed record across all three seams, as far as those tools&rsquo; own documents show.</p>
 
     <figure class="dgm">
       <div class="dgm-scroll">
@@ -1330,7 +1286,7 @@
 
           <!-- spec-driven tools: build only -->
           <text class="dgm-row" x="186" y="100">Spec-driven tools</text>
-          <text class="dgm-sub" x="186" y="116">Spec Kit · BMAD · Kiro</text>
+          <text class="dgm-sub" x="186" y="116">end at the merge</text>
           <rect class="dgm-band" x="200" y="84" width="252" height="30" rx="4"/>
           <rect class="dgm-void" x="465" y="84" width="485" height="30" rx="4"/>
           <line class="dgm-stop" x1="455" y1="80" x2="455" y2="118"/>
@@ -1338,7 +1294,7 @@
 
           <!-- deployment platforms: deploy + run -->
           <text class="dgm-row" x="186" y="160">Deployment platforms</text>
-          <text class="dgm-sub" x="186" y="176">Harness · Pulumi Neo</text>
+          <text class="dgm-sub" x="186" y="176">begin at the artifact</text>
           <rect class="dgm-void" x="200" y="144" width="252" height="30" rx="4"/>
           <rect class="dgm-band" x="465" y="144" width="485" height="30" rx="4"/>
           <line class="dgm-stop" x1="462" y1="140" x2="462" y2="178"/>
@@ -1356,26 +1312,24 @@
           <text class="dgm-axis dgm-axis-end" x="950" y="290">it is serving traffic</text>
         </svg>
       </div>
-      <figcaption>The two gaps are the product. Everything else in the category owns one end of this line.</figcaption>
+      <figcaption>The two gaps are the product. Drawn from the tools&rsquo; own documents, not from running them.</figcaption>
     </figure>
 
     <div class="cap">
       <div>
         <div class="cap-num">Deploy</div>
         <h3>Cloud-agnostic by gate, not by rewrite.</h3>
-        <p>Aveto doesn't rebuild your deployment engine — it wraps the one you already trust. Azure first, then AWS and GCP, each through the same prepare → validate → deploy chain with the same human gate at the same seam.</p>
-        <p class="aside">What travels between clouds isn't the infrastructure code. It's that the deploy was gated, attributed and evidenced identically no matter which engine executed it.</p>
+        <p>Aveto doesn&rsquo;t rebuild your deployment engine; it wraps the one you already trust. Azure is proven. AWS and GCP are planned and not tested.</p>
       </div>
       <div>
         <div class="cap-num">Run</div>
         <h3>After the deploy is still on the record.</h3>
-        <p>Production verification checks the live service against the safety invariants the spec actually named — not just a health ping — and on a bad signal executes the rollback plan that was approved when the spec was reviewed.</p>
-        <p class="aside">On-call diagnoses read-only and returns code fixes as new slices through the same gates. Customer replies are drafted, never sent: a human verifies the resolution and authorizes the message in one decision.</p>
+        <p>Production verification checks the live service against the invariants the spec named, not just a health ping. Customer replies are drafted, never sent: a human authorizes the message.</p>
       </div>
     </div>
   </section>
 
-  <section id="evidence-runs">
+  <section id="evidence-runs" class="band-dark">
     <p class="sec-eyebrow">Evidence</p>
     <h2>Validated on live runs, not a slide.</h2>
     <p class="sec-lede">Slices carried to merged pull requests on a reference app, a second app built from a one-paragraph brief, and a security gate that stopped its own release.</p>
@@ -1410,7 +1364,7 @@
   <section id="who">
     <p class="sec-eyebrow">Who it's for</p>
     <h2>For everyone shipping without a safety net.</h2>
-    <p class="sec-lede">Not everyone needs this. The people who do have one thing in common: the software matters, and there is nobody else standing between a mistake and production.</p>
+    <p class="sec-lede">The software matters, and nobody else stands between a mistake and production.</p>
     <div class="aud-grid">
       <div class="aud">
         <h3>Solo founders and small teams</h3>
@@ -1436,53 +1390,94 @@
     <div class="runs-tbl">
       <div class="runs-tr h"><div>Kind of software</div><div>Status</div><div>What the record shows</div></div>
       <div class="runs-tr"><div><b>Web apps and services</b></div><div><span class="runs-tag ok">proven</span></div><div><span>Two apps and a live public service, taken to merged pull requests under a Charter.</span></div></div>
-      <div class="runs-tr"><div><b>A feature that calls a model</b></div><div><span class="runs-tag ok">proven once</span></div><div><span>The ask-the-docs service: retrieval plus one judge call, deployed to Azure.</span></div></div>
+      <div class="runs-tr"><div><b>A feature that calls a model</b></div><div><span class="runs-tag part">proven once</span></div><div><span>The ask-the-docs service: retrieval plus one judge call, deployed to Azure.</span></div></div>
       <div class="runs-tr"><div><b>Data engineering and ML</b></div><div><span class="runs-tag">roles exist, not run</span></div><div><span>The pack has data and ML roles and templates. No run has used them on a pipeline or a model.</span></div></div>
-      <div class="runs-tr"><div><b>Native iOS and Android</b></div><div><span class="runs-tag">not covered</span></div><div><span>The release gate and rollback assume something deployable on a server. A mobile app&rsquo;s backend fits. The native client has no store or device checks.</span></div></div>
+      <div class="runs-tr"><div><b>Native iOS and Android</b></div><div><span class="runs-tag no">not covered</span></div><div><span>The release gate and rollback assume something deployable on a server. A mobile app&rsquo;s backend fits. The native client has no store or device checks.</span></div></div>
     </div>
   </section>
 
   <section id="limits">
     <p class="sec-eyebrow">Honest limits</p>
-    <h2>Where it costs you, and where it isn't proven.</h2>
-    <p class="sec-lede">The validation matrix in the repo lists what isn't proven, so this page does too. A product built on refusing unsound work cannot oversell itself and still mean it.</p>
+    <h2>Where it costs you, and where it isn&rsquo;t proven.</h2>
+    <p class="sec-lede">The validation matrix in the repo lists what isn&rsquo;t proven, so this page does too.</p>
     <div class="holds">
       <div class="hold">
         <div class="hold-mark">01</div>
         <div>
           <h3>It spends real tokens.</h3>
-          <p>A slice runs four to ten stages at roughly 70k&ndash;130k tokens each; a full greenfield build measured 947k. That is the price of every stage forming its own independent judgement &mdash; and exactly why the pipeline checks a budget <em>before</em> each step rather than reporting the damage after.</p>
+          <p>A slice runs four to ten stages at roughly 70k&ndash;130k tokens each; a full greenfield build measured 947k. That is the price of every stage forming its own judgement, and why a budget is checked <em>before</em> each step.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">02</div>
         <div>
           <h3>Small changes do not need this.</h3>
-          <p>Running a one-line fix through nine gated stages is theatre. The Engineering Manager compresses the pipeline for small slices and records why. Reach for the full chain where being wrong is expensive, not by default.</p>
+          <p>Running a one-line fix through nine gated stages is theatre. The Engineering Manager compresses the pipeline for small slices and records why.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">03</div>
         <div>
           <h3>Least-privilege binds conditionally.</h3>
-          <p>Per-role tool restrictions are generated correctly, but only take effect when the orchestrator session runs inside the product repo. Run it from elsewhere and you get capable agents with unrestricted tools. Documented rather than buried.</p>
+          <p>Per-role tool restrictions take effect only when the orchestrator session runs inside the product repo. Run it from elsewhere and you get capable agents with unrestricted tools.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">04</div>
         <div>
           <h3>Not yet proven.</h3>
-          <p>Production SLOs, enterprise multi-tenancy, and a real model running unattended at scale. What has now run: real deploys of the support service to Azure, in two Charter runs (the Orchestrator ran the commands, because the deploy role has no shell), a live smoke test, and a production-verification stage that read the saved results. A real model decides, one question at a time, inside that live public feature, behind a $10 monthly limit. Each open item is listed in the validation matrix &mdash; none are claimed here.</p>
+          <p>Production SLOs, enterprise multi-tenancy, and a real model running unattended at scale. What has run: real Azure deploys of the support service, a live smoke test, and a production-verification stage. A real model decides one question at a time inside that live feature, behind a $10 monthly limit.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">05</div>
         <div>
           <h3>The newest evidence is small.</h3>
-          <p>Process v2 has four runs behind it, one tiny and three real, and each needed the owner for something beyond the first Charter approval: a message, a credential step, a permission prompt or a usage limit. Both of the judge&rsquo;s gates were passed with no margin (by one question, then exactly at the bar), and retrieval itself finds the right file for 79.2% of answerable questions, just under its own bar. The service uses Anthropic&rsquo;s API under its commercial terms, which incorporate a data-processing addendum by reference; no agent read that text, and the page asks visitors not to enter personal information. Its spend limits reset when the service restarts, so the $10 monthly limit is the only lasting cap. A person still starts each run and decides the merge. Review mode for an existing codebase is planned, not built.</p>
+          <p>The first four Process v2 runs each needed the owner for something beyond the first Charter approval. The latest run recorded no questions after the Charter, but the record cannot see prompts the app itself shows. The judge&rsquo;s two gates passed with no margin, and retrieval finds the right file for 79.2% of answerable questions, just under its own bar. Spend limits reset when the service restarts, so the $10 monthly limit is the only lasting cap. The service uses Anthropic&rsquo;s API under its commercial terms, which no agent read, and the page asks visitors not to enter personal information. A person still starts each run and decides the merge. Review mode for an existing codebase is planned, not built.</p>
         </div>
       </div>
     </div>
+  </section>
+
+  <section id="course">
+    <p class="sec-eyebrow">From the course to your repo</p>
+    <h2>Anthropic teaches the AI&#8209;native SDLC. Aveto installs it.</h2>
+    <p class="sec-lede">Anthropic&rsquo;s <a href="https://academy.claude.com/courses/ai-native-sdlc-playbook">AI-Native SDLC Playbook</a> course walks through six stages in about an hour. It teaches the practice. Aveto is that practice as software, installed into your repo on the Claude Code plan you already have.</p>
+
+    <div class="map">
+      <div class="map-row map-head"><span>Stage</span><span>The course teaches</span><span>Aveto installs</span></div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">01</span>Plan</div>
+        <div class="map-course">Capture requirements in an <code>intent.md</code>.</div>
+        <div class="map-aveto">The same <code>intent.md</code> as a one-page template. Give it a one-line ask and it drafts the file, marking every guess <em>(inferred)</em> until you confirm.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">02</span>Design</div>
+        <div class="map-course">Turn intent into requirements and a design.</div>
+        <div class="map-aveto">Product, UX, UI and an Architect, with a short path that skips stages your intent already answers. User data, money or anything irreversible still gets the full chain.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">03</span>Build</div>
+        <div class="map-course">Plan mode, <code>CLAUDE.md</code>, parallel sessions and subagents.</div>
+        <div class="map-aveto">One least-privilege subagent per role, from 28 written briefs. The Architect&rsquo;s plan is on disk before any code is written.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">04</span>Test</div>
+        <div class="map-course">Give Claude a feedback loop; run continuous evals in CI.</div>
+        <div class="map-aveto">QA checks every &ldquo;done means&rdquo; line from your intent word for word, and never built the change. AI slices add an eval gate that blocks the merge like a failing test.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">05</span>Deploy</div>
+        <div class="map-course">AI in the PR review loop; hooks as approval gates.</div>
+        <div class="map-aveto">A security review and a release gate that fail closed. The deploy runs only the actions the approved Charter names, and a hook checks the budget before each agent starts.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-stage"><span class="n">06</span>Maintain</div>
+        <div class="map-course">Close the loop on metrics.</div>
+        <div class="map-aveto">Production verification, SRE, on-call and post-launch roles, with token use measured from Claude Code&rsquo;s own logs, not reported by the agents.</div>
+      </div>
+    </div>
+    <p class="map-foot">Course stages summarised from its public outline. Aveto is independent and is not affiliated with or endorsed by Anthropic.</p>
   </section>
 
   <section id="faq">
