@@ -14,7 +14,7 @@
 <title>Aveto playbook</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 </head>
-<body>
+<body id="top">
 <style>
   :root {
     --ground: #FBFAF7;
@@ -104,16 +104,6 @@
 
   /* ---------- nav ---------- */
 
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 22px 0;
-    border-bottom: 1px solid var(--rule);
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
   .brand {
     font-family: var(--f-display);
     font-weight: 700;
@@ -141,9 +131,31 @@
     top: 3px; right: 3px;
   }
 
-  .nav-links { display: flex; gap: 26px; font-size: .9rem; color: var(--muted); flex-wrap: wrap; }
-  .nav-links a { color: inherit; text-decoration: none; }
-  .nav-links a:hover { color: var(--ink); }
+  .skip { position: absolute; left: 12px; top: -64px; z-index: 100; background-color: var(--ink); color: var(--ground); padding: 9px 16px; border-radius: 8px; font-size: .88rem; text-decoration: none; }
+  .skip:focus { top: 10px; }
+  .site-nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 12px 0; border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 50; background-color: var(--ground); box-shadow: -100vmax 0 0 var(--ground), 100vmax 0 0 var(--ground); }
+  .site-nav .brand { color: inherit; text-decoration: none; }
+  .nav-links { display: flex; align-items: center; gap: 22px; font-size: .88rem; color: var(--muted); white-space: nowrap; }
+  .nav-links a { color: inherit; text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; }
+  .nav-links a:hover, .nav-links a:focus-visible { color: var(--ink); }
+  .nav-links a[aria-current="page"] { color: var(--ink); font-weight: 600; border-bottom-color: var(--gold); }
+  .nav-more { position: relative; }
+  .nav-more > span { cursor: default; padding: 4px 0; border-bottom: 2px solid transparent; }
+  .nav-more > span::after { content: " \25BE"; font-size: .8em; }
+  .nav-more-list { display: none; position: absolute; right: 0; top: 100%; min-width: 220px; padding: 8px; flex-direction: column; background-color: var(--surface); border: 1px solid var(--rule); border-radius: 10px; box-shadow: var(--shadow); }
+  .nav-more:hover .nav-more-list, .nav-more:focus-within .nav-more-list { display: flex; }
+  .nav-more-list a { padding: 8px 10px; border-radius: 6px; border-bottom: 0; }
+  .nav-more-list a:hover { background-color: var(--sunk); }
+  .nav-menu { display: none; position: relative; border-bottom: 0; padding: 0; }
+  .nav-menu > summary::after, .nav-menu[open] > summary::after { content: none; }
+  .nav-menu > summary { display: block; font-family: var(--f-body); font-weight: 500; letter-spacing: 0; list-style: none; cursor: pointer; padding: 8px 14px; border: 1px solid var(--rule-strong); border-radius: 999px; font-size: .88rem; color: var(--ink); }
+  .nav-menu > summary::-webkit-details-marker { display: none; }
+  .nav-menu-list { position: absolute; right: 0; top: calc(100% + 10px); width: min(300px, calc(100vw - 32px)); max-height: 75vh; overflow: auto; display: flex; flex-direction: column; padding: 8px; background-color: var(--surface); border: 1px solid var(--rule); border-radius: 12px; box-shadow: var(--shadow); }
+  .nav-menu-list a { padding: 11px 12px; border-radius: 8px; color: var(--ink); text-decoration: none; font-size: .95rem; }
+  .nav-menu-list a:hover, .nav-menu-list a[aria-current="page"] { background-color: var(--sunk); }
+  .nav-menu-list .nav-menu-sep { margin: 6px 12px 2px; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+  @media (max-width: 1040px) { .site-nav > .nav-links, .site-nav > .nav-cta { display: none; } .nav-menu { display: block; } }
+  html { scroll-padding-top: 76px; }
 
   /* ---------- buttons ---------- */
 
@@ -871,99 +883,86 @@
   .doc th, .doc td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--rule); color: var(--ink-soft); line-height: 1.5; }
   .doc th { background: var(--sunk); color: var(--ink); font-weight: 600; }
   .doc tr:last-child td { border-bottom: none; }
-  .doc-toc { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 8px; font-size: 14px; }
-  .doc-toc a { color: var(--muted); text-decoration: none; }
-  .doc-toc a:hover { color: var(--gold-text); }
+  .doc-toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 2px 18px; margin: 0 0 20px; font-size: 14px; }
+  .doc-toc-label { grid-column: 1 / -1; margin: 0 0 6px; font-family: var(--f-mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+  .doc-toc a { color: var(--muted); text-decoration: none; padding: 5px 0 5px 12px; border-left: 2px solid var(--rule); line-height: 1.35; }
+  .doc-toc a:hover, .doc-toc a:focus-visible { color: var(--gold-text); border-left-color: var(--gold); }
+  .doc h2 { scroll-margin-top: 84px; }
+  @media (min-width: 1180px) {
+    .doc { max-width: 1060px; display: grid; grid-template-columns: 220px minmax(0, 760px); column-gap: 56px; row-gap: 0; align-items: start; }
+    .doc > * { grid-column: 2; }
+    .doc > .doc-toc { grid-column: 1; grid-row: 1 / span 60; position: sticky; top: 84px; display: flex; flex-direction: column; max-height: calc(100vh - 110px); overflow: auto; margin: 0; padding-top: 6px; }
+  }
 
+  .to-top { position: fixed; right: 18px; bottom: 18px; z-index: 60; padding: 10px 14px; border-radius: 999px; background-color: var(--ink); color: var(--ground); font-family: var(--f-mono); font-size: .76rem; text-decoration: none; border: 1px solid var(--ink); box-shadow: 0 10px 24px -12px rgba(0,0,0,.5); }
+  .to-top:hover { background-color: var(--gold-text); border-color: var(--gold-text); }
+  @supports (animation-timeline: scroll()) {
+    .to-top { opacity: 0; animation: to-top-in linear both; animation-timeline: scroll(root); animation-range: 0 600px; pointer-events: none; }
+    @keyframes to-top-in { to { opacity: 1; pointer-events: auto; } }
+  }
+  @media print { .to-top { display: none; } }
 </style>
 <div class="shell">
 
-  <nav>
-    <a class="brand" href="/" style="text-decoration:none;color:inherit"><span class="mark"></span>Aveto</a>
-    <div class="nav-links">
-      <a href="/#roles">The team</a>
-      <a href="/#course">From the course</a>
-      <a href="/#how">How it works</a>
-      <a href="/#span">Build · Deploy · Run</a>
-      <a href="/#evidence-runs">Evidence</a>
-      <a href="/#limits">Limits</a>
-      <a href="/#source">Docs</a>
-      <a href="/playbook">Playbook</a>
-    </div>
-    <a class="btn btn-ghost" href="https://github.com/gpatwa/agentic-sdlc-playbook">Get started</a>
+  <a class="skip" href="#main">Skip to content</a>
+  <nav class="site-nav" aria-label="Site">
+    <a class="brand" href="/"><span class="mark"></span>Aveto</a>
+    <div class="nav-links"><a href="/#how">How it works</a><a href="/#try">Live demo</a><a href="/#roles">The team</a><a href="/#evidence-runs">Evidence</a><a href="/#limits">Limits</a><a href="/runs">Runs</a><a href="/playbook" aria-current="page">Playbook</a><div class="nav-more"><span tabindex="0">More</span><div class="nav-more-list"><a href="/#span">Build · Deploy · Run</a><a href="/#course">From the course</a><a href="/#source">Docs</a></div></div></div>
+    <a class="btn btn-ghost nav-cta" href="https://github.com/gpatwa/agentic-sdlc-playbook">Get started</a>
+    <details class="nav-menu"><summary>Menu</summary><div class="nav-menu-list"><a href="/#how">How it works</a><a href="/#try">Live demo</a><a href="/#roles">The team</a><a href="/#evidence-runs">Evidence</a><a href="/#limits">Limits</a><a href="/runs">Runs</a><a href="/playbook" aria-current="page">Playbook</a><span class="nav-menu-sep">More</span><a href="/#span">Build · Deploy · Run</a><a href="/#course">From the course</a><a href="/#source">Docs</a><a href="https://github.com/gpatwa/agentic-sdlc-playbook">Get started</a></div></details>
   </nav>
 
-  <main class="doc">
+  <main class="doc" id="main" tabindex="-1">
     <p class="sec-eyebrow">The playbook</p>
     <h1>The engineering playbook for AI coding agents</h1>
-    <nav class="doc-toc" aria-label="Parts"><a href="#1-principles">1. Principles</a><a href="#2-when-to-use-an-agent">2. When to use an agent</a><a href="#3-roles-delegate-check-own">3. Roles: delegate, check, own</a><a href="#4-the-lifecycle">4. The lifecycle</a><a href="#5-human-approval">5. Human approval</a><a href="#6-context-what-the-agent-reads">6. Context: what the agent reads</a><a href="#7-quality-tests-and-review">7. Quality: tests and review</a><a href="#8-security-and-data">8. Security and data</a><a href="#9-cost-and-capacity">9. Cost and capacity</a><a href="#10-measurement-and-adoption">10. Measurement and adoption</a><a href="#what-this-playbook-is-not">What this playbook is not</a><a href="#where-it-comes-from">Where it comes from</a></nav>
-    <p class="doc-note"><strong>Published 2026-10-20 at <a href="https://aveto.dev/playbook">aveto.dev/playbook</a>.</strong> One entry point to how Aveto runs software work with AI coding agents. Each part is short and links to the document that holds the detail; nothing here overrides those documents. Where something is planned rather than built, it says so.</p>
+    <nav class="doc-toc" aria-label="Parts of the playbook"><p class="doc-toc-label">Parts</p><a href="#1-principles">1. Principles</a><a href="#2-when-to-use-an-agent">2. When to use an agent</a><a href="#3-roles-delegate-check-own">3. Roles: delegate, check, own</a><a href="#4-the-lifecycle">4. The lifecycle</a><a href="#5-human-approval">5. Human approval</a><a href="#6-context-what-the-agent-reads">6. Context: what the agent reads</a><a href="#7-quality-tests-and-review">7. Quality: tests and review</a><a href="#8-security-and-data">8. Security and data</a><a href="#9-cost-and-capacity">9. Cost and capacity</a><a href="#10-measurement-and-adoption">10. Measurement and adoption</a><a href="#what-this-playbook-is-not">What this playbook is not</a><a href="#where-it-comes-from">Where it comes from</a></nav>
+    <p class="doc-note"><strong>Published 2026-10-20 at <a href="https://aveto.dev/playbook">aveto.dev/playbook</a>; revised 2026-10-29.</strong> One entry point to how Aveto runs software work with AI coding agents. Each part is short and links to the document that holds the detail; nothing here overrides those documents. Where something is planned rather than built, it says so.</p>
     <p><strong>The question every part answers:</strong> for each piece of work, <em>what does the agent do, what checks it, what does the human decide, and what record proves it?</em></p>
     <h2 id="1-principles">1. Principles</h2>
     <ol><li><strong>Humans own direction, risk and outcome.</strong> Agents own the work in between.</li><li><strong>The agent that verifies never wrote the change.</strong> Builders and checkers are separate roles, run separately.</li><li><strong>Gates fail closed.</strong> A missing artefact or an unclear result is a failure, not a pass.</li><li><strong>The human decides twice: before the run and after it.</strong> A Charter approved by its hash, and an end review. Anything the Charter does not name stops the run.</li><li><strong>Every claim has evidence, and every bar is set before the test.</strong> A result judged against a bar chosen afterwards is not a result.</li><li><strong>What was not confirmed is marked unconfirmed, with where you looked.</strong></li><li><strong>Budget is checked before the spend, not after.</strong></li></ol>
     <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/pack/AGENTS.md"><code>execution/pack/AGENTS.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/OPERATING_MODEL.md"><code>docs/OPERATING_MODEL.md</code></a>.</p>
     <h2 id="2-when-to-use-an-agent">2. When to use an agent</h2>
     <p>Not all work suits an agent equally. Decide per task, before the run.</p>
-    <div class="doc-table"><table><thead><tr><th>Delegate to the agent</th><th>Agent works, human checks closely</th><th>Keep with the human</th></tr></thead><tbody><tr><td>Well-specified features with clear "done means" lines</td><td>New abstractions or architecture</td><td>Product direction: what to build, and why</td></tr><tr><td>Tests, including edge cases from the spec</td><td>Ambiguous requirements (clarify first; an intent with open questions does not start)</td><td>What ships to production (the merge)</td></tr><tr><td>Refactors and migrations with a test suite around them</td><td>Security-sensitive code (auth, permissions, payments, PII)</td><td>Sending anything on a user's behalf</td></tr><tr><td>Docs, release notes, diagrams from the code</td><td>Novel incidents and low-confidence root causes</td><td>Accepting risk: a lower review depth, a new data processor, a model in a deterministic path</td></tr><tr><td>First-pass code review, triage, log reading</td><td>Data and AI evals (the bar must be fixed before the run)</td><td>Commercial and legal commitments</td></tr></tbody></table></div>
-    <p><strong>Signals that a task is not ready for an agent:</strong> no one can write "done means" in one paragraph; success cannot be checked by a command or a reviewer; the change crosses systems no one has mapped. Fix the intent first.</p>
-    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/templates/INTENT_TEMPLATE.md"><code>templates/INTENT_TEMPLATE.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENTIC_SDLC.md"><code>docs/AGENTIC_SDLC.md</code></a> ("When to compress stages").</p>
+    <div class="doc-table"><table><thead><tr><th>Delegate to the agent</th><th>Agent works, human checks closely</th><th>Keep with the human</th></tr></thead><tbody><tr><td>Well-specified features with clear &quot;done means&quot; lines</td><td>New abstractions or architecture</td><td>Product direction: what to build, and why</td></tr><tr><td>Tests, including edge cases from the spec</td><td>Ambiguous requirements (clarify first; an intent with open questions does not start)</td><td>What ships to production (the merge; the exception is tier 1 under a standing Charter, see parts 4 and 5)</td></tr><tr><td>Refactors and migrations with a test suite around them</td><td>Security-sensitive code (auth, permissions, payments, PII)</td><td>Sending anything on a user's behalf</td></tr><tr><td>Docs, release notes, diagrams from the code</td><td>Novel incidents and low-confidence root causes</td><td>Accepting risk: a lower review depth, a new data processor, a model in a deterministic path</td></tr><tr><td>First-pass code review, triage, log reading</td><td>Data and AI evals (the bar must be fixed before the run)</td><td>Commercial and legal commitments</td></tr></tbody></table></div>
+    <p><strong>Signals that a task is not ready for an agent:</strong> no one can write &quot;done means&quot; in one paragraph; success cannot be checked by a command or a reviewer; the change crosses systems no one has mapped. Fix the intent first.</p>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/templates/INTENT_TEMPLATE.md"><code>templates/INTENT_TEMPLATE.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENTIC_SDLC.md"><code>docs/AGENTIC_SDLC.md</code></a> (&quot;When to compress stages&quot;).</p>
     <h2 id="3-roles-delegate-check-own">3. Roles: delegate, check, own</h2>
     <p>Twenty-eight specialist roles, each with one output, the decisions it owns, and one handoff. Every role states three things:</p>
-    <ul><li><strong>The agent does:</strong> the work delegated to it.</li><li><strong>Checked by:</strong> always another agent or a gate, never a person.</li><li><strong>The human owns:</strong> always a line in the Charter or an item in <code>END_REVIEW.md</code>, so</li></ul>
-    <p>naming it adds no stop.</p>
+    <ul><li><strong>The agent does:</strong> the work delegated to it.</li><li><strong>Checked by:</strong> always another agent or a gate, never a person.</li><li><strong>The human owns:</strong> always a line in the Charter or an item in <code>END_REVIEW.md</code>, so naming it adds no stop.</li></ul>
     <div class="doc-table"><table><thead><tr><th>Group</th><th>Roles</th></tr></thead><tbody><tr><td>Lead</td><td>Orchestrator, Engineering Manager</td></tr><tr><td>Product</td><td>Market Researcher, Product Manager, UX Researcher, UI Designer</td></tr><tr><td>Build</td><td>Software Architect, Backend Architect, Frontend Developer, AI Engineer, ML Engineer, Tech Writer</td></tr><tr><td>Verify</td><td>QA Evidence, Security &amp; Privacy, Release Manager</td></tr><tr><td>Govern</td><td>AI Governance, Compliance Reviewer, Data Governance, FinOps</td></tr><tr><td>Data</td><td>Analytics Engineer, Data Analyst</td></tr><tr><td>Operate</td><td>Cloud Deployment, Production Verification, SRE, On-Call Engineer</td></tr><tr><td>Customers</td><td>Customer Support, Customer Success, Post-Launch Learning</td></tr></tbody></table></div>
-    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_ROLES.md"><code>docs/AGENT_ROLES.md</code></a> (the full delegate / check / own table), <code>agents/</code>.</p>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_ROLES.md"><code>docs/AGENT_ROLES.md</code></a> (the full delegate / check / own table), <a href="https://github.com/gpatwa/agentic-sdlc-playbook/tree/main/agents"><code>agents/</code></a>.</p>
     <h2 id="4-the-lifecycle">4. The lifecycle</h2>
     <p>A slice moves through stages, each producing an artefact the next one reads:</p>
     <p><strong>Intent → Scope review → Discovery → UX and UI → Architecture → Implementation → QA evidence → Security review → Release gate → (Deploy → Verify → Operate) → Post-launch learning.</strong></p>
-    <ul><li>Small slices compress stages; the Engineering Manager decides which, and says why.</li><li>Every seam has a gate. Release tiers set how many: <strong>tier 1</strong> local, docs or</li></ul>
-    <p>refactor; <strong>tier 2</strong> behaviour change with no external effect; <strong>tier 3</strong> anything with an external effect.</p>
-    <ul><li>A run ends in a pull request. Merge, deploy and send are separate, named actions.</li></ul>
-    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENTIC_SDLC.md"><code>docs/AGENTIC_SDLC.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/RELEASE_GATES.md"><code>docs/RELEASE_GATES.md</code></a>.</p>
+    <ul><li>Small slices compress stages; the Engineering Manager decides which, and says why.</li><li>Every seam has a gate. Release tiers set how many: <strong>tier 1</strong> local, docs or refactor; <strong>tier 2</strong> behaviour change with no external effect; <strong>tier 3</strong> anything with an external effect.</li><li>A run ends in a pull request. Merge, deploy and send are separate, named actions. The one exception: under a standing Charter (part 5), a tier 1 pull request merges itself only when all six conditions hold: release tier 1, review tier Low, every gate passed, no open Important finding, CI green, and the Charter allows it. Anything else waits for the owner.</li></ul>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENTIC_SDLC.md"><code>docs/AGENTIC_SDLC.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/RELEASE_GATES.md"><code>docs/RELEASE_GATES.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/PROCESS_V3_PLAN.md"><code>docs/PROCESS_V3_PLAN.md</code></a> (3.4).</p>
     <h2 id="5-human-approval">5. Human approval</h2>
     <p><strong>Six kinds of action always need the human:</strong> sending on a user's behalf; destructive changes to shared state; deploys and releases with an external effect; changes to safety controls; putting a model into a path that was deterministic; a new data processor or data commitment.</p>
     <p><strong>How it works under a Charter:</strong></p>
     <ol><li>The Orchestrator drafts <code>runs/&lt;slice&gt;/CHARTER.md</code>: scope, budget, models with their effort level, data processors, safety-text changes, permissions, depths, end actions.</li><li><a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/charter-check.mjs"><code>execution/charter-check.mjs</code></a> refuses blanks, open-ended grants and wildcards before the human sees it.</li><li>The human approves it <strong>by its sha256, in their own words, in the session that runs it.</strong> An approval typed in another session, or relayed by an agent, never counts.</li><li>Each action cites the Charter line that covers it. Anything not named stops the run.</li><li>At the end, <code>END_REVIEW.md</code> opens with <strong>Blocked on me, Changed, Found</strong>.</li></ol>
-    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md"><code>docs/HUMAN_APPROVAL_RULES.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/templates/CHARTER_TEMPLATE.md"><code>templates/CHARTER_TEMPLATE.md</code></a>.</p>
+    <p><strong>Standing Charters (built in pack v27):</strong> for routine work the owner approves a class of work once, with an expiry, a run cap and a weekly budget, and can revoke it by deleting one file. A plan that does not fit the class waits for the owner.</p>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md"><code>docs/HUMAN_APPROVAL_RULES.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/templates/CHARTER_TEMPLATE.md"><code>templates/CHARTER_TEMPLATE.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/PROCESS_V3_PLAN.md"><code>docs/PROCESS_V3_PLAN.md</code></a>.</p>
     <h2 id="6-context-what-the-agent-reads">6. Context: what the agent reads</h2>
     <p>Agents work from files, not from conversation:</p>
     <div class="doc-table"><table><thead><tr><th>File</th><th>Holds</th></tr></thead><tbody><tr><td><code>AGENTS.md</code> / <code>CLAUDE.md</code></td><td>the run guide every session loads</td></tr><tr><td><code>.agentic/PROJECT_CONTEXT.md</code></td><td>what the product is and who it serves</td></tr><tr><td><code>.agentic/LOCAL_COMMANDS.md</code></td><td>the exact commands to type-check, test, build</td></tr><tr><td><code>.agentic/SAFETY_INVARIANTS.md</code></td><td>what must hold across every release</td></tr><tr><td><code>REVIEW.md</code></td><td>what this repo's reviewers should and should not flag</td></tr><tr><td><code>runs/&lt;slice&gt;/STATE.md</code></td><td>where the run is, so any session can resume it</td></tr></tbody></table></div>
-    <p>Keep each stage's context thin: an agent reads the artefacts it needs, not the whole history. <strong>Planned, not built:</strong> onboarding a codebase Aveto did not build, which proposes these files from the code and marks every invariant "proposed" until the human confirms it (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/REVIEW_MODE_PLAN.md"><code>docs/REVIEW_MODE_PLAN.md</code></a>, M1).</p>
+    <p>Keep each stage's context thin: an agent reads the artefacts it needs, not the whole history. <strong>Planned, not built:</strong> onboarding a codebase Aveto did not build, which proposes these files from the code and marks every invariant &quot;proposed&quot; until the human confirms it (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/REVIEW_MODE_PLAN.md"><code>docs/REVIEW_MODE_PLAN.md</code></a>, M1).</p>
     <h2 id="7-quality-tests-and-review">7. Quality: tests and review</h2>
-    <ul><li><strong>Every new test fails first</strong> on the base commit; QA re-runs it there itself.</li><li><strong>Generated tests are filtered:</strong> kept only if they build, pass three runs in a row,</li></ul>
-    <p>and cover a "done means" line or raise coverage. Removals are listed.</p>
-    <ul><li><strong>Review scales with risk.</strong> The diff sets the tier: high for safety text, hooks,</li></ul>
-    <p>permissions, auth and CI; medium for product behaviour; low for the rest.</p>
-    <ul><li><strong>Every finding is recorded</strong> with file and line, how to reproduce it, and a</li></ul>
-    <p>disposition: fixed, rejected or intentional. At most three review rounds, then re-plan.</p>
-    <ul><li><strong>The reviewer is tested too:</strong> past incidents are kept as review cases, and the</li></ul>
-    <p>review step is rescored when its prompt, model or effort changes.</p>
+    <ul><li><strong>Every new test fails first</strong> on the base commit; QA re-runs it there itself.</li><li><strong>Generated tests are filtered:</strong> kept only if they build, pass three runs in a row, and cover a &quot;done means&quot; line or raise coverage. Removals are listed.</li><li><strong>Review scales with risk.</strong> The diff sets the tier: high for safety text, hooks, permissions, auth and CI; medium for product behaviour; low for the rest.</li><li><strong>Every finding is recorded</strong> with file and line, how to reproduce it, and a disposition: fixed, rejected or intentional. At most three review rounds, then re-plan.</li><li><strong>The reviewer is tested too:</strong> past incidents are kept as review cases, and the review step is rescored when its prompt, model or effort changes.</li></ul>
     <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/CODE_REVIEW.md"><code>docs/CODE_REVIEW.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/tree/main/docs/review-evals"><code>docs/review-evals/</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/agents/qa-evidence.md"><code>agents/qa-evidence.md</code></a>.</p>
     <h2 id="8-security-and-data">8. Security and data</h2>
-    <ul><li>Each agent gets the <strong>fewest tools</strong> its role needs, generated per role.</li><li>Judge-style agents run with <strong>no tools</strong>, a deny list and a hook as a second layer.</li><li>Hostile input is reviewed adversarially when the slice handles untrusted text.</li><li><strong>Agents never handle credentials.</strong> A step that needs one stops the run.</li><li>Every data processor is named in the Charter with exactly what it may receive.</li><li><strong>Planned, not built:</strong> secret paths excluded from what any model sees, with a test</li></ul>
-    <p>that proves it (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/REVIEW_MODE_PLAN.md"><code>docs/REVIEW_MODE_PLAN.md</code></a>, M3b).</p>
+    <ul><li>Each agent gets the <strong>fewest tools</strong> its role needs, generated per role. <strong>The limit:</strong> roles that plan and review are held to their own folders by a hook; roles with a shell are not technically scoped, only bounded by the Charter's permission rules and review.</li><li>Judge-style agents run with <strong>no tools</strong>, a deny list and a hook as a second layer.</li><li>Hostile input is reviewed adversarially when the slice handles untrusted text.</li><li><strong>Agents never handle credentials.</strong> A step that needs one stops the run.</li><li>Every data processor is named in the Charter with exactly what it may receive.</li><li><strong>Built, and used in recent runs:</strong> a tamper-evident event log of every tool call and the role that made it; each run's result is shown on <a href="https://aveto.dev/runs">aveto.dev/runs</a>. The log shows an edited or deleted line afterwards; it does not prevent one.</li><li><strong>Built, not yet proven live:</strong> read-deny rules for secret file paths (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_SECURITY_PLAN.md"><code>docs/AGENT_SECURITY_PLAN.md</code></a>). They cover Claude Code's file tools, not a shell command; the live check that a shell role cannot read a planted credential has not been run.</li><li><strong>Planned, not built:</strong> scoping the shell roles with an operating-system sandbox, and excluding secret paths from review mode's reads with a test that proves it (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_SECURITY_PLAN.md"><code>docs/AGENT_SECURITY_PLAN.md</code></a> A5, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/REVIEW_MODE_PLAN.md"><code>docs/REVIEW_MODE_PLAN.md</code></a> M3b).</li><li><strong>Not provided:</strong> an identity per agent in cloud logs (a deploy pipeline will have its own), or protection against a person using the operator's own account.</li></ul>
     <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/agents/security-privacy.md"><code>agents/security-privacy.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md"><code>docs/HUMAN_APPROVAL_RULES.md</code></a> rules 4 to 6.</p>
     <h2 id="9-cost-and-capacity">9. Cost and capacity</h2>
-    <ul><li>Each stage has an estimate; a hook checks <code>spent + estimate ≤ budget</code> <strong>before</strong> the</li></ul>
-    <p>step. Over budget means degrade, drop or stop, never raise the budget to fit.</p>
-    <ul><li>The Charter sets a plan total, a ceiling (notice) and a hard cap (stop).</li><li>Model and effort are pinned per role in the Charter.</li><li>Runs checkpoint at every stage, so a run that hits a usage limit resumes where it</li></ul>
-    <p>stopped.</p>
-    <ul><li><strong>Measured so far:</strong> a slice runs four to ten stages at roughly 70k to 130k tokens</li></ul>
-    <p>each; one full greenfield build measured 947k. Review stages have run 1.5 to 3 times their estimates.</p>
-    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/pack/protocols/RUN_ECONOMICS.md"><code>execution/pack/protocols/RUN_ECONOMICS.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/hooks/budget-guard.mjs"><code>execution/hooks/budget-guard.mjs</code></a>.</p>
+    <ul><li>Each stage has an estimate; a hook checks <code>spent + estimate ≤ budget</code> <strong>before</strong> the step. Over budget means degrade, drop or stop, never raise the budget to fit.</li><li>The Charter sets a plan total, a ceiling (notice) and a hard cap (stop). If the owner gives one number, it is the hard cap.</li><li>Model and effort are pinned per role in the Charter.</li><li>Runs checkpoint at every stage, so a run that hits a usage limit resumes where it stopped.</li><li><strong>Measured so far:</strong> one request's context in a stage was about 10k to 350k tokens, but a stage makes many requests, so a run handles far more. Thirteen recorded runs (2 to 31 stages each) processed 0.6M to 47M tokens apiece, and one first-app build processed 11.6M (3.7M weighted by price). Most of it is cache reads. The figures cover subagent stages only, not the Orchestrator's own turns, and none is a bill. Review stages have run 1.5 to 3 times their estimates. Per-role figures are on <a href="https://aveto.dev/runs">aveto.dev/runs</a>.</li></ul>
+    <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/pack/protocols/RUN_ECONOMICS.md"><code>execution/pack/protocols/RUN_ECONOMICS.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/hooks/budget-guard.mjs"><code>execution/hooks/budget-guard.mjs</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/execution/usage.mjs"><code>execution/usage.mjs</code></a>.</p>
     <h2 id="10-measurement-and-adoption">10. Measurement and adoption</h2>
     <p><strong>Measure the process, not just the output:</strong></p>
-    <div class="doc-table"><table><thead><tr><th>Measure</th><th>Why</th></tr></thead><tbody><tr><td>Owner touches per run, and time to the first touch</td><td>whether "decide twice" is still true</td></tr><tr><td>Gate catches, by gate</td><td>which checks earn their cost</td></tr><tr><td>Escaped defects</td><td>what the gates missed</td></tr><tr><td>Review precision (findings neither rejected nor marked intentional)</td><td>whether review is signal or noise</td></tr><tr><td>Spend against estimate, per stage</td><td>whether budgets can be trusted</td></tr><tr><td>Tests confirmed failing first; generated tests kept and removed</td><td>whether tests prove the change</td></tr></tbody></table></div>
+    <div class="doc-table"><table><thead><tr><th>Measure</th><th>Why</th></tr></thead><tbody><tr><td>Owner touches per run, and time to the first touch</td><td>whether &quot;decide twice&quot; is still true</td></tr><tr><td>Gate catches, by gate</td><td>which checks earn their cost</td></tr><tr><td>Escaped defects</td><td>what the gates missed</td></tr><tr><td>Review precision (findings neither rejected nor marked intentional)</td><td>whether review is signal or noise</td></tr><tr><td>Spend against estimate, per stage</td><td>whether budgets can be trusted</td></tr><tr><td>Tests confirmed failing first; generated tests kept and removed</td><td>whether tests prove the change</td></tr></tbody></table></div>
     <p><strong>Adopting it (a path, not yet walked by a team):</strong></p>
     <ol><li><strong>One person, one repo, one slice.</strong> Install the pack, write an intent, approve a Charter, read the end review. Measure owner touches.</li><li><strong>Declare bars before widening.</strong> Pick the measures above and their targets before the second repo, not after.</li><li><strong>Existing codebases start read-only.</strong> Review mode reports risk and changes nothing (planned, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/REVIEW_MODE_PLAN.md"><code>docs/REVIEW_MODE_PLAN.md</code></a>).</li><li><strong>Then a team.</strong> Shared gates, a run inventory across developers and an audit export are roadmap, not shipped.</li></ol>
     <p>Detail: <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/PIPELINE_ANALYTICS.md"><code>docs/PIPELINE_ANALYTICS.md</code></a>, <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md"><code>docs/VALIDATION_MATRIX.md</code></a>.</p>
     <h2 id="what-this-playbook-is-not">What this playbook is not</h2>
-    <ul><li><strong>Not a certification.</strong> It records and reviews; it does not certify the absence of</li></ul>
-    <p>bugs or compliance with any standard.</p>
-    <ul><li><strong>Not proven at team scale.</strong> The evidence is three small apps run by one person</li></ul>
-    <p>(<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md"><code>docs/VALIDATION_MATRIX.md</code></a>).</p>
-    <ul><li><strong>Not tied to one vendor's agent in principle,</strong> but built and tested in Claude Code</li></ul>
-    <p>only. Aveto is independent and is not affiliated with or endorsed by Anthropic.</p>
+    <ul><li><strong>Not a certification.</strong> It records and reviews; it does not certify the absence of bugs or compliance with any standard.</li><li><strong>Not proven at team scale.</strong> The evidence is three small apps run by one person (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md"><code>docs/VALIDATION_MATRIX.md</code></a>).</li><li><strong>Not tied to one vendor's agent in principle,</strong> but built and tested in Claude Code only. Aveto is independent and is not affiliated with or endorsed by Anthropic.</li></ul>
     <h2 id="where-it-comes-from">Where it comes from</h2>
     <p>Aveto's own runs and failures (<a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/LESSONS.md"><code>docs/LESSONS.md</code></a>), and published guidance read against them: Anthropic's <em>Building effective agents</em> and its course on the AI-native SDLC, OpenAI's <em>Building an AI-Native Engineering Team</em> (delegate, review, own), Google's report on internal code migrations, and Meta's work on filtering generated tests.</p>
     <p><a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/PLAYBOOK.md">Read this page on GitHub</a>, where every linked document lives.</p>
@@ -977,6 +976,7 @@
   </footer>
 
 </div>
+<a class="to-top" href="#top" aria-label="Back to the top of the page">&uarr; Top</a>
 
 </body>
 </html>

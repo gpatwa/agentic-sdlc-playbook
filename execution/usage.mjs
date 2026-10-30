@@ -245,7 +245,9 @@ if (isMain) {
               "peakContext is the last request's context size; processed is the sum over every request.",
         weights: WEIGHTS,
         generatedAt: new Date().toISOString(),
+        // runsDir is an absolute path on this machine; the file is committed to a public repo.
         ...r,
+        spawns: r.spawns.map(({ runsDir, ...rest }) => rest),
       }, null, 2) + "\n");
     }
   }

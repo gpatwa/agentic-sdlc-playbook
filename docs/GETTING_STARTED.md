@@ -49,11 +49,13 @@ narrative account of what each run proved and what it didn't.
 
 ## What it costs
 
-Real numbers, not an estimate: **~756k tokens per slice on average**
-(520k–947k observed range), dominated by turn count, not output length. A
-slice needing more than 6 stages or ~600k tokens is a sizing signal, not a
-target — see `execution/pack/protocols/RUN_ECONOMICS.md` for the per-stage
-baselines and the budget-check discipline. This is spend an Orchestrator
+Measured from the harness's own logs (`execution/usage.mjs`): the recorded runs processed
+**0.6M to 47M tokens each** across their subagent stages, mostly cache reads, and one request's
+context in a stage held about 10k to 350k tokens. The figure this page used to give
+(~756k per slice) was a sum of peak context sizes and understated what a run handles. None of
+these is a bill, and the Orchestrator's own turns are not counted. A slice needing more than 6
+stages is a sizing signal, not a target; see `execution/pack/protocols/RUN_ECONOMICS.md` for the
+per-stage baselines and the budget-check discipline. This is spend an Orchestrator
 checks *before* every spawn, never reconciled after.
 
 ## Two ways to run it

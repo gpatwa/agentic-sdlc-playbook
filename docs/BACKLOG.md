@@ -665,7 +665,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
     70k–130k tokens" a stage and "a full greenfield build measured 947k" —
     true as peak context, but the build processed 11.6M (3.7M weighted), so
     the one section whose job is not to understate anything does, by 4–12×.
-    Not yet changed: it needs a decision on which number to publish. (2) The
+    *Changed 2026-10-29:* the playbook page, the home page's Limits section and `docs/GETTING_STARTED.md` now state the processed range (0.6M to 47M tokens per recorded run, subagent stages only, not a bill) and label peak context as peak context. (2) The
     **"~868k" that triggered RUN_ECONOMICS** is the same kind of figure
     (peak-context sum), so the budget gate has always been a control on
     context pressure, not on window consumption; it is still internally

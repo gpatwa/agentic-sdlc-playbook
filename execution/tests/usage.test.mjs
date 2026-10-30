@@ -168,6 +168,8 @@ describe("CLI", () => {
     assert.equal(u.schema, "aveto/usage@1");
     assert.equal(u.source, "harness-log");
     assert.equal(u.totals.measuredSpawns, 1);
+    assert.equal(JSON.stringify(u).includes(f.root), false, "no local absolute path in a file meant for a public repo");
+    assert.equal("runsDir" in u.spawns[0], false);
     assert.equal(readFileSync(trace, "utf8"), '{"untouched":true}\n');
     assert.equal(existsSync(join(f.repo, "runs", "beta", "usage.json")), false);
   });

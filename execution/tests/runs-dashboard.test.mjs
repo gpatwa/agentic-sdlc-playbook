@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { tokens, parseState, parseEndReview, parseEvents, collect, render } from "../runs-dashboard.mjs";
+import { tokens, parseState, parseEndReview, parseEvents, parseUsage, collect, render } from "../runs-dashboard.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cli = join(here, "..", "runs-dashboard.mjs");
@@ -127,5 +127,51 @@ describe("command line", () => {
     assert.match(execFileSync("cat", [out], { encoding: "utf8" }), /Every run, read from its own records/);
     assert.throws(() => execFileSync("node", [cli, root], { stdio: "pipe" }), /usage/);
     rmSync(root, { recursive: true, force: true });
+  });
+});
+
+describe("usage by role", () => {
+  const spawn = (role, processed, extra = {}) => ({ role, generic: false, measured: { requests: 4, processed, inputEquivalents: processed / 2 }, ...extra });
+  const usage = (spawns) => JSON.stringify({ schema: "aveto/usage@1", totals: { spawns: spawns.length, measuredSpawns: spawns.filter((x) => x.measured).length, processed: 0, inputEquivalents: 0 }, spawns });
+
+  test("per-role totals add stages, requests and tokens; unmeasured spawns are skipped", () => {
+    const u = parseUsage(usage([spawn("qa-evidence", 1000), spawn("qa-evidence", 500), spawn("sre", 200), { role: "x", generic: false, measured: null }]));
+    assert.deepEqual(u.roles["qa-evidence"], { stages: 2, requests: 8, processed: 1500, inEquiv: 750 });
+    assert.equal(u.roles.x, undefined);
+  });
+  test("a generic agent is not credited to a role it did not enforce", () => {
+    const u = parseUsage(usage([spawn("architect", 100, { generic: true })]));
+    assert.deepEqual(Object.keys(u.roles), ["generic agent (role not enforced)"]);
+  });
+  test("a file that is not usage@1 is ignored, not guessed at", () => {
+    assert.equal(parseUsage("not json"), null);
+    assert.equal(parseUsage(JSON.stringify({ schema: "other", spawns: [] })), null);
+    assert.equal(parseUsage(null), null);
+  });
+  test("the page shows the by-role table with the Orchestrator caveat, and omits it when no run has usage", () => {
+    const withU = fixture({ a: { ...done, "usage.json": usage([spawn("qa-evidence", 3_000_000)]) }, b: { ...done } });
+    const html = render(collect(withU), { repo: "o/r", sha: SHA, now: NOW });
+    assert.match(html, /Where the tokens went, by role/);
+    assert.match(html, /qa-evidence/);
+    assert.match(html, /Orchestrator&rsquo;s own turns are not included/);
+    assert.match(html, /for 1 of 2 runs/);
+    assert.doesNotMatch(html, /<script/i);
+    const none = render(collect(fixture({ a: { ...done } })), { repo: "o/r", sha: SHA, now: NOW });
+    assert.doesNotMatch(none, /Where the tokens went/);
+  });
+  test("a role name from a record cannot become markup", () => {
+    const html = render(collect(fixture({ a: { ...done, "usage.json": usage([spawn("<img src=x onerror=1>", 10)]) } })), { repo: "o/r", sha: SHA, now: NOW });
+    assert.doesNotMatch(html, /<img src=x/);
+  });
+});
+
+describe("navigation", () => {
+  test("the page links back to the site and to its sections, with no script", () => {
+    const html = render(collect(fixture({ a: { ...done } })), { repo: "o/r", sha: SHA, now: NOW });
+    assert.match(html, /<nav class="site-nav" aria-label="Site">/);
+    assert.match(html, /<a class="skip" href="#main">/);
+    assert.match(html, /<a href="\/runs" aria-current="page">Runs<\/a>/);
+    for (const href of ['href="/"', 'href="/#how"', 'href="/#limits"', 'href="/#evidence-runs"', 'href="/playbook"']) assert.ok(html.includes(href), href);
+    assert.doesNotMatch(html, /<script/i);
   });
 });

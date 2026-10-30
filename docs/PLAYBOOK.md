@@ -1,6 +1,6 @@
 # The engineering playbook for AI coding agents
 
-> **Published 2026-10-20 at [aveto.dev/playbook](https://aveto.dev/playbook).** One entry
+> **Published 2026-10-20 at [aveto.dev/playbook](https://aveto.dev/playbook); revised 2026-10-29.** One entry
 > point to how Aveto runs software work with AI coding agents. Each part is short and
 > links to the document that holds the detail; nothing here overrides those documents.
 > Where something is planned rather than built, it says so.
@@ -32,7 +32,7 @@ Not all work suits an agent equally. Decide per task, before the run.
 | Delegate to the agent | Agent works, human checks closely | Keep with the human |
 |---|---|---|
 | Well-specified features with clear "done means" lines | New abstractions or architecture | Product direction: what to build, and why |
-| Tests, including edge cases from the spec | Ambiguous requirements (clarify first; an intent with open questions does not start) | What ships to production (the merge) |
+| Tests, including edge cases from the spec | Ambiguous requirements (clarify first; an intent with open questions does not start) | What ships to production (the merge; the exception is tier 1 under a standing Charter, see parts 4 and 5) |
 | Refactors and migrations with a test suite around them | Security-sensitive code (auth, permissions, payments, PII) | Sending anything on a user's behalf |
 | Docs, release notes, diagrams from the code | Novel incidents and low-confidence root causes | Accepting risk: a lower review depth, a new data processor, a model in a deterministic path |
 | First-pass code review, triage, log reading | Data and AI evals (the bar must be fixed before the run) | Commercial and legal commitments |
@@ -79,8 +79,12 @@ Post-launch learning.**
   refactor; **tier 2** behaviour change with no external effect; **tier 3** anything
   with an external effect.
 - A run ends in a pull request. Merge, deploy and send are separate, named actions.
+  The one exception: under a standing Charter (part 5), a tier 1 pull request merges
+  itself only when all six conditions hold: release tier 1, review tier Low, every gate
+  passed, no open Important finding, CI green, and the Charter allows it. Anything else
+  waits for the owner.
 
-Detail: `docs/AGENTIC_SDLC.md`, `docs/RELEASE_GATES.md`.
+Detail: `docs/AGENTIC_SDLC.md`, `docs/RELEASE_GATES.md`, `docs/PROCESS_V3_PLAN.md` (3.4).
 
 ## 5. Human approval
 
@@ -100,7 +104,11 @@ processor or data commitment.
 4. Each action cites the Charter line that covers it. Anything not named stops the run.
 5. At the end, `END_REVIEW.md` opens with **Blocked on me, Changed, Found**.
 
-Detail: `docs/HUMAN_APPROVAL_RULES.md`, `templates/CHARTER_TEMPLATE.md`.
+**Standing Charters (built in pack v27):** for routine work the owner approves a class of
+work once, with an expiry, a run cap and a weekly budget, and can revoke it by deleting one
+file. A plan that does not fit the class waits for the owner.
+
+Detail: `docs/HUMAN_APPROVAL_RULES.md`, `templates/CHARTER_TEMPLATE.md`, `docs/PROCESS_V3_PLAN.md`.
 
 ## 6. Context: what the agent reads
 
@@ -143,10 +151,12 @@ Detail: `docs/CODE_REVIEW.md`, `docs/review-evals/`, `agents/qa-evidence.md`.
 - Hostile input is reviewed adversarially when the slice handles untrusted text.
 - **Agents never handle credentials.** A step that needs one stops the run.
 - Every data processor is named in the Charter with exactly what it may receive.
-- **Built, not yet used in a run:** a tamper-evident event log of every tool call and the role
-  that made it, and read-deny rules for secret file paths (`docs/AGENT_SECURITY_PLAN.md`).
-  The log shows an edited or deleted line afterwards; it does not prevent one. The deny rules
-  cover Claude Code's file tools, not a shell command.
+- **Built, and used in recent runs:** a tamper-evident event log of every tool call and the role
+  that made it; each run's result is shown on [aveto.dev/runs](https://aveto.dev/runs). The log
+  shows an edited or deleted line afterwards; it does not prevent one.
+- **Built, not yet proven live:** read-deny rules for secret file paths (`docs/AGENT_SECURITY_PLAN.md`).
+  They cover Claude Code's file tools, not a shell command; the live check that a shell role
+  cannot read a planted credential has not been run.
 - **Planned, not built:** scoping the shell roles with an operating-system sandbox, and
   excluding secret paths from review mode's reads with a test that proves it
   (`docs/AGENT_SECURITY_PLAN.md` A5, `docs/REVIEW_MODE_PLAN.md` M3b).
@@ -159,15 +169,19 @@ Detail: `agents/security-privacy.md`, `docs/HUMAN_APPROVAL_RULES.md` rules 4 to 
 
 - Each stage has an estimate; a hook checks `spent + estimate ≤ budget` **before** the
   step. Over budget means degrade, drop or stop, never raise the budget to fit.
-- The Charter sets a plan total, a ceiling (notice) and a hard cap (stop).
+- The Charter sets a plan total, a ceiling (notice) and a hard cap (stop). If the owner gives
+  one number, it is the hard cap.
 - Model and effort are pinned per role in the Charter.
 - Runs checkpoint at every stage, so a run that hits a usage limit resumes where it
   stopped.
-- **Measured so far:** a slice runs four to ten stages at roughly 70k to 130k tokens
-  each; one full greenfield build measured 947k. Review stages have run 1.5 to 3 times
-  their estimates.
+- **Measured so far:** one request's context in a stage was about 10k to 350k tokens, but a
+  stage makes many requests, so a run handles far more. Thirteen recorded runs (2 to 31
+  stages each) processed 0.6M to 47M tokens apiece, and one first-app build processed 11.6M
+  (3.7M weighted by price). Most of it is cache reads. The figures cover subagent stages
+  only, not the Orchestrator's own turns, and none is a bill. Review stages have run 1.5 to 3
+  times their estimates. Per-role figures are on [aveto.dev/runs](https://aveto.dev/runs).
 
-Detail: `execution/pack/protocols/RUN_ECONOMICS.md`, `execution/hooks/budget-guard.mjs`.
+Detail: `execution/pack/protocols/RUN_ECONOMICS.md`, `execution/hooks/budget-guard.mjs`, `execution/usage.mjs`.
 
 ## 10. Measurement and adoption
 
