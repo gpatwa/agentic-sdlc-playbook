@@ -3,12 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="An AI-native SDLC you can install: 28 specialist agents covering plan, design, build, test, deploy and maintain — running on your Claude Code subscription, not an API bill.">
-<meta property="og:title" content="Aveto">
+<meta name="description" content="An AI-native SDLC you can install: 28 specialist agents from plan to reviewed pull request, with one Charter approved at the start and a record of every decision. Builds on your Claude Code plan.">
+<meta property="og:title" content="Aveto — the AI-native SDLC you can install">
 <meta property="og:description" content="Move beyond supervising agents to reviewing outcomes. Agentic engineering you can verify.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://aveto.dev/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://aveto.dev/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Aveto: Move beyond supervising agents to reviewing outcomes. From spec to reviewed pull request, with the record.">
+<meta name="twitter:image" content="https://aveto.dev/assets/og.png">
 <link rel="canonical" href="https://aveto.dev/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23A87515' stroke-width='4'/%3E%3Ccircle cx='22' cy='10' r='4' fill='%23A87515'/%3E%3C/svg%3E">
 <title>Aveto — the AI-native SDLC you can install</title>
@@ -166,7 +171,7 @@
   .btn-primary { background-color: var(--ink); color: var(--ground); }
   .btn-primary:hover { background-color: var(--gold); color: #14161A; }
   .btn-ghost { border-color: var(--rule-strong); color: var(--ink); }
-  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold-text); }
   a:focus-visible, .btn:focus-visible, details summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
   /* ---------- hero ---------- */
@@ -283,6 +288,12 @@
   }
   @media (prefers-reduced-motion: reduce) { .flow li { animation: none; } }
 
+  .holds { display: grid; gap: 0; margin-top: 26px; border-top: 1px solid var(--rule); }
+  .hold { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 18px; padding: 22px 0; border-bottom: 1px solid var(--rule); }
+  .hold-mark { font-family: var(--f-mono); font-size: .8rem; color: var(--gold-text); padding-top: 4px; }
+  .hold h3 { margin: 0 0 8px; font-family: var(--f-display); font-size: 1.12rem; line-height: 1.3; }
+  .hold p { margin: 0; color: var(--ink-soft); max-width: 72ch; }
+
   /* ---------- what it runs on ---------- */
   .runs-tbl { border: 1px solid var(--rule); border-radius: 14px; background-color: var(--surface); overflow: hidden; margin-top: 26px; }
   .runs-tr { display: grid; grid-template-columns: 1.1fr 1.5fr 1.6fr; gap: 18px; padding: 16px 20px; border-bottom: 1px solid var(--rule); align-items: start; }
@@ -361,7 +372,7 @@
     flex: none;
   }
 
-  .phase h3 {
+  .phase .phase-name {
     font-family: var(--f-display);
     font-size: 1.02rem;
     font-weight: 600;
@@ -1011,17 +1022,17 @@
       </div>
       <div class="rail">
         <div class="phase covered">
-          <div class="phase-top"><span class="phase-dot"></span><h3>Build</h3></div>
+          <div class="phase-top"><span class="phase-dot"></span><div class="phase-name">Build</div></div>
           <p>Intake, scope, architecture, implementation, independent QA and security review.</p>
           <div class="gates"><span class="gate">refusal at intake</span><span class="gate">independent verify</span></div>
         </div>
         <div class="phase covered">
-          <div class="phase-top"><span class="phase-dot"></span><h3>Deploy</h3></div>
+          <div class="phase-top"><span class="phase-dot"></span><div class="phase-name">Deploy</div></div>
           <p>Plan, validate, then deploy to Azure, AWS or GCP — validation never self-certified.</p>
           <div class="gates"><span class="gate">separation of duties</span><span class="gate">named sign-off</span></div>
         </div>
         <div class="phase covered">
-          <div class="phase-top"><span class="phase-dot"></span><h3>Run</h3></div>
+          <div class="phase-top"><span class="phase-dot"></span><div class="phase-name">Run</div></div>
           <p>Production verification, auto-rollback on regression, on-call and customer response.</p>
           <div class="gates"><span class="gate">rollback pre-approved</span><span class="gate">draft, never send</span></div>
         </div>
@@ -1037,35 +1048,35 @@
       <div class="hold">
         <div class="hold-mark">01</div>
         <div>
-          <h4>Turn one paragraph into a working service.</h4>
+          <h3>Turn one paragraph into a working service.</h3>
           <p>StreakKeeper was built from a one-paragraph brief, from discovery through a tested, shipped service, with every stage independently reviewed. <strong>Shown once.</strong> One small app.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">02</div>
         <div>
-          <h4>Add a feature and get it back reviewed, tested and security-checked.</h4>
+          <h3>Add a feature and get it back reviewed, tested and security-checked.</h3>
           <p>Every run ends in a pull request after independent QA, a security pass and a release gate. Seven traced slices across two apps, and nine more on a third built in public. <strong>Shown repeatedly.</strong> The merge stays yours.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">03</div>
         <div>
-          <h4>Ship an AI feature with the bar set before the test.</h4>
+          <h3>Ship an AI feature with the bar set before the test.</h3>
           <p>Our own support agent&rsquo;s judge refused 24 of 24 questions the docs do not answer and kept 16 of 19 that they do, on a set it had never seen. Four earlier checks failed and are on the record. It now runs as a live public service: scored once on 20 new questions it refused all 10 it should and kept 8 of 10 answerable. <strong>Shown twice, narrowly:</strong> both second bars were passed with no margin (by one question, then exactly at the bar).</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">04</div>
         <div>
-          <h4>Stop watching the agent.</h4>
+          <h3>Stop watching the agent.</h3>
           <p>You approve one Charter by its hash, get a notice at each stage, and review at the end. Nothing outside the Charter happens without asking. <strong>Shown twice.</strong> A person still starts each run.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">05</div>
         <div>
-          <h4>Find the risk in a codebase you did not build.</h4>
+          <h3>Find the risk in a codebase you did not build.</h3>
           <p>Review mode reads and reports and changes nothing, with its success bars declared before any run. <strong>Planned, not built.</strong></p>
         </div>
       </div>
@@ -1439,35 +1450,35 @@
       <div class="hold">
         <div class="hold-mark">01</div>
         <div>
-          <h4>It spends real tokens.</h4>
+          <h3>It spends real tokens.</h3>
           <p>A slice runs four to ten stages at roughly 70k&ndash;130k tokens each; a full greenfield build measured 947k. That is the price of every stage forming its own independent judgement &mdash; and exactly why the pipeline checks a budget <em>before</em> each step rather than reporting the damage after.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">02</div>
         <div>
-          <h4>Small changes do not need this.</h4>
+          <h3>Small changes do not need this.</h3>
           <p>Running a one-line fix through nine gated stages is theatre. The Engineering Manager compresses the pipeline for small slices and records why. Reach for the full chain where being wrong is expensive, not by default.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">03</div>
         <div>
-          <h4>Least-privilege binds conditionally.</h4>
+          <h3>Least-privilege binds conditionally.</h3>
           <p>Per-role tool restrictions are generated correctly, but only take effect when the orchestrator session runs inside the product repo. Run it from elsewhere and you get capable agents with unrestricted tools. Documented rather than buried.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">04</div>
         <div>
-          <h4>Not yet proven.</h4>
+          <h3>Not yet proven.</h3>
           <p>Production SLOs, enterprise multi-tenancy, and a real model running unattended at scale. What has now run: real deploys of the support service to Azure, in two Charter runs (the Orchestrator ran the commands, because the deploy role has no shell), a live smoke test, and a production-verification stage that read the saved results. A real model decides, one question at a time, inside that live public feature, behind a $10 monthly limit. Each open item is listed in the validation matrix &mdash; none are claimed here.</p>
         </div>
       </div>
       <div class="hold">
         <div class="hold-mark">05</div>
         <div>
-          <h4>The newest evidence is small.</h4>
+          <h3>The newest evidence is small.</h3>
           <p>Process v2 has four runs behind it, one tiny and three real, and each needed the owner for something beyond the first Charter approval: a message, a credential step, a permission prompt or a usage limit. Both of the judge&rsquo;s gates were passed with no margin (by one question, then exactly at the bar), and retrieval itself finds the right file for 79.2% of answerable questions, just under its own bar. The service uses Anthropic&rsquo;s API under its commercial terms, which incorporate a data-processing addendum by reference; no agent read that text, and the page asks visitors not to enter personal information. Its spend limits reset when the service restarts, so the $10 monthly limit is the only lasting cap. A person still starts each run and decides the merge. Review mode for an existing codebase is planned, not built.</p>
         </div>
       </div>
