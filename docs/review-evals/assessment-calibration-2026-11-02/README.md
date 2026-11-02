@@ -14,6 +14,8 @@ reviewing blind, scored by `execution/assess-calibrate.mjs`. **It is indicative,
 | Generality (3 repos, different stacks, one not ours) | one repo (Python, 3,837 lines in scope, ours) | **not met** |
 | Confidentiality | secret-path exclusion and hold-back tested (`execution/tests`); no live proof that the permission rules hold in a Claude Code session | tests only |
 
+**Second reviewer.** Codex ran the same six seeds blind and found 4 of 6; see `codex/README.md` for the conditions, the score and the judgments of its seven unmatched findings.
+
 ## How it was run
 1. Base: `hr-timeoff-agent` (the fix branch of PR 39), 3,837 lines of Python in four folders.
 2. **Seeder** (a general-purpose agent, fresh): planted six one-to-few-line bugs, each of a different class, wrote `seeds.json` outside the repo.

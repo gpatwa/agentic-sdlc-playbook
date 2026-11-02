@@ -1,0 +1,7 @@
+You are doing a read-only code review of the Python repository in the current directory (hr_timeoff_agent: an HR time-off agent with policy rules, a web app, an A2A payroll agent, OIDC sign-in, SQLite storage and an MCP tool server).
+
+Find real bugs: authorization and tenant-isolation gaps, injection, authentication and token handling, error handling that fails open, concurrency, and logic errors (off-by-one, wrong comparison). Read the code under hr_timeoff_agent/ carefully; do not rely on comments or docstrings being true. Do not modify any file. Do not run the network.
+
+For every finding, output one line in exactly this form, most severe first:
+| id | P0|P1|P2|P3 | path/to/file.py:LINE | what is wrong and how it can be exploited or break | evidence: the exact code |
+Only report issues you have confirmed in the code. End with a one-line count.
