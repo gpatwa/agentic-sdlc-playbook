@@ -140,6 +140,7 @@ Ids are \`F-<area>-<n>\`. Severity is P0, P1, P2, P3 or note. **Disposition star
 export function writeRecords(plan, map, outDir) {
   mkdirSync(join(outDir, "areas"), { recursive: true });
   writeFileSync(join(outDir, "AREAS.md"), renderAreas(plan, map));
+  writeFileSync(join(outDir, "plan.json"), JSON.stringify({ sha: map.sha, repo: map.repo, date: map.date, ...plan }, null, 2) + "\n");
   for (const a of plan.areas.filter((x) => x.status === "planned")) writeFileSync(join(outDir, "areas", `${a.slug}.md`), renderAreaPrompt(a, map));
   if (!existsSync(join(outDir, "FINDINGS.md"))) writeFileSync(join(outDir, "FINDINGS.md"), FINDINGS_HEADER);
 }

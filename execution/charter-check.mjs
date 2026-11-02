@@ -88,6 +88,10 @@ export function checkCharter(text, planText = null, agentsDir = undefined) {
     if (n === 6 && !/\|\s*C6\.P\s*\|/.test(s.body)) errors.push("section 6 has no C6.P row: say how no app permission prompt will interrupt the run (allow rules or the permission mode)");
   }
 
+  // An assessment Charter (templates/REVIEW_CHARTER_TEMPLATE.md) is for code the owner did not write and Aveto did not build:
+  // it must say what data that code is. Without the line, nobody has decided where the code may go.
+  if (/^# Charter: assess-/m.test(text) && !/\*\*C4\.D[^*]*\*\*/.test(text)) errors.push("an assessment Charter needs a C4.D line: the data classification of the code reviewed");
+
   // C8.4 must be exactly review or skip.
   const c84 = text.match(/\*\*C8\.4[^*]*\*\*\s*:?\s*([^\n(]*)/);
   if (!c84) errors.push("section 8 has no C8.4 line (human review of a Low-risk change: review or skip)");
@@ -97,7 +101,7 @@ export function checkCharter(text, planText = null, agentsDir = undefined) {
   const body = text.replace(/^>.*$/gm, "");
   const ph = body.match(/<[^>\n]{1,80}>/g);
   if (ph) errors.push(`placeholder(s) left: ${[...new Set(ph)].slice(0, 5).join(", ")}`);
-  for (const m of body.matchAll(/^\s*-\s*\*\*(C\d+\.\d+)[^*]*\*\*\s*:?\s*$/gm)) errors.push(`${m[1]} has no value`);
+  for (const m of body.matchAll(/^\s*-\s*\*\*(C\d+\.[A-Za-z0-9]+)[^*]*\*\*\s*:?\s*$/gm)) errors.push(`${m[1]} has no value`);
 
   // C6.P must write to the gitignored local settings file, not the tracked one.
   const p6 = (sections.get(6)?.body || "").split("\n").find((l) => /\|\s*C6\.P\s*\|/.test(l)) || "";

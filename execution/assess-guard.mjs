@@ -15,7 +15,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync, appendFileSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { denyReason, READ_DENY_GLOBS } from "./repo-map.mjs";
 
@@ -37,7 +37,7 @@ export function prepare(repoDir, scratchDir) {
   if (!existsSync(join(repo, ".git"))) throw new Error(`${repo} is not a git repository`);
   const sha = git(repo, ["rev-parse", "HEAD"]).trim();
   const before = { head: sha, status: git(repo, ["status", "--porcelain", "--untracked-files=all"]) };
-  const clone = join(scratch, "copy");
+  const clone = join(scratch, basename(repo)); // named for the repo, so the map and the report carry its name
   if (existsSync(clone)) throw new Error(`${clone} already exists: use a new scratch directory`);
   mkdirSync(scratch, { recursive: true });
   execFileSync("git", ["clone", "-q", "--no-hardlinks", repo, clone], { stdio: "pipe" });

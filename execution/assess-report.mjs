@@ -1,0 +1,131 @@
+#!/usr/bin/env node
+// assess-report.mjs — turns the records of an assessment into reviews/REPORT.md (docs/REVIEW_MODE_PLAN.md, M5). No model.
+//
+//   node assess-report.mjs <records-dir> --reviewers "<name>:<family>[,...]" [--guard <guard.json>] [--date YYYY-MM-DD] [--allow-unverified]
+//
+// <records-dir> holds what repo-map.mjs, assess-plan.mjs and the reviewers wrote: map.json, plan.json, FINDINGS.md.
+// The report is the same words every time for the same records. It will not be written:
+//   - if --guard is given and the read-only check fails (the target moved, or the review copy differs), unless --allow-unverified,
+//     which puts the failure at the top of the report;
+//   - if its own text matches a secret pattern (the reviewers' evidence may have quoted one).
+// It never says "secure", "compliant" or "certified" about the code.
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import { verify } from "./assess-guard.mjs";
+import { secretHits } from "./assess-plan.mjs";
+
+const SEV = ["P0", "P1", "P2", "P3", "note"];
+const fmt = (n) => Number(n).toLocaleString("en-US");
+
+// A markdown table row split on unescaped pipes.
+const cells = (line) => line.replace(/^\s*\||\|\s*$/g, "").split(/(?<!\\)\|/).map((c) => c.trim().replace(/\\\|/g, "|"));
+
+export function parseFindings(md) {
+  const rows = [];
+  for (const line of md.split("\n")) {
+    if (!line.startsWith("|")) continue;
+    const c = cells(line);
+    if (c.length < 7 || !/^F-[\w-]+$/.test(c[0])) continue;
+    rows.push({ id: c[0], severity: c[1], where: c[2], finding: c[3], evidence: c[4], reviewer: c[5], disposition: c[6] });
+  }
+  return rows;
+}
+
+export const hasFileAndLine = (w) => /\S+:\d+/.test(w);
+
+export function renderReport({ map, plan, findings, reviewers, guard, date, unverified }) {
+  const g = map.governance;
+  const families = new Set(reviewers.map((r) => r.family));
+  const valid = findings.filter((f) => hasFileAndLine(f.where));
+  const dropped = findings.filter((f) => !hasFileAndLine(f.where));
+  const bySev = (sev) => valid.filter((f) => f.severity === sev);
+  const tiers = new Map();
+  for (const f of map.files.filter((x) => x.status === "review")) { const e = tiers.get(f.tier) ?? { files: 0, tokens: 0 }; e.files++; e.tokens += f.tokens; tiers.set(f.tier, e); }
+  const high = map.files.filter((f) => f.status === "review" && f.tier === "high");
+  const notReviewed = plan.areas.filter((a) => a.status === "not reviewed");
+  const L = [];
+  if (unverified) L.push(`> **WARNING: the read-only check FAILED or was skipped.** ${unverified} Do not rely on this report until it passes.`, "");
+  L.push(`# Assessment report: ${map.repo}`, "",
+    `**Assessed against Aveto's gates on ${date}. This is an assessment, not a certification.** It records what the reviewers found in the parts listed below. It does not say the code is secure or compliant, and a finding's absence is not evidence of safety.`, "",
+    table(["", ""], [
+      ["Commit", `\`${map.sha}\``], ["Reviewers", reviewers.map((r) => `${r.name} (${r.family})`).join(", ") || "none recorded"],
+      ["Independent second reviewer", families.size >= 2 ? `yes (${[...families].join(", ")})` : "**no**: one model family reviewed this. Treat it as a first pass."],
+      ["Built under Aveto", g.governed ? `yes: ${g.charters} Charter record(s), ${g.runs} run folder(s)` : "no records found"],
+      ["Read-only check", guard ? (unverified ? "FAILED" : "passed: the target's HEAD and working tree were unchanged, and the review copy differed from the commit only by the recorded removals") : "not run"],
+      ["Source reviewed", `about ${fmt(plan.usedTokens)} of ${fmt(plan.usedTokens + notReviewed.reduce((s, a) => s + a.tokens, 0) + plan.oversize.reduce((s, f) => s + f.tokens, 0))} reviewable tokens (estimate: bytes / 4)`],
+    ]), "");
+  L.push("## Summary", "");
+  const counts = SEV.map((s) => `${bySev(s).length} ${s}`).join(", ");
+  L.push(valid.length ? `${valid.length} finding(s): ${counts}. ${valid.filter((f) => f.disposition === "open").length} are still open; the owner sets each disposition.` : "No findings were recorded.", "");
+  if (dropped.length) L.push(`${dropped.length} recorded item(s) had no file and line and are not counted: ${dropped.map((f) => f.id).join(", ")}.`, "");
+  L.push("## Risk map", "", table(["Tier", "Files", "Approx. tokens"], ["high", "medium", "low"].filter((t) => tiers.has(t)).map((t) => [t, fmt(tiers.get(t).files), fmt(tiers.get(t).tokens)])), "");
+  L.push(high.length ? `High-risk files (${high.length}): ${high.slice(0, 25).map((f) => `\`${f.path}\``).join(", ")}${high.length > 25 ? `, and ${high.length - 25} more (see \`map.json\`)` : ""}.` : "No high-risk files matched.", "");
+  L.push("## Findings", "");
+  for (const sev of SEV) {
+    const list = bySev(sev);
+    if (!list.length) continue;
+    L.push(`### ${sev}`, "");
+    for (const f of list) L.push(`**${f.id}** · \`${f.where}\` · ${f.reviewer} · ${f.disposition}`, "", f.finding, "", `*Evidence:* ${f.evidence || "none given"}`, "");
+  }
+  if (!valid.length) L.push("None recorded.", "");
+  L.push("## What was not reviewed, and why", "");
+  const nr = [];
+  for (const a of notReviewed) nr.push(`- Area \`${a.dir}\` (${a.tier}, about ${fmt(a.tokens)} tokens): ${a.reason}.`);
+  for (const f of plan.oversize) nr.push(`- \`${f.path}\` (about ${fmt(f.tokens)} tokens): too large for one pass.`);
+  for (const h of plan.held) nr.push(`- \`${h.path}\`: held back for a possible secret (${h.patterns.join(", ")}); the owner decides.`);
+  if (plan.outOfScope) nr.push(`- ${plan.outOfScope} file(s) outside the requested scope.`);
+  if (plan.excluded) nr.push(`- ${plan.excluded} file(s) on the secret-path list, never read.`);
+  if (plan.skipped) nr.push(`- ${plan.skipped} file(s) vendored, binary, lock or minified.`);
+  L.push(nr.length ? nr.join("\n") : "Everything reviewable was in a planned area.", "");
+  L.push("## Tests and CI", "");
+  const cmds = map.commands.filter((c) => c.kind !== "ci");
+  L.push(cmds.length ? `Commands detected from manifests: ${cmds.map((c) => `${c.kind} \`${c.command.replace(/\s+#.*$/, "")}\``).join("; ")}. **They were not run by this assessment.**` : "**No tests found.** No test, lint or build command was detected from the manifests.", "");
+  L.push(map.ci.length ? `CI files: ${map.ci.map((c) => `\`${c}\``).join(", ")}.` : "No CI files found.", "");
+  L.push("## Proposed backlog", "", "Nothing below has been done. Each item is an intent the owner can turn into a Charter; none changes anything until the owner picks it.", "");
+  const fix = valid.filter((f) => ["P0", "P1"].includes(f.severity));
+  if (fix.length) {
+    for (const f of fix) L.push(`- **Intent (${f.id}, ${f.severity}):** Fix the issue at \`${f.where}\`: ${f.finding.replace(/\.$/, "")}. *Done when:* a test that fails on the current code passes after the change, and the area is re-assessed with this finding closed. *Non-goals:* other findings.`);
+  } else L.push("No P0 or P1 finding to file.");
+  const defer = valid.filter((f) => !["P0", "P1"].includes(f.severity));
+  if (defer.length) L.push("", "**Recorded and deferred** (below P1; filing them is the owner's call):", ...defer.map((f) => `- ${f.id} (${f.severity}) \`${f.where}\`: ${f.finding.replace(/\.$/, "")}.`));
+  L.push("", "## Method and limits", "",
+    "- Files were mapped and tiered by a script from names, manifests and git history; reviewers read areas in order of risk until the cap.",
+    "- Reviewers worked in a copy with write tools, pushes and secret reads denied; the read-only check above is the evidence, not the instruction.",
+    "- Findings are from reading. None was reproduced unless its evidence says so.",
+    "- Recall and precision of this reviewer are reported in the calibration record, not here; a repo's report is only as good as that record.", "");
+  return L.join("\n");
+}
+const table = (head, rows) => [`| ${head.join(" | ")} |`, `|${head.map(() => "---").join("|")}|`, ...rows.map((r) => `| ${r.join(" | ")} |`)].join("\n");
+
+export function buildReport(dir, { reviewers, guardPath, date, allowUnverified = false }) {
+  const map = JSON.parse(readFileSync(join(dir, "map.json"), "utf8"));
+  const plan = JSON.parse(readFileSync(join(dir, "plan.json"), "utf8"));
+  const findings = parseFindings(readFileSync(join(dir, "FINDINGS.md"), "utf8"));
+  let guard = null, unverified = null;
+  if (guardPath) {
+    guard = JSON.parse(readFileSync(guardPath, "utf8"));
+    const r = verify(guard);
+    if (!r.ok) {
+      if (!allowUnverified) throw new Error(`the read-only check failed, so no report was written:\n- ${r.problems.join("\n- ")}`);
+      unverified = r.problems.join("; ");
+    }
+  }
+  const text = renderReport({ map, plan, findings, reviewers, guard, date: date ?? new Date().toISOString().slice(0, 10), unverified });
+  const hits = secretHits(text);
+  if (hits.length) throw new Error(`the report text matches a secret pattern (${hits.join(", ")}): a finding's evidence quoted one. Remove it from FINDINGS.md and run again.`);
+  return text;
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const a = process.argv.slice(2);
+  const val = (f) => { const i = a.indexOf(f); return i >= 0 ? a[i + 1] : undefined; };
+  const dir = a.find((x, i) => !x.startsWith("--") && !["--reviewers", "--guard", "--date"].includes(a[i - 1]));
+  if (!dir || !val("--reviewers")) { console.error('usage: node assess-report.mjs <records-dir> --reviewers "<name>:<family>[,...]" [--guard <guard.json>] [--date YYYY-MM-DD] [--allow-unverified]'); process.exit(2); }
+  const reviewers = val("--reviewers").split(",").map((r) => { const [name, family] = r.split(":"); return { name: name.trim(), family: (family ?? name).trim() }; });
+  try {
+    const text = buildReport(resolve(dir), { reviewers, guardPath: val("--guard"), date: val("--date"), allowUnverified: a.includes("--allow-unverified") });
+    writeFileSync(join(resolve(dir), "REPORT.md"), text);
+    console.log(`wrote ${join(resolve(dir), "REPORT.md")}`);
+  } catch (e) { console.error(`! ${e.message}`); process.exit(1); }
+}
