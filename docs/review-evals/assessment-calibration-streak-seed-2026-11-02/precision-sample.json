@@ -1,0 +1,242 @@
+[
+ {
+  "reviewer": "codex",
+  "id": "F-08-5",
+  "sev": "P3",
+  "where": "test/server.test.js:87",
+  "finding": "The real-clock assertions can fail if UTC midnight occurs between the request and the subsequent clock read; the same race appears at lines 239 and 559. Pin/inject the clock or bracket the operation with before/after dates and handle a boundary crossing.",
+  "evidence": "evidence: after awaiting the completion response, S3 computes `const todayUTC = new Date().toISOString().slice(0, 10)` and requires the earlier response date to equal it"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-01-5",
+  "sev": "P1",
+  "where": ".claude/agents/customer-support.md:50<br>.claude/agents/customer-success.md:48<br>.claude/agents/market-researcher.md:52<br>.claude/agents/sre.md:46",
+  "finding": "Autonomous roles ingest tickets, customer notes, public content, and production logs without an operating rule that embedded text is untrusted data. A malicious instruction in those inputs can redirect repository reads, writes, or shell calls. Suggested fix: add a shared enforced rule that input content is never authority, embedded commands are never executed, and tool arguments must be independently derived from the role brief and approval state.",
+  "evidence": "evidence: \u201cThe inbound issue (ticket, message, or escalation)\u201d; \u201csupport tickets \u2026 CSM / QBR notes\u201d; \u201cinterview transcripts, support tickets, public competitor docs \u2026 community forums\u201d; \u201cProduction signals: error logs \u2026 audit events.\u201d"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-05-1",
+  "sev": "P2",
+  "where": ".github/workflows/ci.yml:18",
+  "finding": "CI executes actions referenced by mutable major-version tags. If either tag is maliciously repointed or its upstream account is compromised, arbitrary code runs in every PR and main-branch job. Suggested fix: pin both actions to reviewed full commit SHAs and use comments to record their release versions.",
+  "evidence": "evidence: `- uses: actions/checkout@v4` and `- uses: actions/setup-node@v4`"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-02-2",
+  "sev": "P1",
+  "where": ".claude/protocols/STANDING_CHARTER.md:36",
+  "finding": "Tier-1 runs may open and automatically merge a pull request based only on an agent verdict, despite the approval protocol identifying opening or merging a PR as a rule 1\u20133 action requiring the human\u2019s direct approval. Trigger: a standing-Charter run classified Tier 1 and Low with green gates. Suggested fix: leave the PR open and require direct human approval before merge.",
+  "evidence": "evidence: \u201cLand. Open a pull request (S5.1). Auto-merge only under the rule below.\u201d and \u201cThe Release Manager\u2026 decides; the Orchestrator merges with `gh pr merge`\u201d"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-01-8",
+  "sev": "P2",
+  "where": ".claude/agents/cloud-deployment.md:4<br>.claude/agents/production-verification.md:4<br>.claude/agents/on-call-engineer.md:4<br>.claude/agents/post-launch-learning.md:4<br>.claude/agents/software-architect.md:4",
+  "finding": "These roles mandate executable or provider operations but their declared tool boundaries cannot perform them, so their core stages must stop at runtime. Suggested fix: provide narrowly scoped, approval-gated provider/runner capabilities or explicitly delegate each operation to a capable role.",
+  "evidence": "evidence: Cloud Deployment declares only `Read, Write, Edit, Grep, Glob` but requires `azd up` / `terraform apply`; Production Verification has the same tools but must query Azure and execute rollback; On-Call must access observability and execute remediation; Post-Launch mandates `node <playbook>/execution/analyze.mjs .`; Architect must \u201crun the candidate \u2026 with a throwaway script.\u201d"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-06-2",
+  "sev": "P1",
+  "where": "src/client/render.js:94",
+  "finding": "The habit-detail link has only an absolutely positioned, clipped screen-reader child; the visible habit name is outside the anchor. Sighted pointer users therefore have no visible click target for opening details. Wrap the visible row content/name in the anchor or give the link a visible, sized target.",
+  "evidence": "evidence: `h(\"a\", { class: \"row-link\", href: detailHref(view.habitId) }, [ h(\"span\", { class: \"sr-only\" }, [view.name]), ])`"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-01-3",
+  "sev": "P1",
+  "where": ".claude/agents/security-privacy.md:4<br>.claude/agents/qa-evidence.md:4",
+  "finding": "Independent reviewers receive unrestricted `Bash`, which can modify product files through shell utilities and bypass the `Write\\",
+  "evidence": "Edit` hook, despite these roles not owning code changes. Trigger: any mistaken or injected `sed -i`, redirect, Node, or similar command. Suggested fix: run review commands in a read-only worktree/sandbox or expose a strict inspection/test-command allowlist plus a separately scoped artifact writer."
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-02-4",
+  "sev": "P2",
+  "where": ".claude/protocols/MODEL_ROUTING.md:59",
+  "finding": "Tier-1 routing lowers gates to `medium`, directly contradicting the stated invariant that gates never drop below `high`. Trigger: any Tier-1 QA, Security, Release, or governance gate. Suggested fix: retain `high` effort for all gates at every tier.",
+  "evidence": "evidence: \u201cGates never drop below `high`.\u201d and \u201cTier 1\u2026 gates stay `medium`.\u201d"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-09-2",
+  "sev": "P2",
+  "where": "scripts/demo.mjs:10",
+  "finding": "Running the demo writes the complete habit view\u2014including the habit name\u2014to the console, violating the repository invariant that logs never contain habit names or free text. Log only explicitly selected non-sensitive fields such as the habit ID and streak counts.",
+  "evidence": "evidence: `const created = createHabit(userId, \"Meditate\"); console.log(\"Created habit:\", created);`"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-07-1",
+  "sev": "P2",
+  "where": "AGENTS.md:66",
+  "finding": "Regenerating from a Git worktree fails because this command uses the worktree-relative path that lines 8\u201312 explicitly say points nowhere; resolve the playbook from the absolute git common directory before invoking it.",
+  "evidence": "evidence: `node ../agentic-sdlc-playbook/execution/install.mjs .`"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-07-3",
+  "sev": "P2",
+  "where": "REVIEW.md:5",
+  "finding": "Every code review loads an unconfigured starter template, so reviewers receive no repository-specific failure modes, exclusions, or high-risk paths. Replace all bracketed placeholders with the project\u2019s actual review guidance.",
+  "evidence": "evidence: `> Replace the bracketed lines; delete this note.`"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-02-8",
+  "sev": "P2",
+  "where": ".claude/protocols/TELEMETRY.md:58",
+  "finding": "Stage token totals omit cache-read and cache-creation tokens even though those signals are available and `RUN_ECONOMICS.md` says actual processing is dominated by cache reads. Trigger: any telemetry-enabled cached run; budgets and SLOs materially undercount usage. Suggested fix: include all four token categories or rename the field and stop comparing it with total-token baselines.",
+  "evidence": "evidence: \u201c`stages[].tokens` \u2014 Runtime \u2014 sum `input_tokens` + `output_tokens` per `agent_id`\u201d"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-03-2",
+  "sev": "P1",
+  "where": ".agentic/STANDING_CHARTER.md:32",
+  "finding": "The charter requires every routine run to open a pull request and allows tier-1 auto-merge, but \u00a77 says routine runs never send/submit or release anything. Every landing therefore has contradictory authorization and may either bypass the stated stop or deadlock. Explicitly exempt narrowly defined repository landing actions in \u00a77, or require per-run approval and remove auto-merge.",
+  "evidence": "evidence: `End action: pull request`, `Auto-merge: tier 1`, and line 34 permits `git push`, `gh pr create`, and `gh pr merge`; lines 44\u201346 say a routine run never \u201cSends or submits anything on a user's behalf\u201d or \u201cDeploys or releases anything with an external effect.\u201d"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-02-6",
+  "sev": "P2",
+  "where": ".claude/protocols/SESSION_REQUEST.md:56",
+  "finding": "The prescribed waiting status is not one of the four exact status values accepted by `SLICE_STATE.md`, so status parsers and inventory reconciliation can reject or misclassify every fresh-session wait. Suggested fix: keep `Status: in-progress` and record `waiting-on-session` in a separate note or field.",
+  "evidence": "evidence: \u201cSet `Status: in-progress (waiting-on-session)` in `STATE.md`.\u201d"
+ },
+ {
+  "reviewer": "codex",
+  "id": "F-01-7",
+  "sev": "P1",
+  "where": ".claude/agents/cloud-deployment.md:53",
+  "finding": "Live-subscription deployment behavior is loaded from an unpinned third-party skill source. If upstream changes or is compromised, `npx skills add` resolves mutable instructions that can inspect secrets-adjacent configuration and deploy infrastructure. Suggested fix: pin a reviewed immutable commit/version and integrity hash, vendor or lock the exact skill contents, and record provenance.",
+  "evidence": "evidence: `npx skills add microsoft/azure-skills --skill azure-prepare --skill azure-validate --skill azure-deploy`; the role states the skills access \u201cRBAC / managed-identity / secrets-adjacent configuration against a live subscription.\u201d"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-08-1",
+  "sev": "P2",
+  "where": "test/client-static.test.js:68",
+  "finding": "The traversal cases in C16 never reach the server as written. `fetch()` runs the URL through the WHATWG URL parser, which resolves `..` and `%2e%2e` dot-segments before sending. `/app.css/../server.js` goes out as `/server.js`, `/../src/server.js` as `/src/server.js`, and `/%2e%2e/server.js` as `/server.js`. The test therefore only shows that unrelated paths return 404. It would still pass if the static handler did path joining and was open to traversal. Only `/app.js%00.txt`, `/APP.JS` and `/client/app.js` test a real negative.",
+  "evidence": "`const negativePaths = [ \"/app.css/../server.js\", \"/%2e%2e/server.js\", \"/../src/server.js\", \"/client/app.js\", \"/app.js%00.txt\", \"/APP.JS\", ]; ... const res = await fetch(\\`${base}${p}\\`);` (traversal strings are sent through `fetch`, not a raw `http.request`/`net` socket)"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-02-2",
+  "sev": "P2",
+  "where": ".claude/protocols/STANDING_CHARTER.md:22",
+  "finding": "Autonomous routine runs, including auto-merge with no human message, depend on two plain files in `.agentic/`: the Charter and its approval record. Step 2 checks only that the Charter's sha256 equals the hash in the approval file. Nothing here checks that a human wrote the approval file, and nothing forbids a run from creating or editing either file. An agent that can write `.agentic/` (for example one steered by repo content) could write a matching pair and so authorize itself. `TELEMETRY.md:67` says signing approvals is still unbuilt (BACKLOG T14). This also sits against `APPROVAL_PROTOCOL.md:117-124` (approval is direct, in the driving session). That file never mentions standing Charters.",
+  "evidence": "`with its approval recorded in \\`.agentic/STANDING_CHARTER_APPROVAL.md\\` (the human's words, the sha256, the time from \\`date -u\\`)` (lines 12-14); `.agentic/STANDING_CHARTER.md\\`, and its sha256 equals the one in the approval file.` (lines 22-24); `Approval records \\"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-07-1",
+  "sev": "P2",
+  "where": "REVIEW.md:20",
+  "finding": "The file is still the unfilled template, so every review that loads it gets no repo-specific scope. \"Always read closely\" has no paths, so `.claude/hooks/`, `.claude/settings*.json` and `.agentic/SAFETY_INVARIANTS.md` get no extra attention. \"What failure looks like here\" has no content. \"Skip\" has no content. The file's own header says to replace the bracketed lines and delete the note, and both are still there. Any review of a change to the hooks or settings is triggered by this.",
+  "evidence": "`> Replace the bracketed lines; delete this note.` (line 5); `- [The two or three ways a change here goes wrong in practice, ...]` (line 8); `- [paths that are generated or vendored, for example `dist/`, `*.lock`]` (line 17); `- [paths where a mistake spreads, for example `.agentic/SAFETY_INVARIANTS.md`,` (line 20)"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-04-1",
+  "sev": "P1",
+  "where": ".claude/settings.json:1",
+  "finding": "The file has no `hooks` block, so the budget and write-scope guards that AGENTS.md promises are not wired. It happens on any subagent spawn or write: nothing checks `spent + estimate \u2264 budget` first, and nothing restricts where roles write. The commit has no `.claude/hooks/` directory (glob of `.claude/**/*` returns no hook files) and no `.claude/commands/`. The `/agentic-slice`, `/agentic-resume` and `/agentic-status` entry points are missing too. Non-negotiable rule 6 is therefore not enforced, and rules 3 and 4 have no enforcement either.",
+  "evidence": "evidence: file is `{ \"permissions\": { \"deny\": [ ... ] } }` with no other top-level key. AGENTS.md says: \"Budget enforcement: a pre-spawn hook (`.claude/hooks/`) checks the budget before every subagent spawn\"."
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-07-2",
+  "sev": "P3",
+  "where": "REVIEW.md:13",
+  "finding": "The \"Report only\" rules contradict each other. Line 13 allows up to 3 nits per review, while line 14 says style-only and cleanup-only findings are dropped. A reviewer cannot follow both. Whether nits are allowed is decided by whichever line the reviewer reads, so reports will vary.",
+  "evidence": "`- At most [3] nits per review. Style-only and cleanup-only findings are dropped.`"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-04-3",
+  "sev": "P2",
+  "where": ".claude/settings.json:7-18",
+  "finding": "The \"protective\" deny rules are prefix patterns on specific git/file commands, and Bash is otherwise unrestricted. A role with Bash (qa-evidence, security-privacy, backend-architect, sre and others) can still change or exfiltrate. Examples are `sed -i`, `tee`, `cat > file`, `python -c`, `node -e`, `git -C . commit`, `git -c ... push`, `git stash`, `git rebase`, `git merge`, `git tag`, `git branch -D` and `scp`. It can also read denied files, for example `cat .env` or `cat ~/.ssh/id_rsa`. `Read(...)` deny rules do not cover Bash. The `git push` and `git commit` denies are weakened further by variants such as `git -C <dir> push`. The deny list gives a false sense that human-approval-gated actions (send, destructive shared-state, deploy) are blocked.",
+  "evidence": "evidence: `\"Bash(git push:*)\", \"Bash(git commit:*)\", \"Bash(git add:*)\", ... \"Bash(rm:*)\", \"Bash(mv:*)\", \"Bash(cp:*)\", \"Bash(curl:*)\", \"Bash(wget:*)\"`, with no `ask` list, no `sandbox` setting and no `Bash` default restriction. The secret-read rules at lines 19-53 are all `Read(...)` only."
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-02-11",
+  "sev": "P3",
+  "where": ".claude/protocols/RUN_ECONOMICS.md:46",
+  "finding": "The guidance tells the Orchestrator to estimate stages above the pipeline's own SLO cap. A tier-3 Release Manager is estimated at 150 to 190k, and the worst-seen figures are 149k to 187k. `PIPELINE_SLOS` sets the per-stage target at \u2264150k p95 and says every legitimate stage landed \u2264126k. Following the estimate guidance routinely breaches a stated SLO. Neither file says which governs, and `PIPELINE_SLOS.md:121-126` requires target changes to be recorded.",
+  "evidence": "`Estimate a tier 3 Release Manager at 150 to 190k` (`RUN_ECONOMICS.md:50-51`); `\\"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-02-3",
+  "sev": "P2",
+  "where": ".claude/protocols/CODE_REVIEW.md:31",
+  "finding": "The risk-tier table does not list the protocols, agent briefs, `AGENTS.md` or `CLAUDE.md` as High. A diff that edits `APPROVAL_PROTOCOL.md`, `FAILURE_LOOP.md` or an agent brief is only markdown, so it matches \"only docs\" and is Low. If the owner sets C8.4 to \"skipped\", such a change gets no human review. It is also eligible for auto-merge under `STANDING_CHARTER.md:47`, unless the S4 prefixes (not in this area) exclude it. These files define the hard stops.",
+  "evidence": "High row: `safety invariants, hooks, permission rules or settings, deny lists, auth, a model or processor line, CI or release workflows, anything a Charter line (C5.x) names`; Low row: `only docs, comments, formatting, tests that add coverage without changing behaviour \\"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-06-2",
+  "sev": "P2",
+  "where": "src/client/app.js:127",
+  "finding": "Stale \"healthy\" state after the UTC day rolls over. The client has no clock, and the only fetch of `/habits` is the initial `load()`, with no refetch, visibility handler or timer. A tab left open past UTC midnight still shows \"Logged\" and \"Current streak N\". Tapping the control hits `stateOf(view) === \"healthy\"` and returns with no request, so the user cannot log the new day until they reload. The at-risk, broken and healthy tags are also stale.",
+  "evidence": "`if (stateOf(view) === \"healthy\") return;` and `window.addEventListener(\"hashchange\", render); render(); load();` (no later call to `load()` or refetch anywhere in the file)"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-01-4",
+  "sev": "P2",
+  "where": ".claude/agents/production-verification.md:4",
+  "finding": "Same mismatch. The mission needs `azure-diagnostics` and `azure-reliability` queries and execution of the rollback plan. The tools are Read, Write, Edit, Grep, Glob only, and writes are limited to `runs/`. The agent either cannot act, so it hands back, or it is inlined with full tools. The inlined case loses the \"read-only against the live environment\" guarantee at line 112.",
+  "evidence": "`tools: Read, Write, Edit, Grep, Glob`; `If no-go: the tech spec's rollback plan, executed`; `Read-only against the live environment`"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-01-6",
+  "sev": "P2",
+  "where": ".claude/agents/post-launch-learning.md:68",
+  "finding": "The brief requires running `node <playbook>/execution/analyze.mjs .`, but the agent has no Bash. It also must write `runs/ANALYTICS.md` and `runs/dashboard.html`, which are outside the `runs/<slice-id>/` write scope in line 25. Every Tier 2/3 close-out triggers this, so the step is skipped or the guard blocks it. The brief does not say which.",
+  "evidence": "`regenerate \\`runs/ANALYTICS.md\\` + \\`runs/dashboard.html\\` via \\`node <playbook>/execution/analyze.mjs .\\`` versus `tools: Read, Write, Edit, Grep, Glob` and `Your writes are limited to \\`runs/<slice-id>/\\``"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-06-4",
+  "sev": "P2",
+  "where": "src/client/render.js:94",
+  "finding": "The detail view cannot be reached by a sighted mouse or touch user. The only anchor to `#/habit/<id>` contains just an `.sr-only` span. `.row-link` in app.css:142 has only `color: inherit`, with no overlay, size or `::after` stretch. The visible name sits in `.row-visual` (`aria-hidden`) and is not a link. The anchor has no visible area and no useful focus indicator, so the habit detail page is effectively reachable only by screen-reader or keyboard users.",
+  "evidence": "`h(\"a\", { class: \"row-link\", href: detailHref(view.habitId) }, [ h(\"span\", { class: \"sr-only\" }, [view.name]), ]),` and `.row-link { color: inherit; }`"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-07-3",
+  "sev": "P2",
+  "where": "README.md:15",
+  "finding": "The README sends readers to `runs/` as \"the interesting directory\" and links three slice folders. It also points the known-advisories note at `runs/browser-client/04-security.md`. In this copy the directory does not exist, so every one of those links is dead. AGENTS.md rule 4 also depends on `runs/<slice-id>/STATE.md` for resuming a slice. A reader following the README, or an agent resuming a slice, finds nothing. Unconfirmed whether `runs/` was left out of the review copy or was never committed. I searched with `Glob runs/**/*` and it returned no files.",
+  "evidence": "`The interesting directory is [`runs/`](runs/).` (line 15); `\\"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-08-2",
+  "sev": "P3",
+  "where": "test/client-render.test.js:301",
+  "finding": "C6 is meant to show the UI does not reveal whether a habit id exists. It builds both trees by calling the same `ErrorNotice(COPY.errorHabitNotFound, \"region\")` and compares them, so the `deepEqual` always passes. It never runs the app.js render path that picks which tree to show. If app.js rendered a different tree for a foreign id than for a missing one, C6 would still pass.",
+  "evidence": "`const treeA = neverExisted === null ? ErrorNotice(COPY.errorHabitNotFound, \"region\") : null; const treeB = foreignButAbsent === null ? ErrorNotice(COPY.errorHabitNotFound, \"region\") : null; assert.deepEqual(treeA, treeB);`"
+ },
+ {
+  "reviewer": "claude",
+  "id": "F-01-3",
+  "sev": "P2",
+  "where": ".claude/agents/cloud-deployment.md:4",
+  "finding": "The role cannot do its mission with its granted tools. It must run the three wrapped skills, run `azd up` or `terraform apply`, and open a PR. It has no Bash and no Skill tool. Line 25 limits its writes to `runs/<slice-id>/`, yet its outputs include `.azure/deployment-plan.md` and IaC in the product repo. Line 24 says to stop and hand back. The only other path is the inlined fallback with full tools, which removes the least-privilege guarantee and the \"never sets Validated\" separation. Any deploy slice triggers this.",
+  "evidence": "`tools: Read, Write, Edit, Grep, Glob`; `used as a chain their own authors already enforce`; `Generated IaC (Terraform or Bicep) as a **pull request** into the product repo`; `Your writes are limited to \\`runs/<slice-id>/\\` and the few repo files your role owns`"
+ }
+]

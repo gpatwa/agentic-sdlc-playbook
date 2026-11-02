@@ -8,7 +8,7 @@ import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync } from "node
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
-import { run, extractRows, reviewerCommand, REVIEWERS } from "../assess-run.mjs";
+import { run, extractRows, splitCells, reviewerCommand, REVIEWERS } from "../assess-run.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 let root, repo;
@@ -36,6 +36,13 @@ describe("extractRows", () => {
     const rows = extractRows(REPLY, 3, "codex");
     assert.equal(rows.length, 1);
     assert.match(rows[0], /^\| F-03-1 \| P1 \| src\/auth\.py:2 \| .*\| codex \| open \|$/);
+  });
+  test("backticks and pipes inside the text do not add columns (every row has exactly 7 cells)", () => {
+    const reply = "| 1 | P2 | src/a.js:9 | `a || b` is always truthy, so the check never fails. | evidence: `return x.includes(\"#/\") || ok` |";
+    const [row] = extractRows(reply, 2, "codex");
+    assert.equal(splitCells(row.replace(/^\||\|$/g, "")).length, 7, row);
+    assert.match(row, /\| codex \| open \|$/);
+    assert.deepEqual(splitCells("a | `b | c` | d"), ["a", "`b \u00a6 c`", "d"]);
   });
   test("prose and 'No findings.' give no rows", () => {
     assert.deepEqual(extractRows("No findings.", 1, "codex"), []);

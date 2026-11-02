@@ -1,0 +1,212 @@
+[
+ {
+  "id": "F-08-5",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "test/server.test.js:87 and :239 compare a response date with a fresh new Date() read after the await, so a UTC-midnight crossing fails them; S26 at :559 seeds Date.now()-86400000 with the same boundary exposure."
+ },
+ {
+  "id": "F-01-5",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "too high",
+  "reason": "customer-support.md:50, sre.md:46 etc. ingest tickets/logs and no brief, AGENTS.md or protocol says such content is untrusted data (only security-privacy.md:112 mentions untrusted content). Three of the four roles have no Bash and are write-scope guarded, so P1 overstates the reach."
+ },
+ {
+  "id": "F-05-1",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "too high",
+  "reason": ".github/workflows/ci.yml:18-19 use actions/checkout@v4 and actions/setup-node@v4 by mutable tag; these are GitHub-owned actions with permissions: contents: read (line 11-12), so P3 fits better."
+ },
+ {
+  "id": "F-02-2",
+  "reviewer": "codex",
+  "verdict": "intentional",
+  "severity_view": "n/a",
+  "reason": ".claude/protocols/STANDING_CHARTER.md:3-7 and .agentic/STANDING_CHARTER.md S5.1-S5.3 deliberately pre-approve PR open and tier-1 auto-merge once, by sha256, in the human's words (approval in .agentic/STANDING_CHARTER_APPROVAL.md); APPROVAL_PROTOCOL.md:135-137 only says rule 1-3 records are 'usually' a PR approval."
+ },
+ {
+  "id": "F-01-8",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "cloud-deployment.md:4, production-verification.md:4, on-call-engineer.md:4, post-launch-learning.md:4, software-architect.md:4 declare no Bash/Skill tool, yet the briefs require azd/terraform via skills (cloud-deployment.md:69), executing rollback (production-verification.md:76), running analyze.mjs (post-launch-learning.md:70-71) and a throwaway pilot script (software-architect.md:122)."
+ },
+ {
+  "id": "F-06-2",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "too high",
+  "reason": "render.js:94-96 puts only an .sr-only span (app.css:46-56, 1px clipped) inside the a.row-link, and the visible name is in the aria-hidden .row-visual (render.js:93); .row-link (app.css:142-144) has no size, so mouse/touch users have no click target for the detail view. A secondary view being unreachable by pointer fits P2."
+ },
+ {
+  "id": "F-01-3",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "too high",
+  "reason": "security-privacy.md:4 and qa-evidence.md:4 grant Bash plus Write/Edit with no write-scope-guard hook and settings.json has no permission rules, so these reviewers can change product files. The 'bypass the Write|Edit hook' framing is off (these roles have no such hook at all), and P1 is high for a misuse path."
+ },
+ {
+  "id": "F-02-4",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "MODEL_ROUTING.md:43 says gates never drop below high while :59-61 says tier-1 gates stay medium, a direct contradiction (and :47 vs :60 also contradict on producers at low)."
+ },
+ {
+  "id": "F-09-2",
+  "reviewer": "codex",
+  "verdict": "rejected",
+  "severity_view": "n/a",
+  "reason": "SAFETY_INVARIANTS.md:24-25 governs audit/telemetry content; scripts/demo.mjs:1-10 is a local eyeball script printing a hard-coded 'Meditate' literal to the operator's terminal, not an audit or telemetry log carrying user free text."
+ },
+ {
+  "id": "F-07-1",
+  "reviewer": "codex",
+  "verdict": "rejected",
+  "severity_view": "n/a",
+  "reason": "AGENTS.md:8-12 explicitly says the ../agentic-sdlc-playbook path is relative to the main checkout and must be resolved via git rev-parse --git-common-dir from a worktree, which covers the command at :66; the doc does not tell anyone to run it literally from a worktree."
+ },
+ {
+  "id": "F-07-3",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "REVIEW.md:5 still says 'Replace the bracketed lines; delete this note' and lines 8-9, 17, 20-21 are unfilled placeholders, so reviews get no repo-specific guidance."
+ },
+ {
+  "id": "F-02-8",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "TELEMETRY.md:58 defines stages[].tokens as input+output only though :43 lists cache_read/cache_creation tokens; RUN_ECONOMICS.md:29-38 says budgets are in peak context and real processing is mostly cache reads, so the runtime figure is comparable to neither."
+ },
+ {
+  "id": "F-03-2",
+  "reviewer": "codex",
+  "verdict": "rejected",
+  "severity_view": "n/a",
+  "reason": ".agentic/STANDING_CHARTER.md S5.1-S5.3 (lines ~32-34) specifically authorize PR create and tier-1 merge, and \u00a77 item 3 is qualified 'with an external effect' (a repo merge with no deploy is not one); specific-over-general resolves it and nothing in the protocol treats this as a deadlock."
+ },
+ {
+  "id": "F-02-6",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "too high",
+  "reason": "SESSION_REQUEST.md:56 prescribes 'in-progress (waiting-on-session)' while SLICE_STATE.md:16 requires Status to be exactly one of four values. But the only parser, budget-guard.mjs:77-80, matches ^in-progress\\b and accepts it, so the claimed rejection or misclassification does not happen; P3."
+ },
+ {
+  "id": "F-01-7",
+  "reviewer": "codex",
+  "verdict": "confirmed",
+  "severity_view": "too high",
+  "reason": "cloud-deployment.md:55-56 installs microsoft/azure-skills via npx skills add with no version, commit or hash pin. The role itself has no Bash (line 4), so the install is a manual step, which makes P1 overstated."
+ },
+ {
+  "id": "F-08-1",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "too high",
+  "reason": "The negativePaths list is in test/client-server.test.js:68-77, not client-static.test.js as cited; fetch's URL parser normalizes /app.css/../server.js and /%2e%2e/server.js to /server.js and /../src/server.js to /src/server.js (verified with new URL). The server is an exact-key allowlist (server.js:230 Object.hasOwn(STATIC, pathname)), so this is a weak test, not exposure: P3."
+ },
+ {
+  "id": "F-02-2",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "STANDING_CHARTER.md:22-24 only compares the Charter hash with the one in .agentic/STANDING_CHARTER_APPROVAL.md, nothing verifies who wrote that file, and TELEMETRY.md:67 confirms approval signing is unbuilt (BACKLOG T14). APPROVAL_PROTOCOL.md:54-85 covers per-run Charters only and never mentions standing Charters."
+ },
+ {
+  "id": "F-07-1",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "REVIEW.md:5, :8-9, :17, :20-21 are still template placeholders, so 'Always read closely' names no real paths (hooks/settings get no extra attention) and 'Skip' is empty."
+ },
+ {
+  "id": "F-04-1",
+  "reviewer": "claude",
+  "verdict": "rejected",
+  "severity_view": "n/a",
+  "reason": ".claude/settings.json:2-14 has a hooks block wiring budget-guard.mjs on Agent; .claude/hooks/budget-guard.mjs and write-scope-guard.mjs exist (wired per role in agent frontmatter, e.g. cloud-deployment.md:7-13), and .claude/commands/agentic-slice|resume|status.md exist."
+ },
+ {
+  "id": "F-07-2",
+  "reviewer": "claude",
+  "verdict": "rejected",
+  "severity_view": "n/a",
+  "reason": "REVIEW.md:13 caps nits at 3 and drops style-only/cleanup-only findings; a nit (a minor real issue) is not the same as a style-only finding, so the two clauses are compatible."
+ },
+ {
+  "id": "F-04-3",
+  "reviewer": "claude",
+  "verdict": "rejected",
+  "severity_view": "n/a",
+  "reason": ".claude/settings.json contains no permissions or deny rules at all (only hooks and env), so the quoted Bash(git push:*)\u2026Bash(wget:*) deny list and Read(...) rules at lines 7-53 do not exist."
+ },
+ {
+  "id": "F-02-11",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "RUN_ECONOMICS.md:49-51 says to estimate a tier-3 Release Manager at 150-190k (187k measured), while PIPELINE_SLOS.md:17,42-44 sets a 150k per-stage p95 cap and says every legitimate stage lands at or under 126k. Neither file records the change or says which governs."
+ },
+ {
+  "id": "F-02-3",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "too high",
+  "reason": "CODE_REVIEW.md:31 does not name protocols, agent briefs, AGENTS.md or CLAUDE.md as High, so markdown edits to them can read as 'only docs' Low (:33). But Low skip is an opt-in (:35-37), and routine auto-merge is impossible because S4 limits paths to src/, test/, README.md and \u00a77.4 forbids .claude/."
+ },
+ {
+  "id": "F-06-2",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "app.js:162-177 calls load() once with no timer, visibility or focus refetch, and handleLog returns early at :127 when stateOf(view)==='healthy', so after UTC midnight a stale 'healthy' row cannot be logged until reload."
+ },
+ {
+  "id": "F-01-4",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "production-verification.md:4 grants only Read/Write/Edit/Grep/Glob while :76 and :101 require executing the rollback and :53-59 require azure-diagnostics/azure-reliability queries; it also says read-only (:112) while executing a rollback."
+ },
+ {
+  "id": "F-01-6",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "post-launch-learning.md:70-71 requires running node analyze.mjs but tools at :4 exclude Bash. The write-scope part is wrong, since write-scope-guard.mjs COMMON is 'runs/' and allows runs/ANALYTICS.md and runs/dashboard.html, but the run step cannot happen."
+ },
+ {
+  "id": "F-06-4",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "render.js:94-96 anchor contains only an .sr-only span, .row-link (app.css:142-144) has only color: inherit, and the visible name sits in aria-hidden .row-visual (render.js:93), so pointer users have no visible target."
+ },
+ {
+  "id": "F-07-3",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "too high",
+  "reason": "README.md:15 and :40-42 link runs/, runs/greenfield etc., and runs/ is absent from this tree (not gitignored, single 'Import' commit), so the links are dead here. Slice STATE.md files are created at run time, so the AGENTS rule-4 impact is overstated; P3."
+ },
+ {
+  "id": "F-08-2",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "client-render.test.js:301-310 builds both trees with the same ErrorNotice(COPY.errorHabitNotFound,'region') expression and deepEquals them, never exercising app.js's selection path, so C6 is tautological."
+ },
+ {
+  "id": "F-01-3",
+  "reviewer": "claude",
+  "verdict": "confirmed",
+  "severity_view": "about right",
+  "reason": "cloud-deployment.md:4 has no Bash or Skill tool, yet :53-70 require running the azure-skills chain (azd up/terraform apply) and :89-90 a PR. The write-scope sub-claim is wrong: write-scope-guard.mjs EXTRA allows .azure/, infra/, azure.yaml for this role."
+ }
+]

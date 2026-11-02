@@ -22,8 +22,26 @@ A second seeded run, to test two things the first run (`../assessment-calibratio
 - The misses cluster in small, local, semantic bugs (S2, S3, S6) and a bypassable string check (S4). Both reviewers did find the two that break a security rule outright (S1 authz, S5 fails open).
 - Both misses of S4 and S6 were in files the reviewers said they read ("Listed files not read: none"), so they are reviewer misses, not planner coverage gaps.
 
-**Precision is not measured.** Codex raised 41 findings and Claude 45; none is judged except the seed matches. The scorer's range (5% to 100% and 7% to 100%) is the honest statement. Judging about 86 findings was not done; the plan's bar needs 30 judged, so a sample of them is the next step.
+**Precision, on a judged sample of 30.** Of the 81 findings that match no seed (Codex 39, Claude 42), 30 were drawn at random, 15 per reviewer, with a fixed seed (`random.seed(20261102)`, `precision-sample.json`). One judge agent (Claude Opus, fresh, told nothing about the seeds or which reviewer wrote what) read the code for each and gave a verdict (`precision-sample-judged.json`, with its reason and a file:line). The judgments are the support session's, not the owner's.
 
-**Bars after two runs.** Generality: 2 repos (Python, JavaScript), both ours; the plan's three, with one not ours, is still not met. Recall: 6 of 6 and 3 of 6 (Claude), 4 of 6 and 2 of 6 (Codex); no bar is claimed. Nothing here supports "the review finds the bugs"; it supports "it finds the loud ones and some quiet ones", with the misses listed.
+| | Confirmed | Rejected | Intentional | Precision |
+|---|---|---|---|---|
+| Codex (15) | 11 | 3 | 1 | 73% |
+| Claude (15) | 11 | 4 | 0 | 73% |
+| Both (30) | 22 | 7 | 1 | **73%** (27 of 35 if the 5 seed matches are counted as true) |
 
-Files: per reviewer `FINDINGS.md`, `SCORE.md`, `REPORT.md`, `RUN.md` (model, effort, tool version, per-area counts).
+One verdict was changed by hand: the judge confirmed Claude's F-07-3 ("README links `runs/`, which does not exist"), but the seeded copy omitted `runs/` when it was made, so I set it to rejected. Without that correction the figure is 77%.
+
+**Read this number with care.** It clears the plan's 70% bar on 30 judged findings, but:
+- With 30 findings a 73% result has a wide interval (about 56% to 86% at 95%), so "clears 70%" is not established; and the sample is two reviewers on one repo.
+- The judge is one model, and Claude is one of the two reviewers it judged. A different family or the owner could rule differently. Nine of the 30 were confirmed but with severity "too high" (the judge's view), so the P1/P2 labels are generous.
+- 23 of the 30 are about the repo's governance documents, agent definitions, README or CI file (contradictions between protocols, tool lists, unfilled placeholders), not about application code. They are real, but low-value next to the seeded bugs; a "confirmed" doc inconsistency is cheap to be right about.
+- The owner has dispositioned none of them. Owner touches per finding is not measured.
+
+The scorer works per reviewer, so each file shows 17 or 18 judged and "not measured"; the combined 30 is the figure above.
+
+**A bug found while doing this.** `assess-run.mjs` mis-parsed reviewer rows whose evidence contains backticks (it split the row wrongly, so the reviewer name landed in the disposition column and the scorer saw almost nothing judged). Fixed in `execution/assess-run.mjs` (`splitCells`) with a test that fails on the old code; `FINDINGS.md`, `SCORE.md` and `REPORT.md` here were rebuilt from the saved raw replies. Recall figures did not change.
+
+**Bars after two runs.** Precision: 73% on 30 judged (above the bar, weakly supported, see above). Generality: 2 repos (Python, JavaScript), both ours; the plan's three, with one not ours, is still not met. Recall: 6 of 6 and 3 of 6 (Claude), 4 of 6 and 2 of 6 (Codex); no bar is claimed. Nothing here supports "the review finds the bugs"; it supports "it finds the loud ones and some quiet ones", with the misses listed.
+
+Files: `precision-sample.json` and `precision-sample-judged.json` (the draw and the verdicts); per reviewer `FINDINGS.md`, `SCORE.md`, `REPORT.md`, `RUN.md` (model, effort, tool version, per-area counts).

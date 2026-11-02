@@ -51,6 +51,18 @@ export function reviewerCommand(reviewer, { clone, model, effort, outFile }) {
   throw new Error(`unknown reviewer "${reviewer}": use codex or claude`);
 }
 
+/** Cells of a table row, splitting on pipes that are not inside a backtick span. A pipe left inside a cell would add a
+ * column and shift the reviewer and disposition, so those are replaced by a broken bar. */
+export function splitCells(text) {
+  const cells = []; let cur = "", code = false;
+  for (const ch of text) {
+    if (ch === "`") code = !code;
+    if (ch === "|" && !code) { cells.push(cur.trim()); cur = ""; } else cur += ch === "|" ? "\u00a6" : ch;
+  }
+  cells.push(cur.trim());
+  return cells;
+}
+
 const ROW = /^\|\s*[^|]*\|\s*(P[0-3]|note)\s*\|\s*([^|]*?:\d[^|]*?)\s*\|(.*)$/i;
 
 /** Table rows out of a reviewer's reply, as FINDINGS.md rows for area `area`. Rows without a file and line are dropped. */
@@ -60,9 +72,9 @@ export function extractRows(text, area, reviewerName, startAt = 1) {
     const m = line.trim().match(ROW);
     if (!m) continue;
     const [, sev, where, rest] = m;
-    const cells = rest.replace(/\|\s*$/, "").split(/\|(?![^`]*`)/).map((c) => c.trim());
+    const cells = splitCells(rest.replace(/\|\s*$/, ""));
     const finding = cells[0] ?? "";
-    const evidence = cells.slice(1).join(" | ");
+    const evidence = cells.slice(1).join(" / ");
     if (!finding) continue;
     rows.push(`| F-${String(area).padStart(2, "0")}-${startAt + rows.length} | ${sev.toUpperCase()} | ${where} | ${finding} | ${evidence} | ${reviewerName} | open |`);
   }
