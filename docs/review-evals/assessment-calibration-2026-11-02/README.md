@@ -7,7 +7,7 @@ reviewing blind, scored by `execution/assess-calibrate.mjs`. **It is indicative,
 | Bar (plan) | Result | Status |
 |---|---|---|
 | Recall on known incidents | **6 of 6 planted bugs found** (authz, tenant, injection, logic, errors, concurrency; P0 to P2). With six seeds, a perfect score only supports "at least about 61% recall at 95% confidence" (0.607^6 = 0.05). The earlier spike found the real S5 incident (Codex) and missed it (Claude `/code-review`); see `docs/review-mode-spike/RESULTS.md`. | indicative |
-| Precision (at least 70% on a sample of 30) | 18 findings: 6 match a planted bug, **12 match none and await the owner** (real finds or false positives). Range **33% to 100%**; the bar needs 30 judged findings and has 0 from the owner. | **not measured** |
+| Precision (at least 70% on a sample of 30) | 18 findings: 6 match a planted bug and 12 match none. **On 2026-11-02 the owner told the support session to fix the 12; it read each against the real code and found all 12 real, and fixed them in hr-timeoff-agent PR 41 (open; PR 40 is the separate CI hardening).** They are recorded as `accepted` (becoming `fixed` when PR 41 merges). So 0 false positives in 18. **That is not the plan's measurement:** 18 is below the 30 the bar needs, the judge is the session that wrote the fixes and not an independent sample, and 5 of the 12 are P3 or low-value. | **18 of 30 judged; 100% so far; bar not met as measured** |
 | Owner touches | none yet: the owner has not dispositioned a finding | not measured |
 | Cost per 10,000 lines | 234,172 tokens for 3,837 lines = about 610,000 per 10,000 lines. **Basis: the harness's per-agent total, which is the context size of each agent's last request (peak context), summed over four agents. Processed tokens were not measured** (`usage.mjs` reads slices, not these agents), so this understates consumption, as the cost correction of 2026-10-29 explains. | indicative |
 | Changes to the target | **zero**: `assess-guard.mjs verify` passed (target HEAD and tree unchanged, review copy differs only by the recorded removals) | met |
@@ -28,7 +28,7 @@ reviewing blind, scored by `execution/assess-calibrate.mjs`. **It is indicative,
 - **Seeds are one-liners** that diverge from a nearby docstring or sibling code in several cases (S5, S6 contradict their own comments). Subtler logic bugs are under-represented.
 - **Discipline.** Reviewers were told to use Read, Grep and Glob only. Two reported using Bash (`wc -l`, `cat -n`) anyway. Nothing changed, as `verify` shows, but it is another instance that an instruction is not a control.
 - **These seeds are now public.** Do not reuse them to score a model that may have seen this directory; plant new ones for a rescore.
-- **Findings beyond the seeds.** F-01-1 repeats finding 1 of the earlier manual assessment (the PR 39 guard is in the CLI, so `identity_from_env` still falls back when the app is created directly). The other eleven unmatched findings have not been triaged by anyone but the reviewers.
+- **Findings beyond the seeds.** F-01-1 repeats finding 1 of the earlier manual assessment (the PR 39 guard is in the CLI, so `identity_from_env` still falls back when the app is created directly). The other eleven were fixed in PR 41 (see the table).
 
 ## Files
 `seeds.json` (ground truth), `FINDINGS.md` (all 18, as recorded), `AREAS.md` (the plan), `REPORT.md` (the generated report), `SCORE.md` (the scorer's output).

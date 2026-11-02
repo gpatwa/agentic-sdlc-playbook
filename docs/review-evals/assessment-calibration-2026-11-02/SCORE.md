@@ -14,9 +14,7 @@
 | severity: P1 | 3 | 3 |
 | severity: P2 | 1 | 1 |
 
-**Precision: 33% to 100%** of 18 finding(s). Lower bound counts every unjudged finding that matches no seed as false; upper bound counts them as true. Only 6 finding(s) are judged, so **the plan's bar (70% on a sample of 30) is not measured.**
-
-Findings awaiting the owner's disposition (they match no seed, so they are real finds or false positives): F-01-1, F-01-2, F-01-3, F-01-4, F-03-3, F-03-4, F-03-5, F-03-6, F-04-3, F-04-4, F-05-1, F-05-2.
+**Precision: 100% to 100%** of 18 finding(s). Lower bound counts every unjudged finding that matches no seed as false; upper bound counts them as true. Only 18 finding(s) are judged, so **the plan's bar (70% on a sample of 30) is not measured.**
 
 **Cost:** 234,172 tokens over 3,837 lines = 610,300 tokens per 10,000 lines (the figure supplied; see the record for what it counts).
 

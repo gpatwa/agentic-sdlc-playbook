@@ -46,7 +46,7 @@ reproduced by running an attack; each is from reading the code.
 
 **Worth filing now:** finding 1. Findings 2 and 3 are cheap and would travel with it. 4 to 7 are recorded and deferred.
 
-**Update 2026-11-02:** findings 1 and 2 are fixed in [hr-timeoff-agent PR 39](https://github.com/gpatwa/hr-timeoff-agent/pull/39) (not merged): `web` and `a2a` refuse a non-loopback address without `HR_OIDC_ISSUER` unless `HR_ALLOW_DEMO_AUTH=1`, each prints its sign-in mode, and Reset exists in demo mode only. Two tests fail on the old code. Finding 3 (CI permissions, tag-pinned actions) is not fixed.
+**Update 2026-11-02:** findings 1 and 2 are fixed in [hr-timeoff-agent PR 39](https://github.com/gpatwa/hr-timeoff-agent/pull/39) (merged 2026-11-02): `web` and `a2a` refuse a non-loopback address without `HR_OIDC_ISSUER` unless `HR_ALLOW_DEMO_AUTH=1`, each prints its sign-in mode, and Reset exists in demo mode only. Two tests fail on the old code. Finding 3 (CI permissions, tag-pinned actions) is fixed in [PR 40](https://github.com/gpatwa/hr-timeoff-agent/pull/40) (unmerged); PR 39 is merged. Findings 4 to 7 stay deferred.
 
 ## What was and was not examined
 
