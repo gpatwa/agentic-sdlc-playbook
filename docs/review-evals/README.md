@@ -13,3 +13,8 @@ A case the reviewer misses is a defect in the review layer, not in the case.
 ## Assessment mode (2026-11-02)
 `assessment-calibration-2026-11-02/` holds the first seeded-bug run of the area reviewer: 6 of 6 planted bugs found, precision not
 measured, one repo and one model family. Read its README before quoting any number from it.
+
+## Assessment-mode calibration runs
+
+- `assessment-calibration-2026-11-02/` (Python, `hr-timeoff-agent`): six seeds, Claude reviewers 6 of 6, Codex 4 of 6.
+- `assessment-calibration-streak-seed-2026-11-02/` (JavaScript, `streak-seed`): six harder seeds, Claude 3 of 6, Codex 2 of 6, both through `execution/assess-run.mjs`.

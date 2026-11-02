@@ -1,0 +1,8 @@
+[
+{"id":"S1","file":"src/services/habits.js","lineStart":85,"lineEnd":85,"class":"authz","severity":"P0","description":"Habit ownership check compares userIds case-insensitively, so a user whose id differs only by letter case can log completions on another user's habit."},
+{"id":"S2","file":"src/server.js","lineStart":327,"lineEnd":327,"class":"input-validation","severity":"P2","description":"Habit name length limit is counted in code points instead of UTF-16 units/bytes, so names up to roughly twice the intended 200 limit are accepted."},
+{"id":"S3","file":"src/services/streak.js","lineStart":29,"lineEnd":29,"class":"logic","severity":"P2","description":"Day index uses truncation toward zero instead of floor, so timestamps before 1970-01-01 map to the wrong UTC day."},
+{"id":"S4","file":"src/client/dom.js","lineStart":37,"lineEnd":37,"class":"injection","severity":"P1","description":"The href allowlist only checks that '#/' appears somewhere in the value rather than at the start, so a javascript: URL containing '#/' passes validation and can be set as a link."},
+{"id":"S5","file":"src/client/app.js","lineStart":45,"lineEnd":45,"class":"error-handling-fails-open","severity":"P1","description":"Only 5xx responses are treated as failures, so 4xx responses other than 404 (e.g. 400) are parsed as success and replace the habit in client state with an undefined value."},
+{"id":"S6","file":"src/server.js","lineStart":155,"lineEnd":160,"class":"race-resource","severity":"P2","description":"When the body cap is exceeded the data/end/error listeners are not removed, so they stay attached to the request for the remainder of the oversized upload."}
+]
