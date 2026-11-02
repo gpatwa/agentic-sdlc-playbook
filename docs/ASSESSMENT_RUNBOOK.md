@@ -21,13 +21,13 @@ to your own model provider under your own plan.
    Only committed files are copied, so a `.env` that git ignores never reaches the copy.
 2. **Map and plan** inside the copy, writing to its `reviews/` folder (git ignores it):
    ```bash
-   node <playbook>/execution/repo-map.mjs <scratch-dir>/copy --out <scratch-dir>/copy/reviews
-   node <playbook>/execution/assess-plan.mjs <scratch-dir>/copy --out <scratch-dir>/copy/reviews [--cap-tokens N] [--area-tokens N] [--scope <subdir>]
+   node <playbook>/execution/repo-map.mjs <scratch-dir>/<repo-name> --out <scratch-dir>/<repo-name>/reviews
+   node <playbook>/execution/assess-plan.mjs <scratch-dir>/<repo-name> --out <scratch-dir>/<repo-name>/reviews [--cap-tokens N] [--area-tokens N] [--scope <subdir>]
    ```
    `MAP.md` answers "was this governed by Aveto?" from records. `AREAS.md` lists what will be reviewed in order of risk, and
    what will **not** be (past the cap, out of scope, too large for one pass, held back for a possible secret). Read it before you
    start; the owner decides whether the cap is right.
-3. **Review each planned area.** Open Claude Code in `<scratch-dir>/copy` and give it `reviews/areas/01-….md`, then the next.
+3. **Review each planned area.** Open Claude Code in `<scratch-dir>/<repo-name>` and give it `reviews/areas/01-….md`, then the next.
    Findings go to `reviews/FINDINGS.md` as `open`, with file and line. Use a second model family for at least the high-risk
    areas; one reviewer is a first pass, not an assessment.
 4. **Verify nothing changed.** This must pass before the findings are used:
@@ -36,8 +36,19 @@ to your own model provider under your own plan.
    ```
    It fails if the target's HEAD or working tree moved, if the copy differs from the commit by anything but the recorded
    removals, or if the permission rules were altered.
-5. **Report.** Severity, file and line, evidence, what was and was not examined, the commit, the reviewers, the date. Findings
-   below P0 and P1 are recorded and deferred, not filed. The owner sets each disposition.
+5. **Report.** Findings from every reviewer go in `reviews/FINDINGS.md` as `open` rows with a file and a line. Then:
+   ```bash
+   node <playbook>/execution/assess-report.mjs <scratch-dir>/<repo-name>/reviews --reviewers "<name>:<family>,<name>:<family>" --guard <scratch-dir>/guard.json
+   ```
+   It writes `REPORT.md`: the risk map, findings by severity with evidence, what was not reviewed and why, tests and CI, and a proposed
+   backlog where each P0 or P1 is a Charter-ready intent (below P1 is recorded and deferred). It refuses to write if the read-only check
+   fails, or if a finding's evidence quotes something shaped like a secret. With one model family it says "first pass". The owner sets
+   each disposition.
+6. **Before you rely on a reviewer**, score it: `execution/assess-calibrate.mjs` compares its findings with bugs a *different* agent
+   planted (recall) and with the owner's dispositions (precision). See `docs/review-evals/`.
+
+The Charter for an assessment run is `templates/REVIEW_CHARTER_TEMPLATE.md` (a filled example is `examples/review-charter-hr-timeoff-agent.md`);
+`charter-check` refuses it with a blank data classification (C4.D) or processor.
 
 ## Limits worth knowing
 

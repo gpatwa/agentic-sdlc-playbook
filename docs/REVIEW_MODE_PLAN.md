@@ -1,5 +1,11 @@
 # Plan: reviewing an existing codebase (review mode)
 
+> **Update 2026-11-02: M5 built; M4 first run (indicative).** Report writer, review-mode Charter template and example, calibration scorer
+> (`assess-report.mjs`, `templates/REVIEW_CHARTER_TEMPLATE.md`, `assess-calibrate.mjs`); first seeded run found 6 of 6 planted bugs in
+> one repo with one model family, precision unmeasured. Details and caveats: `docs/review-evals/assessment-calibration-2026-11-02/README.md`.
+> The `hr-timeoff-agent` findings 1 and 2 are fixed in that repo's PR 39 (unmerged). Still open: owner dispositions, Codex, more repos
+> (M6), re-assessment (M7), the plugin (M8).
+>
 > **Update 2026-10-30: M2 built; M1, M3 and part of M3b built.** `execution/repo-map.mjs` (M2), `execution/assess-guard.mjs` and
 > `install.mjs --existing` (M1), `execution/assess-plan.mjs` and `docs/ASSESSMENT_RUNBOOK.md` (M3), with the secret exclusions of M3b.
 > 42 new tests, none of which run a model. **Nothing here has been run on a private repo or measured for recall or precision.**

@@ -1622,8 +1622,16 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [~] **M3b** *(partly built 2026-10-30.)* Done and tested: secret-path exclusion (map, copy and plan), a secret-pattern scan that holds files
         back, `--scope` for subdirectories. **Not done:** data classification and processor as required Charter lines (the template does not
         yet refuse a blank), a hook-level read deny proven in a live session, a configurable records location.
-  - [ ] **M5** review-mode Charter template and report format.
-  - [ ] **M4** calibration run: recall on S5/S6, seeded bugs by a different agent, precision on a 30-finding sample.
+  - [x] **M5** *(2026-11-02)* `execution/assess-report.mjs` writes `REPORT.md` (risk map, findings by severity with evidence, what was not
+        reviewed and why, tests and CI, a proposed backlog of Charter-ready intents); it refuses if the read-only check fails or a finding
+        quotes a secret, and says "first pass" with one model family. `templates/REVIEW_CHARTER_TEMPLATE.md` plus a filled example that
+        passes `charter-check`; `charter-check` now also refuses a blank or missing C4.D (data classification) in an assessment Charter and
+        blank lettered ids such as C3.R. 15 tests.
+  - [~] **M4** *(first run 2026-11-02, indicative.)* `execution/assess-calibrate.mjs` scores recall against planted bugs and gives precision as
+        a range until the owner judges. Run: 6 bugs planted by one agent, 4 read-only reviewer agents, **6 of 6 found**, one repo, one model
+        family. **Precision not measured:** 12 of 18 findings await the owner's disposition (30 judged are needed for the 70% bar).
+        Record: `docs/review-evals/assessment-calibration-2026-11-02/`. **Open:** the owner's dispositions, the Codex run, a second and a
+        third repo, fresh seeds for any rescore.
   - [ ] **M7** re-assessment: the same review on the same scope after fixes land, with a closed / still open / regressed / new table keyed on the first report's ids.
   - [ ] **M6** pilots on aveto-support, then two or more repos of other stacks and sizes (one not ours); only then README and site, as pilot results.
   - **Stops after M4** if recall or precision misses its declared bar.
