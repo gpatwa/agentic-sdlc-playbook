@@ -1630,7 +1630,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
   - [~] **M4** *(first run 2026-11-02, indicative.)* `execution/assess-calibrate.mjs` scores recall against planted bugs and gives precision as
         a range until the owner judges. Run: 6 bugs planted by one agent, 4 read-only reviewer agents, **6 of 6 found**, one repo, one model
         family. **Precision: 18 judged, 0 false, bar not met as measured:** the 12 unmatched findings were verified against the real code and fixed
-        (hr-timeoff-agent PR 41, open); 30 independently judged are needed for the 70% bar.
+        (hr-timeoff-agent PR 41, merged); 30 independently judged are needed for the 70% bar.
         Record: `docs/review-evals/assessment-calibration-2026-11-02/`. **Open:** a larger independent sample, the Codex run, a second and a
         third repo, fresh seeds for any rescore.
   - [ ] **M7** re-assessment: the same review on the same scope after fixes land, with a closed / still open / regressed / new table keyed on the first report's ids.
