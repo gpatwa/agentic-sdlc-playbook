@@ -4,6 +4,22 @@ How to assess a repository Aveto did not build, with what is built today (`docs/
 **records and reviews; it does not certify.** The report says "assessed against Aveto's gates on <date>", names what was not
 examined, and never says the code is secure or compliant.
 
+## One command
+
+`execution/assess-run.mjs` chains everything below that is automated: review copy and guard, map, plan, one read-only reviewer call per area, the read-only check, the report, and (with `--seeds`) the calibration score.
+
+```bash
+node execution/assess-run.mjs <repo> --reviewer codex --scratch <dir> [--model <name>] [--seeds seeds.json] [--scope <subdir>]
+```
+
+- `--reviewer codex|claude` picks the reviewer CLI. The model is always passed explicitly (defaults in the script, recorded in `reviews/RUN.md` with the tool version) because a tool's own default can be a model your account cannot use; that failed a Codex run before it read any code.
+- `--dry-run` plans and stops, so you can see the areas and the token estimate before any model is called.
+- It exits 1 if the read-only check fails, an area's reviewer failed (that area is listed as not reviewed), or the report could not be written.
+- The `claude` reviewer path is covered by tests with a fake reviewer only; it has not yet been run live.
+- You still do the part that is yours: read `reviews/REPORT.md`, disposition each finding in `reviews/FINDINGS.md`.
+
+The manual steps below remain the reference for what each stage does.
+
 What is automated: the review copy and its guard, the map, the plan, the area prompts, the secret exclusion. What is **not**
 yet: running the reviews themselves (you open Claude Code in the copy and run each area prompt), the independent second
 reviewer, the report writer (M5), calibration (M4), the Charter lines for data classification and processor (rest of M3b).
