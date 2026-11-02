@@ -1,0 +1,8 @@
+[
+{"id":"S1","file":"hr_timeoff_agent/core/policy.py","lineStart":76,"lineEnd":76,"class":"authz","severity":"P0","description":"The direct-manager check is skipped when the worker has no manager_id, so any worker may decide such a request."},
+{"id":"S2","file":"hr_timeoff_agent/services/a2a/payroll.py","lineStart":50,"lineEnd":50,"class":"tenant","severity":"P1","description":"The tenant check only runs when tenant_id is supplied, so a request with no tenant_id reads this tenant's payroll data."},
+{"id":"S3","file":"hr_timeoff_agent/adapters/storage.py","lineStart":143,"lineEnd":143,"class":"injection","severity":"P1","description":"persona is interpolated into the SQL string by f-string instead of being bound as a parameter, allowing SQL injection."},
+{"id":"S4","file":"hr_timeoff_agent/core/policy.py","lineStart":186,"lineEnd":186,"class":"logic","severity":"P2","description":"Coverage passes only when strictly above the floor, but the rule and message say at or above, so exactly-at-floor coverage is flagged."},
+{"id":"S5","file":"hr_timeoff_agent/adapters/oidc.py","lineStart":168,"lineEnd":168,"class":"errors","severity":"P0","description":"Only an explicit email_verified=false is refused; a token with the claim missing or non-boolean is accepted, so the check fails open."},
+{"id":"S6","file":"hr_timeoff_agent/services/a2a/common.py","lineStart":145,"lineEnd":145,"class":"concurrency","severity":"P1","description":"Bearer token is compared with == instead of a constant-time compare, enabling timing attacks."}
+]
