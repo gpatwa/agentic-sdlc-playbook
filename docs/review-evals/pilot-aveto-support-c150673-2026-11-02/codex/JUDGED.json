@@ -1,0 +1,136 @@
+{
+  "judge": "claude",
+  "family": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "effort": "high",
+  "promptSha256": "0b19370c37c15b74d0b161de1e208fbcbbcaba733596dfa8daf83050068b86d3",
+  "seed": 20261102,
+  "n": 15,
+  "sampled": [
+    "F-03-1",
+    "F-01-11",
+    "F-01-9",
+    "F-03-2",
+    "F-12-3",
+    "F-11-3",
+    "F-09-1",
+    "F-02-2",
+    "F-13-2",
+    "F-02-7",
+    "F-08-5",
+    "F-01-13",
+    "F-10-2",
+    "F-03-3",
+    "F-02-9"
+  ],
+  "allowSameFamily": false,
+  "note": "Provisional: the owner's disposition outranks the judge's.",
+  "verdicts": [
+    {
+      "id": "F-03-1",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": ".agentic/PROJECT_CONTEXT.md:78 says 'No generative model is used anywhere', but CURRENT_MVP_STATUS.md:21-29 describes the operator-run `aveto-answerability-judge` (claude-sonnet-5-5), which sends the question, passages and reply to Anthropic. CURRENT_MVP_STATUS.md:103 scopes the exclusion to 'by the program', and PROJECT_CONTEXT.md never does."
+    },
+    {
+      "id": "F-01-11",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": ".claude/agents/software-architect.md:121-122 requires running the candidate with a throwaway script, but line 4 limits the role to Read, Write, Edit, Grep and Glob, and line 24 says to hand back if a task needs another tool. The brief names no other role or runner for the pilot, so the pilot cannot be done as written."
+    },
+    {
+      "id": "F-01-9",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": ".claude/agents/on-call-engineer.md:4 limits tools to Read, Write, Edit, Grep and Glob, while the brief (lines 37-74) has the role diagnose logs, metrics and traces and execute remediation and rollback. That is a real mismatch, though line 24 makes the role hand back instead of working around the limit, and this CLI-only repo has no production service, so P1 is overstated."
+    },
+    {
+      "id": "F-03-2",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "CURRENT_MVP_STATUS.md:55-56 says eval exits non-zero below 80% on either group, but evaluate.py:52 defines `passed` from answerable hits only, and __main__.py:300 returns 0 or 1 from `report_eval.passed`. The unanswerable group is diagnostic only. This is a one-line documentation error, so P3 fits better."
+    },
+    {
+      "id": "F-12-3",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "The tech-spec table at 02-tech-spec.md:264-268 sums to 13, plus 1 for the INV annotation and 2 for ADR 0002/0003 (line 270) makes 16, above the 01-scope.md:69 maximum of 15, and the spec still says 'Fits the cap; no re-split needed'. The ADR edits were disclosed and made at the Orchestrator's instruction, so this is an accounting and process lapse, not a hidden one."
+    },
+    {
+      "id": "F-11-3",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "STATE.md:24 marks Post-Launch 'done', but 03-close-out.md:3 and :33 say Post-Launch did not run by the owner's decision, and STATE.md:22-23 already use 'not run — owner's decision' for Security and Release. It is a status inconsistency with no safety effect, so P3 fits better."
+    },
+    {
+      "id": "F-09-1",
+      "reviewer": "codex",
+      "verdict": "rejected",
+      "severity_view": "n/a",
+      "reason": "SUPPORT_REPLIES.md:41 says the owner told the support session directly ('remove it') and labels the reply 'Data only', not an approval. The deletion removes a permissive rule, and the repo keeps S6 unresolved: 15-close-out.md:174 (T9a) requires the owner's disposition in the driving session, and 13-release-checklist-tier3.md:48 flags that no driving-session record exists. The remedy the finding asks for is already in place."
+    },
+    {
+      "id": "F-02-2",
+      "reviewer": "codex",
+      "verdict": "rejected",
+      "severity_view": "n/a",
+      "reason": "HANDOFF_CHECK.md:16 limits the validator to mechanical envelope checks and :58-60 says it never judges quality. No rule is contradicted or left unenforced; a fooled validator only lets an incomplete handoff through to downstream gates. The missing untrusted-input wording is a hardening suggestion, not a defect, and P1 is unsupported."
+    },
+    {
+      "id": "F-13-2",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "tests/test_judge_seen_skill.py:199-200 compares the freshly derived key/key.toml byte for byte with the committed one. CURRENT_MVP_STATUS.md:92-94 confirms the committed key gained rows after the freeze, so `test_sample_derivation_reproducible` fails even when derivation is correct. The repo records it as a known failure that 'a later slice must change'."
+    },
+    {
+      "id": "F-02-7",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "RUN_ECONOMICS.md:171-173 calls a 'timeout with no output' an infrastructure interruption that does not consume the retry budget. FAILURE_LOOP.md:10-21 says a stage attempt exceeding its wall-clock budget is a failure that counts against retries, and :65 has a `timeout` category, so the two protocols contradict. Nothing bounds repeated timed-out respawns, which undercuts non-negotiable rule 3."
+    },
+    {
+      "id": "F-08-5",
+      "reviewer": "codex",
+      "verdict": "rejected",
+      "severity_view": "n/a",
+      "reason": "The finding cuts the quoted sentence at the ellipsis. The full line (06-release-checklist.md:108) reads 'Any end-to-end figure … on held-out data, and any fifth-set result. I report none', so it excludes only held-out and fifth-set figures. The seen-set end-to-end figures in 03-implementation.md:14-19 are not contradicted, and line 102 labels seen-set results 'diagnostic'."
+    },
+    {
+      "id": "F-01-13",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "security-privacy.md:4 gives Read, Write, Edit, Bash, Grep, Glob, and the file has no write-scope-guard hook, although the other artefact-only roles do (for example orchestrator.md:9-12). Line 62 says the role does not own code changes. The other Bash-holding roles I checked also have no hook, and a path-matching hook would not constrain Bash anyway, so P1 overstates it; P2 fits."
+    },
+    {
+      "id": "F-10-2",
+      "reviewer": "codex",
+      "verdict": "intentional",
+      "severity_view": "n/a",
+      "reason": "The per-fold re-selection is what the sweep calls its 'committed procedure' (02-baseline-sweep.py:349-350). 02-baseline.md:43 says 'LOSO procedure as in the brief (max of min(Bar1, Bar2) on the other three sets)'. 01-scope.md:65 does say 'single chosen setting', so the wording is loose. The outcome does not change, because 02-tech-spec.md:23-25 shows no cell reaches 80% on both bars pooled."
+    },
+    {
+      "id": "F-03-3",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "__main__.py:56 echoes result.question verbatim, and retrieve (search.py:457) only rejects empty or wordless questions. A multi-line question can therefore put 'no confident match' or 'Deciding signal:' at line start in retrieve output, which breaks the literal wording of SAFETY_INVARIANTS.md:62-64. The only source of the injected text is the operator's own input, and the program itself never emits a verdict, so P3 or a narrowed invariant is enough."
+    },
+    {
+      "id": "F-02-9",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "APPROVAL_PROTOCOL.md:47-48 says 'Denied → stop the slice' but gives no status transition, and step 2 (line 28) leaves the slice at blocked-on-approval. SLICE_STATE.md:33 allows only in-progress, blocked-on-approval, blocked-on-failure and done, so a denied slice has no terminal state."
+    }
+  ],
+  "failedBatches": []
+}

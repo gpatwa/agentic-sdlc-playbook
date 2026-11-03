@@ -1,0 +1,1 @@
+[{"id":"S5","file":".claude/skills/aveto-judge-seen/SKILL.md","lineStart":9,"lineEnd":9,"class":"injection","severity":"P1","description":"$ARGUMENTS is placed inside single quotes in a shell line, so a single quote in the argument breaks out and runs a second command (a real incident, fixed in the commit after c150673)."}]

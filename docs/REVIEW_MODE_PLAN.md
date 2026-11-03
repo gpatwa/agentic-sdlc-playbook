@@ -208,7 +208,7 @@ plugin's version equals `PACK_VERSION`. *Estimate:* not set.
 
 **Pack version (2026-11-02):** `PACK_VERSION` stays at 31. No file under `execution/pack/`, which is what a project receives, has changed since v31; everything added since (`repo-map`, `assess-*`, `onboard`, the review Charter template, `install.mjs --existing`) runs from the playbook checkout. Bump it when a pack file changes, for example when `/aveto-onboard` or a review-mode protocol is added to the pack, and the plugin's version follows it.
 
-**Pilot status (2026-11-02):** three repos assessed with the engine (`hr-timeoff-agent`, `streak-seed`, `microblog`, the last not ours); evidence in `docs/review-evals/`. Not yet done: the `aveto-support` pilot at `c150673`, the owner's review of a report per pilot, M7, M8.
+**Pilot status (2026-11-02):** three repos assessed with the engine (`hr-timeoff-agent`, `streak-seed`, `microblog`, the last not ours); evidence in `docs/review-evals/`. The `aveto-support` pilot at `c150673` is done (`docs/review-evals/pilot-aveto-support-c150673-2026-11-02/`). M7 has a first run (`reassessment-hr-timeoff-agent-2026-11-02/`). Not yet done: the owner's review of a report per pilot, the README and site wording, M8.
 
 **First trial (2026-10-30):** a manual assessment of `hr-timeoff-agent`
 (`docs/research/2026-10-assessment-hr-timeoff-agent.md`). Lessons: read-only needs a mechanical check (M1); the map
