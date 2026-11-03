@@ -142,7 +142,7 @@ export function run(repo, opts, runner = defaultRunner) {
   return { clone: guard.clone, records, reportPath, scorePath, failed, rows, verified, reportError, areas: areaFiles.length };
 }
 
-function defaultRunner(spec, prompt, cwd) {
+export function defaultRunner(spec, prompt, cwd) {
   const r = spawnSync(spec.cmd, spec.args, { input: prompt, cwd, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
   return { status: r.status ?? 1, stdout: r.stdout, stderr: r.stderr };
 }

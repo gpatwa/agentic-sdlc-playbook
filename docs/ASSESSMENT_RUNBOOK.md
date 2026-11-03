@@ -20,6 +20,19 @@ node execution/assess-run.mjs <repo> --reviewer codex --scratch <dir> [--model <
 
 The manual steps below remain the reference for what each stage does.
 
+## Judging findings
+
+`execution/assess-judge.mjs` judges a random sample of open findings (the precision bar needs 30 judged):
+
+```bash
+node execution/assess-judge.mjs <copy>/reviews --judge codex --n 30 --seed 1 [--seeds seeds.json]
+```
+
+- The judge must be a different model family from the reviewer that wrote the findings (`--allow-same-family` overrides and is recorded). It is not told which reviewer wrote a finding.
+- The sample is seeded, balanced across reviewers, and never includes a finding that matches a planted bug.
+- `confirmed`, `rejected` and `intentional` are written into `FINDINGS.md`; `unclear` stays open. `JUDGED.json` keeps each reason, the judge's model and effort, the seed and the prompt's sha256 (`templates/FINDING_JUDGE_PROMPT.md`).
+- A judge's verdict is provisional. The owner's disposition outranks it: edit the row and the score follows.
+
 What is automated: the review copy and its guard, the map, the plan, the area prompts, the secret exclusion. What is **not**
 yet: running the reviews themselves (you open Claude Code in the copy and run each area prompt), the independent second
 reviewer, the report writer (M5), calibration (M4), the Charter lines for data classification and processor (rest of M3b).
