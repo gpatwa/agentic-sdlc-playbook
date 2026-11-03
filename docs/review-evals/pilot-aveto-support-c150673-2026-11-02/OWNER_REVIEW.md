@@ -1,6 +1,6 @@
 # Owner review sheet: aveto-support pilot (M6)
 
-Every P1 finding from both reviewers (28 rows), with the cross-family judge's verdict where the finding was in the judged sample (otherwise "not judged"). **Your dispositions are what the plan's "done" condition needs.** Mark each: fixed, confirmed, deferred, rejected or intentional. Full reports: `claude/REPORT.md` and `codex/REPORT.md`; every finding: `claude/FINDINGS.md` and `codex/FINDINGS.md`. Most P1s are about the agent briefs and protocols (self-approval, unpinned installs, missing tool access); the one code finding is the S5 shell escape (claude F-04-1), which is already fixed in the repo.
+Every P1 finding from both reviewers (38 rows), with the cross-family judge's verdict where the finding was in the judged sample (otherwise "not judged"). **Your dispositions are what the plan's "done" condition needs.** Mark each: fixed, confirmed, deferred, rejected or intentional. Full reports: `claude/REPORT.md` and `codex/REPORT.md`; every finding: `claude/FINDINGS.md` and `codex/FINDINGS.md`. Most P1s are about the agent briefs and protocols (self-approval, unpinned installs, missing tool access); the one code finding is the S5 shell escape (claude F-04-1), which is already fixed in the repo.
 
 | reviewer | id | where | what | judge | your disposition |
 |---|---|---|---|---|---|
