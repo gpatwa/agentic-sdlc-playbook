@@ -217,7 +217,7 @@ installer to upgrade a repo, and it tells you what changed. See
 
 ## Assessing an existing codebase (pilot)
 
-Assessment mode reviews a repository Aveto did not build, on a read-only copy, with two model families as reviewers and a cross-family judge, and writes a report. It **records and reviews; it does not certify**. Measured so far: three repos and one process repo, six planted bugs each on three of them, found 4 of 6 to 6 of 6 (small edge-case bugs are the ones it misses), and about three in four of the unmatched findings confirmed on a judged sample of 30. These are pilot results on small repos, not a guarantee. Evidence and limits: `docs/review-evals/`.
+Assessment mode reviews a repository Aveto did not build, on a read-only copy, with two model families as reviewers and a cross-family judge, and writes a report. It **records and reviews; it does not certify**. Measured so far: three repos with six planted bugs each, found 2 of 6 to 6 of 6 depending on the repo and the reviewer (small edge-case bugs are the ones it misses), plus one process repo, and about three in four of the unmatched findings confirmed on a judged sample of 30. These are pilot results on small repos, not a guarantee. Evidence and limits: `docs/review-evals/`.
 
 As a Claude Code plugin (skills only, no hooks; it runs a script only when you invoke a skill):
 
