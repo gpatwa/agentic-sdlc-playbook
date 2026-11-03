@@ -1,0 +1,72 @@
+{
+  "judge": "claude",
+  "family": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "effort": "high",
+  "promptSha256": "0b19370c37c15b74d0b161de1e208fbcbbcaba733596dfa8daf83050068b86d3",
+  "seed": 1,
+  "n": 30,
+  "sampled": [
+    "F-01-5",
+    "F-01-10",
+    "F-01-11",
+    "F-01-8",
+    "F-01-7",
+    "F-01-2",
+    "F-01-9"
+  ],
+  "allowSameFamily": false,
+  "note": "Provisional: the owner's disposition outranks the judge's.",
+  "verdicts": [
+    {
+      "id": "F-01-5",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "reset_password.html:7 uses `url_for(..., _external=True)`. `config.py:10` makes SERVER_NAME optional, and nginx uses `server_name _` with `proxy_set_header Host $host` (nginx:4,13,27) and sends no X-Forwarded-Proto, with no ProxyFix, so Host poisoning and http links are possible when SERVER_NAME is unset. It needs an attacker-crafted request and a victim who clicks, so P2 fits better."
+    },
+    {
+      "id": "F-01-10",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "routes.py:219-227 is a GET route that calls `launch_task` and commits, so a cross-site GET can enqueue an export. The impact is small (an export of the victim's own posts, with one task at a time), so P3 fits better."
+    },
+    {
+      "id": "F-01-11",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "messages.html:11 and 16 both use `href=\"#\"`, so the `prev_url` and `next_url` passed by routes.py:215-216 are never used. Users cannot page through messages."
+    },
+    {
+      "id": "F-01-8",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "`requests.post` at translate.py:14-18 has no `timeout`, so a stalled upstream can block a worker. The route is login-protected and has no rate limit, but the practical risk is modest."
+    },
+    {
+      "id": "F-01-7",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "auth/routes.py:76-82 sets the password without invalidating anything. `verify_reset_password_token` (models.py:187-193) only checks the signature and expiry (`exp` set at models.py:183), so the token can be reused within 10 minutes."
+    },
+    {
+      "id": "F-01-2",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "config.py:9 falls back to the hard-coded 'you-will-never-guess', which signs both Flask sessions and the reset JWTs (models.py:184). A deployment that omits SECRET_KEY can have both forged."
+    },
+    {
+      "id": "F-01-9",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "The Dockerfile has no `USER` instruction before `ENTRYPOINT [\"./boot.sh\"]` (line 16), so the container runs as root. This is a hardening gap rather than an exploitable flaw, so P3 fits better."
+    }
+  ],
+  "failedBatches": []
+}

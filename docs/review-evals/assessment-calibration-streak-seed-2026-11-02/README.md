@@ -61,6 +61,8 @@ So the precision figure holds up under a second pair of judges: 73% (Opus) and 8
 - Codex F-09-2 and F-03-2: Opus rejected, Claude said intentional. Both mean "not a defect", so they agree on the outcome.
 - Codex F-02-8: Opus confirmed, Claude unclear.
 
+**A rescan for the same artifact (2026-11-02).** Two more of Claude's findings, F-04-2 (the `Edit`/`Write` deny list) and F-04-4 (the secret-file deny list), were also about the guard's `.claude/settings.json`, not the repository's. Both are now `rejected`; they were outside the sample of 30, so its figures do not change. No other finding in the three runs is about the replaced file, and `hr-timeoff-agent` tracks no `.claude/` folder.
+
 **What the calibration does and does not show.** It shows the judge runs end to end through both reviewer CLIs, returns parseable verdicts for all 30, and lands within a few findings of an independent judge. It does not show the judge is right: there is no ground truth for these findings, only other judges. The owner's dispositions are the missing reference, and they outrank any judge.
 
 **Bars after two runs.** Precision: 73% on 30 judged (above the bar, weakly supported, see above). Generality: 2 repos (Python, JavaScript), both ours; the plan's three, with one not ours, is still not met. Recall: 6 of 6 and 3 of 6 (Claude), 4 of 6 and 2 of 6 (Codex); no bar is claimed. Nothing here supports "the review finds the bugs"; it supports "it finds the loud ones and some quiet ones", with the misses listed.

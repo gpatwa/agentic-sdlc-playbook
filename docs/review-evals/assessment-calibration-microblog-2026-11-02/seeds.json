@@ -1,0 +1,56 @@
+[
+ {
+  "id": "S1",
+  "file": "app/api/users.py",
+  "lineStart": 66,
+  "lineEnd": 68,
+  "class": "authz/ownership",
+  "severity": "P0",
+  "description": "update_user lacks the check that the token's user owns the id; any authenticated user can modify any other user's username, email, about_me and password."
+ },
+ {
+  "id": "S2",
+  "file": "app/main/forms.py",
+  "lineStart": 52,
+  "lineEnd": 52,
+  "class": "input validation",
+  "severity": "P2",
+  "description": "MessageForm message length validator dropped the max=140 bound, so messages of unlimited length are accepted (column is 140 chars)."
+ },
+ {
+  "id": "S3",
+  "file": "app/auth/routes.py",
+  "lineStart": 27,
+  "lineEnd": 27,
+  "class": "open redirect",
+  "severity": "P1",
+  "description": "next parameter only checked to start with '/', so protocol-relative '//evil.com' passes and login redirects off-site."
+ },
+ {
+  "id": "S4",
+  "file": "app/main/routes.py",
+  "lineStart": 173,
+  "lineEnd": 174,
+  "class": "wrong comparison",
+  "severity": "P2",
+  "description": "search next_url uses total >= page*per_page instead of >, off-by-one: shows a Next link to an empty page when results exactly fill the current page."
+ },
+ {
+  "id": "S5",
+  "file": "app/models.py",
+  "lineStart": 274,
+  "lineEnd": 285,
+  "class": "fails open",
+  "severity": "P0",
+  "description": "check_token swallows AttributeError when token_expiration is missing and treats the token as not expired, accepting tokens with no expiry (fails open)."
+ },
+ {
+  "id": "S6",
+  "file": "app/models.py",
+  "lineStart": 264,
+  "lineEnd": 264,
+  "class": "secret handling",
+  "severity": "P0",
+  "description": "API token generated from md5 of user id and timestamp instead of secrets.token_hex, so tokens are predictable and guessable."
+ }
+]

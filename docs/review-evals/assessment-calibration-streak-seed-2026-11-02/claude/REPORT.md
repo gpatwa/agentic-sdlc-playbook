@@ -13,7 +13,7 @@
 
 ## Summary
 
-45 finding(s): 0 P0, 6 P1, 26 P2, 13 P3, 0 note. 30 are still open; the owner sets each disposition.
+45 finding(s): 0 P0, 6 P1, 26 P2, 13 P3, 0 note. 28 are still open; the owner sets each disposition.
 
 ## Risk map
 
@@ -53,7 +53,7 @@ The file has no `hooks` block, so the budget and write-scope guards that AGENTS.
 
 *Evidence:* evidence: file is `{ "permissions": { "deny": [ ... ] } }` with no other top-level key. AGENTS.md says: "Budget enforcement: a pre-spawn hook (`.claude/hooks/`) checks the budget before every subagent spawn".
 
-**F-04-2** · `.claude/settings.json:4-6` · claude · open
+**F-04-2** · `.claude/settings.json:4-6` · claude · rejected
 
 The project-wide deny list blocks `Edit`, `Write` and `NotebookEdit` outright. Deny rules take precedence over allow rules and over per-agent `tools:` frontmatter. Every role that lists `Write, Edit` (orchestrator, product-manager, qa-evidence and the rest) therefore cannot write `runs/<slice-id>/STATE.md`, specs or evidence, which breaks rule 4 ("State is durable") and rule 5 (handoff through artefacts). Slices stall, or roles fall back to Bash redirects. That fallback is not denied (see F-04-3) and bypasses the least-privilege model.
 
@@ -255,7 +255,7 @@ The guidance tells the Orchestrator to estimate stages above the pipeline's own 
 
 *Evidence:* `Estimate a tier 3 Release Manager at 150 to 190k` (`RUN_ECONOMICS.md:50-51`); `\¦ Per-stage token budget \¦ ≤ 150k subagent tokens p95, **each spawned stage** \¦` (`PIPELINE_SLOS.md:17`); `Every legitimate stage across all three runs lands ≤ 126k.` (`PIPELINE_SLOS.md:42`)
 
-**F-04-4** · `.claude/settings.json:19-53` · claude · open
+**F-04-4** · `.claude/settings.json:19-53` · claude · rejected
 
 The secret-file deny list misses common credential files, so they stay readable by `Read`. These include `.git-credentials`, `.docker/config.json`, `*.p8`, `*.ovpn`, `.env` variants outside `**/.env*` such as `*.env`, `.vault-token`, `.terraformrc`, `terraform.tfvars` and `.aws` (the `.aws` rule covers only the `**/.aws/**` path form). Any role with `Read` can pull them into context and then into artefacts or logs.
 

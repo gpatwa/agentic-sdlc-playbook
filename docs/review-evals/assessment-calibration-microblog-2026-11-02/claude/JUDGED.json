@@ -1,0 +1,40 @@
+{
+  "judge": "codex",
+  "family": "openai",
+  "model": "gpt-5.6-sol",
+  "effort": "medium",
+  "promptSha256": "0b19370c37c15b74d0b161de1e208fbcbbcaba733596dfa8daf83050068b86d3",
+  "seed": 1,
+  "n": 30,
+  "sampled": [
+    "F-01-7",
+    "F-01-4",
+    "F-01-5"
+  ],
+  "allowSameFamily": false,
+  "note": "Provisional: the owner's disposition outranks the judge's.",
+  "verdicts": [
+    {
+      "id": "F-01-7",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": ".flaskenv:2 sets FLASK_DEBUG=1, and requirements.txt includes python-dotenv, so Flask CLI commands load it; app/__init__.py:61 then suppresses production logging handlers, while Vagrantfile:3 assigns a reachable private-network address."
+    },
+    {
+      "id": "F-01-4",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "config.py:9 uses the public fallback key, while app/models.py:181-190 uses that same SECRET_KEY to sign and verify HS256 password-reset tokens. Dockerfile:1-16 and boot.sh:1-11 provide no required or generated SECRET_KEY."
+    },
+    {
+      "id": "F-01-5",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "Dockerfile:1-16 defines no USER after starting from python:slim, so boot.sh:4 runs migrations and boot.sh:11 executes the port-5000 Gunicorn process as the image's default root user."
+    }
+  ],
+  "failedBatches": []
+}

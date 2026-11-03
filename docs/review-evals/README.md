@@ -18,3 +18,4 @@ measured, one repo and one model family. Read its README before quoting any numb
 
 - `assessment-calibration-2026-11-02/` (Python, `hr-timeoff-agent`): six seeds, Claude reviewers 6 of 6, Codex 4 of 6.
 - `assessment-calibration-streak-seed-2026-11-02/` (JavaScript, `streak-seed`): six harder seeds, Claude 3 of 6, Codex 2 of 6, both through `execution/assess-run.mjs`.
+- `assessment-calibration-microblog-2026-11-02/` (Python/Flask, `microblog`, not ours): six seeds, Claude 4 of 6, Codex 4 of 6; the 10 non-seed findings confirmed by cross-family judges.
