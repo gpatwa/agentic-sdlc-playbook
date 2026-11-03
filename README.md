@@ -215,6 +215,18 @@ intentional (`docs/CODE_REVIEW.md`). The pack is at **version 24**; re-run the
 installer to upgrade a repo, and it tells you what changed. See
 [execution/README.md](execution/README.md).
 
+## Assessing an existing codebase (pilot)
+
+Assessment mode reviews a repository Aveto did not build, on a read-only copy, with two model families as reviewers and a cross-family judge, and writes a report. It **records and reviews; it does not certify**. Measured so far: three repos and one process repo, six planted bugs each on three of them, found 4 of 6 to 6 of 6 (small edge-case bugs are the ones it misses), and about three in four of the unmatched findings confirmed on a judged sample of 30. These are pilot results on small repos, not a guarantee. Evidence and limits: `docs/review-evals/`.
+
+As a Claude Code plugin (skills only, no hooks; it runs a script only when you invoke a skill):
+
+```
+/plugin install aveto --marketplace gpatwa/agentic-sdlc-playbook
+```
+
+Then `/aveto:assess <repo>`, `/aveto:judge`, `/aveto:reassess`, `/aveto:onboard`. Reviewers run on your own Codex and Claude plans, and the code is sent to those providers, so do not point it at a private repository until you have approved that. The plugin has been loaded and dry-run in a local session; it has not been tested on a clean machine.
+
 ## Core principles
 
 - **Less setup, more value.** A user (or developer) hits something useful

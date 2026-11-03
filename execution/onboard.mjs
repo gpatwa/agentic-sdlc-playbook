@@ -55,3 +55,22 @@ export function proposeAgentic(map) {
 
   return { "PROJECT_CONTEXT.md": context, "LOCAL_COMMANDS.md": commands, "SAFETY_INVARIANTS.md": invariants };
 }
+
+// node onboard.mjs <repo>: write the proposals into <repo>/.agentic/ and nothing else. Never overwrites a file that exists.
+// (install.mjs --existing does the same and then installs the whole pack, which points back at the playbook checkout; this
+// is the part that needs no playbook, so the plugin can ship it.)
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const repo = process.argv[2] && !process.argv[2].startsWith("--") ? resolve(process.argv[2]) : null;
+  if (!repo || !existsSync(join(repo, ".git"))) { console.error("usage: node onboard.mjs <git-repo>"); process.exit(2); }
+  const { buildMap } = await import("./repo-map.mjs");
+  mkdirSync(join(repo, ".agentic"), { recursive: true });
+  for (const [f, body] of Object.entries(proposeAgentic(buildMap(repo)))) {
+    const dest = join(repo, ".agentic", f);
+    if (existsSync(dest)) { console.log(`.agentic/${f}: exists, left alone`); continue; }
+    writeFileSync(dest, body);
+    console.log(`.agentic/${f}: PROPOSED (not confirmed) from the repo itself`);
+  }
+}

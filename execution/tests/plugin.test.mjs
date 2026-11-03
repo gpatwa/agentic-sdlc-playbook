@@ -30,12 +30,12 @@ describe("the plugin", () => {
     assert.ok(!("hooks" in manifest()) && !("mcpServers" in manifest()));
   });
   test("every skill is user-invoked only, names its script by the plugin path, and keeps user text out of shell quotes", () => {
-    assert.deepEqual(skills.sort(), ["assess", "judge", "reassess"]);
+    assert.deepEqual(skills.sort(), ["assess", "judge", "onboard", "reassess"]);
     for (const s of skills) {
       const text = readFileSync(join(PLUGIN_DIR, "skills", s, "SKILL.md"), "utf8");
       assert.match(text, /^---\nname: /, `${s} has frontmatter`);
       assert.match(text, /disable-model-invocation: true/, `${s} must not be started by the model`);
-      assert.match(text, /\$\{CLAUDE_PLUGIN_ROOT\}\/execution\/assess-/, `${s} runs a shipped script by plugin path`);
+      assert.match(text, /\$\{CLAUDE_PLUGIN_ROOT\}\/execution\/(assess-|onboard)/, `${s} runs a shipped script by plugin path`);
       assert.ok(!/\$ARGUMENTS/.test(text), `${s} must not interpolate $ARGUMENTS (the S5 incident)`);
       const commands = [...text.matchAll(/```bash\n([\s\S]*?)```/g)].map((m) => m[1]).join("\n");
       assert.ok(commands.length > 0, `${s} has a command block`);
@@ -65,6 +65,21 @@ describe("the shipped scripts run from inside the plugin and change nothing", ()
     const out = execFileSync("node", [join(PLUGIN_DIR, "execution", "assess-run.mjs"), repo, "--reviewer", "codex", "--scratch", join(base, "s"), "--dry-run"], { encoding: "utf8" });
     assert.match(out, /dry run: \d+ area/);
     assert.equal(g("status", "--porcelain") + g("rev-parse", "HEAD"), before);
+    rmSync(base, { recursive: true, force: true });
+  });
+  test("onboard proposes .agentic/ files, marks them unconfirmed, and never overwrites", () => {
+    const base = join(tmpdir(), `plugin-onboard-${process.pid}`);
+    rmSync(base, { recursive: true, force: true });
+    mkdirSync(base, { recursive: true });
+    const g = (...a) => execFileSync("git", ["-C", base, "-c", "user.name=A", "-c", "user.email=a@x", ...a], { encoding: "utf8" });
+    g("init", "-q", "-b", "main"); writeFileSync(join(base, "a.py"), "x = 1\n"); mkdirSync(join(base, ".agentic")); writeFileSync(join(base, ".agentic", "PROJECT_CONTEXT.md"), "MINE\n"); g("add", "-A"); g("commit", "-q", "-m", "i");
+    const out = execFileSync("node", [join(PLUGIN_DIR, "execution", "onboard.mjs"), base], { encoding: "utf8" });
+    assert.match(out, /PROJECT_CONTEXT\.md: exists, left alone/);
+    assert.match(out, /SAFETY_INVARIANTS\.md: PROPOSED/);
+    assert.equal(readFileSync(join(base, ".agentic", "PROJECT_CONTEXT.md"), "utf8"), "MINE\n");
+    assert.match(readFileSync(join(base, ".agentic", "SAFETY_INVARIANTS.md"), "utf8"), /proposed, not confirmed/);
+    assert.ok(!existsSync(join(base, ".claude")) && !existsSync(join(base, "AGENTS.md")), "no pack is installed");
+    assert.equal(spawnSync("node", [join(PLUGIN_DIR, "execution", "onboard.mjs"), join(base, "nope")]).status, 2);
     rmSync(base, { recursive: true, force: true });
   });
   test("the judge finds its prompt template inside the plugin", () => {

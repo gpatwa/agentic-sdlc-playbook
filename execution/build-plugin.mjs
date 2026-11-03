@@ -15,7 +15,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
 export const PLUGIN_DIR = join(root, "plugin", "aveto");
-export const SCRIPTS = ["assess-guard", "repo-map", "assess-plan", "assess-run", "assess-report", "assess-calibrate", "assess-judge", "assess-reassess"].map((n) => `execution/${n}.mjs`);
+export const SCRIPTS = ["assess-guard", "repo-map", "assess-plan", "assess-run", "assess-report", "assess-calibrate", "assess-judge", "assess-reassess", "onboard"].map((n) => `execution/${n}.mjs`);
 export const TEMPLATES = ["templates/FINDING_JUDGE_PROMPT.md"];
 
 export const packVersion = () => Number(readFileSync(join(here, "install.mjs"), "utf8").match(/const PACK_VERSION = (\d+);/)[1]);
@@ -34,6 +34,7 @@ export const manifest = () => ({
 
 export const marketplace = () => ({
   name: "aveto",
+  description: "Aveto: governed, accountable agentic delivery. This marketplace carries the assessment-mode plugin.",
   owner: { name: "Gopal Patwa" },
   plugins: [{ name: "aveto", source: "./plugin/aveto", description: "Aveto assessment mode for Claude Code (skills only, no hooks)." }],
 });

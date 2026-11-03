@@ -21,3 +21,5 @@ The sample is random (seed 20261102, balanced, S5's finding excluded), the judge
 **What this adds to the series.** A fourth repo, and the first Markdown-heavy process repo rather than application code. The engine ran at 15 areas and 678k tokens of source without a failed area (58% of it reviewed, by the token cap). The M6 "done" condition, the owner's review of a report per pilot, is still open.
 
 Files per reviewer: `FINDINGS.md`, `SCORE.md`, `REPORT.md`, `RUN.md`, `JUDGED.json`.
+
+**Owner review (2026-11-02).** The owner told the support session the M6 review was completed, after being sent `OWNER_REVIEW.md` (the aveto-support pilot's 38 P1 findings). No dispositions were written into the sheet or given in the conversation, so none are recorded here and the findings stay `open`. Not reviewed by the owner as far as the record shows: the `hr-timeoff-agent`, `streak-seed` and `microblog` reports.
