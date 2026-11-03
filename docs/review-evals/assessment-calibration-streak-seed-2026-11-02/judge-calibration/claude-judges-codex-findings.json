@@ -1,0 +1,136 @@
+{
+  "judge": "claude",
+  "family": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "effort": "high",
+  "promptSha256": "0b19370c37c15b74d0b161de1e208fbcbbcaba733596dfa8daf83050068b86d3",
+  "seed": 1,
+  "n": 15,
+  "sampled": [
+    "F-01-8",
+    "F-02-2",
+    "F-08-5",
+    "F-01-5",
+    "F-07-3",
+    "F-02-8",
+    "F-09-2",
+    "F-03-2",
+    "F-02-4",
+    "F-01-7",
+    "F-06-2",
+    "F-07-1",
+    "F-02-6",
+    "F-01-3",
+    "F-05-1"
+  ],
+  "allowSameFamily": false,
+  "note": "Provisional: the owner's disposition outranks the judge's.",
+  "verdicts": [
+    {
+      "id": "F-01-8",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "Cloud-deployment.md:4 declares only Read/Write/Edit/Grep/Glob, yet :69 wraps `azd up`/`terraform apply`. post-launch-learning.md:71 requires `node …/analyze.mjs` and software-architect.md:121-122 requires a throwaway-script pilot, and none of those roles has Bash. The generic 'stop and hand back' rule (cloud-deployment.md:24) softens this, but no brief names who executes the operation."
+    },
+    {
+      "id": "F-02-2",
+      "reviewer": "codex",
+      "verdict": "intentional",
+      "severity_view": "n/a",
+      "reason": "The standing Charter (.agentic/STANDING_CHARTER.md:3-5, S5.1/S5.2) is the owner's own approval, by sha256, of PR creation and tier-1 auto-merge. The protocol (STANDING_CHARTER.md:42-54) also requires more than an agent verdict: CI green, zero open Important findings, tier 1 and Low, only S4 paths."
+    },
+    {
+      "id": "F-08-5",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "test/server.test.js:87-88 and :239-240 compare a server-produced date to a later `new Date().toISOString().slice(0,10)`, so the assertion fails if UTC midnight falls between the two. It is a real but very narrow flake."
+    },
+    {
+      "id": "F-01-5",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "customer-support.md:50 and the other cited briefs ingest tickets, notes, public content and logs. The only untrusted-content rule under .claude is security-privacy.md:112, so none of these four roles has one. Impact is limited because they have no Bash and writes go through write-scope-guard, so P1 overstates it."
+    },
+    {
+      "id": "F-07-3",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "REVIEW.md:5 still says 'Replace the bracketed lines; delete this note', and lines 8, 13, 17 and 20 are unfilled placeholders. CODE_REVIEW.md reads this file on every review, so reviewers get no project-specific guidance."
+    },
+    {
+      "id": "F-02-8",
+      "reviewer": "codex",
+      "verdict": "unclear",
+      "severity_view": "n/a",
+      "reason": "TELEMETRY.md:58 does sum only input+output tokens, omitting cache tokens. But RUN_ECONOMICS.md:29-37 says the budgets are peak-context figures, not consumption, so the claim that budgets undercount is not shown. I could not tell whether `stages[].tokens` is compared with the peak-context baselines."
+    },
+    {
+      "id": "F-09-2",
+      "reviewer": "codex",
+      "verdict": "intentional",
+      "severity_view": "n/a",
+      "reason": "scripts/demo.mjs:1-4 says the script exists so a human can eyeball a HabitView in a local console. SAFETY_INVARIANTS.md:24-25 restricts audit/telemetry logs, not a local demo printout, so the demo is not a violation as the invariant is worded."
+    },
+    {
+      "id": "F-03-2",
+      "reviewer": "codex",
+      "verdict": "intentional",
+      "severity_view": "n/a",
+      "reason": "The charter explicitly authorizes the PR, push and auto-merge actions in S5.1-S5.3 (lines 32-34), and the owner approves the whole charter by hash (lines 3-5). Section 7 (lines 44-46) covers send-on-behalf and external deploy/release, and a PR merge in this repo is neither, so the two sections do not contradict."
+    },
+    {
+      "id": "F-02-4",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "MODEL_ROUTING.md:43 says 'Gates never drop below `high`' while :59-61 says Tier 1 'gates stay `medium`'. The two statements directly conflict, because the static default for gates is `high`, per :36."
+    },
+    {
+      "id": "F-01-7",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "cloud-deployment.md:55-56 installs the skills with `npx skills add microsoft/azure-skills …` with no pinned version, commit or hash, and :130-134 acknowledges the live-subscription capability. The role has no Bash and the deploy is human-gated (:93-94), so P1 is too high."
+    },
+    {
+      "id": "F-06-2",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "src/client/render.js:94-96 puts only an `.sr-only` span (absolute, 1px, clipped, app.css:46-56) inside the anchor. `.row-link` is only `color: inherit` (app.css:142-144), so the anchor has no visible box. The visible name sits in the `aria-hidden` `.row-visual` span, and no row-level click handler exists in src, so sighted pointer users have no click target."
+    },
+    {
+      "id": "F-07-1",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "AGENTS.md:66 runs `node ../agentic-sdlc-playbook/execution/install.mjs .`, while AGENTS.md:8-12 say that relative path points nowhere from a worktree. The regeneration step gives no worktree-safe form. The effect is minor because the command works from the main checkout and the caveat is documented."
+    },
+    {
+      "id": "F-02-6",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "SESSION_REQUEST.md:56 prescribes `Status: in-progress (waiting-on-session)`, but SLICE_STATE.md:252-259 and RUN_INVENTORY.md:21 list only four plain values. qa-evidence.md:18 says to keep Status to one of the four values because a hook parses it, so the parenthetical deviates from that rule. Whether the hook rejects it is unverified, since the hook source is not in the repo."
+    },
+    {
+      "id": "F-01-3",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "security-privacy.md:4 and qa-evidence.md:4 grant unrestricted Bash, while security-privacy.md:62 and qa-evidence.md:71,111 say these roles do not change code. settings.json:7-18 denies only specific commands (git push/commit/add/reset/checkout/clean/remote, rm, mv, cp, curl, wget), so `sed -i` or a redirect is not blocked. Both roles need Bash to run tests, and qa-evidence.md:17 openly relies on the role honoring its boundary, so this is a known tradeoff."
+    },
+    {
+      "id": "F-05-1",
+      "reviewer": "codex",
+      "verdict": "confirmed",
+      "severity_view": "too high",
+      "reason": "ci.yml:18-19 use `actions/checkout@v4` and `actions/setup-node@v4`, which are mutable tags. This is a standard hardening gap, but the permissions are already limited to `contents: read` (ci.yml:11-12) and both are first-party actions."
+    }
+  ],
+  "failedBatches": []
+}

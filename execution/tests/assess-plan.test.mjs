@@ -117,6 +117,8 @@ describe("the records and the command line", () => {
     const first = readdirSync(join(dir, "areas")).sort()[0];
     const prompt = readFileSync(join(dir, "areas", first), "utf8");
     assert.match(prompt, /read-only review copy/);
+    assert.match(prompt, /review guard's permission file, NOT the repository's/);
+    assert.match(prompt, /\.assess-held/);
     assert.match(prompt, /\*\*Never fix\.\*\*/);
     assert.match(prompt, /Security Review/, "the first area is high risk");
     assert.equal(readFileSync(join(dir, "FINDINGS.md"), "utf8"), FINDINGS_HEADER);

@@ -42,6 +42,27 @@ The scorer works per reviewer, so each file shows 17 or 18 judged and "not measu
 
 **A bug found while doing this.** `assess-run.mjs` mis-parsed reviewer rows whose evidence contains backticks (it split the row wrongly, so the reviewer name landed in the disposition column and the scorer saw almost nothing judged). Fixed in `execution/assess-run.mjs` (`splitCells`) with a test that fails on the old code; `FINDINGS.md`, `SCORE.md` and `REPORT.md` here were rebuilt from the saved raw replies. Recall figures did not change.
 
+## Judge calibration (`assess-judge.mjs`, cross-family)
+
+The 30 findings above were judged by an ad-hoc Opus agent. To test the real judge (`execution/assess-judge.mjs`, prompt in `templates/FINDING_JUDGE_PROMPT.md`), the same 30 were judged again by a different family from the one that wrote them: Codex (`gpt-5.6-sol`, medium) judged Claude's 15, Claude (`claude-sonnet-5-5`, high) judged Codex's 15. Neither saw the Opus verdicts. Raw output in `judge-calibration/`.
+
+| | Exact agreement with Opus | True vs false positive agree | Judge's own precision on the 15 |
+|---|---|---|---|
+| Codex judging Claude's findings | 11 of 15 | 11 of 15 | 13 confirmed, 2 rejected (87%) |
+| Claude judging Codex's findings | 11 of 15 | 13 of 15 | 11 confirmed, 3 intentional, 1 unclear (79% of the 14 it settled) |
+| Both | **22 of 30 (73%)** | **24 of 30 (80%)** | 24 of 30 confirmed (80%) |
+
+So the precision figure holds up under a second pair of judges: 73% (Opus) and 80% (cross-family), both over the 70% bar and both on 30 findings, with the same wide interval. The judges agree on most verdicts and disagree on about one in four; four of the eight disagreements are about an artifact described below, and the judges are not ground truth.
+
+**The disagreements.**
+- Claude F-04-1 and F-04-3 (about `.claude/settings.json`) and, in part, F-07-3: **an artifact of the review copy.** The guard overwrites `.claude/settings.json` with its own permission rules and holds the repository's original at `.assess-held/.claude/settings.json.txt`. The Claude reviewer's two settings findings describe the guard's file (no hooks, a short deny list); the Codex judge, working in the same copy, saw the same file and confirmed them; Opus read the original copy and rejected them. Rejected is right. The area prompt did not say any of this; it does now (`assess-plan.mjs`, with a test), and reviewers and judges are told to read `.assess-held/` for the repository's own configuration.
+- Claude F-02-11: Opus confirmed, Codex rejected (a budget-estimate wording point). Unsettled.
+- Codex F-07-1: Opus rejected, Claude confirmed (the playbook install path in `AGENTS.md`). Unsettled.
+- Codex F-09-2 and F-03-2: Opus rejected, Claude said intentional. Both mean "not a defect", so they agree on the outcome.
+- Codex F-02-8: Opus confirmed, Claude unclear.
+
+**What the calibration does and does not show.** It shows the judge runs end to end through both reviewer CLIs, returns parseable verdicts for all 30, and lands within a few findings of an independent judge. It does not show the judge is right: there is no ground truth for these findings, only other judges. The owner's dispositions are the missing reference, and they outrank any judge.
+
 **Bars after two runs.** Precision: 73% on 30 judged (above the bar, weakly supported, see above). Generality: 2 repos (Python, JavaScript), both ours; the plan's three, with one not ours, is still not met. Recall: 6 of 6 and 3 of 6 (Claude), 4 of 6 and 2 of 6 (Codex); no bar is claimed. Nothing here supports "the review finds the bugs"; it supports "it finds the loud ones and some quiet ones", with the misses listed.
 
 Files: `precision-sample.json` and `precision-sample-judged.json` (the draw and the verdicts); per reviewer `FINDINGS.md`, `SCORE.md`, `REPORT.md`, `RUN.md` (model, effort, tool version, per-area counts).

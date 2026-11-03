@@ -1,0 +1,136 @@
+{
+  "judge": "codex",
+  "family": "openai",
+  "model": "gpt-5.6-sol",
+  "effort": "medium",
+  "promptSha256": "0b19370c37c15b74d0b161de1e208fbcbbcaba733596dfa8daf83050068b86d3",
+  "seed": 1,
+  "n": 15,
+  "sampled": [
+    "F-02-2",
+    "F-02-3",
+    "F-08-1",
+    "F-01-4",
+    "F-07-3",
+    "F-04-3",
+    "F-08-2",
+    "F-06-2",
+    "F-02-11",
+    "F-01-6",
+    "F-07-1",
+    "F-07-2",
+    "F-04-1",
+    "F-01-3",
+    "F-06-4"
+  ],
+  "allowSameFamily": false,
+  "note": "Provisional: the owner's disposition outranks the judge's.",
+  "verdicts": [
+    {
+      "id": "F-02-2",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": ".claude/protocols/STANDING_CHARTER.md:22-24 verifies only Charter validity and hash equality, while .claude/protocols/TELEMETRY.md:67 explicitly leaves approval signing as separate work. The direct-human rule at .claude/protocols/APPROVAL_PROTOCOL.md:119-124 is therefore procedural but not authenticated."
+    },
+    {
+      "id": "F-02-3",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": ".claude/protocols/CODE_REVIEW.md:31-36 does not classify agent briefs or general governance protocols as High, so documentation-only changes can receive Low treatment and skipped owner review. The auto-merge portion is overstated for the current Charter, whose .agentic/STANDING_CHARTER.md:25-29 prefixes exclude .claude/ and AGENTS.md."
+    },
+    {
+      "id": "F-08-1",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "The defect is at test/client-server.test.js:68-79: all three traversal strings pass through fetch(), which normalizes them to /server.js or /src/server.js before transmission. They therefore do not exercise src/server.js:212-216 with traversal syntax and would not catch a path-joining traversal implementation."
+    },
+    {
+      "id": "F-01-4",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": ".claude/agents/production-verification.md:4 and :24 provide no shell or Azure-skill tool, despite requiring real Azure queries at :48-57 and rollback execution at :68-78. Rollback execution also conflicts with the stated live-environment read-only boundary at :110-113."
+    },
+    {
+      "id": "F-07-3",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "README.md:15, :35, :41-43, and :66-68 link to runs/, but no runs directory or tracked runs files exist in this checkout. This also leaves the durable run records repeatedly referenced by the repository unavailable."
+    },
+    {
+      "id": "F-04-3",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": ".claude/settings.json:7-18 denies only named Bash command prefixes, leaving equivalent shell, interpreter, Git-option, and scp forms unmatched. Its secret restrictions at :19-53 apply only to Read, so Bash-capable roles can bypass them through shell reads."
+    },
+    {
+      "id": "F-08-2",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "test/client-render.test.js:301-311 manually constructs both trees with the same ErrorNotice call and never invokes start() or renderDetail(). It would remain green if the actual selection path at src/client/app.js:90-107 later distinguished foreign and fictional IDs."
+    },
+    {
+      "id": "F-06-2",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "src/client/app.js:162-177 calls load() only during startup and installs only a hashchange listener. Because :122-127 suppresses logging whenever the cached view is healthy, a tab crossing UTC midnight cannot log the new day and continues rendering stale status."
+    },
+    {
+      "id": "F-02-11",
+      "reviewer": "claude",
+      "verdict": "rejected",
+      "severity_view": "n/a",
+      "reason": ".claude/protocols/RUN_ECONOMICS.md:3-5 expressly distinguishes pre-spend control estimates from after-the-fact SLO measurement, while .claude/protocols/PIPELINE_SLOS.md:17 states a p95 target rather than a per-execution hard maximum. Budgeting 150-190k for a potentially expensive stage neither guarantees that consumption nor by itself violates a percentile SLO."
+    },
+    {
+      "id": "F-01-6",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": ".claude/agents/post-launch-learning.md:4 and :24 provide no Bash tool, yet :68-73 requires executing a node command. The scope wording at :25 also conflicts with the required repository-wide outputs at runs/ANALYTICS.md and runs/dashboard.html, although the intended guard's broad runs/ allowance would not itself block those paths."
+    },
+    {
+      "id": "F-07-1",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "REVIEW.md:5 explicitly says to replace and remove the placeholders, but REVIEW.md:8-9,17,20-21 remain bracketed examples rather than repository-specific guidance. The cited sensitive paths appear only as examples, so the template has not been completed."
+    },
+    {
+      "id": "F-07-2",
+      "reviewer": "claude",
+      "verdict": "rejected",
+      "severity_view": "n/a",
+      "reason": "REVIEW.md:13 contains compatible rules: it caps permitted nits while excluding style-only and cleanup-only findings. .claude/protocols/CODE_REVIEW.md:50-52 defines a Nit as any small, real, optional issue, not necessarily a style or cleanup issue."
+    },
+    {
+      "id": "F-04-1",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "The working copy's .claude/settings.json:1-56 has no hooks configuration, while AGENTS.md:75-76 and AGENTS.md:95-96 promise commands and a pre-spawn budget hook; the referenced command and hook files are deleted from the working tree. The claim that the commit lacks them is inaccurate because HEAD tracks them, but the adapter as currently checked out is disabled as described."
+    },
+    {
+      "id": "F-01-3",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": ".claude/agents/cloud-deployment.md:4 and :24 grant only file-oriented tools, yet :53-70 requires invoking external skills and deployment commands that need unavailable Skill/Bash capabilities. The write-scope claim is overstated because :25 permits owned repository files and the tracked guard grants cloud-deployment `.azure/`, `infra/`, and `azure.yaml`, but the role still cannot execute its core skill/deploy/PR mission."
+    },
+    {
+      "id": "F-06-4",
+      "reviewer": "claude",
+      "verdict": "confirmed",
+      "severity_view": "about right",
+      "reason": "src/client/render.js:93-96 leaves the visible row inside an aria-hidden span and puts only an sr-only child inside the detail anchor. src/client/app.css:46-56 clips that child to 1px while :142-144 gives the anchor no dimensions or stretched hit area, leaving no practical mouse or touch target."
+    }
+  ],
+  "failedBatches": []
+}

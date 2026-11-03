@@ -118,6 +118,7 @@ export function renderAreas(plan, map) {
 export function renderAreaPrompt(a, map) {
   return [`# Review area ${a.id}: \`${a.dir}\` (${a.tier} risk)`, "",
     `Repository \`${map.repo}\` at commit \`${map.sha}\`. You are in a **read-only review copy**: you cannot edit, write, commit or push, and secret paths are not in it. Do not try to get around that. If a file you need is missing, say so.`, "",
+    "**The repository's own harness configuration was moved aside.** In this copy `.claude/settings.json` is the review guard's permission file, NOT the repository's; do not report on it. The repository's original `.claude/settings*.json`, `.claude/hooks/`, `.claude/commands/` and `.mcp.json` are at `.assess-held/<same path>.txt` (when the repository had them): review those instead.", "",
     "## What to do", "",
     "1. Read every file listed below. Review the area as a whole, as if it were a new change against an empty tree (`/code-review` at `high`).",
     a.tier === "high" ? "2. This area has high-risk files. Also run the Security Review over them (`.claude/agents/security-privacy.md` if present, otherwise your own checklist for authentication, access, injection, secrets and data exposure)." : "2. No Security Review is needed unless you find a security issue.",
