@@ -1,0 +1,13 @@
+{
+  "name": "aveto",
+  "owner": {
+    "name": "Gopal Patwa"
+  },
+  "plugins": [
+    {
+      "name": "aveto",
+      "source": "./plugin/aveto",
+      "description": "Aveto assessment mode for Claude Code (skills only, no hooks)."
+    }
+  ]
+}
