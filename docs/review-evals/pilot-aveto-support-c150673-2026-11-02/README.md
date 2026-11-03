@@ -16,6 +16,8 @@ The sample is random (seed 20261102, balanced, S5's finding excluded), the judge
 
 **Reading the findings.** Most findings are about the governance Markdown and run records (contradictions between a protocol and a brief, a stale count, an unfilled field), because that is most of this repo. The one code finding that matters, S5, was found by both. Whether the rest are worth fixing is the owner's call and has not been made.
 
+**Checked: Codex F-05-1 (`.claude/settings.json:9`).** Not the guard-file artifact: it quotes the repository's real hook command, which the review copy holds under `.assess-held/`. It says the budget guard only asks for approval when a stage would exceed the budget. That is the designed behaviour (pack v30: the guard asks against the Charter's hard cap), so it reads as intentional; it was not in the judged sample and stays `open` for the owner.
+
 **What this adds to the series.** A fourth repo, and the first Markdown-heavy process repo rather than application code. The engine ran at 15 areas and 678k tokens of source without a failed area (58% of it reviewed, by the token cap). The M6 "done" condition, the owner's review of a report per pilot, is still open.
 
 Files per reviewer: `FINDINGS.md`, `SCORE.md`, `REPORT.md`, `RUN.md`, `JUDGED.json`.
