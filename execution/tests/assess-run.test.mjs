@@ -89,6 +89,16 @@ describe("run", () => {
     assert.match(readFileSync(join(r.records, "RUN.md"), "utf8"), /FAILED/);
   });
 
+  test("a usage limit stops the run, records the reason, and lists every remaining area as not reviewed", () => {
+    let calls = 0;
+    const r = run(repo, { reviewer: "codex", scratch: join(root, "s5") }, () => { calls++; return { status: 1, stdout: "", stderr: "ERROR: You've hit your usage limit. Try again at 5:16 PM." }; });
+    assert.equal(calls, 1, "no further reviewer call after a usage limit");
+    assert.equal(r.failed.length, r.areas);
+    const log = readFileSync(join(r.records, "RUN.md"), "utf8");
+    assert.match(log, /hit your usage limit/);
+    assert.match(log, /not attempted \(reviewer usage limit\)|FAILED/);
+  });
+
   test("a reviewer that writes into the copy fails the read-only check", () => {
     const r = run(repo, { reviewer: "claude", scratch: join(root, "s3") }, (spec, prompt, cwd) => { writeFileSync(join(cwd, "src", "util.py"), "x = 2\n"); return { status: 0, stdout: REPLY }; });
     assert.equal(r.verified.ok, false);

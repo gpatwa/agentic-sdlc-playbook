@@ -63,6 +63,8 @@ export function splitCells(text) {
   return cells;
 }
 
+export const LIMIT = /usage limit|rate limit|quota|too many requests|credits/i;
+
 const ROW = /^\|\s*[^|]*\|\s*(P[0-3]|note)\s*\|\s*([^|]*?:\d[^|]*?)\s*\|(.*)$/i;
 
 /** Table rows out of a reviewer's reply, as FINDINGS.md rows for area `area`. Rows without a file and line are dropped. */
@@ -122,7 +124,15 @@ export function run(repo, opts, runner = defaultRunner) {
     const spec = reviewerCommand(reviewer, { clone: guard.clone, model, effort, outFile });
     const res = runner(spec, prompt, guard.clone);
     const reply = spec.reply === "file" && existsSync(outFile) ? readFileSync(outFile, "utf8") : res.stdout ?? "";
-    if (res.status !== 0 || !reply.trim()) { failed.push(f); log.push(`- area ${f}: FAILED (exit ${res.status}); not reviewed`); continue; }
+    if (res.status !== 0 || !reply.trim()) {
+      const why = String(res.stderr ?? res.stdout ?? "").replace(/\s+/g, " ").trim().slice(-200);
+      failed.push(f); log.push(`- area ${f}: FAILED (exit ${res.status}); not reviewed${why ? `; reviewer said: ${why}` : ""}`);
+      if (LIMIT.test(why)) { // a usage or rate limit will fail every remaining area too: stop, and say so
+        for (const rest of areaFiles.slice(areaFiles.indexOf(f) + 1)) { failed.push(rest); log.push(`- area ${rest}: not attempted (reviewer usage limit)`); }
+        break;
+      }
+      continue;
+    }
     writeFileSync(join(records, `reply-${f}`), reply);
     const found = extractRows(reply, area, name);
     if (found.length) appendFileSync(join(records, "FINDINGS.md"), found.join("\n") + "\n");
