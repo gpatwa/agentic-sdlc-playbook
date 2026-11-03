@@ -124,7 +124,7 @@ Agents work from files, not from conversation:
 | `runs/<slice>/STATE.md` | where the run is, so any session can resume it |
 
 Keep each stage's context thin: an agent reads the artefacts it needs, not the whole
-history. **Planned, not built:** onboarding a codebase Aveto did not build, which
+history. **Built, in pilot:** onboarding a codebase Aveto did not build, which
 proposes these files from the code and marks every invariant "proposed" until the human
 confirms it (`docs/REVIEW_MODE_PLAN.md`, M1).
 
