@@ -1928,3 +1928,13 @@ self-reported` figure in existing run traces, and T13's collector work is
 still what closes it for *run* telemetry. What it shows is that the local
 usage logs are a second, already-available instrumentation source that nobody
 had thought to read.
+
+- **T42 · Measuring developer productivity and defining the organisation.** *Raised 2026-11-04 from the Amazon and
+  Conductor reviews and the owner's direction.* Plan: `docs/PRODUCTIVITY_AND_ORG_PLAN.md`. Three workstreams: **W1** outcome
+  metrics computed mechanically from git and traces (never tokens or lines as a score, never per person), with a metric
+  dictionary, `execution/outcomes.mjs`, a dashboard section, a "delivery health from history" section in assessment reports,
+  and a baseline pilot on one real team repo; **W2** a human org model (`docs/ORG_MODEL.md`, proposal) including review
+  capacity, an ownership map, a role-count experiment and a parallel-slice test; **W3** fixes the reviews exposed: remove
+  self-approval from the sre, on-call and production-verification briefs and add "AI did not help here" to the fit check (pack v32,
+  owner approves wording), a Conductor compatibility test, and three unread sources. Status: plan only; nothing built.
+  Owner decisions: the position, the baseline repo, v32 wording, the Conductor install.
