@@ -233,7 +233,7 @@ export async function outcomes(repo, opts = {}) {
       Q2_postMergeWithin: { windowDays, closedWindowN: closed.length, openWindowN: post.length - closed.length, reverted: revertCount, fixCandidates: fixCount,
         revertRate: closed.length ? revertCount / closed.length : NOT_RECORDED,
         revertOrFixCandidateRate: closed.length ? (revertCount + fixCount) / closed.length : NOT_RECORDED,
-        note: "reverts are certain; fix candidates are a heuristic (a fix/hotfix commit that names the PR or touches a file it changed)" },
+        note: "reverts are certain; fix candidates are a heuristic (a commit whose subject starts with Fix or Hotfix, made after the merge, that names the PR or touches a file it changed); both counts are a lower bound, because a fix made inside the same pull request, or worded differently, is not seen" },
       Q1_gateCatches: recorded ? { unit: "defects a gate caught before merge (trace.json gateCatches)", perSlice: recorded.map((r) => ({ slice: r.slice, catches: r.gateCatches })), recordedSlices: recorded.filter((r) => r.gateCatches !== null).length } : { value: NOT_RECORDED, reason: "no runs/*/trace.json" },
       Q3_Q4: { value: NOT_RECORDED, reason: "review findings are prose today; CI first-run results need the GitHub API (not read here)" },
     },
