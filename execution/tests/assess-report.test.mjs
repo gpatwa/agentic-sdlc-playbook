@@ -152,3 +152,28 @@ describe("delivery health from history (T42 P4)", () => {
     assert.doesNotMatch(renderHealth(h).join("\n"), /author|rank|leaderboard|by person/i);
   });
 });
+
+import { renderJudge } from "../assess-report.mjs";
+describe("judge check (T42 P6)", () => {
+  const rec = (verdicts) => ({ judge: "codex", family: "openai", sampled: verdicts.map((_, i) => `F-${i}`), verdicts: verdicts.map((verdict, i) => ({ id: `F-${i}`, verdict })) });
+  test("zero rejections over ten judged findings is flagged", () => {
+    const t = renderJudge(rec(Array(12).fill("confirmed"))).join("\n");
+    assert.match(t, /Rejection rate 0% \(0 of 12\)/);
+    assert.match(t, /Flag: the judge rejected nothing across 12 findings/);
+  });
+  test("a judge that rejects some is reported, not flagged", () => {
+    const t = renderJudge(rec([...Array(9).fill("confirmed"), "rejected", "intentional"])).join("\n");
+    assert.match(t, /Rejection rate 9% \(1 of 11\)/);
+    assert.doesNotMatch(t, /Flag:/);
+  });
+  test("under ten judged: shown, not interpreted, no flag even at zero", () => {
+    const t = renderJudge(rec(Array(5).fill("confirmed"))).join("\n");
+    assert.match(t, /below ten judged findings/);
+    assert.doesNotMatch(t, /Flag:/);
+  });
+  test("not-judged and unclear are not counted as judged rejections; no record, no section", () => {
+    const t = renderJudge(rec(["confirmed", "not judged", "unclear"])).join("\n");
+    assert.match(t, /2 were judged/);
+    assert.deepEqual(renderJudge(null), []);
+  });
+});

@@ -54,7 +54,21 @@ export function renderHealth(h) {
     "Not shown because the history cannot show it: time to restore service, defects nobody found, whether a review was careful, and how many people the team has. Figures for one operator merging their own work will show no reviews; that is a fact about the team, not a fault to score.", ""];
 }
 
-export function renderReport({ map, plan, findings, reviewers, guard, date, unverified, health }) {
+// Health of the measure itself (T42 P6): a judge that never rejects anything is not checking anything. The dictionary's rule:
+// report the rejection rate with every judged sample, and flag zero rejections over ten or more judged findings.
+export function renderJudge(j) {
+  if (!j || !Array.isArray(j.verdicts)) return [];
+  const v = j.verdicts.filter((x) => x.verdict && x.verdict !== "not judged");
+  const c = (k) => v.filter((x) => x.verdict === k).length;
+  const judged = v.length, rej = c("rejected");
+  const L = ["## Judge check", "",
+    `A ${j.family ?? "second-family"} judge (${j.judge ?? "judge"}) read a seeded sample of ${j.sampled?.length ?? judged} finding(s); ${judged} were judged: ${c("confirmed")} confirmed, ${rej} rejected, ${c("intentional")} intentional, ${c("unclear")} unclear. **Rejection rate ${judged ? Math.round((rej / judged) * 100) + "%" : "not available"} (${rej} of ${judged}).** The verdicts are provisional; the owner's disposition outranks the judge's.`, ""];
+  if (judged >= 10 && rej === 0) L.push("> **Flag: the judge rejected nothing across " + judged + " findings.** A judge that agrees with every finding may be too lenient, or the reviewers may be precise; this run cannot tell which. Treat the confirmations as unchecked until a few are read by hand.", "");
+  else if (judged > 0 && judged < 10) L.push(`The sample is below ten judged findings, so the rejection rate is shown but not interpreted.`, "");
+  return L;
+}
+
+export function renderReport({ map, plan, findings, reviewers, guard, date, unverified, health, judged }) {
   const g = map.governance;
   const families = new Set(reviewers.map((r) => r.family));
   const valid = findings.filter((f) => hasFileAndLine(f.where));
@@ -91,6 +105,7 @@ export function renderReport({ map, plan, findings, reviewers, guard, date, unve
     for (const f of list) L.push(`**${f.id}** · \`${f.where}\` · ${f.reviewer} · ${f.disposition}`, "", f.finding, "", `*Evidence:* ${f.evidence || "none given"}`, "");
   }
   if (!valid.length) L.push("None recorded.", "");
+  L.push(...renderJudge(judged));
   L.push(...renderHealth(health));
   L.push("## What was not reviewed, and why", "");
   const nr = [];
@@ -136,7 +151,9 @@ export function buildReport(dir, { reviewers, guardPath, date, allowUnverified =
   }
   const healthFile = join(dir, "health.json");
   const health = existsSync(healthFile) ? JSON.parse(readFileSync(healthFile, "utf8")) : null;
-  const text = renderReport({ map, plan, findings, reviewers, guard, date: date ?? new Date().toISOString().slice(0, 10), unverified, health });
+  const judgedFile = join(dir, "JUDGED.json");
+  const judged = existsSync(judgedFile) ? JSON.parse(readFileSync(judgedFile, "utf8")) : null;
+  const text = renderReport({ map, plan, findings, reviewers, guard, date: date ?? new Date().toISOString().slice(0, 10), unverified, health, judged });
   const hits = secretHits(text);
   if (hits.length) throw new Error(`the report text matches a secret pattern (${hits.join(", ")}): a finding's evidence quoted one. Remove it from FINDINGS.md and run again.`);
   return text;
