@@ -240,6 +240,9 @@ const leadTimes = withDates.map((r) => ({ slice: r.slice, h: hours(r.started, r.
 const totalRetries = stages.reduce((a, s) => a + (s.retries || 0), 0);
 const postFixes = runs.reduce((a, r) => a + (r.postLandingFixes || 0), 0);
 const reverted = runs.filter((r) => r.reverted).length;
+// A 0% change failure rate is only true if someone recorded the fixes. When no run carries either field the value is unknown,
+// and showing 0% would be the unearned green this section warns about (aveto-support, 2026-11-04).
+const failuresRecorded = runs.some((r) => "postLandingFixes" in r || "reverted" in r);
 
 // Failed-deployment recovery time: DORA's 2025 MTTR rename, mapped here to
 // blocked→unblocked on a gate catch. A `gateCatches` entry may carry
@@ -267,8 +270,9 @@ const dora = {
   leadTimeMedianH: leadTimes.length ? leadTimes[Math.floor(leadTimes.length / 2)].h : null,
   leadTimes,
   deployFreqPerWeek: spanWeeks ? landed.length / spanWeeks : null,
-  changeFailureRate: landed.length ? (postFixes + reverted) / landed.length : null,
-  reworkRate: landed.length ? (totalRetries + postFixes) / landed.length : null,
+  failuresRecorded,
+  changeFailureRate: landed.length && failuresRecorded ? (postFixes + reverted) / landed.length : null,
+  reworkRate: landed.length && failuresRecorded ? (totalRetries + postFixes) / landed.length : null,
   totalRetries, postFixes, reverted, landedCount: landed.length,
   undated: landed.length - withDates.length,
   fdrtMedianMin, fdrtSamples,
@@ -314,8 +318,8 @@ md += `\n## DORA\n\nPer \`PIPELINE_SLOS.md\` § DORA mapping. **Only metrics the
 md += `| Metric | Value | Basis |\n|--------|-------|-------|\n`;
 md += `| Lead time (median) | ${hfmt(dora.leadTimeMedianH)} | intake → landed, ${withDates.length}/${dora.landedCount} slices dated |\n`;
 md += `| Deployment frequency | ${dora.deployFreqPerWeek ? dora.deployFreqPerWeek.toFixed(1) + " slices/week" : "—"} | ${dora.landedCount} landed over the traced span |\n`;
-md += `| Change failure rate | ${dora.changeFailureRate == null ? "—" : Math.round(dora.changeFailureRate * 100) + "%"} | ${dora.postFixes} post-landing fixes + ${dora.reverted} reverts ÷ ${dora.landedCount} landed |\n`;
-md += `| Rework rate | ${dora.reworkRate == null ? "—" : dora.reworkRate.toFixed(2) + " / slice"} | ${dora.totalRetries} stage retries + ${dora.postFixes} post-landing fixes ÷ ${dora.landedCount} landed |\n`;
+md += `| Change failure rate | ${dora.changeFailureRate == null ? "**not recorded**" : Math.round(dora.changeFailureRate * 100) + "%"} | ${dora.failuresRecorded ? `${dora.postFixes} post-landing fixes + ${dora.reverted} reverts ÷ ${dora.landedCount} landed` : "no run records `postLandingFixes` or `reverted`, so 0% would be a guess"} |\n`;
+md += `| Rework rate | ${dora.reworkRate == null ? "**not recorded**" : dora.reworkRate.toFixed(2) + " / slice"} | ${dora.failuresRecorded ? `${dora.totalRetries} stage retries + ${dora.postFixes} post-landing fixes ÷ ${dora.landedCount} landed` : "needs post-landing fixes to be recorded"} |\n`;
 md += `| Failed-deployment recovery time | ${dora.fdrtMedianMin == null ? "**not captured**" : `**${mfmt(dora.fdrtMedianMin)}**`} | ${dora.fdrtMedianMin == null ? "needs `detectedAt`/`resolvedAt` on a `gateCatches` entry; no run has recorded them" : `median across ${dora.fdrtSamples.length} recorded gate-catch recovery window(s)`} |\n`;
 if (dora.undated > 0) md += `\n> ${dora.undated} landed slice(s) lack \`landedAt\` and are excluded from lead time.\n`;
 if (preTelemetry.length) md += `\n> **Change failure and rework cover traced slices only.** ${preTelemetry.length} pre-telemetry run(s) are invisible here, so a defect shipped by one of them — and fixed later — is not counted. These rates are a floor, not a ceiling.\n`;
@@ -489,8 +493,8 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--ink2);font-size:12.5p
  <div class="tblwrap"><table><thead><tr><th>Metric</th><th class="n">Value</th><th>Basis</th></tr></thead><tbody>
  <tr><td>Lead time (median)</td><td class="n">${hfmt(dora.leadTimeMedianH)}</td><td>intake → landed · ${withDates.length}/${dora.landedCount} dated</td></tr>
  <tr><td>Deployment frequency</td><td class="n">${dora.deployFreqPerWeek ? dora.deployFreqPerWeek.toFixed(1) + "/wk" : "—"}</td><td>${dora.landedCount} landed over the traced span</td></tr>
- <tr><td>Change failure rate</td><td class="n">${dora.changeFailureRate == null ? "—" : Math.round(dora.changeFailureRate * 100) + "%"}</td><td>${dora.postFixes} post-landing fixes + ${dora.reverted} reverts</td></tr>
- <tr><td>Rework rate</td><td class="n">${dora.reworkRate == null ? "—" : dora.reworkRate.toFixed(2)}</td><td>${dora.totalRetries} retries + ${dora.postFixes} fixes ÷ ${dora.landedCount} landed</td></tr>
+ <tr><td>Change failure rate</td><td class="n">${dora.changeFailureRate == null ? "n/a" : Math.round(dora.changeFailureRate * 100) + "%"}</td><td>${dora.failuresRecorded ? `${dora.postFixes} post-landing fixes + ${dora.reverted} reverts` : "<b>not recorded</b> — no run records post-landing fixes or reverts"}</td></tr>
+ <tr><td>Rework rate</td><td class="n">${dora.reworkRate == null ? "n/a" : dora.reworkRate.toFixed(2)}</td><td>${dora.failuresRecorded ? `${dora.totalRetries} retries + ${dora.postFixes} fixes ÷ ${dora.landedCount} landed` : "<b>not recorded</b> — needs post-landing fixes"}</td></tr>
  <tr><td>Failed-deploy recovery</td><td class="n">${dora.fdrtMedianMin == null ? "n/a" : mfmt(dora.fdrtMedianMin)}</td><td>${dora.fdrtMedianMin == null ? "<b>not captured</b> — needs blocked→unblocked timestamps" : `median across ${dora.fdrtSamples.length} recorded window(s)`}</td></tr>
  </tbody></table></div>
 </div>

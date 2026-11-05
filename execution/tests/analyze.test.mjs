@@ -105,6 +105,22 @@ describe("analyze.mjs — honesty about what it cannot measure", () => {
   });
 });
 
+describe("analyze.mjs — change failure is not shown as 0% when nobody recorded it", () => {
+  test("no run records postLandingFixes or reverted: the row says not recorded", () => {
+    const t = trace([{ stage: "X", archetype: "build", model: "sonnet", effort: "medium", tokens: 1000, toolCalls: 5, retries: 0 }]);
+    delete t.postLandingFixes; delete t.reverted;
+    const { md, html } = analyze({ one: t });
+    assert.match(md, /Change failure rate \| \*\*not recorded\*\*/);
+    assert.match(md, /Rework rate \| \*\*not recorded\*\*/);
+    assert.doesNotMatch(md, /Change failure rate \| 0%/);
+    assert.match(html, /not recorded<\/b>/);
+  });
+  test("a run that records zero fixes still shows 0%", () => {
+    const { md } = analyze({ one: trace([{ stage: "X", archetype: "build", model: "sonnet", effort: "medium", tokens: 1000, toolCalls: 5, retries: 0 }]) });
+    assert.match(md, /Change failure rate \| 0%/);
+  });
+});
+
 describe("analyze.mjs — degenerate input", () => {
   test("a stage with zero tool calls does not emit Infinity or NaN", () => {
     const { md } = analyze({
