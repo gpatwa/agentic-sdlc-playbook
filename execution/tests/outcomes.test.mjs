@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readdirSync, statSync } 
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
-import { outcomes, median, NOT_RECORDED, loadDictionary, renderMarkdown } from "../outcomes.mjs";
+import { outcomes, median, NOT_RECORDED, loadDictionary, renderMarkdown, FIX_SUBJECT } from "../outcomes.mjs";
 import { readFileSync } from "node:fs";
 
 const AUTHOR = "Zed Uniqueperson";
@@ -55,6 +55,18 @@ describe("outcomes.mjs", () => {
     assert.equal(q.closedWindowN, 3); assert.equal(q.openWindowN, 1);
     assert.equal(q.reverted, 1); assert.equal(q.fixCandidates, 1);
     assert.equal(q.revertRate, 1 / 3); assert.equal(q.revertOrFixCandidateRate, 2 / 3);
+    rmSync(d, { recursive: true });
+  });
+
+  test("a slice-named commit is not a fix: 'fix-<slice>: ...' touching the merged file does not become a fix candidate (T42 review, aveto-support)", async () => {
+    assert.ok(FIX_SUBJECT.test("Fix an off-by-one") && FIX_SUBJECT.test("Fixes #3") && FIX_SUBJECT.test("Fixed typo") && FIX_SUBJECT.test("hotfix: rollback flag") && FIX_SUBJECT.test("fix(auth): trim input") && FIX_SUBJECT.test("Fix: x"));
+    assert.ok(!FIX_SUBJECT.test("fix-service-accounting: scope review") && !FIX_SUBJECT.test("fixture: add data") && !FIX_SUBJECT.test("prefix x") && !FIX_SUBJECT.test("hotfix-2 notes"));
+    const d = fixture(); const count = async () => (await outcomes(d, { now: NOW })).quality.Q2_postMergeWithin.fixCandidates;
+    assert.equal(await count(), 1, "only PR 3 has a fix: the original 'Fix an off-by-one'");
+    at("2026-10-06T00:00:00Z"); put(d, "src/a.js", lines(31, "a")); g(d, "add", "."); g(d, "commit", "-qm", "fix-one-slice: scope review of a");
+    assert.equal(await count(), 1, "a slice-named commit touching PR 1's file adds no fix candidate (the old pattern made this 2)");
+    at("2026-10-07T00:00:00Z"); put(d, "src/a.js", lines(32, "a")); g(d, "add", "."); g(d, "commit", "-qm", "Fixed a typo in a");
+    assert.equal(await count(), 2, "'Fixed ...' touching PR 1's file is a fix candidate (the old pattern missed it)");
     rmSync(d, { recursive: true });
   });
 

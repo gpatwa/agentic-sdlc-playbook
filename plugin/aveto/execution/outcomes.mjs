@@ -100,13 +100,18 @@ function commitIndex(repo, branch) {
   return raw.map((r) => { const [sha, when, subject, body] = r.split("\x1f"); return { sha: sha.trim(), when, subject, body: body ?? "" }; });
 }
 
+// A commit subject that reads as a defect repair: Fix, Fixes, Fixed or Hotfix as the first word. A name written as a branch or slice,
+// such as "fix-service-accounting: scope review", is NOT a repair: the hyphen made the old `^(fix|hotfix)\b` match it, and aveto-support
+// has 19 such routine slice commits (T42 review, 2026-11-05). Wording like "Correct ..." is still missed, so the count stays a lower bound.
+export const FIX_SUBJECT = /^(?:fix(?:es|ed)?|hotfix)(?![\w-])/i;
+
 /**
  * Q2: within `windowDays` after a merge, was there a revert of it (certain) or a "fix" commit that names its PR or touches a file
  * it changed (a heuristic, reported separately so nobody reads it as certain)? Merges younger than the window are not counted.
  */
 export function postMergeOutcomes(repo, changes, idx, { windowDays, now }) {
   const winMs = windowDays * 864e5;
-  const cands = idx.filter((c) => /^(fix|hotfix|revert)\b|\brevert\b/i.test(c.subject));
+  const cands = idx.filter((c) => FIX_SUBJECT.test(c.subject) || /^revert\b|\brevert\b/i.test(c.subject));
   const filesOf = new Map();
   const filesFor = (sha) => { if (!filesOf.has(sha)) filesOf.set(sha, new Set(git(repo, ["diff-tree", "--no-commit-id", "--name-only", "-r", sha]).split("\n").filter(Boolean))); return filesOf.get(sha); };
   return changes.map((c) => {
@@ -121,7 +126,7 @@ export function postMergeOutcomes(repo, changes, idx, { windowDays, now }) {
       const named = [...k.body.matchAll(/This reverts commit ([0-9a-f]{7,40})/g)].map((m) => m[1]);
       const revertsThis = /^revert\b/i.test(k.subject) && (named.some((n) => [...ids].some((s) => s.startsWith(n))) || new RegExp(`Merge pull request #${c.pr}\\b`).test(k.subject));
       if (revertsThis) { reverted = true; continue; }
-      if (!/^(fix|hotfix)\b/i.test(k.subject)) continue;
+      if (!FIX_SUBJECT.test(k.subject)) continue;
       const names = new RegExp(`#${c.pr}\\b`).test(k.subject + k.body);
       const overlap = [...filesFor(k.sha)].some((f) => c.files.has(f) && !RECORD_PATH.test(f));
       if (names || overlap) fixes.push(k.sha.slice(0, 7));
@@ -233,7 +238,7 @@ export function outcomes(repo, opts = {}) {
       Q2_postMergeWithin: { windowDays, closedWindowN: closed.length, openWindowN: post.length - closed.length, reverted: revertCount, fixCandidates: fixCount,
         revertRate: closed.length ? revertCount / closed.length : NOT_RECORDED,
         revertOrFixCandidateRate: closed.length ? (revertCount + fixCount) / closed.length : NOT_RECORDED,
-        note: "reverts are certain; fix candidates are a heuristic (a commit whose subject starts with Fix or Hotfix, made after the merge, that names the PR or touches a file it changed); both counts are a lower bound, because a fix made inside the same pull request, or worded differently, is not seen" },
+        note: "reverts are certain; fix candidates are a heuristic (a commit whose first word is Fix, Fixes, Fixed or Hotfix, not a slice name such as fix-<slice>:, made after the merge, that names the PR or touches a file it changed); both counts are a lower bound, because a fix made inside the same pull request, or worded differently, is not seen" },
       Q1_gateCatches: recorded ? { unit: "defects a gate caught before merge (trace.json gateCatches)", perSlice: recorded.map((r) => ({ slice: r.slice, catches: r.gateCatches })), recordedSlices: recorded.filter((r) => r.gateCatches !== null).length } : { value: NOT_RECORDED, reason: "no runs/*/trace.json" },
       Q3_Q4: { value: NOT_RECORDED, reason: "review findings are prose today; CI first-run results need the GitHub API (not read here)" },
     },

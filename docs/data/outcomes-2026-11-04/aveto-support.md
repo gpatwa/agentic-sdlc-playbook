@@ -1,6 +1,6 @@
 # Outcomes: aveto-support
 
-> Generated 2026-11-05T01:53:48.615Z by `execution/outcomes.mjs` from the git history of `main` (tip `902b959`, 2026-10-30T07:16:51Z) and `runs/<slice>/trace.json`. No model call, no person named, no ranking. A figure the records do not hold says "not recorded". Definitions, decisions and gaming checks are copied from `docs/PRODUCTIVITY_METRICS.md`, not retyped.
+> Generated 2026-11-05T17:15:18.942Z by `execution/outcomes.mjs` from the git history of `main` (tip `04b2190`, 2026-11-05T07:04:57Z) and `runs/<slice>/trace.json`. No model call, no person named, no ranking. A figure the records do not hold says "not recorded". Definitions, decisions and gaming checks are copied from `docs/PRODUCTIVITY_METRICS.md`, not retyped.
 
 **n = 9 merged changes** (merge, squash); 13 run record(s). Reported against this repo's own history only.
 
@@ -22,7 +22,7 @@
 
 ## Quality
 
-**Q2 reverted or fixed within 14 days:** 4 change(s) have a closed window (5 still open and not counted). Reverted: 0 (certain). Fix candidates: 2 (heuristic). Revert rate 0%; revert or fix-candidate rate 50%. reverts are certain; fix candidates are a heuristic (a commit whose subject starts with Fix or Hotfix, made after the merge, that names the PR or touches a file it changed); both counts are a lower bound, because a fix made inside the same pull request, or worded differently, is not seen.
+**Q2 reverted or fixed within 14 days:** 4 change(s) have a closed window (5 still open and not counted). Reverted: 0 (certain). Fix candidates: 0 (heuristic). Revert rate 0%; revert or fix-candidate rate 0%. reverts are certain; fix candidates are a heuristic (a commit whose first word is Fix, Fixes, Fixed or Hotfix, not a slice name such as fix-<slice>:, made after the merge, that names the PR or touches a file it changed); both counts are a lower bound, because a fix made inside the same pull request, or worded differently, is not seen.
 
 *Decision it informs:* The central counterweight to speed: did the work hold? *Gaming check:* Calling a fix a "new feature" *Cannot show:* Silent defects; fixes under another name
 
