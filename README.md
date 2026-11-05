@@ -42,7 +42,8 @@ restarts from zero. This is the part that makes it finish.
 > with project-specific context — never add product-specific files here.
 
 `stash-seed` and `streak-seed` are where it has actually been run end to
-end — see "Real runs, not just a worked example" below.
+end (both now archived, see below) — see "Real runs, not just a worked
+example" below.
 
 ## What's here
 
@@ -256,6 +257,11 @@ suite missed, caught before it shipped — `saved-item-folders`), real
 budget overruns recorded honestly rather than smoothed over. `docs/VALIDATION_MATRIX.md`
 is the narrative account; `runs/*/trace.json` in either repo is the
 primary evidence.
+
+Both repos are **archived reference runs as of 2026-11-05**: they take no
+new changes and no pack upgrades. `stash-seed` stays at pack v4 and
+`streak-seed` at pack v33, so neither shows what the current pack does.
+They are kept because the records above are the evidence.
 
 A third repo, [`aveto-support`](https://github.com/gpatwa/aveto-support), is the
 product Aveto builds about itself, in public: nine traced runs, held-out gates
