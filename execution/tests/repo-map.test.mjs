@@ -153,3 +153,26 @@ describe("the command line", () => {
     assert.throws(() => execFileSync("node", [cli, tmpdir()], { stdio: "pipe" }), /not a git repository/);
   });
 });
+
+import { summarize } from "../repo-map.mjs";
+describe("ownerless high-risk paths (T42 O2)", () => {
+  const f = (path, tier, owners) => ({ path, status: "review", tier, tierWhy: "x", owners, tokens: 10, lang: "js", commits: 1, authors: ["someone"], last: null });
+  const map = { repo: "r", sha: "abc", branch: "main", commits: 1, date: "2026-11-04", scopes: [], commands: [], ci: [], entryPoints: [], governance: { governed: false }, customRules: 0, codeowners: true,
+    files: [f(".claude/settings.json", "high", ["@steward"]), f("src/auth/login.js", "high", []), f("src/auth/token.js", "high", []), f("README.md", "low", [])] };
+  test("lists high-risk files with no CODEOWNERS entry, counts them, never reads owners from authors", () => {
+    const s = summarize(map);
+    assert.deepEqual(s.ownerlessHigh.map((x) => x.path), ["src/auth/login.js", "src/auth/token.js"]);
+    const doc = renderMap(map);
+    assert.match(doc, /2 of 3 high-risk file\(s\) have no owner in CODEOWNERS/);
+    assert.match(doc, /never guessed from who committed/);
+    assert.match(doc, /`src\/auth\/` \| 2/);
+    assert.doesNotMatch(doc, /\.json\/`|\.md\/`/, "a file is never shown as a folder");
+  });
+  test("a repo with no CODEOWNERS says so", () => {
+    const doc = renderMap({ ...map, codeowners: false });
+    assert.match(doc, /the repo has no CODEOWNERS file/);
+  });
+  test("no high-risk files: nothing to own", () => {
+    assert.match(renderMap({ ...map, files: [f("README.md", "low", [])] }), /No high-risk files, so nothing to own/);
+  });
+});

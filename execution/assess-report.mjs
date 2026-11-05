@@ -80,6 +80,8 @@ export function renderReport({ map, plan, findings, reviewers, guard, date, unve
   L.push(valid.length ? `${valid.length} finding(s): ${counts}. ${valid.filter((f) => f.disposition === "open").length} are still open; the owner sets each disposition.` : "No findings were recorded.", "");
   if (dropped.length) L.push(`${dropped.length} recorded item(s) had no file and line and are not counted: ${dropped.map((f) => f.id).join(", ")}.`, "");
   L.push("## Risk map", "", table(["Tier", "Files", "Approx. tokens"], ["high", "medium", "low"].filter((t) => tiers.has(t)).map((t) => [t, fmt(tiers.get(t).files), fmt(tiers.get(t).tokens)])), "");
+  const ownerless = high.filter((f) => !f.owners || f.owners.length === 0);
+  if (high.length) L.push(`${ownerless.length} of ${high.length} high-risk file(s) have no owner in CODEOWNERS${map.codeowners ? "" : " (no CODEOWNERS file)"}. A change to one has no named person who may approve it.`, "");
   L.push(high.length ? `High-risk files (${high.length}): ${high.slice(0, 25).map((f) => `\`${f.path}\``).join(", ")}${high.length > 25 ? `, and ${high.length - 25} more (see \`map.json\`)` : ""}.` : "No high-risk files matched.", "");
   L.push("## Findings", "");
   for (const sev of SEV) {

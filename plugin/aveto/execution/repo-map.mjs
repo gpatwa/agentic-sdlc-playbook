@@ -306,6 +306,9 @@ export function summarize(map) {
     review, tokens: review.reduce((s, f) => s + f.tokens, 0), languages: by("lang"), tiers: by("tier"),
     denied: map.files.filter((f) => f.status === "denied"), skipped: map.files.filter((f) => f.status === "skipped"),
     outOfScope: map.files.filter((f) => f.status === "out of scope"),
+    // O2: high-risk files nobody is named for in CODEOWNERS. Owners are never inferred from commit authors: that would
+    // turn a history of who typed into a statement of who is accountable, and it is a per-person view.
+    ownerlessHigh: review.filter((f) => f.tier === "high" && f.owners.length === 0),
   };
 }
 
@@ -345,6 +348,14 @@ export function renderMap(map) {
   const high = s.review.filter((f) => f.tier === "high");
   L.push(high.length ? table(["Path", "Why", "Owners"], high.slice(0, 60).map((f) => [`\`${f.path}\``, f.tierWhy, f.owners.join(" ") || "—"])) : "None matched.");
   if (high.length > 60) L.push("", `…and ${high.length - 60} more (see \`map.json\`).`);
+  L.push("", "## Ownerless high-risk paths", "");
+  if (!high.length) L.push("No high-risk files, so nothing to own.");
+  else {
+    const ol = s.ownerlessHigh;
+    L.push(`${ol.length} of ${high.length} high-risk file(s) have no owner in CODEOWNERS${map.codeowners ? "" : " (the repo has no CODEOWNERS file)"}. A change to a path with no named owner has no one who may approve it, so a Charter that touches one stops at drafting and asks who owns it. Owners are read only from CODEOWNERS; they are never guessed from who committed.`, "");
+    const byDir = new Map(); for (const f of ol) { const parts = f.path.split("/"); const d = parts.length === 1 ? "(repo root)" : parts.slice(0, Math.min(2, parts.length - 1)).join("/") + "/"; byDir.set(d, (byDir.get(d) ?? 0) + 1); }
+    if (ol.length) L.push(table(["Path prefix", "Ownerless high-risk files"], [...byDir.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 30).map(([d, n]) => [`\`${d}\``, String(n)])));
+  }
   L.push("", "## Most changed files", "");
   L.push(top.length ? table(["Path", "Commits", "Authors", "Last change"], top.map((f) => [`\`${f.path}\``, String(f.commits), String(f.authors.length), f.last ?? "—"])) : "No history for the files to review.", "");
   L.push("## Commands found", "");
