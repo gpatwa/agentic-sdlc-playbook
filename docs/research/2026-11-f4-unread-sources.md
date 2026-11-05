@@ -65,7 +65,22 @@ from press:
 which is fine, but the plan must not say Amazon "measures outcomes, not inputs". The percentile idea is worth keeping in a form that
 suits one operator: report the spread across slices (slowest and costliest tenth), never across people.
 
+## 4. Anthropic's own support page (read 2026-11-04, through a summarising fetcher)
+
+Page: "Use the Claude Agent SDK with your Claude plan" (support.claude.com, article 15036540). It says:
+- 2026-06-15 update: the previously announced changes to Agent SDK usage are **paused**; Agent SDK, `claude -p` and third-party
+  app usage **still draw from subscription limits**. The page does not describe the paused change or its original date, and says
+  the pause holds "for now".
+- 2026-10-07 update: Max, Ultra and Team plans include monthly API credits. They cover the API, Managed Agents, and the Agent SDK
+  and `claude -p` **when used with an API key from a linked Console organization**. Signed in with the Claude plan, the SDK and
+  `claude -p` still draw from subscription limits.
+
+**What it settles.** The secondary reports in section 2 were right that the change is paused, and the primary page confirms
+`claude -p` is covered by subscription limits today. Assessment mode's Claude reviewer (`claude -p`, signed in with the plan) is
+within the wording "your Claude Code plan, not an API key". No site or README change is needed. The risk stays: the page says
+"for now", so re-read it before any release that repeats the claim.
+
 ## Still unread
 
-Anthropic's own support page on the paused credit change; Conductor's privacy policy and terms; the press claims about Amazon team
+Conductor's privacy policy and terms; the press claims about Amazon team
 sizes and reviewer rules (no primary source found).
