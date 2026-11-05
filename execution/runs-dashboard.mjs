@@ -1,6 +1,6 @@
 // Read-only run dashboard — dependency-free Node ESM.
 //
-//   node <playbook>/execution/runs-dashboard.mjs <productRepoRoot> --repo <owner/name> [--out <file>] [--sha <commit>] [--now <iso>]
+//   node <playbook>/execution/runs-dashboard.mjs <productRepoRoot> --repo <owner/name> [--out <file>] [--sha <commit>] [--now <iso>] [--outcomes [--branch main]]
 //
 // Reads every runs/<slice>/ in a product repo and renders ONE self-contained HTML page: each run's status,
 // spend against its plan and hard cap, tier, Charter hash, event-log result, pull request, the questions
@@ -14,6 +14,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
+import { outcomes, loadDictionary, NOT_RECORDED } from "./outcomes.mjs";
 
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const read = (p) => (existsSync(p) ? readFileSync(p, "utf8") : null);
@@ -140,7 +141,35 @@ const M = (n) => (n === null || n === undefined ? null : `${(n / 1e6).toFixed(1)
 const k = (n) => (n === null || n === undefined ? null : `${Math.round(n / 1000).toLocaleString("en-US")}k`);
 const NR = '<span class="nr">not recorded</span>';
 
-export function render(rows, { repo, sha, now }) {
+// Section "Delivery, quality, cost and review" from outcomes.mjs. Definitions and gaming checks come from the dictionary file, not retyped.
+export function outcomesSection(o, dict = loadDictionary()) {
+  const n = (v, d = 1) => (typeof v === "number" ? (Number.isInteger(v) ? String(v) : v.toFixed(d)) : null);
+  const cell = (v, suffix = "") => (n(v) === null ? NR : `${esc(n(v))}${suffix}`);
+  const d1 = o.delivery.D1_leadTime_gitOnly, d1c = o.delivery.D1_leadTime_fromCharter, q2 = o.quality.Q2_postMergeWithin, h4 = o.humanAttention.H4_reviewBurden, h5 = o.humanAttention.H5_reviewsWaiting, c = o.cost;
+  const pct = (v) => (typeof v === "number" ? `${Math.round(v * 100)}%` : null);
+  const card = (value, label) => `<div class="card"><b>${value}</b><span>${label}</span></div>`;
+  const row = (id, name, value, basis) => `<tr><td><b>${esc(id)}</b> ${esc(name)}</td><td>${value}</td><td>${basis}</td><td class="muted">${esc(dict[id]?.gaming ?? "")}</td></tr>`;
+  const nrWhy = (x) => (x && x.value === NOT_RECORDED ? `${NR}<div class="muted">${esc(x.reason)}</div>` : null);
+  const weeks = Object.entries(o.humanAttention.reviewLoadPerWeek.weeks);
+  return `<h2>Delivery, quality, cost and review</h2>
+<p class="lede">Computed from the git history of <code>${esc(o.repo.branch)}</code> (tip <code>${esc(o.repo.tip)}</code>, ${esc(o.repo.tipAt.slice(0, 10))}) and the run records. No model call; no person is named or ranked. n is shown on every row and a figure the records do not hold says so. <b>Read lead time beside the revert rate and the review burden: a faster lead time with more reverts or thinner review is not an improvement.</b></p>
+<div class="cards">
+${card(esc(o.n.mergedChanges), "merged changes in the history")}
+${card(d1.median === null ? NR : `${esc(n(d1.median))} h`, `median lead time, first commit to merge (n ${d1.n})`)}
+${card(pct(q2.revertRate) ?? NR, `reverted within ${q2.windowDays} days (n ${q2.closedWindowN})`)}
+${card(h4.median === null ? NR : esc(n(h4.median, 0)), "median changed lines a reader was asked to read")}
+</div>
+<div class="wrap"><table class="roles"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th><th>How it could be gamed</th></tr></thead><tbody>
+${row("D1", "Lead time from Charter approval", nrWhy(d1c) ?? `${cell(d1c.median, " h")}`, nrWhy(d1c) ? "" : `${esc(d1c.unit)}; n ${d1c.n}`)}
+${row("Q2", "Reverted, or a fix candidate, within the window", `${pct(q2.revertOrFixCandidateRate) ?? NR}`, `${q2.reverted} reverted (certain), ${q2.fixCandidates} fix candidate(s) (heuristic) of ${q2.closedWindowN}; ${q2.openWindowN} still inside the window and not counted`)}
+${row("H4", "Review burden", `${cell(h4.median, " lines")}`, `${esc(h4.unit)}; merged with no GitHub review recorded: ${nrWhy(h4.mergedWithNoReview) ?? `${h4.mergedWithNoReview.none} of ${h4.mergedWithNoReview.of}`}`)}
+${row("H5", "Reviews waiting", nrWhy(h5) ?? esc(h5.count), nrWhy(h5) ? "" : `oldest ${cell(h5.oldestAgeDays, " days")}; ${esc(h5.note)}`)}
+${row("C2", "Actual spend ÷ plan", nrWhy(c) ?? (typeof c.planRatioMedian === "number" ? esc(c.planRatioMedian.toFixed(2)) : NR), nrWhy(c) ? "" : `median over ${c.planRatioN} slice(s) with a Charter plan total; ${esc(c.unit)}`)}
+</tbody></table></div>
+<p class="muted">Review load per week (merged changes and changed lines): ${weeks.length ? weeks.map(([w, v]) => `${esc(w)}: ${v.merged} / ${v.readLines}`).join(" · ") : "none"}. For planning reading time; not a target and not a per-person figure.</p>`;
+}
+
+export function render(rows, { repo, sha, now, outcomes: oc }) {
   const base = `https://github.com/${repo}`;
   const tree = (slice) => `${base}/tree/${sha}/runs/${encodeURIComponent(slice)}`;
   const done = rows.filter((r) => r.status === "done").length;
@@ -234,6 +263,7 @@ code{font:.82rem ui-monospace,monospace}.notes{margin-top:28px;color:var(--soft)
 ${tr}
 </tbody></table></div>
 ${usageSection}
+${oc ? outcomesSection(oc) : ""}
 <ul class="notes">
 <li><b>Spend</b> is what the run's state file says, in tokens. &ldquo;Self-reported&rdquo; means the model reported its own token use; it is not a bill. ${overPlan} of ${rows.length} runs ended over their plan total; a Charter's hard cap, where one is recorded, is what stops a run.</li>
 <li><b>Event log: intact</b> means the hash chain verified when the run closed. It shows tampering after the fact; it does not prevent it. Runs before the event log existed show &ldquo;no event log&rdquo;.</li>
@@ -255,7 +285,8 @@ if (isMain) {
   const repo = opt("--repo");
   if (!repoRoot || !repo) { console.error("usage: runs-dashboard.mjs <productRepoRoot> --repo <owner/name> [--out file] [--sha commit] [--now iso]"); process.exit(2); }
   const sha = opt("--sha") || execFileSync("git", ["-C", repoRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
-  const html = render(collect(repoRoot), { repo, sha, now: opt("--now") || new Date().toISOString() });
+  const oc = args.includes("--outcomes") ? await outcomes(repoRoot, { branch: opt("--branch") ?? "main", now: opt("--now") || undefined }) : undefined;
+  const html = render(collect(repoRoot), { repo, sha, now: opt("--now") || new Date().toISOString(), outcomes: oc });
   if (opt("--out")) { writeFileSync(opt("--out"), html); console.log(`wrote ${opt("--out")} (${html.length} bytes) from ${repoRoot} at ${sha.slice(0, 7)}`); }
   else process.stdout.write(html);
 }

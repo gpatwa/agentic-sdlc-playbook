@@ -8,7 +8,8 @@ import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { tokens, parseState, parseEndReview, parseEvents, parseUsage, collect, render } from "../runs-dashboard.mjs";
+import { tokens, parseState, parseEndReview, parseEvents, parseUsage, collect, render, outcomesSection } from "../runs-dashboard.mjs";
+import { loadDictionary, NOT_RECORDED } from "../outcomes.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cli = join(here, "..", "runs-dashboard.mjs");
@@ -175,3 +176,37 @@ describe("navigation", () => {
     assert.doesNotMatch(html, /<script/i);
   });
 });
+
+describe("outcomes section (T42 P3)", () => {
+  const oc = {
+    repo: { branch: "main", tip: "abc1234", tipAt: "2026-10-30T00:00:00Z" },
+    n: { mergedChanges: 4 },
+    delivery: { D1_leadTime_gitOnly: { n: 4, median: 10, unit: "hours" }, D1_leadTime_fromCharter: { value: NOT_RECORDED, reason: "no <b>trace</b>" } },
+    quality: { Q2_postMergeWithin: { windowDays: 14, closedWindowN: 3, openWindowN: 1, reverted: 1, fixCandidates: 1, revertRate: 1 / 3, revertOrFixCandidateRate: 2 / 3 } },
+    humanAttention: { H4_reviewBurden: { median: 30, unit: "lines", mergedWithNoReview: { value: NOT_RECORDED, reason: "needs --gh" } }, H5_reviewsWaiting: { value: NOT_RECORDED, reason: "needs --gh" }, reviewLoadPerWeek: { weeks: { "2026-09-28": { merged: 1, readLines: 30 } } } },
+    cost: { value: NOT_RECORDED, reason: "no runs" },
+  };
+  test("it shows figures with n, says not recorded where it is, and copies the gaming check from the dictionary", () => {
+    const html = outcomesSection(oc);
+    assert.match(html, /Delivery, quality, cost and review/);
+    assert.match(html, /n 4/);
+    assert.match(html, /not recorded/);
+    assert.ok(html.includes(loadDictionary().Q2.gaming.replace(/"/g, "&quot;")));
+    assert.match(html, /Read lead time beside the revert rate and the review burden/);
+  });
+  test("reason text cannot become markup, and the section has no script or form", () => {
+    const html = outcomesSection(oc);
+    assert.doesNotMatch(html, /<b>trace<\/b>/);
+    assert.match(html, /&lt;b&gt;trace&lt;\/b&gt;/);
+    assert.doesNotMatch(html, /<script|<form|<iframe/i);
+  });
+  test("render without outcomes is unchanged; with outcomes the section appears once", () => {
+    const root = fixture({ a: done });
+    const plain = render(collect(root), { repo: "o/r", sha: SHA, now: NOW });
+    assert.doesNotMatch(plain, /Delivery, quality, cost and review/);
+    const withOc = render(collect(root), { repo: "o/r", sha: SHA, now: NOW, outcomes: oc });
+    assert.equal(withOc.split("Delivery, quality, cost and review</h2>").length - 1, 1);
+    rmSync(root, { recursive: true });
+  });
+});
+

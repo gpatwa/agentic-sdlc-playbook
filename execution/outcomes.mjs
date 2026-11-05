@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // outcomes.mjs — delivery, quality, cost and review figures for one repo, computed from git and the run records (T42 P2).
 //
-//   node outcomes.mjs <repo> [--branch main] [--window-days 14] [--now <ISO>] [--exclude <regex>]... [--gh] [--json]
+//   node outcomes.mjs <repo> [--branch main] [--window-days 14] [--now <ISO>] [--exclude <regex>]... [--gh] [--json | --md | --write]
 //
 // The contract is docs/PRODUCTIVITY_METRICS.md. A figure not defined there is not produced here. Rules held in code:
 //   • READ ONLY and NO MODEL CALL. Only `git log/diff/rev-list/diff-tree` (and, with --gh, `gh pr view`) are run, with -C <repo>.
@@ -12,7 +12,7 @@
 //   • Tokens appear only as cost (group C), in the unit the run records use: peak context summed per spawn.
 //   • Works on a repo with no Aveto records (git only); where runs/*/trace.json exist it adds the record-based figures.
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -166,6 +166,10 @@ export async function outcomes(repo, opts = {}) {
   // D2: merged changes per week
   const perWeek = {}; for (const c of changes) perWeek[weekKey(c.when)] = (perWeek[weekKey(c.when)] ?? 0) + 1;
 
+  // PM3: what a reader was asked to read each week (changed lines outside excluded paths and runs/), beside the merge count.
+  const reviewLoad = {};
+  for (const c of changes) { const w = (reviewLoad[weekKey(c.when)] ??= { merged: 0, readLines: 0 }); w.merged += 1; w.readLines += c.readLines; }
+
   // D1 (git only): first commit on the branch to merge. Squash merges have no branch history, so they are left out, not guessed.
   const lead = changes.filter((c) => c.firstCommit).map((c) => ({ pr: c.pr, hours: Math.max(0, hoursBetween(c.firstCommit, c.when)) }));
   const slowest = n >= 10 ? [...lead].sort((a, b) => b.hours - a.hours).slice(0, Math.max(1, Math.ceil(lead.length / 10))) : null;
@@ -177,12 +181,24 @@ export async function outcomes(repo, opts = {}) {
 
   // H4
   const readLines = changes.map((c) => c.readLines);
-  let noReview = { value: NOT_RECORDED, reason: "needs --gh (reads each pull request's reviews through the GitHub CLI)" };
+  let noReview = { value: NOT_RECORDED, reason: "needs --gh (reads each pull request's review objects through the GitHub CLI; a read without a review object is not counted)" };
   if (opts.gh) {
     const get = opts.reviewsOf ?? ((pr) => JSON.parse(run(repo, "gh", ["pr", "view", String(pr), "--json", "reviews"])).reviews?.length ?? 0);
     let none = 0, known = 0, failed = 0;
     for (const c of changes) { try { known++; if (get(c.pr) === 0) none++; } catch { failed++; known--; } }
     noReview = known ? { value: none / known, none, of: known, failed } : { value: NOT_RECORDED, reason: "GitHub CLI unavailable for this repo" };
+  }
+
+  // H5: open pull requests that are not drafts, and the age of the oldest (from creation; the dictionary says first ready-for-review,
+  // which GitHub's list does not expose, so creation is the stated approximation).
+  let waiting = { value: NOT_RECORDED, reason: "needs --gh (lists open pull requests through the GitHub CLI)" };
+  if (opts.gh) {
+    try {
+      const open = opts.openPrs ?? JSON.parse(run(repo, "gh", ["pr", "list", "--state", "open", "--json", "number,createdAt,isDraft,author"]));
+      const ready = open.filter((p) => !p.isDraft && !/\[bot\]$|^app\//i.test(p.author?.login ?? ""));
+      const ages = ready.map((p) => hoursBetween(p.createdAt, iso(now)) / 24);
+      waiting = { unit: "open, non-draft, non-bot pull requests at generation time", count: ready.length, oldestAgeDays: ages.length ? Math.max(...ages) : 0, excludedBotOrDraft: open.length - ready.length, note: "age counts from creation, not from first ready-for-review" };
+    } catch { waiting = { value: NOT_RECORDED, reason: "GitHub CLI unavailable for this repo" }; }
   }
 
   const recs = recordFigures(repo);
@@ -225,18 +241,83 @@ export async function outcomes(repo, opts = {}) {
     humanAttention: {
       H1_H2_H3: { value: NOT_RECORDED, reason: "owner touches live in the session transcript; no collector yet (backlog T30)" },
       H4_reviewBurden: { unit: "changed lines (added + removed) outside excluded paths and runs/, per merged change", n, median: median(readLines), items: changes.map((c, i) => ({ pr: c.pr, readLines: c.readLines, excludedLines: c.excludedLines, recordLines: c.recordLines })), mergedWithNoReview: noReview },
-      H5_reviewsWaiting: { value: NOT_RECORDED, reason: "snapshot of open pull requests; needs the GitHub API" },
+      H5_reviewsWaiting: waiting,
+      reviewLoadPerWeek: { unit: "per Monday-start UTC week: merged changes and changed lines a reader was asked to read", weeks: reviewLoad },
     },
     counterweightNote: "Read lead time beside Q2 and H4. A faster lead time with a rising revert or fix rate, or with thinner review, is not an improvement.",
   };
+}
+
+// The dictionary is the contract. Definitions, decisions and gaming checks are read from it at render time, never retyped.
+export function loadDictionary(file = new URL("../docs/PRODUCTIVITY_METRICS.md", import.meta.url)) {
+  const text = readFileSync(file, "utf8");
+  const dict = {};
+  for (const line of text.split("\n")) {
+    const cells = line.split("|").map((c) => c.trim());
+    if (cells.length < 8 || !/^[A-Z]\d$/.test(cells[1])) continue;
+    dict[cells[1]] = { metric: cells[2].replace(/\*\*/g, ""), definition: cells[3], decision: cells[4], gaming: cells[5], cannotShow: cells[7] };
+  }
+  return dict;
+}
+
+const fmt = (v, d = 1) => (typeof v === "number" ? (Number.isInteger(v) ? String(v) : v.toFixed(d)) : v == null ? "n/a" : String(v));
+const nr = (x) => (x && x.value === NOT_RECORDED ? `**not recorded** (${x.reason})` : null);
+
+export function renderMarkdown(o, repoName, dict = loadDictionary()) {
+  const D = o.delivery, Q = o.quality, H = o.humanAttention;
+  const def = (id) => (dict[id] ? `*Decision it informs:* ${dict[id].decision} *Gaming check:* ${dict[id].gaming} *Cannot show:* ${dict[id].cannotShow}` : "");
+  const L = [];
+  L.push(`# Outcomes: ${repoName}`, "",
+    `> Generated ${o.repo.generatedAt} by \`execution/outcomes.mjs\` from the git history of \`${o.repo.branch}\` (tip \`${o.repo.tip}\`, ${o.repo.tipAt}) and \`runs/<slice>/trace.json\`. No model call, no person named, no ranking. A figure the records do not hold says "not recorded". Definitions, decisions and gaming checks are copied from \`docs/PRODUCTIVITY_METRICS.md\`, not retyped.`, "",
+    `**n = ${o.n.mergedChanges} merged changes** (${o.n.style.join(", ") || "none found"}); ${o.n.withRecords} run record(s). Reported against this repo's own history only.`, "",
+    `> ${o.counterweightNote}`, "");
+  L.push("## Delivery", "");
+  const d1 = D.D1_leadTime_gitOnly;
+  L.push(`**D1 lead time, git only** (${d1.unit}): n ${d1.n}, median ${fmt(d1.median)} h.${d1.note ? ` ${d1.note}.` : ""} ${Array.isArray(d1.slowestTenth) ? `Slowest tenth: ${d1.slowestTenth.map((x) => `#${x.pr} ${fmt(x.hours)} h`).join(", ")}.` : `Slowest tenth: ${d1.slowestTenth}.`}`, "", def("D1"), "");
+  const d1c = D.D1_leadTime_fromCharter;
+  L.push(nr(d1c) ? `**D1 from Charter approval:** ${nr(d1c)}` : `**D1 from Charter approval** (${d1c.unit}): n ${d1c.n}, median ${fmt(d1c.median)} h.`, "");
+  const wk = Object.entries(D.D2_mergedPerWeek.weeks);
+  L.push(`**D2 merged per week** (${D.D2_mergedPerWeek.unit}): ${wk.length ? wk.map(([w, c]) => `${w}: ${c}`).join(" · ") : "none"}.`, "", def("D2"), "");
+  L.push(`**D3 time to restore:** ${nr(D.D3_timeToRestore)}`, "");
+  L.push("## Quality", "");
+  const q2 = Q.Q2_postMergeWithin;
+  L.push(`**Q2 reverted or fixed within ${q2.windowDays} days:** ${q2.closedWindowN} change(s) have a closed window (${q2.openWindowN} still open and not counted). Reverted: ${q2.reverted} (certain). Fix candidates: ${q2.fixCandidates} (heuristic). Revert rate ${typeof q2.revertRate === "number" ? Math.round(q2.revertRate * 100) + "%" : "not recorded"}; revert or fix-candidate rate ${typeof q2.revertOrFixCandidateRate === "number" ? Math.round(q2.revertOrFixCandidateRate * 100) + "%" : "not recorded"}. ${q2.note}.`, "", def("Q2"), "");
+  L.push(nr(Q.Q1_gateCatches) ? `**Q1 gate catches:** ${nr(Q.Q1_gateCatches)}` : `**Q1 gate catches** (${Q.Q1_gateCatches.unit}): ${Q.Q1_gateCatches.recordedSlices} of ${Q.Q1_gateCatches.perSlice.length} slice(s) record them; total ${Q.Q1_gateCatches.perSlice.reduce((a, r) => a + (r.catches || 0), 0)}.`, "", def("Q1"), "");
+  L.push(`**Q3, Q4:** ${nr(Q.Q3_Q4)}`, "");
+  L.push("## Cost", "");
+  if (nr(o.cost)) L.push(`**C1, C2:** ${nr(o.cost)}`, "");
+  else {
+    L.push(`Unit: ${o.cost.unit}. The orchestrator's own turns are not in this figure.`, "",
+      `**C1 tokens per merged slice:** ${typeof o.cost.tokensPerMergedSlice === "number" ? Math.round(o.cost.tokensPerMergedSlice / 1000).toLocaleString("en-US") + "k" : "not recorded"} over ${o.cost.mergedSlices} landed slice(s). **C2 actual ÷ plan:** median ${typeof o.cost.planRatioMedian === "number" ? o.cost.planRatioMedian.toFixed(2) : "not recorded"} over ${o.cost.planRatioN} slice(s) that have a Charter plan total.`, "",
+      "| Slice | Tier | Landed | Tokens | Plan | Actual ÷ plan |", "|---|---|---|---|---|---|",
+      ...o.cost.perSlice.map((r) => `| ${r.slice} | ${r.tier ?? "n/a"} | ${r.landed ? "yes" : "no"} | ${Math.round(r.tokens / 1000).toLocaleString("en-US")}k | ${r.plan ? Math.round(r.plan / 1000).toLocaleString("en-US") + "k" : "n/a"} | ${r.ratio ? r.ratio.toFixed(2) : "n/a"} |`), "", def("C1"), "", def("C2"), "");
+  }
+  L.push("## Human attention", "");
+  L.push(`**H1, H2, H3:** ${nr(H.H1_H2_H3)}`, "");
+  const h4 = H.H4_reviewBurden;
+  const nrv = h4.mergedWithNoReview;
+  L.push(`**H4 review burden** (${h4.unit}): n ${h4.n}, median ${fmt(h4.median, 0)} lines. Merged with no GitHub review recorded: ${nr(nrv) ?? `${nrv.none} of ${nrv.of}`}.`, "", def("H4"), "");
+  const h5 = H.H5_reviewsWaiting;
+  L.push(nr(h5) ? `**H5 reviews waiting:** ${nr(h5)}` : `**H5 reviews waiting** (${h5.unit}): ${h5.count}, oldest ${fmt(h5.oldestAgeDays)} days (${h5.note}); ${h5.excludedBotOrDraft} draft or bot PR(s) left out.`, "");
+  const rl = Object.entries(H.reviewLoadPerWeek.weeks);
+  L.push(`**Review load per week** (${H.reviewLoadPerWeek.unit}): ${rl.length ? rl.map(([w, v]) => `${w}: ${v.merged} merged, ${v.readLines} lines`).join(" · ") : "none"}. Shown for planning the team's reading time. It is not a target and not a per-person figure.`, "");
+  L.push("## Paths excluded from review burden", "", "Lockfiles and generated or build paths are left out of H4 so a padded diff cannot move it; changed lines under `runs/` are counted separately as record lines, not hidden:", "", ...o.excludedPaths.map((x) => `- \`${x}\``), "");
+  return L.join("\n");
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const args = process.argv.slice(2);
   const repo = args.find((a, i) => !a.startsWith("--") && !["--branch", "--window-days", "--now", "--exclude"].includes(args[i - 1]));
   const opt = (n) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : undefined; };
-  if (!repo) { console.error("usage: outcomes.mjs <repo> [--branch main] [--window-days 14] [--now ISO] [--exclude regex]... [--gh] [--json]"); process.exit(2); }
+  if (!repo) { console.error("usage: outcomes.mjs <repo> [--branch main] [--window-days 14] [--now ISO] [--exclude regex]... [--gh] [--json | --md | --write]"); process.exit(2); }
   const exclude = []; args.forEach((a, i) => { if (a === "--exclude") exclude.push(args[i + 1]); });
   const r = await outcomes(repo, { branch: opt("--branch"), windowDays: opt("--window-days") ? Number(opt("--window-days")) : undefined, now: opt("--now"), exclude, gh: args.includes("--gh") });
-  console.log(JSON.stringify(r, (k, v) => (v instanceof Set ? [...v] : v), 2));
+  if (args.includes("--md") || args.includes("--write")) {
+    const md = renderMarkdown(r, repo.split("/").filter(Boolean).pop());
+    if (args.includes("--write")) {
+      const out = join(repo, "runs", "OUTCOMES.md");
+      if (!existsSync(join(repo, "runs"))) { console.error("--write needs a runs/ directory in the target; nothing written"); process.exit(1); }
+      writeFileSync(out, md + "\n"); console.log(`wrote ${out}`);
+    } else console.log(md);
+  } else console.log(JSON.stringify(r, (k, v) => (v instanceof Set ? [...v] : v), 2));
 }

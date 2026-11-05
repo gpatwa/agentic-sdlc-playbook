@@ -4,7 +4,8 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readdirSync, statSync } 
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
-import { outcomes, median, NOT_RECORDED } from "../outcomes.mjs";
+import { outcomes, median, NOT_RECORDED, loadDictionary, renderMarkdown } from "../outcomes.mjs";
+import { readFileSync } from "node:fs";
 
 const AUTHOR = "Zed Uniqueperson";
 let clock;
@@ -120,4 +121,38 @@ describe("outcomes.mjs", () => {
   });
 
   test("median", () => { assert.equal(median([3, 1, 2]), 2); assert.equal(median([1, 2, 3, 4]), 2.5); assert.equal(median([]), null); });
+
+  test("review load per week and reviews waiting (bots and drafts left out, age from creation)", async () => {
+    const d = fixture();
+    const open = [
+      { number: 7, createdAt: "2026-11-05T00:00:00Z", isDraft: false, author: { login: "someone" } },
+      { number: 8, createdAt: "2026-11-09T00:00:00Z", isDraft: true, author: { login: "someone" } },
+      { number: 9, createdAt: "2026-10-01T00:00:00Z", isDraft: false, author: { login: "dependabot[bot]" } },
+    ];
+    const o = await outcomes(d, { now: NOW, gh: true, reviewsOf: () => 1, openPrs: open });
+    const h5 = o.humanAttention.H5_reviewsWaiting;
+    assert.equal(h5.count, 1); assert.equal(h5.oldestAgeDays, 5); assert.equal(h5.excludedBotOrDraft, 2);
+    const week = o.humanAttention.reviewLoadPerWeek.weeks["2026-09-28"];
+    assert.deepEqual(week, { merged: 1, readLines: 30 });
+    rmSync(d, { recursive: true });
+  });
+
+  test("the markdown copies the dictionary's definitions and gaming checks, and shows not recorded", async () => {
+    const dict = loadDictionary();
+    for (const id of ["D1", "D2", "D3", "Q1", "Q2", "C1", "C2", "H4", "H5"]) assert.ok(dict[id]?.gaming, `dictionary has ${id}`);
+    const d = fixture(); const o = await outcomes(d, { now: NOW });
+    const md = renderMarkdown(o, "fixture");
+    assert.ok(md.includes(dict.Q2.gaming), "Q2 gaming check is copied verbatim");
+    assert.ok(md.includes(dict.H4.decision));
+    assert.match(md, /\*\*not recorded\*\*/);
+    assert.match(md, /Read lead time beside Q2 and H4/);
+    assert.doesNotMatch(md, /Zed|Uniqueperson|leaderboard|ranking:/i);
+    rmSync(d, { recursive: true });
+  });
+
+  test("the dictionary has no per-person metric and no token score outside group C", () => {
+    const text = readFileSync(new URL("../../docs/PRODUCTIVITY_METRICS.md", import.meta.url), "utf8");
+    const table = text.split("## Not metrics here")[0];
+    assert.doesNotMatch(table, /per (developer|engineer|person)|leaderboard|ranking of/i);
+  });
 });
