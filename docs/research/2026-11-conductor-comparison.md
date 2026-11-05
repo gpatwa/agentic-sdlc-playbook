@@ -108,3 +108,11 @@ has no interface for running many agents at once. A team could run Aveto's pack 
 - https://www.conductor.build/docs/reference/checks
 - https://www.conductor.build/docs/api
 - Related notes: `2026-10-orchestration-prior-art.md` (several agents, approvals as pause and resume), `2026-10-spec-kit-comparison.md`.
+
+## Update 2026-11-04 (later the same day): open questions 2 and 3 are answered
+
+Read in full: "Conductor is joining Meta" and "Claude subscription update for Conductor" (`docs/research/2026-11-f4-unread-sources.md`).
+**From 2026-11-04 new users can no longer sign up or download Conductor**, its Cloud shuts down on 2026-11-20, and the local app
+receives fixes only until early 2027. So the compatibility test in open question 1 is dropped (plan item F3), and the advice
+"do not name Conductor as a dependency" stands more strongly: it is a closing product, not an emerging layer. The subscription
+post is about Anthropic's paused change to Agent SDK billing; see the F4 note for what it means for Aveto. Questions 4 to 7 stay open and are unlikely to be worth answering.
