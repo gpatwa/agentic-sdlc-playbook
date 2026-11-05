@@ -25,8 +25,11 @@ Typical slice sizes:
 | Phase / milestone | 6–15 | 80–200k |
 | Cross-cutting refactor | varies | split, always |
 
-A slice that crosses 200k of estimated work tokens MUST be split by the
-EM. No exceptions.
+A slice that needs more than six stages or about 600k estimated tokens is a
+signal it is too big, and the EM sends it back to be split before spending
+(`execution/pack/protocols/RUN_ECONOMICS.md`). The owner chose 600k on
+2026-11-04; the earlier 200k "MUST split" rule is withdrawn because the
+measured slices that ran well exceeded it.
 
 ---
 
