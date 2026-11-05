@@ -125,3 +125,30 @@ describe("it refuses to overclaim", () => {
     assert.throws(() => execFileSync("node", [cli, rec, "--reviewers", "claude:anthropic"], { stdio: "pipe" }), (e) => e.status === 1 && /secret pattern/.test(String(e.stderr)));
   });
 });
+
+import { renderHealth } from "../assess-report.mjs";
+describe("delivery health from history (T42 P4)", () => {
+  const h = {
+    repo: { branch: "abc1234def", tip: "abc1234", tipAt: "2026-10-01T00:00:00Z" },
+    n: { mergedChanges: 12 },
+    delivery: { D1_leadTime_gitOnly: { n: 12, median: 4.5 }, D2_mergedPerWeek: { weeks: { "2026-09-28": 5, "2026-10-05": 7 } } },
+    quality: { Q2_postMergeWithin: { windowDays: 14, closedWindowN: 10, openWindowN: 2, reverted: 1, fixCandidates: 2, revertRate: 0.1 } },
+    humanAttention: { H4_reviewBurden: { median: 220 } },
+  };
+  test("states n, the window, the lower-bound caveat and that it is not a verdict", () => {
+    const text = renderHealth(h).join("\n");
+    assert.match(text, /12 merged pull request/);
+    assert.match(text, /1 of 10 with a closed window \(10%\)/);
+    assert.match(text, /heuristic, a lower bound/);
+    assert.match(text, /not a verdict on the code and is not comparable with another repo/);
+    assert.match(text, /Merged with no GitHub review \| not read here/);
+  });
+  test("no merged pull requests: it says so and gives no figure", () => {
+    const text = renderHealth({ n: { mergedChanges: 0 } }).join("\n");
+    assert.match(text, /No merged pull requests were found/);
+    assert.doesNotMatch(text, /median/);
+  });
+  test("it never names a person or ranks", () => {
+    assert.doesNotMatch(renderHealth(h).join("\n"), /author|rank|leaderboard|by person/i);
+  });
+});

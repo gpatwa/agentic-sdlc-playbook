@@ -153,7 +153,7 @@ export function recordFigures(repo) {
   return rows;
 }
 
-export async function outcomes(repo, opts = {}) {
+export function outcomes(repo, opts = {}) {
   const branch = opts.branch ?? "main";
   const windowDays = opts.windowDays ?? 14;
   const now = opts.now ? new Date(opts.now).getTime() : Date.now();

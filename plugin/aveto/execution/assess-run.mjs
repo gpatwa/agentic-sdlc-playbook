@@ -18,6 +18,7 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync, write
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { prepare, verify } from "./assess-guard.mjs";
+import { outcomes } from "./outcomes.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const today = () => new Date().toISOString().slice(0, 10);
@@ -139,6 +140,12 @@ export function run(repo, opts, runner = defaultRunner) {
     rows += found.length;
     log.push(`- area ${f}: ${found.length} finding(s)`);
   }
+  // Delivery health from the assessed commit's own history (T42 P4): read only, from the original repo, no model call.
+  try {
+    const health = outcomes(repo, { branch: guard.sha });
+    writeFileSync(join(records, "health.json"), JSON.stringify(health, null, 2) + "\n");
+    log.push(`- delivery health: ${health.n.mergedChanges} merged pull request(s) read from git history`);
+  } catch (e) { log.push(`- delivery health: not computed (${String(e.message).split("\n")[0].slice(0, 120)})`); }
   writeFileSync(join(records, "RUN.md"), log.join("\n") + "\n");
 
   const verified = verify(guard);

@@ -34,7 +34,27 @@ export function parseFindings(md) {
 
 export const hasFileAndLine = (w) => /\S+:\d+/.test(w);
 
-export function renderReport({ map, plan, findings, reviewers, guard, date, unverified }) {
+// "Delivery health from history" (T42 P4): figures computed by outcomes.mjs from the target's git history, read only, no model call.
+// A description of how the repo has been changed, not a verdict on it. Nothing here is scored or compared with another repo.
+export function renderHealth(h) {
+  if (!h || !h.n || !h.n.mergedChanges) return ["## Delivery health from history", "", "No merged pull requests were found in the assessed history (merge or squash commits naming a pull request), so no delivery figure is given.", ""];
+  const f1 = (v) => (typeof v === "number" ? (Number.isInteger(v) ? String(v) : v.toFixed(1)) : "not recorded");
+  const d1 = h.delivery.D1_leadTime_gitOnly, q = h.quality.Q2_postMergeWithin, b = h.humanAttention.H4_reviewBurden;
+  const pct = (v) => (typeof v === "number" ? `${Math.round(v * 100)}%` : "not recorded");
+  const weeks = Object.keys(h.delivery.D2_mergedPerWeek.weeks).length;
+  return ["## Delivery health from history", "",
+    `Read from the git history of \`${h.repo.branch}\` up to \`${h.repo.tip}\` (${h.repo.tipAt.slice(0, 10)}); nothing was fetched and no model was asked. **${h.n.mergedChanges} merged pull request(s)** over ${weeks} calendar week(s) with at least one merge. This describes how the repo has been changed. It is not a verdict on the code and is not comparable with another repo.`, "",
+    table(["Measure", "Value", "Read it with"], [
+      ["Lead time, first commit to merge (hours)", `median ${f1(d1.median)} over ${d1.n} merge(s)`, "the revert rate and the review size below; a short lead time with more reverts is not an improvement"],
+      [`Reverted within ${q.windowDays} days`, `${q.reverted} of ${q.closedWindowN} with a closed window (${pct(q.revertRate)}); ${q.openWindowN} too recent to judge`, "certain: a revert commit names the merge"],
+      ["Fix candidates within the same window", `${q.fixCandidates} (heuristic, a lower bound)`, "a Fix-titled commit after the merge that names the pull request or touches a file it changed"],
+      ["Changed lines a reader was asked to read, per merge", `median ${f1(b.median)} (generated files, lockfiles and \`runs/\` left out)`, "whether the unit was small enough to review well"],
+      ["Merged with no GitHub review", "not read here", "needs the GitHub API; run \`outcomes.mjs --gh\` on the repo"],
+    ]), "",
+    "Not shown because the history cannot show it: time to restore service, defects nobody found, whether a review was careful, and how many people the team has. Figures for one operator merging their own work will show no reviews; that is a fact about the team, not a fault to score.", ""];
+}
+
+export function renderReport({ map, plan, findings, reviewers, guard, date, unverified, health }) {
   const g = map.governance;
   const families = new Set(reviewers.map((r) => r.family));
   const valid = findings.filter((f) => hasFileAndLine(f.where));
@@ -69,6 +89,7 @@ export function renderReport({ map, plan, findings, reviewers, guard, date, unve
     for (const f of list) L.push(`**${f.id}** · \`${f.where}\` · ${f.reviewer} · ${f.disposition}`, "", f.finding, "", `*Evidence:* ${f.evidence || "none given"}`, "");
   }
   if (!valid.length) L.push("None recorded.", "");
+  L.push(...renderHealth(health));
   L.push("## What was not reviewed, and why", "");
   const nr = [];
   for (const a of notReviewed) nr.push(`- Area \`${a.dir}\` (${a.tier}, about ${fmt(a.tokens)} tokens): ${a.reason}.`);
@@ -111,7 +132,9 @@ export function buildReport(dir, { reviewers, guardPath, date, allowUnverified =
       unverified = r.problems.join("; ");
     }
   }
-  const text = renderReport({ map, plan, findings, reviewers, guard, date: date ?? new Date().toISOString().slice(0, 10), unverified });
+  const healthFile = join(dir, "health.json");
+  const health = existsSync(healthFile) ? JSON.parse(readFileSync(healthFile, "utf8")) : null;
+  const text = renderReport({ map, plan, findings, reviewers, guard, date: date ?? new Date().toISOString().slice(0, 10), unverified, health });
   const hits = secretHits(text);
   if (hits.length) throw new Error(`the report text matches a secret pattern (${hits.join(", ")}): a finding's evidence quoted one. Remove it from FINDINGS.md and run again.`);
   return text;
