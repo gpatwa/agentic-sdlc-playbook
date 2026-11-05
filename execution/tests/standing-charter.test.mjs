@@ -214,4 +214,36 @@ describe("pick-intent", () => {
     assert.equal(r.runsUsed, 2);
     rmSync(d, { recursive: true });
   });
+  // Pack v33: one run per REPO, so the run folders of every git worktree count (T42 O4).
+  test("a run open in a linked worktree stops the pick, and a slice run there is not picked again", async () => {
+    const { execFileSync } = await import("node:child_process");
+    const d = repo();
+    const git = (...a) => execFileSync("git", ["-C", d, ...a], { stdio: "pipe", env: { ...process.env, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@t", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@t" } });
+    writeFileSync(join(d, "intents", "ready", "x.md"), "# x"); writeFileSync(join(d, "intents", "ready", "y.md"), "# y"); writeFileSync(join(d, ".gitignore"), ".claude/worktrees/\nruns/\n");
+    git("init", "-q", "-b", "main"); git("add", "."); git("commit", "-qm", "init");
+    const w = join(d, ".claude", "worktrees", "w1");
+    git("worktree", "add", "-q", w, "-b", "w1");
+    mkdirSync(join(w, "runs", "x"), { recursive: true });
+    writeFileSync(join(w, "runs", "x", "STATE.md"), "- **Status:** in-progress\n");
+    const open = pickIntent(d);
+    assert.equal(open.status, "open"); assert.deepEqual(open.open, ["x"]); assert.equal(open.openIn[0].in, ".claude/worktrees/w1");
+    assert.equal(pickIntent(w).status, "open", "seen from the worktree as well");
+    writeFileSync(join(w, "runs", "x", "STATE.md"), "- **Status:** done\n");
+    assert.equal(pickIntent(d).slice, "y", "x has a run folder in the worktree, so it is not picked again");
+    rmSync(d, { recursive: true });
+  });
+  test("standing-Charter runs are counted across worktrees, once per slice name", () => {
+    const d = repo();
+    const sha = createHash("sha256").update(standing).digest("hex");
+    const w = join(d, ".claude", "worktrees", "w1");
+    for (const root of [d, w]) {
+      mkdirSync(join(root, "runs", "same"), { recursive: true });
+      writeFileSync(join(root, "runs", "same", "STATE.md"), "- **Status:** done\n");
+      writeFileSync(join(root, "runs", "same", "STANDING_FIT.md"), `${sha}\nfits\n`);
+    }
+    mkdirSync(join(w, "runs", "other"), { recursive: true });
+    writeFileSync(join(w, "runs", "other", "STANDING_FIT.md"), `${sha}\nfits\n`);
+    assert.equal(pickIntent(d, standing).runsUsed, 2);
+    rmSync(d, { recursive: true });
+  });
 });

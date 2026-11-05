@@ -1,8 +1,8 @@
 // T42 O4: what happens when two slices run at once in two git worktrees of one project (plain Claude Code worktrees, not any
 // other tool). Real `git worktree add`; the pack's real hook scripts driven with simulated hook payloads. This does NOT start a
 // Claude Code session, so it proves what the scripts do with the inputs the harness is documented to send, not that the harness
-// sends them. Two tests are named KNOWN GAP: they pin today's behaviour, which is a hole; when the pack closes it, flip the
-// assertion on purpose. See docs/PARALLEL_SLICES.md.
+// sends them. The two gaps this test first pinned as KNOWN GAP were closed in pack v33 (pick-intent reads every worktree's runs/;
+// write-scope-guard binds a session to its own worktree) and the assertions were flipped on purpose. See docs/PARALLEL_SLICES.md.
 import { test, describe, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, readdirSync, existsSync, rmSync } from "node:fs";
@@ -55,8 +55,25 @@ describe("two slices in two worktrees", () => {
     assert.ok(!denied(scope(main, wa, join(wa, "runs/slice-a/x.md"))));
   });
 
-  test("KNOWN GAP: with CLAUDE_PROJECT_DIR set to the main checkout, a session in worktree A may write into worktree B's runs/", () => {
-    assert.ok(!denied(scope(main, wa, join(wb, "runs/slice-b/x.md"))), "today this is allowed: the guard strips any worktree name, not the session's own");
+  test("write scope (was KNOWN GAP): with CLAUDE_PROJECT_DIR set to the main checkout, a session in worktree A may NOT write into worktree B's runs/", () => {
+    const r = scope(main, wa, join(wb, "runs/slice-b/x.md"));
+    assert.ok(denied(r)); assert.match(r.stdout, /worktree \\"a\\"/); assert.match(r.stdout, /worktree \\"b\\"/);
+  });
+
+  test("write scope: with CLAUDE_PROJECT_DIR = main, A still writes its own worktree's runs/, also from a subdirectory", () => {
+    assert.ok(!denied(scope(main, wa, join(wa, "runs/slice-a/x.md"))));
+    mkdirSync(join(wa, "src"), { recursive: true });
+    assert.ok(!denied(scope(main, join(wa, "src"), join(wa, "runs/slice-a/y.md"))));
+  });
+
+  test("write scope: a session in the main checkout owns no worktree, so it may not write into one either", () => {
+    const r = scope(main, main, join(wa, "runs/slice-a/x.md"));
+    assert.ok(denied(r)); assert.match(r.stdout, /no worktree/);
+    assert.ok(!denied(scope(main, main, join(main, "runs/slice-main/x.md"))), "its own runs/ is still fine");
+  });
+
+  test("write scope: the worktree's own product code stays out of scope", () => {
+    assert.ok(denied(scope(main, wa, join(wa, "src/x.js"))));
   });
 
   test("write scope: with CLAUDE_PROJECT_DIR set to the session's own worktree, another worktree is outside the project and denied", () => {
@@ -68,12 +85,19 @@ describe("two slices in two worktrees", () => {
     assert.equal(r.status, 3); assert.match(r.stdout, /slice-a/);
   });
 
-  test("KNOWN GAP: 'one run per repo' is enforced per checkout, so main and a fresh worktree both pick the same intent while A is open", () => {
+  test("pick-intent (was KNOWN GAP): while A is open, main and a fresh worktree B are both told a run is open, and where", () => {
     rmSync(join(wb, "runs"), { recursive: true, force: true });           // B has no run yet
     const fromMain = pick(main), fromB = pick(wb);
+    assert.equal(fromMain.status, 3); assert.equal(fromB.status, 3);
+    assert.match(fromMain.stdout, /slice-a \(in \.claude\/worktrees\/a\)/);
+    assert.match(fromB.stdout, /slice-a/);
+  });
+
+  test("pick-intent: once A is done, the next pick skips an intent that already has a run folder in another worktree", () => {
+    writeFileSync(join(wa, "runs/slice-a/STATE.md"), state(400, 500, "done"));
+    mkdirSync(join(wa, "runs/one"), { recursive: true }); writeFileSync(join(wa, "runs/one/STATE.md"), state(400, 10, "done"));
+    const fromMain = pick(main), fromB = pick(wb);
     assert.equal(fromMain.status, 0); assert.equal(fromB.status, 0);
-    assert.match(fromMain.stdout, /intents\/ready\/one\.md/); assert.match(fromB.stdout, /intents\/ready\/one\.md/);
-    // A's open run is invisible to both
-    assert.ok(existsSync(join(wa, "runs/slice-a/STATE.md")));
+    assert.match(fromMain.stdout, /intents\/ready\/two\.md/); assert.match(fromB.stdout, /intents\/ready\/two\.md/);
   });
 });

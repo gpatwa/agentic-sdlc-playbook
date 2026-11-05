@@ -99,10 +99,27 @@ try {
   // get CLAUDE_PROJECT_DIR set to the MAIN checkout, not the worktree — it has
   // varied across spawns. Its in-scope writes then looked like
   // ".claude/worktrees/<name>/runs/...", outside runs/, and were denied. Judge
-  // such a target by its path inside that worktree. Stripped once: anything
-  // still not in scope afterwards is denied as before.
-  const inWorktree = rel.match(/^\.claude\/worktrees\/[^/]+\/(.+)$/);
-  if (inWorktree) rel = inWorktree[1];
+  // such a target by its path inside that worktree.
+  //
+  // Only the session's OWN worktree. The session's worktree is the one its cwd
+  // is in; a target in any other worktree is denied, so a session working one
+  // slice cannot write another slice's runs/ (T42 O4: the guard used to strip
+  // any worktree name). A session whose cwd is not in a worktree owns none, so
+  // it may not write into one either. Stripped once: anything still not in
+  // scope afterwards is denied as before.
+  const worktreeOf = (path) => (path.match(/^\.claude\/worktrees\/([^/]+)(?:\/(.*))?$/) ?? []);
+  const [, targetWt, inside] = worktreeOf(rel);
+  if (targetWt !== undefined) {
+    const cwdAbs = canonical(resolve(payload.cwd || process.cwd()));
+    const [, ownWt] = worktreeOf(relative(root, cwdAbs).split(sep).join("/"));
+    if (ownWt !== targetWt) {
+      deny(
+        `write-scope-guard: ${role} is working in ${ownWt ? `worktree "${ownWt}"` : "no worktree"} and may not write into worktree "${targetWt}" (${target}). ` +
+        `Each slice's session writes its own worktree only; hand the change to that slice's session.`,
+      );
+    }
+    if (inside) rel = inside;
+  }
 
   if (!rel || rel.startsWith("../") || rel === ".." || isAbsolute(rel)) {
     deny(`write-scope-guard: ${role} may not write outside the project (${target}).`);
