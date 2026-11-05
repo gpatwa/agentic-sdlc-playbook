@@ -1,6 +1,8 @@
 # Ownerless high-risk paths on four repos (T42 O2)
 
-Generated 2026-11-04 by `execution/repo-map.mjs` (read only) at each repo's checked-out HEAD, whose commit is in each map's header. Owners come only from CODEOWNERS. **None of the four repos has a CODEOWNERS file**, so every high-risk file is ownerless; the pack does not install one.
+Generated 2026-11-04 by `execution/repo-map.mjs` (read only) at each repo's checked-out HEAD, whose commit is in each map's header. Owners come only from CODEOWNERS. **Three of the four repos have no CODEOWNERS file** (aveto-support, streak-seed, stash-seed), so every high-risk file in them is ownerless; the pack does not install one. **hr-timeoff-agent does have `.github/CODEOWNERS`**, which names one person (`@gpatwa`) for every path, so none of its 21 high-risk files is ownerless. Named is not the same as independently approved: one owner on every path gives every path an accountable human and no second approver.
+
+> Correction 2026-11-05: this line first said none of the four repos has a CODEOWNERS file. That was wrong for hr-timeoff-agent; the per-repo sections below were always computed from the file and were right. Found by the independent review in `docs/PROPOSAL_REVIEW_T42.md`.
 
 ## aveto-support
 
