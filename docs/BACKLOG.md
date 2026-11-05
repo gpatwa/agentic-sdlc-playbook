@@ -1936,5 +1936,8 @@ had thought to read.
   and a baseline pilot on one real team repo; **W2** a human org model (`docs/ORG_MODEL.md`, proposal) including review
   capacity, an ownership map, a role-count experiment and a parallel-slice test; **W3** fixes the reviews exposed: remove
   self-approval from the sre, on-call and production-verification briefs and add "AI did not help here" to the fit check (pack v32,
-  owner approves wording), a Conductor compatibility test, and three unread sources. Status: plan only; nothing built.
-  Owner decisions: the position, the baseline repo, v32 wording, the Conductor install.
+  owner approves wording), a Conductor compatibility test, and three unread sources; **W4** (added from the project-management
+  research) fixes records first (`landed` false in all 13 aveto-support traces, owner touches uncomputed, missing
+  `runs/INDEX.md`, 200k-versus-600k slice rule), calibrates estimates (`budget-ratios.md`), models review capacity, and adds a
+  read-only ticket-to-draft-intent adapter; no tracker, roadmap or velocity replacement. Status: plan only; nothing built.
+  Owner decisions: the position, the baseline repo, v32 wording, the Conductor install, the slice-size rule, the adapter source.
