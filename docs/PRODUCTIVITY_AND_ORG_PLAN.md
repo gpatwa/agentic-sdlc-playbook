@@ -2,8 +2,32 @@
 
 > Raised 2026-11-04 by the support session, from two reviews and the owner's direction that Aveto should "focus on measuring
 > developer productivity and defining org-structure". Extended the same day (owner: "fold them into the T42 plan") with a
-> project-management research pass, which adds workstream W4. Status: **plan, nothing built or adopted.** Every claim about
+> project-management research pass, which adds workstream W4. Status: **built 2026-11-04 except P5 and O3 (see "Status" below); the org model and the metric dictionary are still proposals for the owner to edit.** Every claim about
 > other companies below is as reported in the sources named; where a source was thin, it says so.
+
+## Status (2026-11-04, after the owner approved the whole batch)
+
+| Step | State | Where |
+|---|---|---|
+| F1 self-approval removed from the three incident briefs | **done, pack v32**, not installed into other repos | `agents/sre.md`, `on-call-engineer.md`, `production-verification.md`; commit ef01441 |
+| F2 "AI fit" line in `END_REVIEW.md` and `aiFit` in `trace.json` | **done, pack v32** | `APPROVAL_PROTOCOL.md`, `SLICE_STATE.md` |
+| F3 | dropped (Conductor closed to new users) | |
+| F4 unread sources | done, incl. Anthropic's own page: `claude -p` still draws from subscription limits, change paused "for now" | `docs/research/2026-11-f4-unread-sources.md` |
+| P1 metric dictionary | draft, awaiting the owner's edits | `docs/PRODUCTIVITY_METRICS.md` |
+| O1 org model | proposal, awaiting the owner's edits; not yet used on a real Charter | `docs/ORG_MODEL.md` |
+| PM1a records true | **done**: `land-records.mjs`; aveto-support's 13 traces set on a **local branch `records/landed-from-git`, not pushed**; the analyzer says "not recorded" instead of 0% when no run records fixes | commits 6da45b7, fb59b4b |
+| PM1b `runs/INDEX.md` | **decision: drop the claim**, but it lives in two pack files (`RUN_INVENTORY.md`, `agentic-status.md`), so the edit waits for the owner's yes and the next pack bump | |
+| PM1c slice rule | done: six stages or about 600k | `OPERATING_MODEL.md` |
+| PM2 calibration | done: median actual/plan 1.45 over five tier 3 runs | `docs/data/budget-ratios.md` |
+| P2 `outcomes.mjs` | done, tested, run read-only on four repos | `docs/data/outcomes-2026-11-04/` |
+| P3 render, PM3 review capacity | done: `runs/OUTCOMES.md` writer and a dashboard section. **`site/runs.html` not regenerated or deployed** | `runs-dashboard.mjs --outcomes` |
+| P4 delivery health in assessment reports | done; `outcomes.mjs` now ships in the plugin | `assess-report.mjs` |
+| O2 ownership map | done: **none of the four repos has a CODEOWNERS file** | `docs/data/ownership-2026-11-04/` |
+| PM4 issue to draft intent | done, read-only, planted-instruction tests, one live read of an existing issue | `execution/issue-to-intent.mjs` |
+| O4 parallel slices | done as a script-level test; **two known gaps** and one live-session check left | `docs/PARALLEL_SLICES.md` |
+| P6 judge rejection rate | done | `assess-report.mjs` |
+| **P5 baseline pilot** | **not started: needs a real team repo with pre-Aveto history** | owner |
+| **O3 role-count experiment** | **not started: needs model runs and its own Charter** | owner |
 
 ## Why now
 
