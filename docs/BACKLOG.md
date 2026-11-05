@@ -1940,4 +1940,4 @@ had thought to read.
   research) fixes records first (`landed` false in all 13 aveto-support traces, owner touches uncomputed, missing
   `runs/INDEX.md`, 200k-versus-600k slice rule), calibrates estimates (`budget-ratios.md`), models review capacity, and adds a
   read-only ticket-to-draft-intent adapter; no tracker, roadmap or velocity replacement. Status: plan only; nothing built.
-  Owner decisions: the position, the baseline repo, v32 wording, the Conductor install, the slice-size rule, the adapter source.
+  Owner decisions recorded 2026-11-04: position approved; slice rule 600k or six stages; GitHub Issues first for the adapter; `hr-timeoff-agent` as test bed only; v32 wording approved in principle (draft to review); Conductor install moot (closed to new users 2026-11-04, F3 dropped). Open: the team repo for P5.

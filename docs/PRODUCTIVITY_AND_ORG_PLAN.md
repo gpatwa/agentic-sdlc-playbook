@@ -9,10 +9,14 @@
 
 Two reviews point the same way.
 
-- **Amazon** (GeekWire, 2026-11-03; the revised guidelines themselves were not published, so the article is the only source): agents write almost all implementation code for most of its developers; the new guidelines
-  measure **outcomes, not inputs** such as tokens spent or lines committed; an internal leaderboard (KiroRank) was shut down
-  after people used the tool just to climb it; some new teams are small (six to eight, a roughly 35-person lab) with one owner per
-  piece; the stated worry is engineers losing touch with the customer and the product. Reported as Brooker's views and press reports, not as measured results.
+- **Amazon.** Press (GeekWire, 2026-11-03): agents write almost all implementation code for most of its developers; an internal
+  leaderboard (KiroRank) was shut down after people used the tool just to climb it; some new teams are small (six to eight, a
+  roughly 35-person lab) with one owner per piece. Reported as Brooker's views and press reports, not as measured results.
+  **Amazon's own memo** (read 2026-11-04 on aboutamazon.com through a summarising fetcher; `docs/research/2026-11-f4-unread-sources.md`)
+  says something narrower than the press did: it prefers outcome measures but admits they are slow, so it **sometimes uses input
+  metrics** (token use, adoption) and throughput metrics "with care and judgment", calls them flawed as targets, and has leaders
+  watch the 10th and 90th percentile of AI adoption; it calls work AI does not help "a finding, not a failing"; and it worries
+  that engineers and managers have drifted from customers. Team sizes, reviewer rules and PM, EM or TPM roles are not on that page.
 - **Conductor** (`docs/research/2026-11-conductor-comparison.md`): a workbench that runs many agents at once, one
   isolated workspace per shippable unit, with a review loop. It states no rule about who may approve what or what must be true
   before a merge.
@@ -82,7 +86,7 @@ by name and general shape; I have not re-read either for this plan.
 Two layers, kept apart.
 
 **The agent organisation (exists).** 28 roles, a Charter per run, hard stops. Open question the reviews raise, answered by an
-experiment and not by opinion: *is 28 the right number?* Amazon reports small, high-trust teams; Conductor's unit is one
+experiment and not by opinion: *is 28 the right number?* Press reports small teams at Amazon (the memo itself gives no sizes); Conductor's unit was one
 workspace per shippable unit. Experiment O3 below.
 
 **The human organisation (new).**
@@ -100,8 +104,8 @@ workspace per shippable unit. Experiment O3 below.
 |---|---|---|
 | F1 | **Remove self-approval from three agent briefs** (`sre.md`, `on-call-engineer.md`, `production-verification.md`): a runbook may *recommend* a production mutation; each execution needs a fresh in-session human approval; a failed production check *asks* before any rollback. Both pilot reviewers raised this independently as P1. | pack change, so pack v32; owner approves the wording first |
 | F2 | **Fit check records "AI did not help here, and why"** as a first-class outcome (Amazon's letter: "a finding, not a failing"). Today the only code called a fit check is `standing-charter.mjs fits`, which checks that a routine run stays inside a pre-approved class; it does not judge whether AI suits the task. F2 is the broader check, stored in the plan and in `trace.json`. | pack change; ships with F1 in v32 |
-| F3 | **Conductor compatibility test**: with a fixture repo and the pack, do hooks, `.claude/settings.json` and the plugin load in a Conductor-started Claude Code session, and do permission prompts reach the human? | needs the Mac app installed; owner's go |
-| F4 | **Read what was missing**: "Conductor is joining Meta"; "Claude subscription update for Conductor" (2026-06-15), which bears on the site's "A subscription to build" heading; and the Amazon letter itself if it is public. | reading only |
+| F3 | ~~Conductor compatibility test~~ **Dropped 2026-11-04.** Conductor's own announcement says new users cannot sign up or download the app from 2026-11-04, Cloud shuts down 2026-11-20, and the local app winds down in early 2027. The owner's approval to install it cannot be used and is moot. The question (do hooks, `.claude/settings.json` and the plugin load when another tool starts the session, and do permission prompts reach the human) moves into O4, run with plain Claude Code worktrees. | none |
+| F4 | **Read what was missing. Done 2026-11-04** (`docs/research/2026-11-f4-unread-sources.md`): the Meta post, the Conductor subscription post and Amazon's memo on Amazon's own page. Findings: Conductor is closing to new users; the paused Anthropic credit change named `claude -p`, which assessment mode uses, so that wording is a risk to watch (Anthropic's own page still unread); Amazon's memo uses input metrics with care, which corrected the line above. | done |
 
 ## Workstream W4: planning and project management (from the research pass)
 
@@ -120,11 +124,11 @@ F2 (the fit check that records "AI did not help here, and why") is the research'
 
 ## Order, cost, touches
 
-F4 (reading) → P1 → O1 → PM1 → PM2 → P2 → P3 and PM3 → F1 and F2 → P4 → O2 → PM4 → F3 → P5 → O3 → P6. PM1 comes before the
+F4 (done) → P1 → O1 → PM1 → PM2 → P2 → P3 and PM3 → F1 and F2 → P4 → O2 → PM4 → P5 → O3 and O4 → P6. PM1 comes before the
 metrics code because every later figure depends on records that are true. P1 and O1 are documents the owner edits; the
 rest is engineering of about 0.85M agent work plus the runs in P5 and O3. **Owner touches:** edit the dictionary (P1), edit the
 org model (O1), choose the slice-size rule (PM1), approve the pack v32 wording (F1, F2), approve GitHub Issues as the first
-adapter source (PM4), choose the baseline repo (P5), allow the Conductor install (F3). Cost figures are
+adapter source (PM4), choose the team baseline repo (P5). Cost figures are
 peak-sum estimates; review stages have run 1.5 to 3 times their estimates before, so plan on the high side.
 
 ## Risks, stated now
@@ -138,7 +142,7 @@ peak-sum estimates; review stages have run 1.5 to 3 times their estimates before
 - **Calibrating on too little.** Thirteen runs from one operator, plus seven seed runs, make a table, not a model. PM2 states n and treats the ratios as starting ceilings to revise, not forecasts.
 - **A ticket is an injection path.** Issue text can contain instructions aimed at an agent (three vendor pages read in the research did exactly that). PM4 treats it as data, produces a draft only, runs nothing from it, and the owner approves the Charter by hash as before.
 - **Reading a vendor study as a result.** The measured figures in the research are mostly vendor telemetry and a dated trial; they carry direction more reliably than size. Nothing in this plan quotes them as Aveto results.
-- **Over-reading a thin source.** The Amazon article is secondhand and the guidelines are unpublished; the Conductor pages were read as summaries. Nothing here depends on either being right.
+- **Over-reading a thin source.** The Amazon memo was read through a summarising fetcher and its page is undated; press claims about team sizes and reviewer rules have no primary source; the Anthropic credit-change terms are known only from secondary coverage. Nothing here depends on any of them being right.
 
 ## What this plan does not do
 
@@ -153,11 +157,13 @@ peak-sum estimates; review stages have run 1.5 to 3 times their estimates before
 - It does not generate AI-written stakeholder digests. The dashboard shows recorded facts or "not recorded", and stays that way.
 - Parallel slices stay at "one slice per repo at a time" in public wording until O4 runs.
 
-## Decisions for the owner
+## Decisions (owner, 2026-11-04)
 
-1. Approve the position above (outcomes and teams, never inputs or individuals), or edit it.
-2. Which repo is the baseline pilot (P5)? It should be a real team repo with history and CI.
-3. Approve F1 and F2 as the next pack version (v32), after reading the wording I would draft.
-4. Allow installing Conductor for the compatibility test (F3), or skip it.
-5. Slice-size rule (PM1c): is 200k estimated tokens a MUST-split, or is about 600k and six stages the signal?
-6. Approve GitHub Issues as the first source for the read-only ticket adapter (PM4), or name another.
+1. **Position: approved.** Outcomes and teams, never inputs or individuals.
+2. **Baseline (P5):** `hr-timeoff-agent` is the **test bed** for proving `outcomes.mjs` works (89 commits from 2026-09-21, 35 merged PRs, CI and an eval gate, one author). It supports no productivity claim: one author, no known pre-Aveto period. A real team repo with history before adoption is still needed for P5, and is **not yet chosen**.
+3. **Pack v32 (F1, F2): wording approved in principle.** The support session drafts the exact wording and shows it before any pack file changes.
+4. **Conductor install: approved, then moot** (F3 dropped, above).
+5. **Slice-size rule (PM1c): about 600k estimated tokens or six stages is the signal to split**, as `RUN_ECONOMICS.md` says. `OPERATING_MODEL.md` (200k "MUST split") is to be brought into line; that edit is part of PM1 and not yet made.
+6. **Ticket adapter (PM4): GitHub Issues is the first source.**
+
+Still open: the team repo for P5; the wording of F1 and F2 (a draft to review); whether to read Anthropic's page on the paused credit change before touching site or README wording.
