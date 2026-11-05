@@ -62,7 +62,7 @@ export function renderJudge(j) {
   const c = (k) => v.filter((x) => x.verdict === k).length;
   const judged = v.length, rej = c("rejected");
   const L = ["## Judge check", "",
-    `A ${j.family ?? "second-family"} judge (${j.judge ?? "judge"}) read a seeded sample of ${j.sampled?.length ?? judged} finding(s); ${judged} were judged: ${c("confirmed")} confirmed, ${rej} rejected, ${c("intentional")} intentional, ${c("unclear")} unclear. **Rejection rate ${judged ? Math.round((rej / judged) * 100) + "%" : "not available"} (${rej} of ${judged}).** The verdicts are provisional; the owner's disposition outranks the judge's.`, ""];
+    `A judge (${j.judge ?? "judge"}, ${j.family ?? "second"} model family) read a seeded sample of ${j.sampled?.length ?? judged} finding(s); ${judged} were judged: ${c("confirmed")} confirmed, ${rej} rejected, ${c("intentional")} intentional, ${c("unclear")} unclear. **Rejection rate ${judged ? Math.round((rej / judged) * 100) + "%" : "not available"} (${rej} of ${judged}).** The verdicts are provisional; the owner's disposition outranks the judge's.`, ""];
   if (judged >= 10 && rej === 0) L.push("> **Flag: the judge rejected nothing across " + judged + " findings.** A judge that agrees with every finding may be too lenient, or the reviewers may be precise; this run cannot tell which. Treat the confirmations as unchecked until a few are read by hand.", "");
   else if (judged > 0 && judged < 10) L.push(`The sample is below ten judged findings, so the rejection rate is shown but not interpreted.`, "");
   return L;
