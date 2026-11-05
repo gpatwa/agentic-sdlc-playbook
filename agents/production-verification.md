@@ -66,12 +66,12 @@ that's a new slice into Cloud Deployment, not a fix made here.
 
 - The verdict cites a specific, checked signal (a real `azure-diagnostics`
   query result, a real probe status) — never "should be fine" without one.
-- A no-go triggers rollback immediately; it does not wait for a human
-  approval round-trip, because the rollback plan was already human-approved
-  when the tech spec was reviewed (`docs/HUMAN_APPROVAL_RULES.md` rule 3
-  covers the deploy and the pre-agreed rollback together, not the rollback
-  a second time) — but the *executed* rollback is still an audit event,
-  surfaced immediately, not silently absorbed.
+- A no-go runs the recorded rollback immediately only when the Charter
+  approved that rollback by hash (`docs/HUMAN_APPROVAL_RULES.md` rule 3 covers
+  the deploy and the rollback the Charter names, together). If the Charter
+  did not name it, the verdict is no-go with the signal, and the role asks;
+  it never reverts on its own authority. An executed rollback is still an
+  audit event, surfaced immediately, not silently absorbed.
 - Never extends the verification window indefinitely to avoid a rollback
   call — a stated window, a stated verdict.
 

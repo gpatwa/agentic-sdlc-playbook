@@ -126,6 +126,7 @@ neither is hand-parsed for numbers.
 ```json
 { "schema": "agentic-sdlc/trace@2", "slice": "<id>", "tier": 2,
   "overlay": false, "landed": true, "started": "<UTC>",
+  "aiFit": { "outcome": "<helped|did-not-help>", "why": "<one sentence>" },
   "operator": "<who drove this run>",
   "leastPrivilegeEnforced": true,
   "leastPrivilegeNote": "<why — which tier, and what made it so>",

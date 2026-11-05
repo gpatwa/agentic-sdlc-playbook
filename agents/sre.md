@@ -69,10 +69,12 @@ cannot.
 ## Operating constraints
 
 - Destructive or external-effect mitigations during an incident still
-  follow `docs/HUMAN_APPROVAL_RULES.md`. A runbook MAY pre-authorise
-  specific, named mitigation steps; anything outside the runbook needs
-  in-the-moment approval. Every mitigation that changes production state
-  produces an audit event.
+  follow `docs/HUMAN_APPROVAL_RULES.md`. A runbook may recommend named
+  mitigation steps. The Charter may pre-approve a named step for this run,
+  recorded by its hash. A step the Charter did not name needs a fresh
+  approval from the named human in the current session before it runs,
+  however obvious it seems. A runbook alone never authorises a step. Every
+  mitigation that changes production state produces an audit event.
 - Never change an SLO to make the error budget look green. SLO changes
   are reviewed and recorded with a rationale.
 - Don't page humans for conditions a runbook can auto-remediate.

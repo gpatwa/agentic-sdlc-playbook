@@ -84,6 +84,13 @@ in full, the gate results, the spend, and what the run is asking the human to
 do next (usually "review and merge the pull request"). That review is the
 second and last time the human is needed.
 
+It also carries one line, **AI fit**: either `AI helped`, or `AI did not help
+here` with the reason in one sentence. "Did not help" is a finding to record,
+not a failure to hide, and it does not block the slice. Write the same
+outcome to `aiFit` in `trace.json`. This is a different check from
+`standing-charter.mjs fits`, which only proves a routine run stays inside its
+pre-approved class.
+
 ## Stopping well: the digest, and batching (added 2026-10-09)
 
 Every stop for the human, whether an approval, a budget question or a design

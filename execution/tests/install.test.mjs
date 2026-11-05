@@ -428,7 +428,7 @@ describe("install.mjs — pack integrity", () => {
     assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
     const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
     assert.match(ag, /Mark what you could not confirm, and say where you looked/);
-    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 31);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 32);
   });
 
   test("pack v31: the design rules and the platform split reach the installed agents", () => {
@@ -440,6 +440,22 @@ describe("install.mjs — pack integrity", () => {
       const text = readFileSync(join(target, ".claude", "agents", `${role}.md`), "utf8");
       assert.match(text, needle, role);
     }
+  });
+
+  test("pack v32: the incident briefs cannot approve their own actions, and the end review records AI fit", () => {
+    const sre = readFileSync(join(target, ".claude", "agents", "sre.md"), "utf8");
+    assert.match(sre, /needs a fresh\s+approval from the named human in the current session/);
+    assert.doesNotMatch(sre, /MAY pre-authorise/);
+    const oc = readFileSync(join(target, ".claude", "agents", "on-call-engineer.md"), "utf8");
+    assert.match(oc, /never reverts on\s+its own authority/);
+    assert.doesNotMatch(oc, /auto-executes the rollback/);
+    const pv = readFileSync(join(target, ".claude", "agents", "production-verification.md"), "utf8");
+    assert.match(pv, /only when the Charter\s+approved that rollback by hash/);
+    assert.doesNotMatch(pv, /does not wait for a human\s+approval round-trip/);
+    const ap = readFileSync(join(target, ".claude", "protocols", "APPROVAL_PROTOCOL.md"), "utf8");
+    assert.match(ap, /\*\*AI fit\*\*.*AI did not help\s+here/s);
+    const ss = readFileSync(join(target, ".claude", "protocols", "SLICE_STATE.md"), "utf8");
+    assert.match(ss, /"aiFit":/);
   });
 
   test("the budget guard is installed and wired into settings", () => {
