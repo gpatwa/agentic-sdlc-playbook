@@ -25,6 +25,7 @@ is the "may not" column below.
 | **Steward of the pack and of standing Charters** | The pack version, standing Charters (their class, expiry, budget), hooks and permission rules | Approve a change to a rule they depend on to approve others (a hook, a deny list) without a second person |
 | **Incident owner** | Declaring severity and closure; approving any production mutation or rollback the Charter did not name (pack v32) | Delegate an in-the-moment approval to an agent |
 | **Platform owner** | CI, release workflows, secrets handling, model and processor lines | Approve a model or processor line that processes data they do not have authority over |
+| **Delivery owner** (proposed 2026-11-06) | Slice sizing before work starts; the review queue against the team's review capacity (H4, H5); deciding what waits when reviews back up | Approve a Charter, merge, or record a reviewer's disposition on that basis; use review-capacity figures to rank or score a person |
 
 ## Decision class by tier
 
@@ -112,9 +113,10 @@ program manager. This section says why none is added now, so the question is not
 3. Parallel slices running live need someone to arbitrate conflicts between them. That would more likely be a protocol than a
    role, and is considered first as one.
 
-**Open, and the owner's to decide:** this document's five human roles include no delivery owner, meaning the person who protects
-review capacity and slice sizing. That is a gap in the human side, not a reason for an agent. Whether to name such a role is
-item 4 below.
+**Done instead:** the human side had no delivery owner, meaning the person who protects review capacity and slice sizing. A
+**Delivery owner** row was added to the human-roles table on 2026-11-06 as a proposal. It is a gap on the human side, not a reason
+for an agent. With one operator, the Owner of a Charter holds it; the row matters when a second person exists. Item 4 below asks
+the owner to confirm or strike it.
 
 ## What this document does not do
 
@@ -128,8 +130,8 @@ item 4 below.
 
 1. Is "a second named person at tier 3 where the team has one" the right bar, or do you want it required even for you alone (which
    would mean tier 3 work waits until someone else exists)?
-2. Which of the five roles do you hold today, and which do you want written as "unfilled"?
+2. Which of the six roles do you hold today, and which do you want written as "unfilled"?
 3. Should the Incident owner be allowed to pre-approve a rollback in the Charter on the agent's behalf, as pack v32 now requires,
    or do you want it asked even when the Charter names it?
-4. Do you want a sixth human role for delivery (protects review capacity and slice sizing), or is that held by the Owner of a
-   Charter until a team exists? See "Considered and declined" above.
+4. The **Delivery owner** row was added on your "implement it" with no stated preference: keep it, rename it, or strike it? With
+   one operator you hold it by default; it is written down so the duty is not nobody's once a second person exists.
