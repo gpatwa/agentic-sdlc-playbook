@@ -86,6 +86,36 @@ with the W1 metrics.
 No row claims that agents make a team faster. That claim needs a baseline from the same repo's history before adoption (pilot
 P5), and none exists yet.
 
+## Considered and declined: a project-manager agent and a TPM agent
+
+Recorded 2026-11-06 at the owner's request. The pack has 28 agent briefs in `agents/`; none is a project manager or a technical
+program manager. This section says why none is added now, so the question is not re-opened without new evidence.
+
+**Why not now**
+
+- **The duties already have homes.** Slice size, missing context and skipped gates sit with the `engineering-manager` brief;
+  sequencing sits with the `orchestrator` brief; status and tracking are artefacts (Charter, `runs/`, `trace.json`, the `/runs`
+  dashboard), not a role.
+- **Nothing measured supports it.** The research found no measured result on whether agents change project-manager, EM or TPM
+  work (`docs/research/2026-11-project-management-with-ai-agents.md`). The shift of those duties toward specs, acceptance checks
+  and protecting review capacity is an inference.
+- **A role adds a handoff.** Step O3 tests whether *fewer* producing roles, with the same gates, cost fewer tokens. Adding a
+  role before that baseline exists points the other way.
+- **There is no program to run.** TPM work is cross-team dependencies and program risk. Every Aveto run so far has one operator
+  or one team, so a TPM agent would have nothing real to coordinate.
+
+**What would reopen it** (any one, with the evidence recorded here)
+
+1. A pilot on a real team repo (P5) shows work stalling on cross-slice sequencing, dependencies or status that the
+   orchestrator and EM briefs do not cover.
+2. The O3 baseline exists, so a new role can be compared against it.
+3. Parallel slices running live need someone to arbitrate conflicts between them. That would more likely be a protocol than a
+   role, and is considered first as one.
+
+**Open, and the owner's to decide:** this document's five human roles include no delivery owner, meaning the person who protects
+review capacity and slice sizing. That is a gap in the human side, not a reason for an agent. Whether to name such a role is
+item 4 below.
+
 ## What this document does not do
 
 - It does not assign people, set team sizes or define career ladders.
@@ -101,3 +131,5 @@ P5), and none exists yet.
 2. Which of the five roles do you hold today, and which do you want written as "unfilled"?
 3. Should the Incident owner be allowed to pre-approve a rollback in the Charter on the agent's behalf, as pack v32 now requires,
    or do you want it asked even when the Charter names it?
+4. Do you want a sixth human role for delivery (protects review capacity and slice sizing), or is that held by the Owner of a
+   Charter until a team exists? See "Considered and declined" above.
