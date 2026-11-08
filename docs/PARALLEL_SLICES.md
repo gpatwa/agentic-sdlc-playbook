@@ -2,15 +2,16 @@
 
 > **Update 2026-11-04, pack v33:** the two known gaps below are closed in the pack's scripts (fixes 1 and 2 under "Fixes"). The
 > table keeps the result as first measured; the "Now" column is the result after the fix, from the same test file with its two
-> KNOWN GAP assertions flipped on purpose. Pack v33 is in this repo, **not installed into other repos**. The live-session check
-> (fix 4) is still open, so "the hooks fire in a worktree session" is still not shown.
+> KNOWN GAP assertions flipped on purpose. Pack v33 is now installed in `aveto-support` and `streak-seed`.
+>
+> **Update 2026-11-07, live-session check (fix 4) done:** in one real Claude Code worktree session, hooks fired, `cwd` was the
+> worktree, and the v33 guard allowed and blocked the right writes. See "Live-session check" below for the result and its limits.
 
 > Tested 2026-11-04 by `execution/tests/parallel-slices.test.mjs`: two real `git worktree`s of one project, the pack's real hook
 > scripts and `pick-intent.mjs`, driven with **simulated hook payloads**. Plain Claude Code worktrees were the model; no other
 > tool was involved (Conductor, the earlier subject of plan item F3, closed to new users on 2026-11-04).
 > **What this does not prove:** it does not start a Claude Code session. It shows what the scripts do with the inputs the harness
-> is documented to send. Whether a real session in a worktree loads the repo's `.claude/settings.json` hooks, and what
-> `CLAUDE_PROJECT_DIR` is set to on each spawn, is a harness fact still to be confirmed in a live session.
+> is documented to send. *(As of 2026-11-04. The live-session check below has since confirmed it for one session and one agent.)*
 
 ## Result
 
@@ -28,7 +29,7 @@
 - **Can say:** two slices with *different* intents, each started deliberately by a person in its own worktree, keep separate
   budgets and separate event logs. Their approvals are separate by construction (each Charter is approved by its own hash).
 - **Cannot say:** that parallel slices are safe in general, that routine (standing-Charter) runs can run in parallel, or that
-  the hooks fire in a worktree session. The site's limit "one slice at a time per repo" stays as written.
+  the hooks fire in every harness setup (one live session was checked, see below). The site's limit "one slice at a time per repo" stays as written.
 
 ## Fixes (pack v33, made 2026-11-04)
 
@@ -41,7 +42,37 @@
    `cd`s out of its worktree is treated as owning none.
 3. **Interim rule, no code, still sound:** run parallel slices only for different intents typed by a person; set `CLAUDE_PROJECT_DIR`
    to the worktree when launching a session there.
-4. **Confirm in one live session (open; owner or a spawned test):** that hooks listed in the worktree's `.claude/settings.json`
-   fire, and what `CLAUDE_PROJECT_DIR` and `cwd` are on each spawn. Fix 2 depends on `cwd` being the worktree.
+4. **Confirm in one live session. Done 2026-11-07, see "Live-session check".** Fix 2 depends on `cwd` being the worktree, and it was.
+
+Fix 3's advice to set `CLAUDE_PROJECT_DIR` to the worktree is **not needed and not what the harness does** (see below): in a
+worktree the app created, `CLAUDE_PROJECT_DIR` was the main checkout. The guard is built for that case.
+
+## Live-session check (2026-11-07)
+
+A throwaway repo with pack v33 (`--greenfield`), a second worktree `probe-other`, and a probe hook at two levels (the repo's
+`settings.json` and the `software-architect` agent's frontmatter). A session was started by the desktop app in a fresh worktree
+of that repo (`claude/inspiring-brahmagupta-bc3e61`) and scripted to write once itself and then spawn the real
+`software-architect` agent for three writes. Raw log and the session's own report:
+`docs/data/worktree-probe-2026-11-07/`. A first attempt stalled on an unanswered permission prompt and is not used.
+
+| Question | Observed |
+|---|---|
+| Do hooks fire in a worktree session? | **Yes**, at both levels (session `settings.json` and agent frontmatter), on every tool call logged (14 events). |
+| `cwd` in the hook payload | **The worktree**, on all 14 events, main session and subagent. |
+| `CLAUDE_PROJECT_DIR` seen by hooks | **The main checkout**, on all 14 events. (Empty in the Bash tool's own shell.) |
+| Hook process working directory | **The main checkout.** |
+| Architect writes its own worktree's `runs/` | **Allowed**; file present on disk. |
+| Architect writes `src/` | **Blocked** by `write-scope-guard`: "…outside its scope (runs/, …)"; no file on disk. |
+| Architect writes another worktree's `runs/` | **Blocked** by `write-scope-guard`: "…working in worktree "inspiring-brahmagupta-bc3e61" and may not write into worktree "probe-other"…"; no file on disk. |
+
+**What it shows:** the v33 guard's assumption holds in this setup. `cwd` is the worktree while the project root is the main checkout,
+which is the case the guard was built for. Any hook or script that resolves a path from `CLAUDE_PROJECT_DIR` or the process
+directory will get the main checkout, not the worktree; per-worktree decisions must use the payload's `cwd`.
+
+**Limits:** one session, one agent role (`software-architect`), one run, macOS. The guard's own decisions are known from the
+block messages and the files on disk, not from a guard log. A subagent has no shell, so its directory is the payload's value,
+not a `pwd`. Whether the worktree's `settings.json` or the main checkout's fired is not distinguishable (same commit). A session
+whose `cwd` is outside every worktree was not run live; it stays covered by the simulated-payload tests only. Other hooks and
+scripts in the pack that read `CLAUDE_PROJECT_DIR` were **not audited** for this.
 
 The two KNOWN GAP tests were flipped on purpose when the gaps closed.

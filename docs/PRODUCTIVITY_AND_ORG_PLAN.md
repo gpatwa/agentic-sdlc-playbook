@@ -24,7 +24,7 @@
 | P4 delivery health in assessment reports | done; `outcomes.mjs` now ships in the plugin | `assess-report.mjs` |
 | O2 ownership map | done: **three of the four repos have no CODEOWNERS file; hr-timeoff-agent has one that names a single owner for every path** (corrected 2026-11-05) | `docs/data/ownership-2026-11-04/` |
 | PM4 issue to draft intent | done, read-only, planted-instruction tests, one live read of an existing issue | `execution/issue-to-intent.mjs` |
-| O4 parallel slices | done as a script-level test; both gaps fixed in **pack v33** (not installed elsewhere); one live-session check left | `docs/PARALLEL_SLICES.md` |
+| O4 parallel slices | done as a script-level test; both gaps fixed in **pack v33**; live-session check done 2026-11-07 (one session, one agent role; other hooks' use of `CLAUDE_PROJECT_DIR` not audited) | `docs/PARALLEL_SLICES.md` |
 | P6 judge rejection rate | done | `assess-report.mjs` |
 | **P5 baseline pilot** | **not started: needs a real team repo with pre-Aveto history** | owner |
 | **O3 role-count experiment** | **not started: needs model runs and its own Charter** | owner |
