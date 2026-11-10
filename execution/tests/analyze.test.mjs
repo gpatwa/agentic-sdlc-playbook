@@ -36,6 +36,25 @@ const trace = (stages, extra = {}) => ({
   stages, ...extra,
 });
 
+describe("analyze.mjs — Opportunity Scout folders (pack v34)", () => {
+  test("a runs/opportunity-* folder with SCOUT.md and no STATE.md is not counted as a pre-telemetry run", () => {
+    const dir = join(tmpdir(), `analyze-test-scout-${process.pid}`);
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(join(dir, "runs", "one"), { recursive: true });
+    writeFileSync(join(dir, "runs", "one", "trace.json"), JSON.stringify(trace([{ stage: "QA", archetype: "review", model: "sonnet", effort: "high", tokens: 40000, toolCalls: 10, retries: 0 }])));
+    mkdirSync(join(dir, "runs", "opportunity-next-agent"), { recursive: true });
+    writeFileSync(join(dir, "runs", "opportunity-next-agent", "SCOUT.md"), "# Opportunity Scout\n");
+    mkdirSync(join(dir, "runs", "old-untraced"), { recursive: true });       // a real pre-telemetry run still counts
+    writeFileSync(join(dir, "runs", "old-untraced", "STATE.md"), "**Status:** done\n");
+    execFileSync("node", [analyzer], { cwd: dir, encoding: "utf8" });
+    const md = readFileSync(join(dir, "runs", "ANALYTICS.md"), "utf8");
+    rmSync(dir, { recursive: true, force: true });
+    assert.doesNotMatch(md, /opportunity-next-agent/);
+    assert.match(md, /old-untraced/);
+    assert.match(md, /\+ 1 pre-telemetry/);
+  });
+});
+
 describe("analyze.mjs — effort column", () => {
   test("renders the effort a stage ran at", () => {
     const { md, html } = analyze({

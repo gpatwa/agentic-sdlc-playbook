@@ -60,6 +60,14 @@ describe("a scoped role can still do its job", () => {
     assert.equal(run(d, "product-manager", write(".agentic/PROJECT_CONTEXT.md")), "allow");
     assert.equal(run(d, "market-researcher", write(".agentic/PROJECT_CONTEXT.md")), "allow");
   });
+  test("Opportunity Scout (pack v34) writes runs/ only: not the product, not PROJECT_CONTEXT, not .claude", () => {
+    const d = repo();
+    assert.equal(run(d, "opportunity-scout", write("runs/opportunity-next-agent/SCOUT.md")), "allow");
+    assert.equal(run(d, "opportunity-scout", write("runs/opportunity-next-agent/SOURCES.md")), "allow");
+    for (const p of ["src/app.js", ".agentic/PROJECT_CONTEXT.md", "intents/ready/next.md", ".claude/settings.json", "README.md"]) {
+      assert.equal(run(d, "opportunity-scout", write(p)), "deny", p);
+    }
+  });
   test("Cloud Deployment may write its plan and azd-layout IaC", () => {
     const d = repo();
     for (const p of [".azure/deployment-plan.md", "infra/main.bicep", "azure.yaml"]) {

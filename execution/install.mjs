@@ -79,6 +79,11 @@ if (existing) {
 }
 
 // Roles that run commands (need Bash); everyone else is doc-only (least privilege).
+// The only role with web tools. It reads public pages to compare candidate problems
+// (agents/opportunity-scout.md, "Web rules"). It has no Bash, so it is write-scoped
+// to runs/ like the other planning roles. Web tools are not given to any other role.
+const WEB_ROLES = new Set(["opportunity-scout"]);
+
 const BASH_ROLES = new Set([
   "frontend-developer", "backend-architect", "ai-engineer", "ml-engineer",
   "qa-evidence", "security-privacy", "sre", "analytics-engineer",
@@ -131,7 +136,9 @@ for (const file of readdirSync(join(playbookRoot, "agents")).filter((f) => f.end
     `${title} for Aveto.`;
   const tools = BASH_ROLES.has(slug)
     ? "Read, Write, Edit, Bash, Grep, Glob"
-    : "Read, Write, Edit, Grep, Glob";
+    : WEB_ROLES.has(slug)
+      ? "Read, Write, Edit, Grep, Glob, WebSearch, WebFetch"
+      : "Read, Write, Edit, Grep, Glob";
   const model = MODEL_FOR_ROLE[slug] ?? DEFAULT_MODEL;
   const effort = HIGH_EFFORT_ROLES.has(slug) ? "high" : DEFAULT_EFFORT;
 
@@ -299,7 +306,7 @@ writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
 // Pack version. Bump when a regeneration changes what agents *do* — new
 // frontmatter the harness acts on, a changed tool boundary, a protocol whose
 // absence would change a decision. Cosmetic edits do not earn a bump.
-const PACK_VERSION = 33;
+const PACK_VERSION = 34;
 
 // Read the previous install back before overwriting it. Until now this field
 // was written and never read, so a product repo could drift arbitrarily far

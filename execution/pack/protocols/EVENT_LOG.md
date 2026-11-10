@@ -2,8 +2,9 @@
 
 A hook, not an agent, writes `.claude/events/<session_id>.jsonl`: one hash-chained line per
 tool call, with the role that made it (`agent_type`), the tool, a call id and a target (a
-project-relative path; for Bash only the program and a hash of the command; never contents,
-commands or output). The hook fails open: a logging fault never blocks a run. Agents never
+project-relative path; for Bash only the program and a hash of the command; for WebFetch the
+host and path, never the query string; for WebSearch the first four words and a hash of the query
+(pack v34); never contents, commands or output). The hook fails open: a logging fault never blocks a run. Agents never
 write, edit or delete these files; `.claude/` is a protected path for routine runs.
 
 ## What the Orchestrator does

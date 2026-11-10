@@ -51,6 +51,16 @@ describe("event log hook", () => {
     rmSync(d, { recursive: true });
   });
 
+  test("web tools (pack v34): a fetch logs host and path only; a search logs four words and a hash, not the whole query", () => {
+    const d = project();
+    assert.equal(targetOf("WebFetch", { url: "https://example.com/a/b?token=SECRET#frag" }, d), "example.com/a/b");
+    const t = targetOf("WebSearch", { query: "small business invoicing pain points reddit 2026 secretword" }, d);
+    assert.match(t, /^small business invoicing pain #[0-9a-f]{12}$/);
+    assert.ok(!t.includes("secretword") && !t.includes("reddit"));
+    assert.equal(targetOf("WebFetch", { url: "not a url" }, d), "", "a malformed URL logs nothing and does not throw");
+    rmSync(d, { recursive: true });
+  });
+
   test("editing, deleting or reordering a line breaks the chain", () => {
     const d = project();
     for (let i = 1; i <= 5; i++) record("pre", payload({ tool_use_id: `u${i}`, tool_input: { file_path: `src/f${i}.js` } }), d);

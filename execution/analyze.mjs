@@ -46,7 +46,10 @@ const runsDir = join(root, "runs");
 if (!existsSync(runsDir)) { console.error(`no runs/ dir at ${root}`); process.exit(1); }
 
 // ── load: glob runs/*/trace.json (the canonical per-run facts) ───────────────
-const dirs = readdirSync(runsDir).filter((d) => statSync(join(runsDir, d)).isDirectory());
+// An Opportunity Scout folder (pack v34) has SCOUT.md and no STATE.md or trace.json. It is research, not a run, so it is
+// neither a traced run nor a "pre-telemetry" one.
+const isScoutFolder = (d) => existsSync(join(runsDir, d, "SCOUT.md")) && !existsSync(join(runsDir, d, "STATE.md")) && !existsSync(join(runsDir, d, "trace.json"));
+const dirs = readdirSync(runsDir).filter((d) => statSync(join(runsDir, d)).isDirectory() && !isScoutFolder(d));
 const runs = [];
 const preTelemetry = [];
 for (const d of dirs) {

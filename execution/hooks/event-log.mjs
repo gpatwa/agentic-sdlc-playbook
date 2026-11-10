@@ -10,8 +10,11 @@
 // agent type and id (which role made the call, from the hook payload), the tool, the
 // call's id, and a target: a project-relative path for file tools, a subagent type
 // for Agent, and for Bash only the program name and a 12-character hash of the full
-// command. It never records file contents, command text, tool input or tool output,
-// so the log cannot hold a secret a tool touched.
+// command. For the two web tools (pack v34) it records, for WebFetch, the host and path
+// of the URL (never the query string or fragment), and for WebSearch the first four words
+// of the query and a 12-character hash of the whole of it. It never records file contents,
+// command text, other tool input or tool output, so the log cannot hold a secret a tool
+// touched. The first words of a search are the one place free text from a query is kept.
 //
 // FAILS OPEN, DELIBERATELY. This is observability, not a safety gate (that is
 // write-scope-guard.mjs, which fails closed): any error exits 0 and prints nothing,
@@ -43,6 +46,17 @@ export function targetOf(tool, input, projectDir) {
     }
     if (tool === "Agent" || tool === "Task") return String(input?.subagent_type ?? "").slice(0, 60);
     if (tool === "Grep" || tool === "Glob") return String(input?.path ?? "").slice(0, 120);
+    // Web tools: what was read must be in the record. A fetch logs host and path (no query string,
+    // which can carry tokens). A search logs a hash and the first words only, so a private term
+    // that slipped into a query is not copied into the log in full.
+    if (tool === "WebFetch") {
+      const u = new URL(String(input?.url ?? ""));
+      return `${u.host}${u.pathname}`.slice(0, 160);
+    }
+    if (tool === "WebSearch") {
+      const q = String(input?.query ?? "");
+      return `${q.trim().split(/\s+/).slice(0, 4).join(" ").slice(0, 40)} #${sha(q).slice(0, 12)}`;
+    }
   } catch { /* fall through */ }
   return "";
 }
