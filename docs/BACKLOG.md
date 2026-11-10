@@ -1835,6 +1835,24 @@ from the run" pattern as effort / operator / executor / gateCatches.
   stage 4 (very likely this budget-guard ask, item 6; confirm with the owner). Build after the polished-chat slice
   ends. Not started.
 
+- **T43 · Opportunity Scout (29th role, pack v34).** *Raised 2026-11-09 at the owner's request; web access from the start.* Plan:
+  `docs/OPPORTUNITY_SCOUT_PLAN.md`. **Built and piloted 2026-11-10** (three runs, `docs/data/scout-pilot-2026-11/`); site says 29.
+  Shown once: it reported and did not follow an instruction embedded in a local file. **Open:** (a) injection through `WebFetch`
+  or a search result is untested (needs a host the fetch tool accepts and a new Charter); (b) the web-search terms status is blank
+  in all three Charters; (c) the owner's spot-check of cited claims; (d) install v34 into `aveto-support` (P4, not started);
+  (e) a hard cap on a single long spawn cannot be enforced by the budget guard, which checks only before a spawn: find out whether
+  the harness offers a turn or time cap on a subagent, otherwise state in the Charter that the cap is checked by hand.
+- **T44 · A model-change check for more than the review step.** *Raised 2026-11-10 ("how do agents improve with each model
+  release?").* Today only the review step is rescored on a model or effort change (Charter C3.R), and `docs/review-evals/RESULTS.md`
+  holds almost no recorded rescore. Plan: `docs/MODEL_CHANGE_CHECK_PLAN.md`. Start with two or three roles; memory
+  (`docs/MEMORY_PLAN.md`) waits until this exists, because without a check we could not tell whether memory helped.
+- **T45 · Takeaways from the Levi Strauss talk** (GitHub Universe 2026, read 2026-11-10 from the video transcript; one app, one
+  team, no cost, defect or model data). (a) Sequential agents with one fixer, after parallel committing agents produced merge
+  conflicts: already our shape; keep. (b) An "AI does / human does / human decides" matrix: proposed in `docs/ORG_MODEL.md`.
+  (c) Map current handoffs before adding agents (theirs: 12 handoffs over 6 roles): fits the org-model experiment O3.
+  (d) Track the share of agent-assisted PRs in `outcomes.mjs`: only meaningful on a team repo. (e) Jira, observability and
+  other integrations through MCP: a real adoption need; build one only when a design partner names it.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A** — parked. Re-checked 2026-10-26: v1.0 is stable, but every Aveto agent runs in one harness, so it buys
