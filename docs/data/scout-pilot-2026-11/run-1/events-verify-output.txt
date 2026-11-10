@@ -1,0 +1,9 @@
+/Users/gopalpatwa/opt/scout-pilot/.claude/events/924c45d3-2bd4-4f54-ba9d-34f3a71b2746.jsonl: chain intact; 105 lines; head 9673d2fc252a4252
+  main: 29 calls, 2 failed
+  opportunity-scout: 26 calls, 2 failed
+  ! seq 39: main wrote .claude/worktrees/sleepy-lichterman-89158e/.claude/settings.local.json, outside the allowed paths
+  ! seq 93: opportunity-scout attempted SubagentHandback  with no outcome recorded (denied, blocked or interrupted)
+  ! seq 94: opportunity-scout attempted SubagentHandback  with no outcome recorded (denied, blocked or interrupted)
+  ! seq 95: opportunity-scout attempted SubagentHandback  with no outcome recorded (denied, blocked or interrupted)
+  ! seq 96: opportunity-scout attempted SubagentHandback  with no outcome recorded (denied, blocked or interrupted)
+  ! seq 105: main attempted Bash cd #03d8c332efcd with no outcome recorded (denied, blocked or interrupted)
