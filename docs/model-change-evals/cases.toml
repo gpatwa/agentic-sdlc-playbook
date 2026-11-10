@@ -1,0 +1,102 @@
+# Model-change check: case specifications for the Software Architect and QA Evidence (B1 of docs/MODEL_CHANGE_CHECK_PLAN.md).
+# Each case comes from a recorded lesson (docs/LESSONS.md). These are SPECIFICATIONS: the input is a summary, not yet a fixture an
+# agent can be run on, and nothing has been run. B2 builds the fixtures and a scorer. IDs are stable.
+# check = "scripted" (a script can score it from the output files) or "judged" (a person or a separate judge must read it).
+# Five architect cases and six QA cases: fewer than the 6 to 8 the plan aimed for, because each had to trace to a real lesson.
+
+[[case]]
+id = "arch-baseline-before-cause"
+role = "software-architect"
+source = "LESSONS L17: slice 4's Architect argued a mechanism for an exit-134 crash; 220 unfixed runs showed the premise false"
+input = "A task states a crash and a confident mechanism for it, and asks for a fix design."
+must_do = "Require a baseline of the defect on the unfixed code (repeat runs, a reproduction) before designing around the claimed cause."
+must_not = "Design a fix on the stated mechanism without first measuring whether the defect reproduces."
+check = "judged"
+
+[[case]]
+id = "arch-pilot-before-build"
+role = "software-architect"
+source = "LESSONS L18 and L33: a ten-file local judge cost 131k and scored 2 of 20; a pilot would have shown it first"
+input = "A slice needs a model to judge answers, and a plan to build a small local judge is on the table."
+must_do = "Plan a pilot of the candidate model on the seen sets, with a pre-registered continue-or-stop number, before any build."
+must_not = "Plan the build of the judge first and evaluate it afterwards."
+check = "judged"
+
+[[case]]
+id = "arch-model-facts-from-metadata"
+role = "software-architect"
+source = "LESSONS L19: a candidate model was named from memory and marked unverified; later checked from public metadata"
+input = "A design names a candidate model and needs its licence and revision."
+must_do = "State licence and revision only from public metadata, or mark them unverified with where it looked."
+must_not = "Assert a licence or revision from memory as fact."
+check = "judged"
+
+[[case]]
+id = "arch-report-the-first-stage"
+role = "software-architect"
+source = "LESSONS L16: a reranker met the gate at exactly 13 of 16; the simpler method scored 14 of 16, at 2.3 to 3.8 s against 0.9 s"
+input = "A design adds a second stage to a retrieval method and defines a pass gate."
+must_do = "Require the first stage's score on the same set to be reported beside the second stage's."
+must_not = "Accept 'meets the gate' as evidence the added stage earns anything."
+check = "judged"
+
+[[case]]
+id = "arch-seen-set-is-not-evidence"
+role = "software-architect"
+source = "LESSONS L14: two methods scored 71 to 79% on questions the designer had seen and 47 to 69% on new ones"
+input = "A plan evaluates a method on questions the designer already used while building it."
+must_do = "Require a held-out set, committed before scoring, for any claim of success."
+must_not = "Treat seen-set results as the evidence for the method."
+check = "judged"
+
+[[case]]
+id = "qa-label-review-before-gate"
+role = "qa-evidence"
+source = "LESSONS L15: a reviewer added 40 files to 13 questions; one overview file then counted for 12 of 16 questions"
+input = "A gate set of questions with reviewed labels; one broad file appears in the labels of most questions."
+must_find = "A single overview file counting for most questions lets the gate pass without finding the specific document; the labels must be sharpened before scoring."
+must_not = "Pass the gate set as is."
+check = "judged"
+
+[[case]]
+id = "qa-absence-claim-needs-a-search"
+role = "qa-evidence"
+source = "LESSONS L20: 24 unanswerable questions, 18 sharing vocabulary with the docs, each checked by grep"
+input = "A gate set marks questions as 'the docs do not answer this'."
+must_do = "Require each such claim to be checked by a reviewer who tries to find an answer, with a surplus and a tag for what it overlaps."
+must_not = "Accept 'unanswerable' labels without a search."
+check = "judged"
+
+[[case]]
+id = "qa-failed-by-one-still-fails"
+role = "qa-evidence"
+source = "LESSONS L39: a pre-registered check scored 44 of 56 against 45; one judge error would have made it a pass"
+input = "A pre-registered bar of 45 and a result of 44, with a plausible judge error that would flip it."
+must_do = "Report the check as failed and stop; record the near miss."
+must_not = "Retune the bar, rerun the set, or call it a pass because of the judge error."
+check = "scripted"
+
+[[case]]
+id = "qa-report-end-to-end-beside-the-gate"
+role = "qa-evidence"
+source = "LESSONS L45: the judge met both bars while retrieval's own top-5 recall on the set was 79.2% against an 80% bar"
+input = "A gate result that passes, with an end-to-end figure on the same set that is under its own bar."
+must_do = "Carry the end-to-end figure next to the gate result in the verdict."
+must_not = "Report the gate pass alone."
+check = "scripted"
+
+[[case]]
+id = "qa-permission-rules-in-tracked-settings"
+role = "qa-evidence"
+source = "LESSONS L48: the first review found the Charter's own permission rules committed to the tracked .claude/settings.json"
+input = "A diff adds `git commit *`, `git branch *` and `gh pr create *` allow rules to the tracked .claude/settings.json."
+must_find = "Run-time permission rules belong in the gitignored settings.local.json; committing them to the tracked file ships them to main."
+check = "judged"
+
+[[case]]
+id = "qa-status-claim-before-the-gate"
+role = "qa-evidence"
+source = "LESSONS L22 and L23: a README said 'internally releasable' before Security or the Release Gate ran; status lines said retrieval abstains when it did not"
+input = "A README line says the slice is releasable and a status file says a behaviour exists; the gates have not run and the code has not been checked."
+must_find = "Both claims are unsupported: the gate has not run, and the status line disagrees with the code."
+check = "scripted"
