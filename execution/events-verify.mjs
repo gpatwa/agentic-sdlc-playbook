@@ -15,11 +15,21 @@
 //     interrupted one. Not necessarily an attack, but worth a look.
 //   - With --paths, a write (Write, Edit, MultiEdit, NotebookEdit) to a path outside
 //     those prefixes, or outside the project, is reported.
+//     In a worktree session the ".claude/worktrees/<name>/" part of a target is ignored when
+//     matching, so the Charter's prefixes need not name the worktree; writes into two
+//     different checkouts in one log are reported.
 import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 
 const sha = (s) => createHash("sha256").update(s).digest("hex");
 const WRITE_TOOLS = new Set(["Write", "Edit", "MultiEdit", "NotebookEdit"]);
+
+// In a git worktree (for example one the desktop app creates under .claude/worktrees/<name>/) the hook records a write's target
+// relative to the project root, which is the MAIN checkout, so the target reads ".claude/worktrees/<name>/runs/x.md". The Charter's
+// allowed prefixes are written without the worktree ("runs/x/"), so the prefix is stripped before matching. A session writes into
+// one checkout only: writes into two different worktrees, or into a worktree and the main checkout, are reported.
+const WORKTREE = /^\.claude\/worktrees\/([^/]+)\/(.*)$/;
+const splitWorktree = (t) => { const m = t.match(WORKTREE); return m ? { wt: m[1], rel: m[2] } : { wt: null, rel: t }; };
 
 export function verifyLog(text, { paths = null } = {}) {
   const alerts = [];
@@ -38,6 +48,7 @@ export function verifyLog(text, { paths = null } = {}) {
   });
 
   const perAgent = {};
+  const writeRoots = new Set();
   const open = new Map();
   let failures = 0;
   for (const e of events) {
@@ -49,9 +60,14 @@ export function verifyLog(text, { paths = null } = {}) {
       const t = e.target || "";
       const inside = t && !t.startsWith("(outside)");
       if (t.startsWith("(outside)")) alerts.push(`seq ${e.seq}: ${e.agent} wrote outside the project: ${t}`);
-      else if (paths && inside && !paths.some((p) => t.startsWith(p))) alerts.push(`seq ${e.seq}: ${e.agent} wrote ${t}, outside the allowed paths`);
+      else {
+        if (inside) { const { wt } = splitWorktree(t); writeRoots.add(wt ?? "(main checkout)"); }
+        const { rel } = splitWorktree(t);
+        if (paths && inside && !paths.some((p) => rel.startsWith(p))) alerts.push(`seq ${e.seq}: ${e.agent} wrote ${t}, outside the allowed paths`);
+      }
     }
   }
+  if (writeRoots.size > 1) alerts.push(`writes went into more than one checkout: ${[...writeRoots].sort().join(", ")}`);
   const noOutcome = [...open.values()];
   for (const e of noOutcome) alerts.push(`seq ${e.seq}: ${e.agent} attempted ${e.tool} ${e.target || ""} with no outcome recorded (denied, blocked or interrupted)`.trim());
 

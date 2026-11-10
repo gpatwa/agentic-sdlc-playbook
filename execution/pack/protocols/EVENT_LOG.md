@@ -11,6 +11,8 @@ write, edit or delete these files; `.claude/` is a protected path for routine ru
 
 1. **At each stage boundary,** run
    `node <playbook>/execution/events-verify.mjs .claude/events/<session_id>.jsonl [--paths <the Charter's allowed write prefixes>]`.
+   In a git worktree, write the prefixes without the worktree (`runs/<slice>/`): the verifier ignores the
+   `.claude/worktrees/<name>/` part, and reports a log whose writes went into more than one checkout.
    Any alert (a broken chain, an attempt with no outcome, a write outside the allowed paths
    or the project) goes into that stage's notice as one line. An alert is not a stop by
    itself; a **broken chain is**, unless the Charter says otherwise: stop and say so.

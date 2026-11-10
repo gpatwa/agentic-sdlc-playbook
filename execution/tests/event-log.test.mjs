@@ -119,6 +119,22 @@ describe("event log hook", () => {
     rmSync(d, { recursive: true });
   });
 
+  test("worktree session: the worktree part of a target is ignored for --paths; writes into two checkouts are reported", () => {
+    const d = project();
+    const w = (id, file) => { record("pre", payload({ tool_use_id: id, tool_name: "Write", tool_input: { file_path: file } }), d); record("post", payload({ tool_use_id: id, tool_name: "Write", tool_input: { file_path: file } }), d); };
+    w("a1", ".claude/worktrees/wt-a/runs/s/SCOUT.md");
+    w("a2", ".claude/worktrees/wt-a/.claude/settings.local.json");
+    let r = verifyLog(logOf(d), { paths: ["runs/s/"] });
+    assert.ok(!r.alerts.some((a) => /SCOUT\.md/.test(a)), "a prefix without the worktree matches: " + r.alerts.join("; "));
+    assert.ok(r.alerts.some((a) => /settings\.local\.json, outside the allowed paths/.test(a)), r.alerts.join("; "));
+    assert.ok(!r.alerts.some((a) => /more than one checkout/.test(a)));
+    w("b1", ".claude/worktrees/wt-b/runs/s/SCOUT.md");     // a second worktree
+    w("m1", "runs/s/other.md");                              // the main checkout
+    r = verifyLog(logOf(d), { paths: ["runs/s/"] });
+    assert.ok(r.alerts.some((a) => /more than one checkout: \(main checkout\), wt-a, wt-b/.test(a)), r.alerts.join("; "));
+    rmSync(d, { recursive: true });
+  });
+
   test("the command-line verifier exits 0 on an intact log and 1 on a broken one", () => {
     const d = project();
     record("pre", payload({}), d);
