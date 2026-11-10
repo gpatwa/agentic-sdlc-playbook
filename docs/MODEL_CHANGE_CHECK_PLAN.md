@@ -44,8 +44,8 @@ Per role: 6 to 8 cases, three runs, two models, so about 36 to 48 spawns. At the
 
 | Phase | Work | Spend | Needs |
 |---|---|---|---|
-| B1 | Pick the cases: 6 to 8 per role for the architect and QA from `LESSONS.md` and past runs; record the existing review rescore in `RESULTS.md` | none | nothing |
-| B2 | Case files, the driving prompt and a scoring script, with tests that the scorer passes a known-good and fails a known-bad output | none | nothing |
+| B1 | Pick the cases: 6 to 8 per role for the architect and QA from `LESSONS.md` and past runs; record the existing review rescore in `RESULTS.md` | none | **done 2026-11-10** for the architect (5) and QA (6) cases: `docs/model-change-evals/cases.toml`. The review rescore is **not** recorded yet. |
+| B2 | Case files, the driving prompt and a scoring script, with tests that the scorer passes a known-good and fails a known-bad output | none | **done 2026-11-10**: fixtures, `execution/role-eval.mjs`, 12 tests (493 in the suite). Three scripted cases have known-good and known-bad samples; the eight judged cases need a judge, which is B3's part. Never run on a model. |
 | B3 | One approved run set on the current model, to measure spend and variance | model spend | the owner's Charter approval, typed in that session |
 | B4 | The same set on the next model that ships, compared | model spend | a model release, and the owner's approval |
 
