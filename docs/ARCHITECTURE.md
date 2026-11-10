@@ -34,6 +34,8 @@ stage by stage. The static chart below is the GitHub-renderable fallback.
 ```mermaid
 flowchart TB
     H(["Human"]) -->|ask| O["Orchestrator"]
+    H -. "what to ask for?" .-> OS["Opportunity Scout"]
+    OS -. "ranked candidates, human picks" .-> H
     O -. "fuzzy / novel ask" .-> MR["Market Researcher"]
     MR -. "discovery brief" .-> EM["Engineering Manager"]
     O -->|"slice plan"| EM
@@ -87,7 +89,7 @@ system definition.
 | Path | Architectural role | Key contents |
 |------|--------------------|--------------|
 | `docs/` | Lifecycle definition + control plane | `AGENTIC_SDLC.md` (the pipeline), `AGENT_ROLES.md` (topology + handoffs), `RELEASE_GATES.md` + `HUMAN_APPROVAL_RULES.md` (control plane), `OPERATING_MODEL.md` (context discipline), this file (the map) |
-| `agents/` | **Nodes** — one brief per agent | 28 role briefs: mission, inputs, outputs, decisions owned/not-owned, quality bar, handoff |
+| `agents/` | **Nodes** — one brief per agent | 29 role briefs: mission, inputs, outputs, decisions owned/not-owned, quality bar, handoff |
 | `templates/` | **Artefact bus** — the message format between nodes | 22 fill-in artefacts; `AGENT_HANDOFF_TEMPLATE.md` is the envelope every handoff uses |
 | `prompts/` | **Node instantiation** — how to invoke an agent | 20 copy-paste prompts, one per role |
 | `project-packs/` | **Configuration** per product archetype | `b2c-saas`, `ai-agent-product`, `browser-automation-product`, `enterprise-saas-future` |
@@ -110,7 +112,7 @@ on the diagram. The static chart below is the GitHub-renderable fallback.
 ```mermaid
 flowchart TB
     subgraph PB["Playbook (source of truth)"]
-        BR["agents/ — 28 briefs"]
+        BR["agents/ — 29 briefs"]
         PR["execution/pack/protocols/"]
         INS["execution/install.mjs"]
         ANA["execution/analyze.mjs"]

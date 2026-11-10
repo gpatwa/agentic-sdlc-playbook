@@ -89,7 +89,7 @@ P5), and none exists yet.
 
 ## Considered and declined: a project-manager agent and a TPM agent
 
-Recorded 2026-11-06 at the owner's request. The pack has 28 agent briefs in `agents/`; none is a project manager or a technical
+Recorded 2026-11-06 at the owner's request. The pack had 28 agent briefs in `agents/` when this was written (29 since the Opportunity Scout, 2026-11-09, a discovery role); none is a project manager or a technical
 program manager. This section says why none is added now, so the question is not re-opened without new evidence.
 
 **Why not now**

@@ -12,6 +12,11 @@ path, the optional Market Research branch, and the real Security→Rework→
 Implementation gate-fail path this pipeline has actually produced (twice).
 Three guided views; click through rather than reading top to bottom.
 
+**Before the pipeline (optional, pack v34):** when the human has not yet decided *what* to ask for, the **Opportunity Scout**
+ranks three to five candidate problems from public sources and returns `runs/opportunity-<topic>/SCOUT.md`. It recommends;
+the human picks, and the pick enters at Intake (or Stage 2) as the ask. It is not a numbered stage and has no `STATE.md`.
+See `agents/opportunity-scout.md`.
+
 ---
 
 ## Stages

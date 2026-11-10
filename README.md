@@ -10,7 +10,7 @@ reviewer, security and a release gate have all signed off. That process — not
 the headcount — is what separates a demo from production software, and until
 now almost nobody outside those companies could run it.
 
-Aveto encodes it as **28 specialist agents**: orchestrator, engineering manager,
+Aveto encodes it as **29 specialist agents**: orchestrator, engineering manager,
 product manager, designers, architects, developers, QA, security, release,
 deployment, on-call and post-launch. Narrow roles hand off through artefacts,
 the agent that verifies is never the agent that wrote the code, every gate fails
@@ -69,6 +69,7 @@ agentic-sdlc/
   agents/                          ← role briefs, one per agent
     orchestrator.md
     market-researcher.md
+    opportunity-scout.md           ← compares 3 to 5 candidate problems from public sources; recommends, never chooses
     engineering-manager.md
     product-manager.md
     ux-researcher.md
@@ -99,6 +100,7 @@ agentic-sdlc/
     INTENT_TEMPLATE.md             ← start here — the one page the human writes
     CHARTER_TEMPLATE.md            ← the one approval of a Process v2 run, approved by its hash
     DISCOVERY_BRIEF_TEMPLATE.md
+    SCOUT_TEMPLATE.md              ← the Opportunity Scout's ranked candidates and sources
     PRD_TEMPLATE.md
     FEATURE_SPEC_TEMPLATE.md
     UX_SPEC_TEMPLATE.md
@@ -126,6 +128,7 @@ agentic-sdlc/
   prompts/                         ← copy-paste prompts to invoke each agent
     orchestrator.md
     market-research.md
+    opportunity-scout.md
     em-scope-review.md
     product-brief.md
     ux-audit.md

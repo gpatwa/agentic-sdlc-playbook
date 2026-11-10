@@ -31,6 +31,7 @@ template, and leaves the rest of the system out of its head.
 | Role | Input | Output | Hand off to | Brief |
 |------|-------|--------|-------------|-------|
 | Orchestrator | Human ask, or an intent the human wrote | Confirmed `intent.md` + slice plan | Market Researcher or Engineering Manager | `agents/orchestrator.md` |
+| Opportunity Scout | The question and 3 to 5 candidate problems, plus public web sources | `SCOUT.md`: candidates ranked by evidence, with sources and gaps | The human, who picks; the pick goes to the Market Researcher | `agents/opportunity-scout.md` |
 | Market Researcher | Human ask + project context | Discovery brief | Engineering Manager (or PM if pre-approved) | `agents/market-researcher.md` |
 | Engineering Manager | Slice plan or discovery brief | Scoped work item, gate map | PM or Architect | `agents/engineering-manager.md` |
 | Product Manager | Scoped work item | PRD | UX Researcher | `agents/product-manager.md` |
@@ -186,6 +187,7 @@ human's part in every role sits in two places only, the Charter before the run a
 | ML Engineer | Trains and evaluates models, fixes the splits and the held-out set. | AI Governance and the Data Analyst. | the models and data processors (Charter C3, C4) and what a failed pre-registered check means (Charter C8.1). |
 | Market Researcher | Gathers the evidence for and against the problem and recommends proceed, more discovery or drop. | the Product Manager, who builds on it and may push back, and the Orchestrator. | whether to build at all (the intent, Charter C1.1); pricing or positioning questions are listed in `END_REVIEW.md`. |
 | On-Call Engineer | Triages, attributes root cause and runs runbook steps already authorised. | the SRE, and the Release Manager for any code fix. | any novel infrastructure action, which stops the run (Charter section 9) unless Charter C8.3 names it. |
+| Opportunity Scout | Searches and reads public pages, compares candidate problems and ranks them by the strength and independence of the evidence. | the Market Researcher, who re-tests the one candidate that is picked, and the Orchestrator. | what to build and whether to build at all (the intent, Charter C1.1); a search provider is a Charter data-processor line (C4). |
 | Orchestrator | Splits the ask into slices, routes each stage, runs to the Charter's edge and writes `END_REVIEW.md`. | the Release Manager (every gate) and `charter-check` (the Charter is complete before the run). | the intent, the plan and the budget (Charter C1, C2), and every stop in Charter section 9; reads the run in `END_REVIEW.md`. |
 | Post-Launch Learning | Captures carry-forward, judges whether the slice met its goal and proposes follow-ups. | the Data Analyst and the Orchestrator. | what to build next (the next Charter's C1); the judgement is in `END_REVIEW.md`. |
 | Product Manager | Defines the problem, the success criteria and what is out of scope. | the Engineering Manager (scope review) and QA, which verifies each "Done means" line. | the intent and its non-goals (Charter C1.1, C1.3), and whether the result met it (`END_REVIEW.md`). |
