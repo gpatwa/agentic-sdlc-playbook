@@ -118,6 +118,26 @@ program manager. This section says why none is added now, so the question is not
 for an agent. With one operator, the Owner of a Charter holds it; the row matters when a second person exists. Item 4 below asks
 the owner to confirm or strike it.
 
+## Who does, who decides: a proposed matrix (2026-11-10)
+
+Borrowed in shape from a Levi Strauss talk (GitHub Universe 2026: "AI does, human does, human decides"; one app and one team, no
+cost or defect data, so it is a framing, not evidence). The cells below come from this repo's own briefs and Charter, not from that
+talk. The point is the split between **does** and **decides**: a human who contributes judgment is not thereby the person who
+approves, which keeps accountability on one named person per decision.
+
+| Stage | An agent does | A human does | A human decides |
+|---|---|---|---|
+| What to build | Opportunity Scout ranks candidates; Market Researcher tests one | Brings context and the candidates; reads the evidence | Which problem to take on; the intent (Charter C1.1) |
+| Scope and plan | Orchestrator and Engineering Manager size the slice and set gates | Reads the plan | The plan, depths and budget (Charter C1 to C2, C7) |
+| Spec and design | Product Manager, UX, UI and Architect write the specs | Answers questions the agents raise | Approves the Charter that bounds them |
+| Build | Engineers implement with fail-first tests | nothing, by design | nothing inside the Charter's bounds; a stop outside it |
+| Verify | QA, Security, review agents produce findings | Reads `END_REVIEW.md` and flagged diffs | Whether a finding blocks; at tier 3, a second reader's disposition |
+| Merge and release | Release Manager walks the gates | Reviews the change | The merge and any end action (Charter C8.2) |
+| Production | SRE and On-Call run authorised steps | Declares severity | Any mutation the Charter did not name (Incident owner) |
+
+An open question for the owner: the Delivery owner row above holds sizing and the review queue. The matrix shows "Scope and plan"
+as a stage where that role does, not decides; confirm that is the intent.
+
 ## What this document does not do
 
 - It does not assign people, set team sizes or define career ladders.
