@@ -1,6 +1,7 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { createHash } from "node:crypto";
@@ -213,6 +214,16 @@ describe("pick-intent", () => {
     assert.equal(r.status, "none");
     assert.equal(r.runsUsed, 2);
     rmSync(d, { recursive: true });
+  });
+  test("the CLI runs when invoked through a symlinked directory, not only by its real path", () => {
+    const d = repo();
+    writeFileSync(join(d, "intents", "ready", "a.md"), "# a");
+    const link = d + "-link";
+    symlinkSync(join(here, ".."), link);
+    const r = spawnSync(process.execPath, [join(link, "pick-intent.mjs"), d], { encoding: "utf8" });
+    assert.equal(r.status, 0, r.stderr);
+    assert.equal(r.stdout.trim(), join("intents", "ready", "a.md"));
+    rmSync(link); rmSync(d, { recursive: true });
   });
   // Pack v33: one run per REPO, so the run folders of every git worktree count (T42 O4).
   test("a run open in a linked worktree stops the pick, and a slice run there is not picked again", async () => {

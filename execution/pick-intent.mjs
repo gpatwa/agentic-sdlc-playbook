@@ -18,6 +18,7 @@
 import { readFileSync, readdirSync, existsSync, statSync, realpathSync } from "node:fs";
 import { join, basename, relative, resolve } from "node:path";
 import { createHash } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 
 const canon = (p) => { try { return realpathSync.native(p); } catch { return resolve(p); } };
@@ -69,7 +70,8 @@ export function pickIntent(repo, standingText = null) {
   return { status: "picked", intent: join("intents", "ready", next), slice: basename(next, ".md"), runsUsed };
 }
 
-const isMain = process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href;
+// import.meta.url is the REAL path; process.argv[1] is the path as invoked (maybe via a symlink, e.g. macOS /var -> /private/var). Resolve both.
+const isMain = (() => { try { return !!process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url)); } catch { return false; } })();
 if (isMain) {
   const args = process.argv.slice(2);
   const repo = args[0];

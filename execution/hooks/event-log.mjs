@@ -23,8 +23,9 @@
 //
 // usage:  node .claude/hooks/event-log.mjs <pre|post|fail>
 // stdin:  Claude Code hook payload (JSON)
-import { readFileSync, writeFileSync, appendFileSync, mkdirSync, openSync, closeSync, unlinkSync, statSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, appendFileSync, mkdirSync, openSync, closeSync, unlinkSync, statSync, existsSync, realpathSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import { join, resolve, relative, isAbsolute, sep } from "node:path";
 
 const sha = (s) => createHash("sha256").update(s).digest("hex");
@@ -104,7 +105,8 @@ export function record(phase, payload, projectDir, now = new Date()) {
   });
 }
 
-const isMain = process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href;
+// import.meta.url is the REAL path; process.argv[1] is the path as invoked (maybe via a symlink, e.g. macOS /var -> /private/var). Resolve both.
+const isMain = (() => { try { return !!process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url)); } catch { return false; } })();
 if (isMain) {
   try {
     const phase = process.argv[2];

@@ -1,6 +1,6 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync, rmSync, readdirSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync, rmSync, readdirSync, symlinkSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { spawn, spawnSync } from "node:child_process";
@@ -98,6 +98,19 @@ describe("event log hook", () => {
     }
     assert.deepEqual(readdirSync(d), []);
     rmSync(d, { recursive: true });
+  });
+
+  test("runs when invoked through a symlinked directory (macOS /var -> /private/var), not only by its real path", () => {
+    const d = project();
+    const link = d + "-link";
+    symlinkSync(dirname(hook), link);
+    const input = JSON.stringify(payload({ session_id: "viaSymlink" }));
+    const r = spawnSync(process.execPath, [join(link, "event-log.mjs"), "pre"], { input, env: { ...process.env, CLAUDE_PROJECT_DIR: d } });
+    assert.equal(r.status, 0);
+    assert.equal(r.stdout.toString(), "");
+    assert.ok(existsSync(join(d, ".claude", "events", "viaSymlink.jsonl")), "the hook did nothing when called via a symlink");
+    assert.equal(verifyLog(logOf(d, "viaSymlink")).ok, true);
+    rmSync(link); rmSync(d, { recursive: true });
   });
 
   test("reports attempts with no outcome, failures, and writes outside the allowed paths", () => {
