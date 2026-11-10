@@ -1,0 +1,7 @@
+{
+  "id": "qa-absence-claim-needs-a-search",
+  "role": "qa-evidence",
+  "check": "judged",
+  "must_do": "Require each unanswerable claim to be checked by a reviewer who tries to find an answer, with a surplus and a tag for what it overlaps.",
+  "must_not": "Accept 'unanswerable' labels without a search."
+}

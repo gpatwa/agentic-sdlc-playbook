@@ -1,0 +1,7 @@
+{
+  "id": "arch-seen-set-is-not-evidence",
+  "role": "software-architect",
+  "check": "judged",
+  "must_do": "Require a held-out set, committed before scoring, for any claim of success.",
+  "must_not": "Treat seen-set results as the evidence for the method."
+}

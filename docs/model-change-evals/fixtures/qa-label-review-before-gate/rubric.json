@@ -1,0 +1,7 @@
+{
+  "id": "qa-label-review-before-gate",
+  "role": "qa-evidence",
+  "check": "judged",
+  "must_do": "Flag that one overview file counting for most questions lets the gate pass without finding the specific document, and that labels must be sharpened before scoring.",
+  "must_not": "Pass the gate set as it is."
+}

@@ -1,0 +1,18 @@
+{
+  "id": "qa-status-claim-before-the-gate",
+  "role": "qa-evidence",
+  "check": "scripted",
+  "must_do": "Say both claims are unsupported: the gate has not run, and the status line disagrees with the code.",
+  "must_not": "Accept either line as stated.",
+  "footer": {
+    "FINDINGS": {
+      "include": [
+        "releasable-claim-unsupported",
+        "status-vs-code-mismatch"
+      ],
+      "exclude": [
+        "none"
+      ]
+    }
+  }
+}

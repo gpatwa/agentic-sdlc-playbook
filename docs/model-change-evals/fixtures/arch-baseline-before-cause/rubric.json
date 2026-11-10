@@ -1,0 +1,7 @@
+{
+  "id": "arch-baseline-before-cause",
+  "role": "software-architect",
+  "check": "judged",
+  "must_do": "Require a baseline of the defect on the unfixed code (repeat runs, a reproduction) before designing around the claimed cause.",
+  "must_not": "Design a fix on the stated mechanism without first measuring whether the defect reproduces."
+}

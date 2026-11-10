@@ -1,0 +1,7 @@
+{
+  "id": "arch-pilot-before-build",
+  "role": "software-architect",
+  "check": "judged",
+  "must_do": "Plan a pilot of the candidate model on the seen sets, with a pre-registered continue-or-stop number, before any build.",
+  "must_not": "Plan the build of the judge first and evaluate it afterwards."
+}

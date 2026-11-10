@@ -1,0 +1,7 @@
+{
+  "id": "arch-report-the-first-stage",
+  "role": "software-architect",
+  "check": "judged",
+  "must_do": "Require the first stage's score on the same set to be reported beside the second stage's.",
+  "must_not": "Accept 'meets the gate' as evidence the added stage earns anything."
+}

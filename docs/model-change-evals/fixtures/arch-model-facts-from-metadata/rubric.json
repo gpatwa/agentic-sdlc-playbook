@@ -1,0 +1,7 @@
+{
+  "id": "arch-model-facts-from-metadata",
+  "role": "software-architect",
+  "check": "judged",
+  "must_do": "State licence and revision only from public metadata, or mark them unverified with where it looked.",
+  "must_not": "Assert a licence or revision from memory as fact."
+}

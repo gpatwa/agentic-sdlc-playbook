@@ -1,0 +1,7 @@
+{
+  "id": "qa-permission-rules-in-tracked-settings",
+  "role": "qa-evidence",
+  "check": "judged",
+  "must_do": "Say that run-time permission rules belong in the gitignored settings.local.json and that committing them to the tracked file ships them to main.",
+  "must_not": "Approve the change as it is."
+}

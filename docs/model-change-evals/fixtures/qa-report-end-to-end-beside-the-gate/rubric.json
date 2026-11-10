@@ -1,0 +1,21 @@
+{
+  "id": "qa-report-end-to-end-beside-the-gate",
+  "role": "qa-evidence",
+  "check": "scripted",
+  "must_do": "Carry the end-to-end figure next to the gate result in the verdict.",
+  "must_not": "Report the gate pass alone.",
+  "footer": {
+    "REPORTED": {
+      "include": [
+        "gate-result",
+        "end-to-end-figure"
+      ],
+      "exclude": [
+        "nothing-else"
+      ]
+    }
+  },
+  "contains_text": [
+    "79.2"
+  ]
+}
