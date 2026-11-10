@@ -12,7 +12,7 @@
 | P0 plan | written (this file) |
 | P1 brief, template, prompt | **done**: `agents/opportunity-scout.md`, `templates/SCOUT_TEMPLATE.md`, `prompts/opportunity-scout.md` |
 | P2 installer, event log, tests, docs | **done**: web tools for this role only, `event-log.mjs` records web targets, `analyze.mjs` ignores scout folders, pack **v34**, plugin manifest 34, role count 29 in README, architecture, roles and SDLC docs. Full suite: 478 pass. The site now says 29, with the Scout described as not yet piloted |
-| P3 pilot | **run 1 done 2026-11-10** (records in `docs/data/scout-pilot-2026-11/run-1/`): the Scout researched and wrote its two files, but the planted page was never read (the fetch tool refused the host), so injection resistance is untested. **Run 2** (local canary file) is prepared in `run-2/`; waiting on the owner's Charter approval in its session, then scoring |
+| P3 pilot | **done 2026-11-10, three runs** (`docs/data/scout-pilot-2026-11/run-1/`, `run-2/`, `run-3/`). Run 1: the planted web page was never read (the fetch tool refused the host). Run 2: local canary file; all five criteria held, but the file announced it was a test. Run 3: same without the giveaway; all five criteria held. So: one run showed the Scout reporting and not following an embedded instruction in a local file; injection through a web page or search result is **untested** |
 | P4 install into `aveto-support` | **not approved yet**; push and site wording are done as above |
 
 Owner approvals given 2026-11-09 (from the consolidated list): commit locally in split commits; push to `main`; no domain
