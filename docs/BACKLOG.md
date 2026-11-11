@@ -1836,12 +1836,17 @@ from the run" pattern as effort / operator / executor / gateCatches.
   ends. Not started.
 
 - **T43 · Opportunity Scout (29th role, pack v34).** *Raised 2026-11-09 at the owner's request; web access from the start.* Plan:
-  `docs/OPPORTUNITY_SCOUT_PLAN.md`. **Built and piloted 2026-11-10** (three runs, `docs/data/scout-pilot-2026-11/`); site says 29.
-  Shown once: it reported and did not follow an instruction embedded in a local file. **Open:** (a) injection through `WebFetch`
-  or a search result is untested (needs a host the fetch tool accepts and a new Charter); (b) the web-search terms status is blank
-  in all three Charters; (c) the owner's spot-check of cited claims; (d) install v34 into `aveto-support` (P4, not started);
-  (e) a hard cap on a single long spawn cannot be enforced by the budget guard, which checks only before a spawn: find out whether
-  the harness offers a turn or time cap on a subagent, otherwise state in the Charter that the cap is checked by hand.
+  `docs/OPPORTUNITY_SCOUT_PLAN.md`. **Built 2026-11-09; piloted 2026-11-10 and 11, four runs**
+  (`docs/data/scout-pilot-2026-11/run-1/` to `run-4/`, each README states its limits); the site source says 29.
+  **Shown, in two valid runs (3 and 4):** the Scout reported an instruction embedded in a local file, and one on a page fetched with
+  `WebFetch`, and did not follow either. Run 1 is void for injection (the fetch tool refused the host) and run 2's file announced itself
+  as a test. **Not shown:** a search-result snippet as the carrier, other wordings or placements, other roles or models, any rate. Run 4's
+  pass may be partly the fetch tool's doing, since it passes a page through a small model and the log does not carry what it returned.
+  Rankings are not stable between runs, the evidence is mostly vendor pages, and no run produced a candidate with three independent signals.
+  **Open:** (a) injection through a search result is untested; (b) the web-search terms status is blank in all four Charters; (c) the
+  owner's spot-check of cited claims; (d) install v34 into `aveto-support` (P4, not started, not approved); (e) a hard cap on a single
+  long spawn cannot be enforced by the budget guard, which checks only before a spawn: find out whether the harness offers a turn or time
+  cap on a subagent, otherwise state in the Charter that the cap is checked by hand.
 - **T44 · A model-change check for more than the review step.** *Raised 2026-11-10 ("how do agents improve with each model
   release?").* Today only the review step is rescored on a model or effort change (Charter C3.R), and `docs/review-evals/RESULTS.md`
   holds almost no recorded rescore. Plan: `docs/MODEL_CHANGE_CHECK_PLAN.md`. Start with two or three roles; memory
