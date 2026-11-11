@@ -1845,8 +1845,13 @@ from the run" pattern as effort / operator / executor / gateCatches.
   Rankings are not stable between runs, the evidence is mostly vendor pages, and no run produced a candidate with three independent signals.
   **Open:** (a) injection through a search result is untested; (b) the web-search terms status is blank in all four Charters; (c) the
   owner's spot-check of cited claims; (d) install v34 into `aveto-support` (P4, not started, not approved); (e) a hard cap on a single
-  long spawn cannot be enforced by the budget guard, which checks only before a spawn: find out whether the harness offers a turn or time
-  cap on a subagent, otherwise state in the Charter that the cap is checked by hand.
+  long spawn cannot be enforced by the budget guard, which checks only before a spawn. **Checked 2026-11-11 against the Claude Code docs
+  (read by a docs agent, not tested here):** the subagent frontmatter documents `maxTurns`, which stops the subagent and returns its output
+  marked partial (needs Claude Code 2.1.246 or later; unrecognised fields are ignored). It counts turns, not tokens or time. Not documented:
+  a per-subagent token or time cap, a limit on the Agent call, or a hook that stops a running subagent (a PostToolUse hook on the Agent call
+  sees `totalTokens` and `totalDurationMs` only after it finishes). `--max-turns` and `--max-budget-usd` exist but only in print mode, which
+  the no-`claude -p` rule excludes. So: C2.3 stays checked by hand after the spawn, and a turn limit is the one mid-run brake on offer.
+  `install.mjs` does not generate `maxTurns` today; adding it is a pack change (new version) and needs a measured turns-per-run figure first.
 - **T44 · A model-change check for more than the review step.** *Raised 2026-11-10 ("how do agents improve with each model
   release?").* Today only the review step is rescored on a model or effort change (Charter C3.R), and `docs/review-evals/RESULTS.md`
   holds almost no recorded rescore. Plan: `docs/MODEL_CHANGE_CHECK_PLAN.md`. Start with two or three roles; memory
