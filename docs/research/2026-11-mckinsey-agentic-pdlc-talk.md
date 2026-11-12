@@ -112,27 +112,39 @@ what is recorded, or what an auditor would ask for.
 
 ## Checks against primary sources
 
-I tried three claims. Searches were one at a time; two page fetches timed out. **Only claim 1 got any support, and only from
-search-result summaries, not the article's own text.**
+**Update 2026-11-11 (later):** the first pass could not open McKinsey's article (four fetch timeouts). At the owner's go-ahead I
+opened it in the in-app browser, signed out, and read the page text. It is "Beyond the copilot: Scaling the agentic product
+development life cycle", mckinsey.com, dated 2026-08-21, **by a team that includes both speakers** (Martin Harrysson, Prakhar
+Dixit, with Charlotte Relyea, Matt Linderman and others). So a match between the talk and the article shows the talk repeats the
+authors' own article, **not** that its figures are independently true. I read the main text only: the exhibits (charts) and the
+"About the research" sidebar did not render, so response rates, sampling and the exact questions are unseen.
 
-1. **"Top 20 to 25% see about 2x end-to-end" (2:48 to 3:15): partly.** A McKinsey article, "Beyond the copilot: Scaling the agentic
-   product development life cycle" (mckinsey.com), exists and its search summary describes a second-quarter 2026 survey of product
-   and engineering leaders. The summaries say 25% of respondents at director level and above report "top" acceleration, defined
-   as more than a quarter of their teams reaching twofold or greater gains, and that organisations that redesigned processes
-   before adding AI were more than twice as likely to report gains over 20% as those that layered AI on. One summary says a separate
-   article cites 334 respondents; I could not tell which study that belongs to. The result snippet was cut off, so I could not
-   confirm the wording of "2x", what the gain is measured in, or whether respondents' self-reports were verified. Two fetches of
-   the page (mckinsey.com and a mirror) both timed out, so the article text is unread. **Reading: the figure appears to be McKinsey's own
-   survey of self-selected leaders, self-reported, with a seller-defined "top accelerator".** I have not confirmed that.
-2. **"Pods of two to four; roles collapse" (7:14 to 8:02): could not check.** A search surfaced a May 2026 McKinsey piece titled
-   "Rewiring software delivery for the agentic era" and a secondary summary of it citing a 24-hour sprint and 3 to 5 times
-   productivity. I did not read either; the secondary summary is not McKinsey.
-3. **"Quality is falling per developer and per PR" (11:35 to 12:15): could not check.** No source is named and the direction is
-   ambiguous in the caption. For context only: `docs/research/2026-11-project-management-with-ai-agents.md` reports vendor telemetry
-   (Faros) and a DORA survey pointing the same way; that report was itself not re-checked against its sources, so it is not
-   independent support.
+1. **"Top 20 to 25% see about 2x end to end" (2:48 to 3:15): partly held, and the talk overstates it.** The article: a
+   second-quarter 2026 survey of **334 product and engineering leaders** (the talk said "a few hundred ... large enterprises"
+   of "companies"); "only 25 percent of the respondents in director-and-above positions" report "meaningful (or top) AI
+   acceleration, which we define as more than a quarter of their teams achieving twofold or greater productivity gains". So the
+   unit is **respondents, self-reporting**, and "top" means more than a quarter of *their teams*, not a company's end-to-end
+   result. The article also says **30 percent of respondents reported team productivity had fallen**, and that around 80% of
+   surveyed engineers report about 3% average acceleration against 55% for the top 20% (footnote-sourced to the same survey). The
+   talk mentions none of the 30%. I could not see how the 334 were chosen.
+2. **"Pods of two to four; roles collapse; definer and builder" (7:14 to 8:02): partly held.** The roles part holds: the article
+   describes "definers who fuse product and design, and builders who fuse development, testing, and operations", and says "organizations may
+   consolidate some dedicated QA activities". The **size** does not match as stated: in top accelerators 79% say squads shrank,
+   **the median from about ten people to seven**, and nearly 20% of director-and-above respondents there are on teams of one to
+   four. "Two to four" appears in the article as a **progress marker to aim for** ("squads have shrunk to two to four"), and one
+   unnamed technology company is described moving from eight-to-ten to four-to-six. The talk's "two to four is what we are
+   seeing" is stronger than the article's measured median.
+3. **"Quality is going down" (11:35 to 12:15): not held as stated.** The article does not give per-developer or per-PR bug or
+   incident trends. Its own figure is that average **time savings (11.8%) outrun rework reduction (6.2%)**: quality is improving
+   more slowly than speed, and still improving. It cites outside sources for the worse picture (DORA 2025 calls AI an amplifier;
+   Veracode: 45% of tested AI-generated code samples failed security checks; GitClear on duplicated code; Stack Overflow on
+   trust), none of which I opened. The talk's wording went further than its own article. The caption ambiguity is settled in
+   direction only: the article's argument is that quality lags, not that it falls.
 
-I stopped at two searches and two failed fetches, not three rounds. A retry of the McKinsey page needs the owner's go-ahead.
+Other numbers in the article that the talk did not say, kept for the record and **not verified**: Sonar's three front-runner teams
+(PR cycle time down 3.4 times, throughput up 2.2 times; Sonar is a code-verification vendor); an unnamed bank (10 to 15%
+from a copilot, then 40 to 80% after a change programme with velocity targets written into team OKRs); AI spend up to 20% of
+existing labour cost; 86% of top accelerators track outcome metrics against low accelerators leaning on adoption metrics.
 
 ## What this means for Aveto's position
 
@@ -144,6 +156,14 @@ I stopped at two searches and two failed fetches, not three rounds. A retry of t
 - "Pilots and greenfield teams are easy; the real change is scale" (9:25 to 9:52) matches Aveto's own limit: one operator,
   small runs.
 - "There is no quick answer" on measurement (16:54) matches the plan's refusal to claim a gain without a baseline.
+- **The article is closer to Aveto than the talk is** (the authors wrote both). It says higher-risk changes (customer-facing
+  behaviour, regulated data, security-sensitive code, architecture) "should require stronger evidence and accountable human
+  review"; that checks should carry "auditability and traceability built into the workflow"; that leaders define "which issues
+  should stop a release"; that agents need "scoped mandates, permissions, escalation paths, and accountability"; and that a shared
+  AI Ops layer needs identity, permissions, logging, escalation, policy enforcement and cost visibility. Each maps to a Charter
+  feature (tiers, stops, records, role briefs, event log, budget guard). It is the same seller's view and says nothing about
+  hashed approvals or a named approver, but it is a better source for "buyers' advisers expect accountable review and traceability"
+  than the talk. Still a McKinsey publication, not independent evidence.
 
 **Threatens or tests:**
 - **Human review described as scaffolding.** "They take the human review back" (6:03) treats a human check as a temporary cost to
@@ -155,6 +175,12 @@ I stopped at two searches and two failed fetches, not three rounds. A retry of t
   multi-handoff process the talk says large organisations are leaving. This is an inference, from an unsourced claim. It is the
   reason O3 matters and should stay in the plan.
 - **"Greenfield wins don't scale"** applies to Aveto's own C13 and the seed apps. The limits already say so; keep them next to the claim.
+- **Velocity targets in OKRs.** The article's bank example wrote "velocity and throughput targets" into team objectives. Aveto's
+  plan refuses targets on these (`PRODUCTIVITY_AND_ORG_PLAN.md`, Goodhart). Not a conflict of evidence, a difference of stance; the
+  article gives no data on whether the targets were gamed.
+- **Squad size.** The article's measured median is seven, not two to four; the 29-brief pipeline is about agent roles, not
+  squad headcount, so the tension I raise above is with the talk's role-collapse language, and the article only says roles
+  blend and agents get scoped mandates, which Aveto also does.
 - **No buyer-demand evidence.** The talk does not say buyers want approval records, an audit trail or named human approval. I
   found no support in it for C19-type claims, and none against.
 
@@ -177,9 +203,11 @@ the talk:
 ## Limits of this review
 
 - Automatic captions only; no speaker attribution; slides not seen; one 20-minute talk.
-- No figure in the talk has a named source or method. I verified none of them. The one primary-source attempt reached only
-  search-result summaries, because the article would not load.
-- I did not read McKinsey's articles, so I cannot say whether the talk faithfully reflects them.
+- No figure in the talk names a source. I checked three against the speakers' own article, which I read in the browser pane
+  (main text only; charts and the "About the research" sidebar did not render). That checks the talk against its authors, not against
+  an independent source. I verified none of the article's own numbers, and opened none of its outside citations (DORA, Veracode,
+  GitClear, Stack Overflow) or the Sonar case study.
+- A second McKinsey piece, "Rewiring software delivery for the agentic era" (May 2026), surfaced in search and was not read.
 - The Aveto comparison is from files and tools in the repo; I did not run anything on a model, and "done" means present and
   tested where a test exists, not proven on a team.
 - Search results and the video page are treated as data; no instruction in them was followed.

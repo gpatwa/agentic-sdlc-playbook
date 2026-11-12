@@ -1874,9 +1874,11 @@ from the run" pattern as effort / operator / executor / gateCatches.
 - **T47 · Takeaways from the McKinsey talk** (AI Engineer, talk dated 2026-10-13, read 2026-11-11 from YouTube's automatic
   captions, 0:01 to 20:11, complete but no speaker labels and no slides; full note `docs/research/2026-11-mckinsey-agentic-pdlc-talk.md`).
   McKinsey sells operating-model work; no figure in the talk has a named source or method. (a) Its headline, a top 20 to 25% of
-  "a few hundred" clients at about 2x end to end (2:48), is partly matched by a McKinsey survey article seen only through search
-  summaries (the page timed out twice): treat as the seller's self-reported figure; **not to be cited publicly**. (b) Its
-  quality figure (11:53) is ambiguous in the caption. (c) Tests our position: "take the human review back" (6:03) and top teams
+  "a few hundred" clients at about 2x end to end (2:48), traced on 2026-11-11 to the speakers' own article (mckinsey.com, 2026-08-21,
+  read in the browser pane): 334 leaders, self-reported, 25% of director-and-above respondents, "top" = more than a quarter of
+  their teams at 2x; the article adds that 30% saw productivity fall. The talk overstates it; **not to be cited publicly**.
+  (b) Its quality claim (11:53) is not held: the article says rework fell 6.2% while time savings were 11.8%, i.e. quality lags,
+  not falls; its squad median is seven, not two to four. (c) Tests our position: "take the human review back" (6:03) and top teams
   collapsing roles (7:24), against our approval step and 29 one-per-stage briefs; O3 stays the way to test the second. (d) Not
   new evidence for "review is the bottleneck": same direction as T42's research, one more unsourced voice. (e) Found in passing:
   README and site call the conformity export "roadmap, not shipped" though `execution/conformity.mjs` exists (T16); and the
