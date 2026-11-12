@@ -204,8 +204,10 @@ Detail: `execution/pack/protocols/RUN_ECONOMICS.md`, `execution/hooks/budget-gua
    the second repo, not after.
 3. **Existing codebases start read-only.** Review mode reports risk and changes nothing
    (planned, `docs/REVIEW_MODE_PLAN.md`).
-4. **Then a team.** Shared gates, a run inventory across developers and an audit export
-   are roadmap, not shipped.
+4. **Then a team.** Shared gates and a run inventory across developers are roadmap, not
+   shipped. A script renders a register of who approved what from a run's records
+   (`execution/conformity.mjs`); it has been run on two small reference repos and no
+   auditor has used it.
 
 Detail: `docs/PIPELINE_ANALYTICS.md`, `docs/VALIDATION_MATRIX.md`.
 
