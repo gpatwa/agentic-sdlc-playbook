@@ -30,7 +30,7 @@ Independent review, a security pass and a release gate run in between, and every
 - **Fee: none proposed (the owner's decision; confirm before sending).** The runs use your Claude Code plan's usage; a run can use a large share of a five-hour window. We agree a hard cap per run
   in each Charter before it starts.
 - A repo with history from before the team used agents, CI, and someone who can approve and merge.
-- Claude Code for the person driving the runs. Aveto has run on Pro and Max plans; a Team plan is untested.
+- Claude Code for the person driving the runs. Aveto has been run on one person's subscription plan; other plans, Team included, are untested.
 
 ## What we promise, and what we do not
 
