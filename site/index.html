@@ -264,11 +264,11 @@
   @keyframes run-in { to { opacity: 1; transform: none; } }
   @keyframes run-dot { to { background-color: #5BD08A; box-shadow: 0 0 0 4px rgba(91,208,138,.15); } }
   @keyframes run-pop { to { opacity: 1; } }
-  @keyframes run-fill { to { width: 73%; } }
+  @keyframes run-fill { to { width: 77%; } }
   @media (prefers-reduced-motion: reduce) {
     .run-hash .ok, .run-stages li { animation: none; opacity: 1; transform: none; }
     .run-stages .dot { animation: none; background-color: #5BD08A; }
-    .run-bar-fill span { animation: none; width: 73%; }
+    .run-bar-fill span { animation: none; width: 77%; }
   }
   @media (max-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; } .hero-grid h1 { max-width: 17ch; } }
 
@@ -998,484 +998,168 @@
   }
   .wf-note-mid { text-anchor: middle; }
 
-</style>
 
+  /* Six steps, one real run */
+  .story { list-style: none; padding: 0; margin: 30px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; counter-reset: none; }
+  .story li { background-color: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 20px 20px 18px; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
+  .story li.human { border-color: var(--gold); background-color: var(--gold-wash); }
+  .story-n { margin: 0 0 6px; font-family: var(--f-mono); font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; color: var(--gold-text); }
+  .story h3 { margin: 0 0 8px; font-family: var(--f-display); font-size: 1.1rem; line-height: 1.3; }
+  .story li > p:not(.story-n) { margin: 0 0 14px; color: var(--ink-soft); font-size: .95rem; }
+  .artefact { margin: auto 0 0; padding: 12px 14px; background-color: var(--sunk); border-left: 3px solid var(--rule-strong); border-radius: 6px; font-family: var(--f-mono); font-size: .8rem; line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
+  .story li.human .artefact { border-left-color: var(--gold); }
+  .artefact .src { display: block; margin-bottom: 4px; font-size: .72rem; color: var(--muted); }
+  .story-foot { margin: 22px 0 0; color: var(--muted); font-size: .92rem; max-width: 80ch; }
+  .not-list { list-style: none; padding: 0; margin: 26px 0 0; border-top: 1px solid var(--rule); }
+  .not-list li { padding: 14px 0; border-bottom: 1px solid var(--rule); color: var(--ink-soft); }
+  .not-list b { color: var(--ink); font-family: var(--f-display); }
+  .closer .closer-links { margin: 24px auto 0; font-size: .92rem; }
+  .story-foot a, .hold p a, .closer-links a { color: var(--gold-text); text-underline-offset: 3px; }
+</style>
 <div class="shell">
 
   <a class="skip" href="#main">Skip to content</a>
   <nav class="site-nav" aria-label="Site">
     <a class="brand" href="/"><span class="mark"></span>Aveto</a>
-    <div class="nav-links"><a href="#how">How it works</a><a href="#try">Live demo</a><a href="#roles">The team</a><a href="#evidence-runs">Evidence</a><a href="#limits">Limits</a><a href="/runs">Runs</a><a href="/playbook">Playbook</a><div class="nav-more"><span tabindex="0">More</span><div class="nav-more-list"><a href="#span">Build · Deploy · Run</a><a href="#course">From the course</a><a href="#source">Docs</a></div></div></div>
-    <a class="btn btn-ghost nav-cta" href="https://github.com/gpatwa/agentic-sdlc-playbook">Get started</a>
-    <details class="nav-menu"><summary>Menu</summary><div class="nav-menu-list"><a href="#how">How it works</a><a href="#try">Live demo</a><a href="#roles">The team</a><a href="#evidence-runs">Evidence</a><a href="#limits">Limits</a><a href="/runs">Runs</a><a href="/playbook">Playbook</a><span class="nav-menu-sep">More</span><a href="#span">Build · Deploy · Run</a><a href="#course">From the course</a><a href="#source">Docs</a><a href="https://github.com/gpatwa/agentic-sdlc-playbook">Get started</a></div></details>
+    <div class="nav-links"><a href="#how">How it works</a><a href="#holds">What holds</a><a href="#proof">How far proven</a><a href="#not">Limits</a><a href="/runs">Runs</a><a href="/playbook">Playbook</a></div>
+    <a class="btn btn-ghost nav-cta" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Get started</a>
+    <details class="nav-menu"><summary>Menu</summary><div class="nav-menu-list"><a href="#how">How it works</a><a href="#holds">What holds</a><a href="#proof">How far proven</a><a href="#not">Limits</a><a href="/runs">Runs</a><a href="/playbook">Playbook</a><a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Get started</a></div></details>
   </nav>
 
   <header class="hero" id="main" tabindex="-1">
-    <a class="announce" href="#course"><span class="pill">New</span><span>Anthropic published the AI-Native SDLC Playbook. Here is how Aveto runs it &rarr;</span></a>
     <div class="hero-grid">
       <div class="hero-copy">
         <p class="brandline">Agentic engineering you can verify.</p>
         <h1>Move beyond supervising agents to <span class="em">reviewing outcomes.</span></h1>
-        <p class="hero-sub"><strong>From spec to reviewed pull request, with the record.</strong> Aveto turns a paragraph into a tested, security-reviewed pull request, run by 29 specialist agents in your own Claude Code session on the plan you already pay for. You approve one Charter at the start and review the result at the end.</p>
+        <p class="hero-sub"><strong>From spec to reviewed pull request, with the record.</strong> 29 specialist agents run in your own Claude Code session, on the plan you already pay for. You approve one Charter at the start and review the result at the end.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
-          <a class="btn btn-ghost" href="#try">Try the live app</a>
+          <a class="btn btn-ghost" href="#how">See one run</a>
           <a class="btn btn-ghost" href="/runs">See every run</a>
         </div>
         <code class="install-cmd"><b>$</b>node execution/install.mjs &lt;your-repo&gt;</code>
       </div>
       <figure class="run-panel">
-        <div class="run-bar" aria-hidden="true"><i></i><i></i><i></i><span>runs/result-page-clarity &middot; stages simplified from the record</span></div>
-        <div class="run-hash"><span>Charter sha256 8eacc4078037&hellip;</span><span class="ok">approved by the owner</span></div>
+        <div class="run-bar" aria-hidden="true"><i></i><i></i><i></i><span>runs/fix-service-accounting &middot; stages simplified from the record</span></div>
+        <div class="run-hash"><span>Charter sha256 afc984d1&hellip;aefe4</span><span class="ok">approved by the owner</span></div>
         <ol class="run-stages">
           <li style="--i:0"><span class="dot"></span><b>Charter approved</b><em>owner, by hash</em></li>
           <li style="--i:1"><span class="dot"></span><b>Scope review</b><em>engineering-manager</em></li>
           <li style="--i:2"><span class="dot"></span><b>Tech spec</b><em>software-architect</em></li>
-          <li style="--i:3"><span class="dot"></span><b>Build</b><em>frontend-developer</em></li>
-          <li style="--i:4"><span class="dot"></span><b>Code review</b><em>independent reviewer</em></li>
+          <li style="--i:3"><span class="dot"></span><b>Build, tests fail first</b><em>backend-architect</em></li>
+          <li style="--i:4"><span class="dot"></span><b>Code review</b><em>independent reviewer, tier High</em></li>
           <li style="--i:5"><span class="dot"></span><b>QA evidence</b><em>qa-evidence</em></li>
           <li style="--i:6"><span class="dot"></span><b>Security review</b><em>security-privacy</em></li>
-          <li style="--i:7"><span class="dot"></span><b>Release gate</b><em>release-manager</em></li>
-          <li style="--i:8"><span class="dot"></span><b>Deploy + rollback gate</b><em>cloud-deployment</em></li>
-          <li style="--i:9"><span class="dot"></span><b>Live checks</b><em>production-verification</em></li>
-          <li style="--i:10"><span class="dot"></span><b>Pull request</b><em>you review and merge</em></li>
+          <li style="--i:7"><span class="dot"></span><b>Release gate</b><em>release-manager, tier 3</em></li>
+          <li style="--i:8"><span class="dot"></span><b>Deploy and live checks</b><em>production-verification</em></li>
+          <li style="--i:9"><span class="dot"></span><b>Pull request</b><em>you review and merge</em></li>
         </ol>
-        <figcaption class="run-meter">581k of an 800k hard cap &middot; 738 tests passed &middot; event log chain intact
+        <figcaption class="run-meter">919k of a 1,200k hard cap &middot; pull request 9, merged by the owner
           <div class="run-bar-fill" aria-hidden="true"><span></span></div>
           One real run, simplified. <a href="/runs">Every run, read from its records &rarr;</a></figcaption>
       </figure>
     </div>
-
-    <div class="rail-block">
-      <div class="rail-label">
-        <span>One record, three phases</span>
-        <span>Every seam carries a named human</span>
-      </div>
-      <div class="rail">
-        <div class="phase covered">
-          <div class="phase-top"><span class="phase-dot"></span><div class="phase-name">Build</div></div>
-          <p>Intake, scope, architecture, implementation, independent QA and security review.</p>
-          <div class="gates"><span class="gate">refusal at intake</span><span class="gate">independent verify</span></div>
-        </div>
-        <div class="phase covered">
-          <div class="phase-top"><span class="phase-dot"></span><div class="phase-name">Deploy</div></div>
-          <p>Plan, validate, then deploy to Azure, AWS or GCP — validation never self-certified.</p>
-          <div class="gates"><span class="gate">separation of duties</span><span class="gate">named sign-off</span></div>
-        </div>
-        <div class="phase covered">
-          <div class="phase-top"><span class="phase-dot"></span><div class="phase-name">Run</div></div>
-          <p>Production verification, auto-rollback on regression, on-call and customer response.</p>
-          <div class="gates"><span class="gate">rollback pre-approved</span><span class="gate">draft, never send</span></div>
-        </div>
-      </div>
-      <div class="stop-marker">Most agentic tools stop at the merge — one third of the way along</div>
-    </div>
   </header>
 
-  <section id="why">
-    <p class="sec-eyebrow">Why now</p>
-    <h2>The code was never the hard part.</h2>
-    <p class="sec-lede">An agent writes the feature in minutes. What it cannot do alone is everything that makes the feature safe to ship — the architecture review, the verification by someone who didn't write it, the security pass, the release gate. That process is what separates a demo from production, it lives inside large engineering orgs, and it never shipped with the models.</p>
-    <div class="stats">
-      <div class="stat">
-        <span class="fig">96%</span>
-        <p>of developers say they do not fully trust AI-generated code to be functionally correct.</p>
-        <cite>Developer survey, 2026</cite>
-      </div>
-      <div class="stat">
-        <span class="fig">33%</span>
-        <p>of AI-written code clears review unmodified &mdash; against 84% for the code a person wrote.</p>
-        <cite>Industry analysis, 2026</cite>
-      </div>
-      <div class="stat">
-        <span class="fig">43%</span>
-        <p>of AI-written changes still require manual debugging in production — after passing QA and staging.</p>
-        <cite>Survey of 100 engineering directors and VPs, 2026</cite>
-      </div>
-      <div class="stat">
-        <span class="fig">88%</span>
-        <p>of agent pilots never reach production at all. The gap is rarely the model — it is everything between a working demo and a change someone will sign.</p>
-        <cite>Industry analysis, 2026</cite>
-      </div>
-    </div>
+  <section id="how">
+    <p class="sec-eyebrow">How it works &middot; one real run</p>
+    <h2>Every change takes the same six steps.</h2>
+    <p class="sec-lede">Our public ask-the-docs service counted its model spend wrongly in three small ways: a retry could take it past its daily cap. This is how Aveto fixed it, step by step, quoting the run&rsquo;s own records.</p>
+    <ol class="story">
+      <li class="human">
+        <p class="story-n">1 &middot; You approve</p>
+        <h3>One Charter, approved by its hash.</h3>
+        <p>Scope, models, spend and stops in one file. Nothing outside it happens without asking.</p>
+        <blockquote class="artefact"><span class="src">APPROVAL_RECORD-1.md</span>&ldquo;I approve runs/fix-service-accounting/CHARTER.md, sha256 afc984d1&hellip;aefe4, with plan 730k, ceiling 950k, hard cap 1,200k.&rdquo;</blockquote>
+      </li>
+      <li>
+        <p class="story-n">2 &middot; Spec</p>
+        <h3>How it will be checked, before the build.</h3>
+        <p>The architect maps every &ldquo;done means&rdquo; line in your intent to a test that must fail on today&rsquo;s code.</p>
+        <blockquote class="artefact"><span class="src">05-tech-spec.md</span>#6 fixed, test fails first | &sect;1 (option A), &sect;5 tests T6.1 (fail-first), T6.2</blockquote>
+      </li>
+      <li>
+        <p class="story-n">3 &middot; Build</p>
+        <h3>Tests fail first, then pass.</h3>
+        <p>New tests are run on the old code and must fail with the figures the spec named.</p>
+        <blockquote class="artefact"><span class="src">END_REVIEW.md</span>30 tests fail on 87178bd with the figures the spec named (&hellip;), and pass on the branch.</blockquote>
+      </li>
+      <li>
+        <p class="story-n">4 &middot; Evidence</p>
+        <h3>QA and security, by roles that did not write it.</h3>
+        <p>QA reproduced the failing list on its own. Security tried every two-attempt outcome through the real adapter: 144 sequences.</p>
+        <blockquote class="artefact"><span class="src">14-security-review.md</span>Verdict: PASS &hellip; No blocker, no required fix.</blockquote>
+      </li>
+      <li>
+        <p class="story-n">5 &middot; Independent review</p>
+        <h3>Every finding recorded.</h3>
+        <p>A reviewer that did not write the code sets a risk tier and records each finding as fixed, rejected or intentional.</p>
+        <blockquote class="artefact"><span class="src">code-review.md</span>5 findings (0 Important, 3 Nit, 1 Pre-existing, 1 behaviour note routed to Docs). Tier: High.</blockquote>
+      </li>
+      <li class="human">
+        <p class="story-n">6 &middot; You decide</p>
+        <h3>A pull request, and the choices that are yours.</h3>
+        <p>The run ends with what changed, what it cost, and what it could not decide for you. You merge.</p>
+        <blockquote class="artefact"><span class="src">END_REVIEW.md</span>The daily pause comes at about 33 questions, not the intent&rsquo;s 41.</blockquote>
+      </li>
+    </ol>
+    <p class="story-foot">Spent 919k tokens of a 1,200k hard cap (subagent stages only). The record also lists the run&rsquo;s misses and open risks, such as a rollback not rehearsed. <a href="https://github.com/gpatwa/aveto-support/tree/main/runs/fix-service-accounting">Read the whole run &rarr;</a></p>
   </section>
 
-  <section id="how">
-    <p class="sec-eyebrow">How it works</p>
-    <h2>One approval at the start. One review at the end.</h2>
-    <p class="sec-lede">Not guardrail text an agent is asked politely to follow. Structural properties of the lifecycle, each producing an artifact you can hand to someone who wasn't there.</p>
-    <ol class="flow" aria-label="How one slice runs, in seven steps">
-      <li class="" style="--i:0"><span class="n">1</span><b>Ask</b><span class="d">A paragraph, free-form.</span></li>
-      <li class="" style="--i:1"><span class="n">2</span><b>Intake</b><span class="d">Checked against your recorded safety invariants. A conflict is refused and no slice opens.</span></li>
-      <li class="human" style="--i:2"><span class="n">3</span><b>Charter</b><span class="d">One document: scope, budget, models, permissions. Approved by its hash.</span><span class="you">you</span></li>
-      <li class="" style="--i:3"><span class="n">4</span><b>Build</b><span class="d">Specialist agents, each with its own tools. The verifier never wrote the code.</span></li>
-      <li class="" style="--i:4"><span class="n">5</span><b>Verify</b><span class="d">Code review, QA, security. A failed gate goes back, never forward.</span></li>
-      <li class="" style="--i:5"><span class="n">6</span><b>Release</b><span class="d">A gate by risk tier, a deploy, and a rollback rehearsed first.</span></li>
-      <li class="human" style="--i:6"><span class="n">7</span><b>Review</b><span class="d">A pull request and the run's record. You merge.</span><span class="you">you</span></li>
-    </ol>
-    <div class="flow-notes"><span>A failed gate goes back to Build, never forward.</span><span>Post-launch findings carry into the next ask.</span><span>The highlight loops; hover to pause it.</span></div>
-
+  <section id="holds">
+    <p class="sec-eyebrow">What holds on every run</p>
+    <h2>Rules the agents cannot talk their way past.</h2>
     <div class="how-cards">
       <div class="how-card">
         <h3>It refuses work it shouldn&rsquo;t build.</h3>
-        <p>Intake checks a request against your recorded safety invariants and blocks a conflict, naming it and offering a safe reframe. Given a request to auto-purge user data with no confirmation, a run stopped before any code was written.</p>
+        <p>Intake checks a request against your recorded safety invariants. Given a request to auto-purge user data with no confirmation, a run stopped before any code was written.</p>
       </div>
       <div class="how-card">
         <h3>The verifier never wrote it.</h3>
-        <p>QA, security and the release gate are separate roles from the one that wrote the code, and a deploy agent cannot mark its own plan validated.</p>
-        <p class="aside">One test, so an example and not a rate: in a spike on a copy of the support agent, a second model&rsquo;s blind review found a planted bug that a review by the same model family missed.</p>
+        <p>QA, security and the release gate are separate roles from the one that wrote the code. A failed gate sends the work back, never forward.</p>
       </div>
       <div class="how-card">
-        <h3>The record names who decided.</h3>
-        <p>Each run keeps its Charter hash, who approved it and when, its spend against a hard cap, and a hash-chained event log. <a href="/runs">Every run is listed, including what its records leave out.</a></p>
+        <h3>Only a person approves.</h3>
+        <p>Aveto&rsquo;s approval binds a hashed Charter: scope, models, spend and data processors. Other tools approve a plan or a task; some record the approval by agent. An approval typed in another session does not count.</p>
       </div>
-    </div>
-  </section>
-
-  <section id="use">
-    <p class="sec-eyebrow">What you can do</p>
-    <h2>Five things, and how far each is proven.</h2>
-    <div class="holds">
-      <div class="hold">
-        <div class="hold-mark">01</div>
-        <div>
-          <h3>Turn one paragraph into a working service.</h3>
-          <p>StreakKeeper was built from a one-paragraph brief, from discovery through a tested, shipped service, with every stage independently reviewed. <strong>Shown once.</strong> One small app.</p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">02</div>
-        <div>
-          <h3>Add a feature and get it back reviewed, tested and security-checked.</h3>
-          <p>Every run ends in a pull request after independent QA, a security pass and a release gate. Seven traced slices across two apps, and thirteen more on a third built in public. <strong>Shown repeatedly.</strong> The merge stays yours.</p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">03</div>
-        <div>
-          <h3>Ship an AI feature with the bar set before the test.</h3>
-          <p>Our own support agent&rsquo;s judge refused 24 of 24 questions the docs do not answer and kept 16 of 19 that they do, on a set it had never seen. Four earlier checks failed and are on the record. It now runs as a live public service: scored once on 20 new questions it refused all 10 it should and kept 8 of 10 answerable. <strong>Shown twice, narrowly:</strong> both second bars were passed with no margin (by one question, then exactly at the bar).</p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">04</div>
-        <div>
-          <h3>Stop watching the agent.</h3>
-          <p>You approve one Charter by its hash, get a notice at each stage, and review at the end. Nothing outside the Charter happens without asking. <strong>Shown twice.</strong> A person still starts each run.</p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">05</div>
-        <div>
-          <h3>Find the risk in a codebase you did not build.</h3>
-          <p>Assessment mode reviews a repository on a read-only copy, with two model families as reviewers and a different family as judge, and writes a report. It records and reviews; it does not certify. On three repos with bugs planted by a separate agent, the reviewers found between 2 and 6 of 6, and missed small edge-case bugs; on a sample of 30 findings, about three in four were confirmed, by models and not yet by an owner. <strong>Pilot results.</strong> Four small repos, one not ours. Runs as a Claude Code plugin.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="try">
-    <p class="sec-eyebrow">Try it</p>
-    <h2>Ask Aveto&rsquo;s docs, live.</h2>
-    <p class="sec-lede">The support agent Aveto built about itself, running on Azure. It answers with passages copied word for word from these docs, with file and line numbers, or says the docs do not answer. A model only decides whether the passages answer. Nothing on the page is written by one.</p>
-    <div class="cta-row" style="margin-top:20px">
-      <a class="btn btn-primary" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io" rel="noopener">Open the live app and ask a question</a>
-    </div>
-    <div class="how-cards">
-      <div class="how-card"><h3>1. Open it</h3><p>The first load after a quiet spell takes about half a minute.</p></div>
-      <div class="how-card"><h3>2. Ask something the docs answer</h3><p>Click one of the first three suggestions. You get quoted passages, each with its file and lines.</p></div>
-      <div class="how-card"><h3>3. Ask something they do not</h3><p>Click &ldquo;Does it support right-to-left languages?&rdquo; The app says so instead of guessing.</p></div>
-    </div>
-    <div class="try-shots">
-      <figure>
-        <img src="assets/chat-answer.png" width="700" height="500" loading="lazy" alt="The live app after a question the docs answer: a green box reading &quot;The docs answer this&quot;, then a quoted passage from docs/DEPLOYMENT.md with its section, line numbers, a link to the lines on GitHub and a Copy link button.">
-        <figcaption>A question the docs answer: the passage is quoted word for word, with its file and lines.</figcaption>
-      </figure>
-      <figure>
-        <img src="assets/chat-refusal.png" width="700" height="535" loading="lazy" alt="The live app after a question the docs do not answer: a box reading &quot;The docs don't answer this&quot; with a hint to rephrase, links to open a GitHub issue or read the docs, and the three questions the docs do answer.">
-        <figcaption>A question the docs do not answer: no passage is shown, and it offers ways to go on.</figcaption>
-      </figure>
-    </div>
-    <p style="font-size:0.875rem;color:var(--muted);margin-top:6px">Screenshots of the live app taken on 2026-10-27.</p>
-    <div class="stats" style="margin-top:28px">
-      <div class="stat"><span class="fig">10 of 10</span><p>Unanswerable or tricky questions refused with no passage, on 20 questions it had not seen.</p><cite><a href="https://github.com/gpatwa/aveto-support/blob/main/runs/public-ask-the-docs/18-gate/RESULT.md">The full result is public</a></cite></div>
-      <div class="stat"><span class="fig">8 of 10</span><p>Answerable questions that got a passage from a listed source. Exactly the bar, with no margin.</p><cite>Two got &ldquo;no confident match&rdquo;</cite></div>
-      <div class="stat"><span class="fig">731</span><p>Tests pass (668 before). No serious accessibility issue on five views. Touch devices not tested.</p><cite><a href="https://github.com/gpatwa/aveto-support/tree/main/runs/polished-chat-experience">Its Charter and record are public</a></cite></div>
-      <div class="stat"><span class="fig">25.8 s</span><p>First load after idle. A warm answer took about 1.4 s (median of six), a question about $0.0086, and a rehearsed rollback served again in about 65 s.</p><cite><a href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io/scorecard" rel="noopener">Scorecard</a>: counts are raw totals since the last restart, never what was asked</cite></div>
-    </div>
-    <h3 style="margin:34px 0 8px">Before you use it</h3>
-    <ul class="try-steps" style="margin-top:0">
-      <li>It is early. Ten answerable questions cannot tell &ldquo;meets 80%&rdquo; from &ldquo;a little below it.&rdquo;</li>
-      <li>Your question and the passages found are sent to Anthropic, which makes the model. The service does not store your question, so please do not put personal information in it.</li>
-      <li>It keeps a scrambled form of your address, the time and the outcome for 7 days, and runs in the United States.</li>
-      <li>Limits: 10 questions an hour, 500 characters, and a pause for the day after about 33 questions (an estimate). Day limits reset when the service restarts.</li>
-    </ul>
-    <p style="margin-top:18px">Built by Aveto, in public, under a Charter one person approved by its hash, including the three accounting flaws found after launch. The record is in <a href="https://github.com/gpatwa/aveto-support">aveto-support</a>. <a href="/runs">Every run, read from its own records.</a></p>
-    <div class="cta-row" style="margin-top:28px">
-      <a class="btn btn-ghost" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io" rel="noopener">Open the live app</a>
-      <a class="btn btn-ghost" href="https://github.com/gpatwa/aveto-support/blob/main/runs/public-ask-the-docs/18-gate/RESULT.md">See the gate result</a>
-      <a class="btn btn-ghost" href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io/scorecard" rel="noopener">See the scorecard</a>
     </div>
   </section>
 
   <section id="runs-on">
     <p class="sec-eyebrow">What it runs on</p>
-    <h2>A subscription to build. An API for what you run.</h2>
-    <p class="sec-lede">Aveto builds on the coding agent plan you already have. The product it builds pays for its own model calls, and you approve those in the Charter.</p>
+    <h2>The Claude Code plan you already pay for.</h2>
+    <p class="sec-lede">Aveto never resells inference and adds no API bill for the build. Usage still counts against your plan&rsquo;s limits, so a long run can pause.</p>
     <div class="runs-tbl">
-      <div class="runs-tr h"><div>Part</div><div>Works with</div><div>How it is paid</div></div>
-      <div class="runs-tr"><div><b>Building a slice</b><span>29 specialist agents, gates, the record</span></div><div><b>Claude Code</b><span>The only runtime the pack is built and proven on.</span><br><span class="runs-tag ok">supported</span></div><div><span>Your Claude Code plan, not an API key. It counts against that plan&rsquo;s usage limits, so a long run can hit them.</span></div></div>
-      <div class="runs-tr"><div><b>Independent review</b><span>A different model checks the work</span></div><div><b>Codex</b><span>Optional and manual, read-only, in a new chat. Trial: 4 pull requests so far.</span><br><span class="runs-tag">optional trial</span></div><div><span>Your ChatGPT plan. Findings are never approvals.</span></div></div>
-      <div class="runs-tr"><div><b>Running in production</b><span>The product you ship</span></div><div><b>Your product&rsquo;s own model API</b><span>Our live demo calls the Anthropic API once per question and never writes text itself.</span><br><span class="runs-tag ok">in use</span></div><div><span>Metered API billing. The demo has a $10 limit set in the provider&rsquo;s console. Real model use in a product needs your approval in the Charter.</span></div></div>
-      <div class="runs-tr"><div><b>Other coding agents</b><span>Cursor, Copilot, Codex, others</span></div><div><b>Read the same run rules</b><span>The rules live in AGENTS.md, but the pack&rsquo;s agents, hooks and commands are Claude Code only.</span><br><span class="runs-tag no">not supported yet</span></div><div><span>A second adapter is on the backlog and starts when a real need appears.</span></div></div>
+      <div class="runs-tr h"><div>What</div><div>Today</div><div>Not yet</div></div>
+      <div class="runs-tr"><div><b>Spend</b><span>per run</span></div><div><span>A budget is checked before each step, against a hard cap in the Charter.</span></div><div><span>Nothing stops a step once it has started.</span></div></div>
+      <div class="runs-tr"><div><b>Second reviewer</b><span>a different model</span></div><div><span>Codex, optional and manual, on your ChatGPT plan. Findings are never approvals.</span></div><div><span>A trial of 4 pull requests so far.</span></div></div>
+      <div class="runs-tr"><div><b>Other coding agents</b><span>Cursor, Copilot, Codex</span></div><div><span>They can read the run rules in AGENTS.md.</span></div><div><span>The agents, hooks and commands are Claude Code only.</span></div></div>
     </div>
   </section>
 
-  <section id="roles">
-    <p class="sec-eyebrow">The team</p>
-    <h2>Twenty-nine specialists, not one generalist.</h2>
-    <p class="sec-lede">One agent asked to build a product makes every decision from the same context, with the same blind spots. Aveto splits the work into 29 written briefs, each with its own scope, its own tools and one artefact it must hand to the next. They ship in the repo. The newest, the Opportunity Scout, compares candidate problems from public sources and recommends one; it has had four pilot runs. Given an instruction planted in a local file, and separately on a web page it fetched, it reported the instruction and did not follow it (one run each; the fetch tool may summarise a page before the Scout sees it). An instruction arriving through a search result is untested.</p>
-    <div class="role-groups">
-      <div class="role-group g-shape">
-        <p class="role-label"><span>Shape the work</span><span class="count">7 roles</span></p>
-        <ul class="chips"><li>Orchestrator</li><li>Opportunity Scout</li><li>Market Researcher</li><li>Engineering Manager</li><li>Product Manager</li><li>UX Researcher</li><li>UI Designer</li></ul>
-      </div>
-      <div class="role-group g-build">
-        <p class="role-label"><span>Design and build</span><span class="count">7 roles</span></p>
-        <ul class="chips"><li>Software Architect</li><li>Backend Architect</li><li>Frontend Developer</li><li>AI Engineer</li><li>ML Engineer</li><li>Analytics Engineer</li><li>Data Analyst</li></ul>
-      </div>
-      <div class="role-group g-verify">
-        <p class="role-label"><span>Verify &mdash; none of these wrote the code</span><span class="count">5 roles</span></p>
-        <ul class="chips"><li>QA Evidence</li><li>Security &amp; Privacy</li><li>Compliance Reviewer</li><li>AI Governance</li><li>Data Governance</li></ul>
-      </div>
-      <div class="role-group g-ship">
-        <p class="role-label"><span>Ship it</span><span class="count">3 roles</span></p>
-        <ul class="chips"><li>Release Manager</li><li>Cloud Deployment</li><li>Tech Writer</li></ul>
-      </div>
-      <div class="role-group g-run">
-        <p class="role-label"><span>Run it &mdash; the part most tools skip</span><span class="count">7 roles</span></p>
-        <ul class="chips"><li>Production Verification</li><li>Site Reliability Engineer</li><li>On-call Engineer</li><li>FinOps</li><li>Post-Launch Learning</li><li>Customer Success</li><li>Customer Support</li></ul>
-      </div>
-    </div>
-  </section>
-
-  <section id="span" class="band-dark">
-    <p class="sec-eyebrow">The span</p>
-    <h2>The record doesn't stop at the merge.</h2>
-    <p class="sec-lede">Spec-driven tools end when code lands. Deployment platforms begin when an artifact appears. Aveto carries one identity-attributed record across all three seams, as far as those tools&rsquo; own documents show.</p>
-
-    <figure class="dgm">
-      <div class="dgm-scroll">
-        <svg viewBox="0 0 980 306" role="img" aria-labelledby="dgm-span-t dgm-span-d">
-          <title id="dgm-span-t">Coverage across the build, deploy and run seams</title>
-          <desc id="dgm-span-d">Spec-driven tools cover only the build seam and stop at the merge. Deployment platforms start only once an artifact exists, covering deploy and run, and never learn why the code was written or who approved it. Aveto carries one identity-attributed record continuously across all three seams.</desc>
-
-          <!-- seam columns -->
-          <g class="dgm-seam">
-            <rect x="200" y="52" width="252" height="206" rx="3"/>
-            <rect x="465" y="52" width="222" height="206" rx="3"/>
-            <rect x="700" y="52" width="250" height="206" rx="3"/>
-          </g>
-          <g class="dgm-seam-label">
-            <text x="326" y="38">BUILD</text>
-            <text x="576" y="38">DEPLOY</text>
-            <text x="825" y="38">RUN</text>
-          </g>
-
-          <!-- spec-driven tools: build only -->
-          <text class="dgm-row" x="186" y="100">Spec-driven tools</text>
-          <text class="dgm-sub" x="186" y="116">end at the merge</text>
-          <rect class="dgm-band" x="200" y="84" width="252" height="30" rx="4"/>
-          <rect class="dgm-void" x="465" y="84" width="485" height="30" rx="4"/>
-          <line class="dgm-stop" x1="455" y1="80" x2="455" y2="118"/>
-          <text class="dgm-note" x="478" y="104">stops at “merged” — no record of the deploy, or the incident</text>
-
-          <!-- deployment platforms: deploy + run -->
-          <text class="dgm-row" x="186" y="160">Deployment platforms</text>
-          <text class="dgm-sub" x="186" y="176">begin at the artifact</text>
-          <rect class="dgm-void" x="200" y="144" width="252" height="30" rx="4"/>
-          <rect class="dgm-band" x="465" y="144" width="485" height="30" rx="4"/>
-          <line class="dgm-stop" x1="462" y1="140" x2="462" y2="178"/>
-          <text class="dgm-note dgm-note-end" x="438" y="164">never learns why, or who approved it</text>
-
-          <!-- aveto: unbroken -->
-          <text class="dgm-row dgm-row-own" x="186" y="226">Aveto</text>
-          <text class="dgm-sub" x="186" y="242">one continuous record</text>
-          <rect class="dgm-own" x="200" y="208" width="750" height="34" rx="4"/>
-          <text class="dgm-own-label" x="575" y="230">unbroken · every gate, every approver, every seam</text>
-
-          <line class="dgm-rule" x1="200" y1="272" x2="950" y2="272"/>
-          <text class="dgm-axis" x="200" y="290">a human asks</text>
-          <text class="dgm-axis dgm-axis-mid" x="575" y="290">an artifact exists</text>
-          <text class="dgm-axis dgm-axis-end" x="950" y="290">it is serving traffic</text>
-        </svg>
-      </div>
-      <figcaption>The two gaps are the product. Drawn from the tools&rsquo; own documents, not from running them.</figcaption>
-    </figure>
-
-    <div class="cap">
-      <div>
-        <div class="cap-num">Deploy</div>
-        <h3>Cloud-agnostic by gate, not by rewrite.</h3>
-        <p>Aveto doesn&rsquo;t rebuild your deployment engine; it wraps the one you already trust. Azure is proven. AWS and GCP are planned and not tested.</p>
-      </div>
-      <div>
-        <div class="cap-num">Run</div>
-        <h3>After the deploy is still on the record.</h3>
-        <p>Production verification checks the live service against the invariants the spec named, not just a health ping. Customer replies are drafted, never sent: a human authorizes the message.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="evidence-runs" class="band-dark">
-    <p class="sec-eyebrow">Evidence</p>
-    <h2>Validated on live runs, not a slide.</h2>
-    <p class="sec-lede">Slices carried to merged pull requests on a reference app, a second app built from a one-paragraph brief, and a security gate that stopped its own release.</p>
-    <div class="stats">
-<div class="stat"><span class="fig">13</span><p>Runs recorded for the support agent, each with its Charter hash, spend and review. Some records leave things out, and the page says which.</p><cite><a href="/runs">aveto.dev/runs</a>, read from the run records</cite></div>
-<div class="stat"><span class="fig">738</span><p>Tests pass on the latest run (668 two runs before), with the new tests failing on the old code first.</p><cite>runs/result-page-clarity, test count record</cite></div>
-<div class="stat"><span class="fig">~65 s</span><p>For a rehearsed rollback to serve the previous version again. One sample, run before release.</p><cite>runs/result-page-clarity, rollback rehearsal</cite></div>
-<div class="stat"><span class="fig">4</span><p>Pull requests reviewed blind by a second model. The trial plans five, so the result is provisional.</p><cite>docs/review-trial, four records</cite></div>
-</div>
-<div class="how-cards">
-      <div class="how-card"><h3>The runs correct themselves</h3><p>Security review found a finished slice listening on <em>every network interface</em>, proved it across the LAN, and sent the work back. The same flaw was then fixed in the older app it came from.</p></div>
-      <div class="how-card"><h3>Hard cases, tested neutrally</h3><p>Shown an unsafe ask, it refused at intake. Shown an impossible one, it bounded the failure and escalated without weakening a gate.</p></div>
-      <div class="how-card"><h3>It failed four of its own checks, and said so</h3><p>Four pre-registered checks on the support agent failed and were recorded as results. A later judge then refused <strong>24 of 24</strong> unanswerable questions and kept <strong>16 of 19</strong> answerable ones, passing the second bar by one question.</p><p class="aside"><a href="https://github.com/gpatwa/aveto-support">Read the full record</a></p></div>
-      <div class="how-card"><h3>One approval, then a review</h3><p>A real run landed a tier 3 gate and opened a pull request after <strong>one typed message</strong>. Its own code review caught the run&rsquo;s permission rules about to ship in a tracked file.</p></div>
-    </div>
-  </section>
-
-  <section id="evidence">
-    <p class="sec-eyebrow">The record</p>
-    <h2>Built to be handed to someone who wasn't there.</h2>
-    <p class="sec-lede">Every standard below asks a version of the same question — who authorized this, what did the system decide, and was that consistent with policy. Aveto's artifacts answer it by construction, because they were produced at the moment the decision was made rather than reconstructed afterwards.</p>
-    <div class="fw-grid">
-      <div class="fw"><span class="name">EU AI Act</span><span class="role">Human oversight, auditability, conformity assessment</span></div>
-      <div class="fw"><span class="name">ISO 42001</span><span class="role">AI management system controls</span></div>
-      <div class="fw"><span class="name">NIST AI RMF</span><span class="role">Risk tiering and documented mitigation</span></div>
-      <div class="fw"><span class="name">SOC 2</span><span class="role">Change management and access control evidence</span></div>
-      <div class="fw"><span class="name">ISO 27001</span><span class="role">Separation of duties, secure change</span></div>
-      <div class="fw"><span class="name">GDPR</span><span class="role">Data classification, residency, retention at design time</span></div>
-    </div>
-  </section>
-
-  <section id="who">
-    <p class="sec-eyebrow">Who it's for</p>
-    <h2>For everyone shipping without a safety net.</h2>
-    <p class="sec-lede">The software matters, and nobody else stands between a mistake and production.</p>
-    <div class="aud-grid">
-      <div class="aud">
-        <h3>Solo founders and small teams</h3>
-        <p>You are the architect, the reviewer and the on-call. Aveto is the colleagues you would have had at a company ten times the size.</p>
-        <span class="trigger">Trigger · the first paying customer</span>
-      </div>
-      <div class="aud">
-        <h3>Engineers outside big tech</h3>
-        <p>You know exactly what a real review process looks like. You just don't work somewhere that runs one.</p>
-        <span class="trigger">Trigger · the change you can't get wrong</span>
-      </div>
-      <div class="aud">
-        <h3>Teams outgrowing what they can hold</h3>
-        <p>Shipping faster than anyone can still keep the whole system in their head, and feeling the first things slip through.</p>
-        <span class="trigger">Trigger · the first production incident</span>
-      </div>
-    </div>
-  </section>
-
-  <section id="built">
-    <p class="sec-eyebrow">What it has built</p>
-    <h2>What Aveto has built, and what it has not.</h2>
-    <div class="runs-tbl">
-      <div class="runs-tr h"><div>Kind of software</div><div>Status</div><div>What the record shows</div></div>
-      <div class="runs-tr"><div><b>Web apps and services</b></div><div><span class="runs-tag ok">proven</span></div><div><span>Two apps and a live public service, taken to merged pull requests under a Charter.</span></div></div>
-      <div class="runs-tr"><div><b>A feature that calls a model</b></div><div><span class="runs-tag part">proven once</span></div><div><span>The ask-the-docs service: retrieval plus one judge call, deployed to Azure.</span></div></div>
-      <div class="runs-tr"><div><b>Data engineering and ML</b></div><div><span class="runs-tag">roles exist, not run</span></div><div><span>The pack has data and ML roles and templates. No run has used them on a pipeline or a model.</span></div></div>
-      <div class="runs-tr"><div><b>Native iOS and Android</b></div><div><span class="runs-tag no">not covered</span></div><div><span>The release gate and rollback assume something deployable on a server. A mobile app&rsquo;s backend fits. The native client has no store or device checks.</span></div></div>
-    </div>
-  </section>
-
-  <section id="limits">
-    <p class="sec-eyebrow">Honest limits</p>
-    <h2>Where it costs you, and where it isn&rsquo;t proven.</h2>
-    <p class="sec-lede">The validation matrix in the repo lists what isn&rsquo;t proven, so this page does too.</p>
+  <section id="proof">
+    <p class="sec-eyebrow">How far it is proven</p>
+    <h2>Five things, each with its count.</h2>
     <div class="holds">
-      <div class="hold">
-        <div class="hold-mark">01</div>
-        <div>
-          <h3>It spends real tokens.</h3>
-          <p>The 13 runs recorded in aveto-support (2 to 31 stages each) processed 0.6M to 47M tokens apiece, mostly cache reads. That counts subagent stages only and is not a bill. It is the price of every stage forming its own judgement, and why a budget is checked <em>before</em> each step.</p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">02</div>
-        <div>
-          <h3>Small changes do not need this.</h3>
-          <p>Running a one-line fix through nine gated stages is theatre. The Engineering Manager compresses the pipeline for small slices and records why.</p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">03</div>
-        <div>
-          <h3>Least-privilege binds conditionally.</h3>
-          <p>Per-role tool restrictions take effect only when the orchestrator session runs inside the product repo. Run it from elsewhere and you get capable agents with unrestricted tools.</p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">04</div>
-        <div>
-          <h3>Not yet proven.</h3>
-          <p>Production SLOs, enterprise multi-tenancy, and a real model running unattended at scale. What has run: real Azure deploys of the support service, a live smoke test, and a production-verification stage. A real model decides one question at a time inside that live feature, behind a $10 monthly limit.</p>
-        </div>
-      </div>
-      <div class="hold">
-        <div class="hold-mark">05</div>
-        <div>
-          <h3>The newest evidence is small.</h3>
-          <p>The first four Process v2 runs each needed the owner for something beyond the first Charter approval. The latest run recorded no questions after the Charter, but the record cannot see prompts the app itself shows. The judge&rsquo;s two gates passed with no margin, and retrieval finds the right file for 79.2% of answerable questions, just under its own bar. Spend limits reset when the service restarts, so the $10 monthly limit is the only lasting cap. The service uses Anthropic&rsquo;s API under its commercial terms, which no agent read, and the page asks visitors not to enter personal information. A person still starts each run and decides the merge. Review mode for an existing codebase is planned, not built.</p>
-        </div>
-      </div>
+      <div class="hold"><div class="hold-mark">01</div><div><h3>A feature back as a reviewed pull request.</h3><p>Seven traced slices across two apps, and thirteen more on a third built in public. <strong>Shown repeatedly.</strong> The merge stays yours.</p></div></div>
+      <div class="hold"><div class="hold-mark">02</div><div><h3>One approval, then a review.</h3><p><strong>Shown twice.</strong> A person still starts each run.</p></div></div>
+      <div class="hold"><div class="hold-mark">03</div><div><h3>A service from a one-paragraph brief.</h3><p>StreakKeeper, from discovery to a tested, shipped service. <strong>Shown once.</strong> One small app.</p></div></div>
+      <div class="hold"><div class="hold-mark">04</div><div><h3>An AI feature with the bar set before the test.</h3><p>Our <a href="https://ca-aveto-ask.salmonsmoke-fa1fa863.eastus2.azurecontainerapps.io">live ask-the-docs service</a>, scored once on 20 new questions, refused all 10 it should and kept 8 of 10 answerable. <strong>Exactly at the bar, no margin.</strong> Four earlier checks failed and are on the record.</p></div></div>
+      <div class="hold"><div class="hold-mark">05</div><div><h3>The risk in a codebase you did not build.</h3><p>Assessment mode found 2 to 6 of 6 planted bugs on three repos and missed small edge cases. <strong>Pilot results.</strong> It records and reviews; it does not certify.</p></div></div>
     </div>
   </section>
 
-  <section id="course">
-    <p class="sec-eyebrow">From the course to your repo</p>
-    <h2>Anthropic teaches the AI&#8209;native SDLC. Aveto installs it.</h2>
-    <p class="sec-lede">Anthropic&rsquo;s <a href="https://academy.claude.com/courses/ai-native-sdlc-playbook">AI-Native SDLC Playbook</a> course walks through six stages in about an hour. It teaches the practice. Aveto is that practice as software, installed into your repo on the Claude Code plan you already have.</p>
-
-    <div class="map">
-      <div class="map-row map-head"><span>Stage</span><span>The course teaches</span><span>Aveto installs</span></div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">01</span>Plan</div>
-        <div class="map-course">Capture requirements in an <code>intent.md</code>.</div>
-        <div class="map-aveto">The same <code>intent.md</code> as a one-page template. Give it a one-line ask and it drafts the file, marking every guess <em>(inferred)</em> until you confirm.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">02</span>Design</div>
-        <div class="map-course">Turn intent into requirements and a design.</div>
-        <div class="map-aveto">Product, UX, UI and an Architect, with a short path that skips stages your intent already answers. User data, money or anything irreversible still gets the full chain.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">03</span>Build</div>
-        <div class="map-course">Plan mode, <code>CLAUDE.md</code>, parallel sessions and subagents.</div>
-        <div class="map-aveto">One least-privilege subagent per role, from 29 written briefs. The Architect&rsquo;s plan is on disk before any code is written.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">04</span>Test</div>
-        <div class="map-course">Give Claude a feedback loop; run continuous evals in CI.</div>
-        <div class="map-aveto">QA checks every &ldquo;done means&rdquo; line from your intent word for word, and never built the change. AI slices add an eval gate that blocks the merge like a failing test.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">05</span>Deploy</div>
-        <div class="map-course">AI in the PR review loop; hooks as approval gates.</div>
-        <div class="map-aveto">A security review and a release gate that fail closed. The deploy runs only the actions the approved Charter names, and a hook checks the budget before each agent starts.</div>
-      </div>
-      <div class="map-row">
-        <div class="map-stage"><span class="n">06</span>Maintain</div>
-        <div class="map-course">Close the loop on metrics.</div>
-        <div class="map-aveto">Production verification, SRE, on-call and post-launch roles, with token use measured from Claude Code&rsquo;s own logs, not reported by the agents.</div>
-      </div>
-    </div>
-    <p class="map-foot">Course stages summarised from its public outline. Aveto is independent and is not affiliated with or endorsed by Anthropic.</p>
+  <section id="not">
+    <p class="sec-eyebrow">What it is not</p>
+    <h2>Where it costs you, and where it isn&rsquo;t proven.</h2>
+    <ul class="not-list">
+      <li><b>Not free to run.</b> Each stage forms its own judgement, so a run spends real tokens from your plan.</li>
+      <li><b>Not for a one-line fix.</b> Small changes take a shorter path, and the reason is recorded.</li>
+      <li><b>Not a team product yet.</b> Built and proven by one person on one subscription. Shared team gates are on the roadmap.</li>
+      <li><b>Not a certification.</b> It keeps a record of who approved what; no auditor has used it.</li>
+      <li><b>Not a hosted service.</b> It runs in your Claude Code session, and only Claude Code.</li>
+    </ul>
+    <p class="story-foot"><a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md">The validation matrix lists every open item &rarr;</a></p>
   </section>
 
   <section id="faq">
@@ -1488,71 +1172,33 @@
       </details>
       <details>
         <summary>Do I have to approve every step?</summary>
-        <p>No. You approve one Charter at the start: the models, data processors, safety-control changes, permissions, budget and end actions the run may use, approved by its hash. The run is built to ask nothing after that; it stops only for an action the Charter does not name, for spend past its hard cap, or for a credential. At the end you review what was done under each line. The default Charter allows no merge, no deploy and no send: a run ends with a pull request for you. An approval typed in another session does not count, and an agent&rsquo;s review is never a person&rsquo;s approval. Seven runs have used a Charter (five on the support agent, two on a small test app); early ones still stopped to ask about a budget set against the wrong limit, which the latest pack fixed.</p>
-      </details>
-      <details>
-        <summary>Is code review part of it?</summary>
-        <p>Yes, as a layer around the review Claude Code already provides, not a new reviewer. Every Charter run reviews its own diff with a reviewer that did not write it, sets a risk tier (safety text, permissions, hooks and CI are always high), limits fix-and-review rounds to three, and records each finding as fixed, rejected or intentional. The playbook is <code>docs/CODE_REVIEW.md</code>.</p>
+        <p>No. You approve one Charter at the start, by its hash. The run stops only for an action the Charter does not name, for spend past its hard cap, or for a credential. The default Charter allows no merge, no deploy and no send: a run ends with a pull request for you.</p>
       </details>
       <details>
         <summary>Why a subscription instead of an API key?</summary>
-        <p>Because it changes who carries the cost. Aveto never resells inference: it runs on the Claude Code plan you already pay for, so it adds no separate API bill. The scarce resource is that plan&rsquo;s usage window, and a long run counts against it, which is why every stage is costed before it spends and written to disk as it goes. What it runs on, part by part, is in the table above.</p>
-      </details>
-      <details>
-        <summary>Can I use it with Cursor, Codex or Copilot?</summary>
-        <p>Not yet. Aveto&rsquo;s run rules live in an <code>AGENTS.md</code> file that tools such as Codex, Cursor and Copilot can read, but the agents, hooks and commands that enforce them are built for Claude Code only. A second adapter is on the backlog and starts when there is a real need. Codex is used today only as an optional, manual second reviewer.</p>
-      </details>
-      <details>
-        <summary>Is the live chat an AI agent?</summary>
-        <p>No. The live chat is a small app Aveto built. It finds passages in the docs, one model call decides whether they answer the question, and it shows the passages word for word or says the docs do not answer. It never writes text of its own and takes no actions. What is autonomous is the build: agents built and released it under a Charter anyone can read.</p>
-      </details>
-      <details>
-        <summary>Our agents already run under scoped credentials &mdash; isn&rsquo;t that enough?</summary>
-        <p>Scoped credentials answer a different question: what an agent is able to touch. They say nothing about whether a particular action was authorized, or what was left behind. In an access log, a deploy a named human approved and a deploy nobody saw look identical, because both were permitted. Permission is a capability boundary; accountability is a record of who decided, when, and against which rule. Aveto assumes your credential scoping is already correct and adds the record on top.</p>
+        <p>Because it changes who carries the cost. Aveto runs on the Claude Code plan you already pay for, so it adds no separate API bill. The scarce resource is that plan&rsquo;s usage window, which is why every stage is costed before it spends.</p>
       </details>
       <details>
         <summary>How is this different from other tools?</summary>
-        <p>They sit at different layers. Spec-driven tools structure how software gets written, and toolkits such as ECC make an agent work better with libraries of skills, hooks and memory. Aveto governs whether the work can be trusted: every stage is costed before it spends, the agent that verifies never wrote the code, gates fail closed, and a named human approves one Charter by its hash and reviews the result. The trade is breadth: Aveto is narrower, Claude Code only, built for one person on one subscription. It can be used alongside the others. Aveto is independent and not affiliated with ECC or Anthropic.</p>
+        <p>Many tools have a plan step and an audit log. Aveto&rsquo;s difference is what is approved and by whom: one hashed Charter that fixes scope, models, spend and processors, approved by a person. The trade is breadth: Aveto is narrower and Claude Code only.</p>
       </details>
       <details>
-        <summary>Does this work for a team, or an enterprise?</summary>
-        <p>Today it is built for one person on one subscription, and that is where it is proven. Each developer running their own slices on their own subscription works now. Shared gates across a team and a run inventory spanning developers are on the roadmap, not shipped. A script (<code>execution/conformity.mjs</code>) renders a register of who approved what from a run&rsquo;s own records; it has been run on two small reference repos and no auditor has used it. A read-only page of every run exists at <a href="/runs">/runs</a>. The validation matrix in the repo marks exactly what has and hasn&rsquo;t been run at that scale.</p>
+        <summary>Does it work for a team?</summary>
+        <p>Each developer running their own slices on their own subscription works now. Shared gates across a team and a run inventory across developers are on the roadmap, not shipped.</p>
       </details>
-      <details>
-        <summary>Which clouds are supported?</summary>
-        <p>Azure is the one proven end to end: the live demo runs on it, deployed by an Aveto run. AWS and GCP are planned, not tested. Each would wrap the deployment engine you already use rather than replacing it.</p>
-      </details>
-      <details>
-        <summary>What happens when a deployment goes wrong?</summary>
-        <p>Production verification checks the live service against the invariants the spec named, and the rollback plan approved at spec review is the one that runs, with no second approval round trip because that decision was already made. In the last two releases the rollback was rehearsed before release: the previous version served again about 65 to 70 seconds after the command, then the new version was restored. That is two samples, not a guarantee.</p>
-      </details>
-    
-    </div>
-  </section>
-
-  <section id="source">
-    <p class="sec-eyebrow">The documents</p>
-    <h2>The specs are the product.</h2>
-    <p class="sec-lede">There is no hidden implementation. The specs below <em>are</em> the system &mdash; agents are generated from these files and the gates are enforced from them. Read the rules before trusting the claims.</p>
-    <div class="fw-grid">
-      <a class="fw" href="/playbook"><span class="name">The playbook &rarr;</span><span class="role">The engineering playbook for AI coding agents, in ten parts: start here</span></a>
-      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/ARCHITECTURE.md"><span class="name">Architecture &amp; data flow &rarr;</span><span class="role">Agent topology, how the repo realizes it, and the execution loop</span></a>
-      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_ROLES.md"><span class="name">Agent roles &rarr;</span><span class="role">Who does what, who hands off to whom</span></a>
-      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md"><span class="name">Human approval rules &rarr;</span><span class="role">The six categories a human must approve, and how one Charter covers them</span></a>
-      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/RELEASE_GATES.md"><span class="name">Release gates &rarr;</span><span class="role">What must be true before anything merges or ships</span></a>
-      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/VALIDATION_MATRIX.md"><span class="name">Validation matrix &rarr;</span><span class="role">What is proven, and what is still open</span></a>
-      <a class="fw" href="https://github.com/gpatwa/agentic-sdlc-playbook"><span class="name">Source on GitHub &rarr;</span><span class="role">Everything above, plus the execution pack</span></a>
     </div>
   </section>
 
   <section id="closer" class="flush">
     <div class="closer">
       <h2>Let the agents do more.</h2>
-      <p>Aveto is open. Point the installer at a repo and it writes one least-privilege agent per role, the gates, and the commands to run a slice — on the Claude Code subscription you already have.</p>
+      <p>Aveto is open. Point the installer at a repo and it writes one least-privilege agent per role, the gates, and the commands to run a slice.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Install the pack</a>
+        <a class="btn btn-ghost" href="/playbook">Read the playbook</a>
         <a class="btn btn-ghost" href="https://github.com/gpatwa/agentic-sdlc-playbook">Source on GitHub</a>
       </div>
+      <p class="closer-links"><a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/AGENT_ROLES.md">The 29 roles</a> &middot; <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/HUMAN_APPROVAL_RULES.md">Approval rules</a> &middot; <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/RELEASE_GATES.md">Release gates</a> &middot; <a href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/ARCHITECTURE.md">Architecture</a></p>
     </div>
   </section>
 

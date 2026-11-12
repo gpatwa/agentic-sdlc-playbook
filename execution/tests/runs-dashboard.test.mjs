@@ -172,7 +172,7 @@ describe("navigation", () => {
     assert.match(html, /<nav class="site-nav" aria-label="Site">/);
     assert.match(html, /<a class="skip" href="#main">/);
     assert.match(html, /<a href="\/runs" aria-current="page">Runs<\/a>/);
-    for (const href of ['href="/"', 'href="/#how"', 'href="/#limits"', 'href="/#evidence-runs"', 'href="/playbook"']) assert.ok(html.includes(href), href);
+    for (const href of ['href="/"', 'href="/#how"', 'href="/#not"', 'href="/#proof"', 'href="/#holds"', 'href="/playbook"']) assert.ok(html.includes(href), href);
     assert.doesNotMatch(html, /<script/i);
   });
 });
