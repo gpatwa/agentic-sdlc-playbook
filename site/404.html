@@ -5,32 +5,21 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Page not found — Aveto</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@600&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
   :root {
-    --ground: #FBFAF7;
-    --ink: #14161A;
-    --muted: #626B77;
-    --rule-strong: #CBC7BE;
-    --gold: #A87515;
-    --gold-text: #85590C;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --ground: #0B0E13;
-      --ink: #E8ECF2;
-      --muted: #8B95A3;
-      --rule-strong: #333C48;
-      --gold: #E0AC4E;
-      --gold-text: #EBBE72;
-    }
-  }
-  :root[data-theme="dark"] {
-    --ground: #0B0E13;
-    --ink: #E8ECF2;
-    --muted: #8B95A3;
-    --rule-strong: #333C48;
+    color-scheme: dark;
+    --ground: #090C11;
+    --surface: #10141B;
+    --sunk: #151A23;
+    --ink: #EDF0F5;
+    --ink-soft: #C3CAD4;
+    --muted: #8D96A4;
+    --rule: #212834;
+    --rule-strong: #333D4B;
     --gold: #E0AC4E;
     --gold-text: #EBBE72;
+    --block: #E8857C;
   }
   * { box-sizing: border-box; }
   body {
@@ -41,31 +30,44 @@
     padding: 24px 16px;
     background-color: var(--ground);
     color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
     line-height: 1.6;
   }
-  main { max-width: 34rem; }
-  .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem; letter-spacing: .12em; color: var(--gold-text); margin: 0 0 12px; }
-  h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 14px; }
-  p { color: var(--muted); margin: 0 0 26px; }
-  a {
-    display: inline-block;
-    color: var(--ink);
-    text-decoration: none;
-    font-weight: 600;
-    border: 1px solid var(--rule-strong);
-    border-radius: 6px;
-    padding: 10px 18px;
-  }
-  a:hover, a:focus-visible { border-color: var(--gold); color: var(--gold-text); outline: none; }
+  main { width: 100%; max-width: 34rem; }
+  .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); text-decoration: none; font-family: "Instrument Sans", sans-serif; font-weight: 600; font-size: 1.1rem; margin-bottom: 34px; }
+  .mark { width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--gold); position: relative; }
+  .mark::after { content: ""; position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); top: -4px; right: -4px; }
+  .win { background-color: var(--surface); border: 1px solid var(--rule-strong); border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .9); }
+  .win-bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid var(--rule); background-color: var(--sunk); font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .74rem; color: var(--muted); }
+  .win-bar i { width: 10px; height: 10px; border-radius: 50%; background-color: var(--rule-strong); }
+  .win-bar span { margin-left: 8px; }
+  .win-body { padding: 26px 22px; }
+  .code { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem; margin: 0 0 12px; color: var(--block); }
+  h1 { font-family: "Instrument Sans", sans-serif; font-weight: 600; font-size: clamp(1.8rem, 5vw, 2.4rem); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 12px; }
+  p { color: var(--ink-soft); margin: 0 0 24px; }
+  .links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .links a { display: inline-block; text-decoration: none; font-weight: 600; font-size: .94rem; border: 1px solid var(--rule-strong); border-radius: 8px; padding: 10px 16px; color: var(--ink); }
+  .links a.primary { background-color: var(--gold); border-color: var(--gold); color: #14100A; }
+  .links a:hover, .links a:focus-visible { border-color: var(--gold-text); outline: none; }
+  .links a.primary:hover, .links a.primary:focus-visible { background-color: var(--gold-text); }
 </style>
 </head>
 <body>
 <main>
-  <p class="code">404</p>
-  <h1>This page does not exist.</h1>
-  <p>Aveto is one page. Everything — the 28 roles, the gates, how it maps to Anthropic's AI-Native SDLC course — is on it.</p>
-  <a href="/">Go to aveto.dev</a>
+  <a class="brand" href="/"><span class="mark"></span>Aveto</a>
+  <div class="win">
+    <div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span>GET this page</span></div>
+    <div class="win-body">
+      <p class="code">404 &middot; not found</p>
+      <h1>This page does not exist.</h1>
+      <p>The home page shows one real run, step by step. The playbook and every recorded run are one click away.</p>
+      <div class="links">
+        <a class="primary" href="/">Go to aveto.dev</a>
+        <a href="/runs">Every run</a>
+        <a href="/playbook">The playbook</a>
+      </div>
+    </div>
+  </div>
 </main>
 </body>
 </html>
