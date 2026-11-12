@@ -17,25 +17,26 @@
 <body id="top">
 <style>
   :root {
-    --ground: #FBFAF7;
-    --surface: #FFFFFF;
-    --sunk: #F2F0EB;
-    --ink: #14161A;
-    --ink-soft: #3A4048;
-    --muted: #626B77;
-    --faint: #616974;
-    --rule: #E2DFD8;
-    --rule-strong: #CBC7BE;
-    --gold: #A87515;
-    --gold-text: #85590C;
-    --gold-bright: #C68D22;
-    --gold-wash: #FAF2DF;
-    --pass: #27684B;
-    --pass-wash: #E7F2EC;
-    --block: #B0453D;
-    --block-wash: #FAEAE8;
-    --shadow-sm: 0 1px 2px rgba(20, 22, 26, .05);
-    --shadow: 0 2px 4px rgba(20, 22, 26, .05), 0 12px 32px -16px rgba(20, 22, 26, .22);
+    color-scheme: dark;
+    --ground: #090C11;
+    --surface: #10141B;
+    --sunk: #151A23;
+    --ink: #EDF0F5;
+    --ink-soft: #C3CAD4;
+    --muted: #8D96A4;
+    --faint: #7C8696;
+    --rule: #212834;
+    --rule-strong: #333D4B;
+    --gold: #E0AC4E;
+    --gold-text: #EBBE72;
+    --gold-bright: #F0C169;
+    --gold-wash: #211A0D;
+    --pass: #5FBE92;
+    --pass-wash: #0F2219;
+    --block: #E8857C;
+    --block-wash: #2A1210;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+    --shadow: 0 24px 60px -24px rgba(0, 0, 0, .9);
     --f-display: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --f-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
     --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -43,48 +44,48 @@
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --ground: #0B0E13;
-      --surface: #12161D;
-      --sunk: #171C25;
-      --ink: #E8ECF2;
-      --ink-soft: #C2CAD5;
-      --muted: #8B95A3;
-      --faint: #7E8898;
-      --rule: #232A34;
-      --rule-strong: #333C48;
+      --ground: #090C11;
+      --surface: #10141B;
+      --sunk: #151A23;
+      --ink: #EDF0F5;
+      --ink-soft: #C3CAD4;
+      --muted: #8D96A4;
+      --faint: #7C8696;
+      --rule: #212834;
+      --rule-strong: #333D4B;
       --gold: #E0AC4E;
       --gold-text: #EBBE72;
       --gold-bright: #F0C169;
-      --gold-wash: #221A0C;
+      --gold-wash: #211A0D;
       --pass: #5FBE92;
-      --pass-wash: #10231A;
-      --block: #E27C74;
-      --block-wash: #26100E;
+      --pass-wash: #0F2219;
+      --block: #E8857C;
+      --block-wash: #2A1210;
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
-      --shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 12px 32px -16px rgba(0, 0, 0, .8);
+      --shadow: 0 24px 60px -24px rgba(0, 0, 0, .9);
     }
   }
 
   :root[data-theme="dark"] {
-    --ground: #0B0E13;
-    --surface: #12161D;
-    --sunk: #171C25;
-    --ink: #E8ECF2;
-    --ink-soft: #C2CAD5;
-    --muted: #8B95A3;
-    --faint: #7E8898;
-    --rule: #232A34;
-    --rule-strong: #333C48;
+    --ground: #090C11;
+    --surface: #10141B;
+    --sunk: #151A23;
+    --ink: #EDF0F5;
+    --ink-soft: #C3CAD4;
+    --muted: #8D96A4;
+    --faint: #7C8696;
+    --rule: #212834;
+    --rule-strong: #333D4B;
     --gold: #E0AC4E;
     --gold-text: #EBBE72;
     --gold-bright: #F0C169;
-    --gold-wash: #221A0C;
+    --gold-wash: #211A0D;
     --pass: #5FBE92;
-    --pass-wash: #10231A;
-    --block: #E27C74;
-    --block-wash: #26100E;
+    --pass-wash: #0F2219;
+    --block: #E8857C;
+    --block-wash: #2A1210;
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
-    --shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 12px 32px -16px rgba(0, 0, 0, .8);
+    --shadow: 0 24px 60px -24px rgba(0, 0, 0, .9);
   }
 
   * { box-sizing: border-box; }
@@ -901,6 +902,13 @@
     @keyframes to-top-in { to { opacity: 1; pointer-events: auto; } }
   }
   @media print { .to-top { display: none; } }
+  /* Dark theme to match the home page (2026-11-12) */
+  .site-nav { background-color: rgba(9, 12, 17, .86); backdrop-filter: blur(10px); box-shadow: none; padding: 16px 0; }
+  .btn-primary { background-color: var(--gold); color: #14100A; }
+  .btn-primary:hover { background-color: var(--gold-text); color: #14100A; }
+  .doc h1 { font-weight: 600; }
+  .doc-table { border-radius: 12px; }
+  .to-top { background-color: #1A202B; color: var(--ink); border: 1px solid var(--rule-strong); }
 </style>
 <div class="shell">
 
@@ -908,7 +916,7 @@
   <nav class="site-nav" aria-label="Site">
     <a class="brand" href="/"><span class="mark"></span>Aveto</a>
     <div class="nav-links"><a href="/#how">How it works</a><a href="/#holds">What holds</a><a href="/#proof">How far proven</a><a href="/#not">Limits</a><a href="/runs">Runs</a><a href="/playbook" aria-current="page">Playbook</a></div>
-    <a class="btn btn-ghost nav-cta" href="https://github.com/gpatwa/agentic-sdlc-playbook">Get started</a>
+    <a class="btn btn-primary nav-cta" href="https://github.com/gpatwa/agentic-sdlc-playbook/blob/main/docs/GETTING_STARTED.md">Get started</a>
     <details class="nav-menu"><summary>Menu</summary><div class="nav-menu-list"><a href="/#how">How it works</a><a href="/#holds">What holds</a><a href="/#proof">How far proven</a><a href="/#not">Limits</a><a href="/runs">Runs</a><a href="/playbook" aria-current="page">Playbook</a><a href="https://github.com/gpatwa/agentic-sdlc-playbook">Get started</a></div></details>
   </nav>
 

@@ -6,8 +6,8 @@
 <title>Aveto runs, read from the records</title>
 <meta name="description" content="Every Aveto run in aveto-support: status, spend against plan and cap, Charter hash, event-log result, pull request. Read from each run's own records; a read-only snapshot.">
 <style>
-:root{--ground:#FBFAF7;--surface:#fff;--ink:#14161A;--soft:#3A4048;--muted:#626B77;--rule:#E2DFD8;--gold:#85590C;--bad:#9B1C1C;--good:#1F6B3A;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#14161A;--surface:#1C1F24;--ink:#F1EFE9;--soft:#C9CDD3;--muted:#9AA3AF;--rule:#2C3037;--gold:#E0A83B;--bad:#F08080;--good:#7FD49B;color-scheme:dark}}
+:root{--ground:#090C11;--surface:#10141B;--ink:#EDF0F5;--soft:#C3CAD4;--muted:#8D96A4;--rule:#212834;--gold:#EBBE72;--bad:#E8857C;--good:#5FBE92;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#090C11;--surface:#10141B;--ink:#EDF0F5;--soft:#C3CAD4;--muted:#8D96A4;--rule:#212834;--gold:#EBBE72;--bad:#E8857C;--good:#5FBE92;color-scheme:dark}}
 *{box-sizing:border-box}body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
 main{max-width:1180px;margin:0 auto;padding:32px 16px 64px}a{color:var(--gold)}h1{font-size:1.9rem;line-height:1.2;margin:.2em 0}
 .eyebrow{font:600 .75rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
@@ -26,13 +26,15 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule);vert
 html{scroll-padding-top:76px}.to-top{position:fixed;right:18px;bottom:18px;z-index:60;padding:10px 14px;border-radius:999px;background:var(--ink);color:var(--ground);font:.76rem ui-monospace,monospace;text-decoration:none}@supports (animation-timeline:scroll()){.to-top{opacity:0;animation:to-top-in linear both;animation-timeline:scroll(root);animation-range:0 600px;pointer-events:none}@keyframes to-top-in{to{opacity:1;pointer-events:auto}}}
 h2{font-size:1.3rem;margin:40px 0 4px}table.roles{min-width:640px}.bar{display:inline-block;height:.6em;background:var(--gold);border-radius:3px;vertical-align:middle;max-width:60%}details{margin:10px 0}summary{cursor:pointer;padding:6px 0}
 code{font:.82rem ui-monospace,monospace}.notes{margin-top:28px;color:var(--soft);max-width:78ch}.notes li{margin:.5em 0}
+body{font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}h1,h2{font-family:"Instrument Sans",system-ui,sans-serif;letter-spacing:-.02em;font-weight:600}h1{font-size:clamp(2rem,4.4vw,3rem);line-height:1.08;margin:.3em 0 .4em}.eyebrow{letter-spacing:.12em}.lede{font-size:1.05rem}.site-nav{background:rgba(9,12,17,.86);backdrop-filter:blur(10px);padding:16px}.site-nav .brand{display:flex;align-items:center;gap:9px;font-family:"Instrument Sans",sans-serif;font-weight:600;font-size:1.15rem}.mark{display:inline-block;width:16px;height:16px;border-radius:50%;border:3px solid #E0AC4E;position:relative}.mark::after{content:"";position:absolute;width:5px;height:5px;border-radius:50%;background:#E0AC4E;top:-4px;right:-4px}.nav-links{margin-left:auto}.nav-cta{display:inline-flex;padding:9px 16px;border-radius:8px;background:#E0AC4E;color:#14100A;font-weight:600;font-size:.9rem;text-decoration:none}.nav-cta:hover{background:#EBBE72}@media (max-width:1040px){.nav-cta{display:none}}.card,.wrap{border-radius:14px;border-color:#333D4B}.card b{font-family:"Instrument Sans",sans-serif;font-size:2.1rem;letter-spacing:-.03em}.to-top{background:#1A202B;color:var(--ink);border:1px solid #333D4B}
 </style>
 </head>
 <body id="top">
 <a class="skip" href="#main">Skip to content</a>
 <nav class="site-nav" aria-label="Site">
-<a class="brand" href="/">Aveto</a>
+<a class="brand" href="/"><span class="mark"></span>Aveto</a>
 <div class="nav-links"><a href="/#how">How it works</a><a href="/#holds">What holds</a><a href="/#proof">How far proven</a><a href="/#not">Limits</a><a href="/runs" aria-current="page">Runs</a><a href="/playbook">Playbook</a></div>
+<a class="nav-cta" href="/#how">See one run</a>
 <details class="nav-menu"><summary>Menu</summary><div class="nav-menu-list"><a href="/#how">How it works</a><a href="/#holds">What holds</a><a href="/#proof">How far proven</a><a href="/#not">Limits</a><a href="/runs" aria-current="page">Runs</a><a href="/playbook">Playbook</a></div></details>
 </nav>
 <main id="main" tabindex="-1">
