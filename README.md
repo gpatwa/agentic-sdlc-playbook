@@ -18,6 +18,8 @@ closed, and a **named human** approves one bounded Charter before the run
 starts (the models, data, safety changes and end actions it may use) and
 reviews the result at the end; nothing outside the Charter happens without
 asking. The record continues past the merge, through deploy and production.
+[See one real run, step by step](https://aveto.dev/#how): the Charter, the
+spec, tests failing first, the evidence, the review and the calls left to you.
 
 It runs on the **Claude Code subscription you already pay for** — not a metered
 API bill — so there is no separate API charge. A run spends your plan's usage
@@ -283,7 +285,7 @@ all 10 it should and kept 8 of 10 answerable, exactly at its bar. A third run fi
 three accounting flaws found after launch (two by an outside model's review, one by
 checking the price list). The service's
 spend limits reset when it restarts, so the monthly limit is the only lasting cap.
-Try it from [aveto.dev](https://aveto.dev/#try). See `docs/LESSONS.md` L47 to L51.
+Try it from [aveto.dev](https://aveto.dev/#proof); the [home page](https://aveto.dev/#how) walks through that third run step by step, quoting its records. See `docs/LESSONS.md` L47 to L51.
 
 *(An earlier pointer here named `agentic-job-ops` as "the first reference
 implementation." That repo has a `.agentic/` folder and zero runs — it was
