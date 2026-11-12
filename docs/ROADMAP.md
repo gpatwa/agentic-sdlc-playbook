@@ -46,9 +46,12 @@ Cheap fixes, most of them wording the owner must approve.
 - C4.1: the owner states the web-search terms status (blank in all four Charters).
 - Review-eval rescore (`docs/review-evals/RESULTS.md` is empty): this is **model spend**, so it needs a Charter.
 
-### Theme 2 · Landing page that tells one story (now, after wording approval)
+### Theme 2 · Landing page that tells one story (built 2026-11-12, deploy waits for the owner)
 
-See the full proposal below. Built only after the owner approves the section list and wording; deployed only by the owner's click.
+Built to the proposal below, on the owner's choices of 2026-11-12: the six steps show `fix-service-accounting` (aveto-support), wording
+reviewed once at the deploy gate, cut sections linked to the playbook and docs, pushed to main. About 1,330 visible words
+(4,540 before), seven sections plus the hero. The four industry statistics, the span diagram, the standards list, the course
+table, the live-demo walkthrough and the role chips left the home page; the live service is linked from the proof list.
 
 ### Theme 2b · Decisions as choices, not typing (next, small)
 
