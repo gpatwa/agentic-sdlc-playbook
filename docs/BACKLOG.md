@@ -1878,7 +1878,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
   read in the browser pane): 334 leaders, self-reported, 25% of director-and-above respondents, "top" = more than a quarter of
   their teams at 2x; the article adds that 30% saw productivity fall. The talk overstates it; **not to be cited publicly**.
   (b) Its quality claim (11:53) is not held: the article says rework fell 6.2% while time savings were 11.8%, i.e. quality lags,
-  not falls; its squad median is seven, not two to four. (c) Tests our position: "take the human review back" (6:03) and top teams
+  not falls; its squad median is seven, not two to four. The May 2026 McKinsey article (different authors, read in full) gives "eight to 12" shrinking to "smaller pods", no two to four, and "3x to 5x with a 60% smaller team" with no company or method; it also says AI code is "robust and consistently secure" while the August article cites a 45% security failure rate. (c) Tests our position: "take the human review back" (6:03) and top teams
   collapsing roles (7:24), against our approval step and 29 one-per-stage briefs; O3 stays the way to test the second. (d) Not
   new evidence for "review is the bottleneck": same direction as T42's research, one more unsourced voice. (e) Found in passing:
   README and site call the conformity export "roadmap, not shipped" though `execution/conformity.mjs` exists (T16); and the
