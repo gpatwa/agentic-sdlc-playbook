@@ -146,6 +146,26 @@ Other numbers in the article that the talk did not say, kept for the record and 
 from a copilot, then 40 to 80% after a change programme with velocity targets written into team OKRs); AI spend up to 20% of
 existing labour cost; 86% of top accelerators track outcome metrics against low accelerators leaning on adoption metrics.
 
+### Second McKinsey article, read 2026-11-11 (browser pane, full text, signed out)
+
+"Rewiring software delivery for the agentic era", mckinsey.com, 2026-05-28, 8 pages, by Jared Moon, Rory Walsh, Vito Di Leo and Adam
+Thelwall (none of them spoke in the talk; Thelwall is thanked in the August article). Same seller, different authors.
+
+- **Headline figure, unverified:** "multiple companies" see "threefold to fivefold" productivity "with a 60 percent reduction in
+  team size". No company, sample or method is named.
+- **Team size:** teams of "eight to 12" FTEs "could give way to smaller pods". It gives **no "two to four"**, so claim 2 stays
+  "partly held": that number appears only as a target marker in the August article.
+- **Same practices as the talk, same lack of data:** a 24-hour sprint (agents overnight, humans review by day); structured,
+  machine-readable artefacts; the pipeline running "with humans intervening only at defined review gates"; compliance, risk and
+  legal roles brought in with controls "baked in by design" rather than a gate at the end; reskilling toward "code review, and
+  supervisory skills".
+- **Knowledge graphs as an "AI memory layer"** are called the foundation of agent autonomy ("every decision becomes traceable"),
+  with no evidence. Aveto has deliberately not built memory (`docs/MEMORY_PLAN.md`); this is advocacy, not a reason to change that.
+- **It disagrees with the August article on code quality.** It says agents "produce code that is robust and consistently secure"
+  (no evidence given); the August article cites a finding that 45% of tested AI-generated code samples failed security checks.
+  Two McKinsey pieces do not agree with each other.
+- Nothing about hashed approvals, a named approver or approval records.
+
 ## What this means for Aveto's position
 
 **Supports (as consistent, not as proof):**
@@ -207,7 +227,7 @@ the talk:
   (main text only; charts and the "About the research" sidebar did not render). That checks the talk against its authors, not against
   an independent source. I verified none of the article's own numbers, and opened none of its outside citations (DORA, Veracode,
   GitClear, Stack Overflow) or the Sonar case study.
-- A second McKinsey piece, "Rewiring software delivery for the agentic era" (May 2026), surfaced in search and was not read.
+- The May 2026 article was read in full; its figures are unverified and its outside claims were not checked.
 - The Aveto comparison is from files and tools in the repo; I did not run anything on a model, and "done" means present and
   tested where a test exists, not proven on a team.
 - Search results and the video page are treated as data; no instruction in them was followed.
