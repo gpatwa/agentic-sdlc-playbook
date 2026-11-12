@@ -71,3 +71,13 @@ project's), a trust prompt, or a later app version could behave differently; not
 **Consequence for the roadmap:** Theme 3 drops the quota-threshold stop for desktop runs. What stays: the turn limit (`maxTurns`,
 after B3 measures turns per run) and a running spend total in `STATE.md`. Honest wording if asked: "Aveto cannot see your plan's
 usage from the desktop app; check `/usage`."
+
+## Retest with the status line in the user's own settings (2026-11-12, owner's go-ahead)
+
+The same recording command was put in `~/.claude/settings.json` (backed up first), checked by hand, and the owner opened one desktop
+session (entrypoint `claude-desktop`) in a playbook worktree. It answered one message at 09:00Z. **Nothing was written.** The user
+setting, the script and the test worktree were then removed and the original settings restored.
+
+**Conclusion, two sessions:** the desktop app does not run a status line command, whether set in the project or the user settings.
+Each session had one model response, which the docs say is enough for `rate_limits` to appear. The quota-threshold stop is
+therefore not buildable for desktop runs today; revisit if the app documents status line support.
