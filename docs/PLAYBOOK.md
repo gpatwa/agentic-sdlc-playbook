@@ -45,7 +45,7 @@ Detail: `templates/INTENT_TEMPLATE.md`, `docs/AGENTIC_SDLC.md` ("When to compres
 
 ## 3. Roles: delegate, check, own
 
-Twenty-eight specialist roles, each with one output, the decisions it owns, and one
+Twenty-nine specialist roles, each with one output, the decisions it owns, and one
 handoff. Every role states three things:
 
 - **The agent does:** the work delegated to it.
@@ -56,7 +56,7 @@ handoff. Every role states three things:
 | Group | Roles |
 |---|---|
 | Lead | Orchestrator, Engineering Manager |
-| Product | Market Researcher, Product Manager, UX Researcher, UI Designer |
+| Product | Opportunity Scout, Market Researcher, Product Manager, UX Researcher, UI Designer |
 | Build | Software Architect, Backend Architect, Frontend Developer, AI Engineer, ML Engineer, Tech Writer |
 | Verify | QA Evidence, Security & Privacy, Release Manager |
 | Govern | AI Governance, Compliance Reviewer, Data Governance, FinOps |
