@@ -1862,6 +1862,14 @@ from the run" pattern as effort / operator / executor / gateCatches.
   (c) Map current handoffs before adding agents (theirs: 12 handoffs over 6 roles): fits the org-model experiment O3.
   (d) Track the share of agent-assisted PRs in `outcomes.mjs`: only meaningful on a team repo. (e) Jira, observability and
   other integrations through MCP: a real adoption need; build one only when a design partner names it.
+- **T46 · Approver identity is not authenticated: `intentional deferred`.** *Raised 2026-11-11 from the Vorflux comparison
+  (`docs/research/2026-11-vorflux-comparison.md`); deferred by the owner under the 2026-10-26 triage rule (not P0/P1).* An
+  Aveto approval names whoever is logged in to the Claude Code session; Aveto does not authenticate that identity, and
+  `execution/verify-approvals.mjs` binds approvals to GitHub only for runs that name a PR and cannot show a second person
+  reviewed it. Claim C19's limit text states this. **Rule until revisited:** no public use of "authenticated approver" or
+  "signed approval". **Trigger to revisit:** the site or README wants to say a named human approved, or a design partner
+  asks. **Options then:** require every approval record to cite a PR and run `verify-approvals`; or signing, which T14
+  decided against. Not checked this session: exactly what identity string the Charter approval flow records.
 
 ## Decided NO / parked — recorded so they don't return
 
