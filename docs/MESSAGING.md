@@ -141,7 +141,7 @@ this repo does not exist. A claim not in the register is not published.
 
 | id | Claim | Status | Evidence | Limit that travels with it |
 |---|---|---|---|---|
-| C1 | 28 specialist agents | proven | `agents/` | roles are briefs run by Claude; enterprise overlays are specified, not all exercised |
+| C1 | 29 specialist agents | proven | `agents/` | roles are briefs run by Claude; enterprise overlays are specified, not all exercised |
 | C2 | The agent that verifies is never the agent that wrote the change | enforced | `execution/pack/AGENTS.md`, `execution/pack/protocols/APPROVAL_PROTOCOL.md` | same model family; human review remains for architecture and the riskiest code |
 | C3 | Gates fail closed | enforced | `docs/RELEASE_GATES.md` | |
 | C4 | One approval at the start, then a review at the end | shown twice | `docs/PROCESS_V2_PLAN.md`, aveto-support `runs/land-answerability/`, streak-seed `runs/health-version/` | two runs; a person starts each run and decides the merge; permission prompts are prevented only if the Charter's permissions row is set |
