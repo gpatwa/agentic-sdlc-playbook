@@ -71,7 +71,7 @@ compared with what Vorflux packages:
 |---|---|---|---|
 | Hard stop during a run | Per-session cap, default $1,000, that stops | Budget checked only before each spawn (C10); no stop mid-spawn (T43e) | `maxTurns` in generated subagent frontmatter (Claude Code 2.1.246+): a turn limit, not a cost cap. Needs a measured turns-per-run figure first, then a pack version |
 | Live spend during a run | Spend analytics | Measured after the spawn (PostToolUse sees `totalTokens`) | Running total in `STATE.md` updated after each spawn, shown by `/agentic-status` |
-| Quota visibility | Quota banner, stop at remaining-quota % | None | **Unconfirmed:** whether a hook or script can read the plan's remaining quota at all. Check before promising anything |
+| Quota visibility | Quota banner, stop at remaining-quota % | None | Checked 2026-11-12 (`docs/research/2026-11-quota-visibility-check.md`): only the status line receives the five-hour and weekly **used** %, on Pro, Max and Ultra. A status line could write it to a file the budget guard reads before each spawn. **Unconfirmed:** whether the desktop app runs a status line at all |
 | Cost per slice, in plain words | Machine hours plus tokens | Run economics and calibration ratios | A one-line cost summary per run in the record |
 
 Limit to keep in view: Vorflux connects a customer's Claude plan to a third-party product; whether that use fits Anthropic's
@@ -82,7 +82,10 @@ consumer terms was **not checked**. Aveto runs inside the owner's own Claude Cod
 B3: the 11 cases on the current model, to measure spend and variance. Needs the owner's spend approval and a Charter typed in
 that session. Prerequisite for judging memory, golden examples or any brief change.
 
-### Theme 5 · Discovery with real users and a design partner (next, blocked on the owner)
+### Theme 5 · Discovery with real users and a design partner (guide ready 2026-11-12; introductions are the owner's)
+
+Ready: `docs/discovery/INTERVIEW_GUIDE.md` (30 minutes, past events not opinions, one block per Scout candidate, a stop rule after five
+interviews) and `docs/discovery/PILOT_ONE_PAGER.md` (two weeks, one repo, before and after figures; fee left to the owner).
 
 The Scout's own recommendation (run 4) and Phase C point to the same act: talk to people who run agents on a team. One set of
 conversations serves three needs: non-vendor evidence on the Scout's candidates (spend per team, audit trail), the P5 baseline
