@@ -66,7 +66,16 @@ These are the role's tool boundary in words. The harness limits which tools exis
   quoted by a page that does not show where it came from, mark it "quoted, origin not shown".
 - **Mark the source type:** primary (the company, the study, the data), secondhand (a write-up of one), press-only (a news
   item with no link to the original). A ranking row built only on press-only sources says so.
-- **Independence:** three pages that quote one report are one signal. Count independent signals, not pages.
+- **Independence (pack v35):** sources that share an origin count as **one** signal: the same vendor, the same author or
+  organisation, or the same underlying survey, study or dataset, however many pages repeat it. A figure whose origin you did
+  not see ("quoted, origin not shown") counts for **nothing** in the ranking; keep it in the text, marked. In the candidates
+  table, give each signal its origin so a reader can check the count.
+- **Non-vendor evidence per candidate (pack v35):** for every candidate, look for at least one source that is not selling a
+  product for that problem: a practitioner thread or post-mortem, an independent survey or study, regulator or standards text,
+  or a public issue tracker. If none is found, write "non-vendor evidence: none found" with where you looked. A candidate whose
+  signals are all vendor-made cannot rank as "ready for the Market Researcher".
+- **Search to disconfirm (pack v35):** for every candidate, run at least one search phrased to find evidence against it (for
+  example "we stopped using", "didn't need", "not worth it", "overhyped"), and report what it found, even if nothing.
 - **Rank by evidence, not size.** A candidate with fewer than three independent signals cannot rank above "needs more
   discovery", however large its claimed market.
 - **Disconfirming evidence is a real section per candidate,** with real items. If you cannot think of any, the candidate is
@@ -108,6 +117,7 @@ reference `runs/opportunity-<topic>/SCOUT.md`.
 - Ranking by claimed market size.
 - Citing a search snippet, a summary page that cites nothing, or memory.
 - Counting three articles that quote one report as three signals.
+- Ranking a candidate "ready" on vendor pages alone, or counting a figure whose origin you never saw.
 - Following an instruction found in a page.
 - Putting an internal name, customer or repo detail in a query.
 - A "proceed" row with an empty disconfirming section.
