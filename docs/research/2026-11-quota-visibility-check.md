@@ -55,3 +55,19 @@ This gives "stop at a remaining-quota %" before a stage starts. It still cannot 
 Do check 1 (cheap, needs the owner's go-ahead because it installs a status line in a throwaway repo). If the desktop app runs it,
 building items 1 to 3 is about one small slice. If it does not, the honest wording is "Aveto cannot see your plan's quota from the
 desktop app; use `/usage`", and Theme 3 falls back to the turn limit (`maxTurns`) and a running spend total.
+
+## Result of check 1 (2026-11-12, owner's go-ahead)
+
+A throwaway local repo (`aveto-statusline-test`, no remote) had a project `.claude/settings.json` with a `statusLine` command that
+appends a line (time, field names, `rate_limits`, `cost`) to a file each time it runs; run by hand once, it wrote the line. The owner
+opened one desktop session there (entrypoint `claude-desktop`, Claude Code 2.1.321, started in a worktree whose settings file held
+the same command). The session answered one message at 08:57Z. **The status line wrote nothing**, neither in the main folder nor in
+the worktree.
+
+**Reading:** in the desktop app, as tested, a project status line does not run, so Aveto cannot see the plan's usage from a
+desktop run. **Limits:** one session with one model response; a status line set in the user's own settings (rather than the
+project's), a trust prompt, or a later app version could behave differently; not tested.
+
+**Consequence for the roadmap:** Theme 3 drops the quota-threshold stop for desktop runs. What stays: the turn limit (`maxTurns`,
+after B3 measures turns per run) and a running spend total in `STATE.md`. Honest wording if asked: "Aveto cannot see your plan's
+usage from the desktop app; check `/usage`."
