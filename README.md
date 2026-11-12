@@ -23,9 +23,11 @@ It runs on the **Claude Code subscription you already pay for** — not a metere
 API bill — so there is no separate API charge. A run spends your plan's usage
 window and checkpoints at every stage, so one that reaches a limit resumes where
 it stopped; falling token prices make it cheaper to run without anything changing here. Today it is built for one person
-on one subscription; shared team gates, a cross-developer run inventory and the
-conformity export are **roadmap, not shipped** (`docs/VALIDATION_MATRIX.md`
-marks exactly what has been run and what hasn't).
+on one subscription; shared team gates and a cross-developer run inventory are
+**roadmap, not shipped**. A script, `execution/conformity.mjs`, renders a register of who
+approved what from a run's own records; it has been run on two small reference repos and no
+auditor has used it (`docs/VALIDATION_MATRIX.md` marks exactly what has been run and what
+hasn't).
 
 It plans every
 run before it spends: each stage costed against a budget it checks *before* the
