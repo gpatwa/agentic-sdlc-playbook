@@ -15,6 +15,9 @@
 // of the query and a 12-character hash of the whole of it. It never records file contents,
 // command text, other tool input or tool output, so the log cannot hold a secret a tool
 // touched. The first words of a search are the one place free text from a query is kept.
+// Pack v35: on the post line of a web call it also records `out`, the SHA-256 and length of
+// what the tool returned (never the text), so a copy of what the agent was shown can later
+// be checked against the record, and two runs can be told apart by what they read.
 //
 // FAILS OPEN, DELIBERATELY. This is observability, not a safety gate (that is
 // write-scope-guard.mjs, which fails closed): any error exits 0 and prints nothing,
@@ -62,6 +65,15 @@ export function targetOf(tool, input, projectDir) {
   return "";
 }
 
+// What a web tool returned, as a hash and a length only (pack v35). Never the content.
+export function outOf(phase, tool, response) {
+  try {
+    if (phase !== "post" || (tool !== "WebFetch" && tool !== "WebSearch") || response === undefined) return {};
+    const s = typeof response === "string" ? response : JSON.stringify(response);
+    return { out: `sha256:${sha(s)} len:${s.length}` };
+  } catch { return {}; }
+}
+
 function lastLine(file) {
   if (!existsSync(file)) return null;
   const text = readFileSync(file, "utf8");
@@ -99,6 +111,7 @@ export function record(phase, payload, projectDir, now = new Date()) {
       agent: String(payload?.agent_type ?? "main"), agent_id: String(payload?.agent_id ?? ""),
       tool, id: String(payload?.tool_use_id ?? ""),
       target: targetOf(tool, payload?.tool_input, projectDir),
+      ...outOf(phase, tool, payload?.tool_response),
       prev,
     };
     appendFileSync(file, JSON.stringify(line) + "\n");
