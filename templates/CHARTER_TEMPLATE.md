@@ -33,6 +33,7 @@ quality, so it is approved with the model.
 One line per processor, with exactly what it may receive and its DPA / terms status.
 - **C4.1** <processor>, receives: <exact data>, terms: <status as known>
 - (or) **C4.0** None beyond those already approved: <record ids>.
+- **C4.B** *(optional; omit unless the owner keeps an Aveto Control board)* Control board: this run may write its own state rows to <board address>, collections `runs` and `sessions` only, through the ArtifactData tool, per `CONTROL_BOARD.md`. Receives: the ask line, stage names and roles, one-phrase stage statuses, token counts, what waits on the owner; never file contents, diffs, commands, secrets or approval words. Processor: Anthropic, as for the model. A failed post is a notice, not a stop.
 
 ## 5. Safety controls (rule 4)
 One line per invariant or guarded file that may change, with the bounds of the

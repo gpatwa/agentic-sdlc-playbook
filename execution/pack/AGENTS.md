@@ -92,6 +92,8 @@ not a universal convention every tool sharing this file follows.
   append it to `runs/<slice-id>/SUPPORT_REQUESTS.md` and read the answer in
   `SUPPORT_REPLIES.md` — don't patch the installed copy or work around it. See the playbook's `docs/GETTING_STARTED.md`, "Running
   with two sessions".
+- **Control board (optional):** if the approved Charter has a C4.B line, post run state to the owner's Aveto Control board as
+  `.claude/protocols/CONTROL_BOARD.md` says. No C4.B line, no posting.
 - **Budget enforcement:** a pre-spawn hook (`.claude/hooks/`) checks the
   budget before every subagent spawn — see `RUN_ECONOMICS.md`.
 
