@@ -6,7 +6,7 @@ import { readFileSync, existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { EVAL_DIR, caseIds, loadCase, specIds, checkFixtures, scoreScripted, judgePacket, footerOf, promptFor } from "../role-eval.mjs";
+import { EVAL_DIR, caseIds, loadCase, specIds, checkFixtures, scoreScripted, judgePacket, footerOf, promptFor, findLeaks } from "../role-eval.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cli = join(here, "..", "role-eval.mjs");
@@ -88,5 +88,42 @@ describe("role-eval: judged cases and the command line", () => {
   test("the tool never calls a model or the network", () => {
     const src = readFileSync(cli, "utf8");
     assert.ok(!/\bfetch\(|node:https?|node:net|child_process/.test(src));
+  });
+});
+
+describe("role-eval: leaks (what a role spawn read beyond its own brief)", () => {
+  const ev = (o) => JSON.stringify({ v: 1, ev: "pre", agent: "qa-evidence", agent_id: "a1", ...o });
+  const log = [
+    ev({ tool: "Read", target: "../agentic-sdlc-playbook/agents/qa-evidence.md" }),
+    ev({ tool: "Read", target: "runs/model-check-b3/STATE.md" }),
+    ev({ tool: "Grep", target: "runs" }),
+    ev({ tool: "Bash", target: "git #0123456789ab" }),
+    ev({ tool: "Read", target: ".claude/settings.json", agent_id: "a2" }),
+    ev({ tool: "Read", target: "x", agent: "backend-architect", agent_id: "b1" }),
+    ev({ tool: "Read", target: "runs/model-check-b3/STATE.md", ev: "post" }),
+    "not json",
+  ].join("\n");
+
+  test("its own brief is allowed; anything else is listed per spawn; other roles and post lines are ignored", () => {
+    const leaks = findLeaks(log);
+    assert.equal(leaks.length, 2);
+    const a1 = leaks.find((s) => s.agent_id === "a1");
+    assert.deepEqual(a1.items, ["Read runs/model-check-b3/STATE.md", "Grep runs", "Bash git #0123456789ab (command not recorded)"]);
+    assert.deepEqual(leaks.find((s) => s.agent_id === "a2").items, ["Read .claude/settings.json"]);
+  });
+  test("an allowed substring is not a leak", () => {
+    const leaks = findLeaks(log, ["model-check-b3/STATE.md", "git #", "runs"]);
+    assert.deepEqual(leaks.map((s) => s.agent_id), ["a2"]);
+  });
+  test("the command line exits 1 when there is a leak and 0 when there is none", () => {
+    const d = mkdtempSync(join(tmpdir(), "leaks-"));
+    writeFileSync(join(d, "leak.jsonl"), log);
+    writeFileSync(join(d, "clean.jsonl"), ev({ tool: "Read", target: "agents/qa-evidence.md" }));
+    const bad = spawnSync(process.execPath, [cli, "leaks", join(d, "leak.jsonl")], { encoding: "utf8" });
+    assert.equal(bad.status, 1);
+    assert.match(bad.stdout, /qa-evidence a1: 3 beyond its brief/);
+    const ok = spawnSync(process.execPath, [cli, "leaks", join(d, "clean.jsonl")], { encoding: "utf8" });
+    assert.equal(ok.status, 0);
+    rmSync(d, { recursive: true, force: true });
   });
 });

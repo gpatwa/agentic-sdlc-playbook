@@ -94,6 +94,29 @@ export function checkFixtures({ fixDir = FIX, spec = specIds() } = {}) {
   return problems;
 }
 
+// Which files each role spawn touched beyond its own brief, from the run's event log (pack v26+ `.claude/events/<session>.jsonl`).
+// B3 found five of eleven role spawns reading the run's Charter, STATE.md, runs/, the playbook or the repo's real settings
+// although the prompt says to work only from the task; a PASS can then come from the environment. This makes that a number per
+// spawn instead of a surprise. Allowed: the role's own brief (agents/<role>.md). Bash records only a program and a hash, so a
+// Bash call cannot be judged and is listed as such.
+const ROLES = new Set(["software-architect", "qa-evidence"]);
+export function findLeaks(eventsText, allowExtra = []) {
+  const bySpawn = new Map();
+  for (const raw of eventsText.split("\n").filter(Boolean)) {
+    let e; try { e = JSON.parse(raw); } catch { continue; }
+    if (e.ev !== "pre" || !ROLES.has(e.agent)) continue;
+    const t = String(e.target ?? "");
+    const ownBrief = e.tool === "Read" && t.endsWith(`agents/${e.agent}.md`);
+    const extra = allowExtra.some((s) => s && t.includes(s));
+    if (ownBrief || extra) continue;
+    const key = e.agent_id || e.agent;
+    const s = bySpawn.get(key) ?? { agent: e.agent, agent_id: e.agent_id, items: [] };
+    s.items.push(`${e.tool} ${t || "(target not recorded)"}${e.tool === "Bash" ? " (command not recorded)" : ""}`);
+    bySpawn.set(key, s);
+  }
+  return [...bySpawn.values()];
+}
+
 const isMain = process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href;
 if (isMain) {
   const [cmd, id, file] = process.argv.slice(2);
@@ -112,6 +135,12 @@ if (isMain) {
       const r = scoreScripted(c.rubric, out);
       console.log(`${r.pass ? "PASS" : "FAIL"} ${id}${r.reasons.length ? "\n  " + r.reasons.join("\n  ") : ""}`);
       process.exit(r.pass ? 0 : 1);
-    } else { console.error("usage: role-eval.mjs list | check | prompt <id> | score <id> <output-file>"); process.exit(2); }
+    } else if (cmd === "leaks" && id) {
+      const allow = process.argv.slice(5).filter((x) => x !== "--allow");
+      const leaks = findLeaks(readFileSync(id, "utf8"), allow);
+      if (!leaks.length) { console.log("no role spawn touched anything beyond its own brief"); process.exit(0); }
+      for (const s of leaks) console.log(`${s.agent} ${s.agent_id || ""}: ${s.items.length} beyond its brief\n  ${[...new Set(s.items)].join("\n  ")}`);
+      process.exit(1);
+    } else { console.error("usage: role-eval.mjs list | check | prompt <id> | score <id> <output-file> | leaks <events.jsonl> [--allow <substring> ...]"); process.exit(2); }
   } catch (e) { console.error(e.message); process.exit(2); }
 }
