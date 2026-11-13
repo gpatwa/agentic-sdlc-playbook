@@ -1884,6 +1884,17 @@ from the run" pattern as effort / operator / executor / gateCatches.
   README and site call the conformity export "roadmap, not shipped" though `execution/conformity.mjs` exists (T16); and the
   MESSAGING C1 row says 28 agents, the site says 29. Both are the owner's wording to decide. Nothing built.
 
+- **T48 · `aveto.dev/runs` misreads some run records: `intentional deferred`.** *Found 2026-11-12 by the design review
+  (`docs/design/WORKFLOW_UX_DESIGN.md`); owner chose "record only".* For `fix-service-accounting` the page shows the hard cap,
+  questions asked and open items as "not recorded", and 533 event-log lines where the final check says 777. Causes in
+  `execution/runs-dashboard.mjs`: the hard cap is matched only as `**Hard cap:**` (the state file says "hard cap 1,200k (C2.3)");
+  questions asked only under a `## Questions asked` heading (the end review has it as a bullet); open items only under "Blocked
+  on me" (the end review says "Blocked on you"); and the event-log figure is read from the pre-release `events-verify-output.txt`,
+  not `events-verify-output-final.txt`. Three of the four understate; the 533 is a wrong figure on a public page. **Fix when
+  taken:** match the forms the records use, prefer the `-final` verify file, add a test per form, regenerate. Also open: the same
+  run's `APPROVAL_RECORD-1.md` quotes the hash short (`afc984d1…aefe4`); check whether the owner typed the full hash and the record
+  shortened it, or a short form was accepted.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A** — parked. Re-checked 2026-10-26: v1.0 is stable, but every Aveto agent runs in one harness, so it buys

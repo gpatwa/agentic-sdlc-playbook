@@ -62,7 +62,7 @@ approval stays a typed sha256, because it binds the approval to the exact text. 
 clicked choice counts as an approval "given directly, in the session driving the run" (it is in that session; record which
 option was picked and its full text).
 
-**Update 2026-11-12:** the owner chose a web app over in-session choices for the workflow. Plan, not built:
+**Update 2026-11-12 (later):** a design review (`docs/design/WORKFLOW_UX_DESIGN.md`) found Claude Code's Remote Control may put a run's questions on the phone with no hosted app; the owner chose D1, approvals asked as choices (pack v36, built). The web app is the later phase D5. Earlier the same day: the owner chose a web app over in-session choices for the workflow. Plan, not built:
 `docs/WEB_APP_PLAN.md` (runs and decisions in a small app; runs still execute in the owner's Claude Code session; decisions signed
 and verified; Charter approval stays a typed hash until a separate decision).
 
