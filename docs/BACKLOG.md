@@ -1903,6 +1903,20 @@ from the run" pattern as effort / operator / executor / gateCatches.
   (pack v36, approvals asked as choices) and D2 passed one test on 2026-11-12: with Remote Control on for a desktop-app session, a choice question arrived on the owner's iPhone as a push and was answered there (`docs/design/WORKFLOW_UX_DESIGN.md`, "D2 result").
   **Trigger to revisit:** D2 fails, or a second person must see or approve runs.
 
+- **T50 · Roles the 29 briefs do not cover: `intentional deferred`.** *Raised by the owner 2026-11-13 ("are we missing any roles,
+  like data engineer?"); checked against `agents/` the same day.* Data today: Analytics Engineer (event contract to warehouse
+  model), Data Analyst, Data Governance, Backend Architect (data model inside the product), ML Engineer, AI Engineer. **Nobody
+  owns building and running pipelines:** ingestion, ETL or ELT jobs, scheduling and orchestration, data-quality tests, backfills.
+  Gaps, with the trigger that would justify building each (a real slice or design partner that needs it; no run so far has):
+  **(1) Data Engineer**, trigger: a slice or pilot repo whose change is a pipeline or warehouse job; **(2) Mobile developer**,
+  trigger: a design partner with a native client (the site already says native iOS and Android are not covered); **(3) Platform or
+  infrastructure-as-code engineer**, trigger: a slice that must write infrastructure, not only deploy through an existing engine
+  (Cloud Deployment wraps one); **(4) Database migration engineer**, trigger: a slice with a risky schema or data migration
+  beyond Backend Architect's data-model deltas. Same rule as the PM and TPM decision (`docs/ORG_MODEL.md`): no new role without a
+  slice that needs it. **Related wording:** the site's row "Data engineering and ML: roles exist, not run" is generous for data
+  engineering (the pipeline role does not exist); the owner's wording to decide. Adding a role changes the count (29), the site,
+  `docs/MESSAGING.md` C1 and the installer tests in one commit.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A** — parked. Re-checked 2026-10-26: v1.0 is stable, but every Aveto agent runs in one harness, so it buys
