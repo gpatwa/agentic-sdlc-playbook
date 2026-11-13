@@ -1895,6 +1895,14 @@ from the run" pattern as effort / operator / executor / gateCatches.
   run's `APPROVAL_RECORD-1.md` quotes the hash short (`afc984d1…aefe4`); check whether the owner typed the full hash and the record
   shortened it, or a short form was accepted.
 
+- **T49 · Workflow UX beyond choices: the web app and the rendered views: `intentional deferred`.** *Owner, 2026-11-12: "put
+  this in backlog for later, focussed on claude desktop app first".* Deferred: D3 (end review rendered in the six-step style,
+  Charter shown as a diff before the hash is typed), D4 (regenerate `/runs` at the end of each run; see T48), and D5, the web app
+  (`docs/WEB_APP_PLAN.md`, with the design review's fixes: sign the exact question text, guard the verifier and key, one channel
+  wins, no long polling). Full proposal: `docs/design/WORKFLOW_UX_DESIGN.md`. **Now:** the Claude desktop app first: D1 is built
+  (pack v36, approvals asked as choices) and D2, answering from the phone through Claude Code's Remote Control, is being tested.
+  **Trigger to revisit:** D2 fails, or a second person must see or approve runs.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A** — parked. Re-checked 2026-10-26: v1.0 is stable, but every Aveto agent runs in one harness, so it buys
