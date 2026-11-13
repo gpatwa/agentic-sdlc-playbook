@@ -1,6 +1,6 @@
 # Plan: an Aveto web app for runs and decisions
 
-> **Proposal, written 2026-11-12 by the support session at the owner's request ("web app instead"). Nothing is built, nothing is
+> **Revised 2026-11-12: now the later phase (D5) of `docs/design/WORKFLOW_UX_DESIGN.md`, after a design review found the session can reach the phone without a hosted app.** Proposal, written 2026-11-12 by the support session at the owner's request ("web app instead"). Nothing is built, nothing is
 > hosted, and nothing spends until the owner approves a phase.** It reverses one line of `docs/ROADMAP.md` "Deliberately not
 > building" (a hosted service) for a narrow purpose, and touches the approval rules, so each of those is an owner decision below.
 
