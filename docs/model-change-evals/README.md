@@ -12,3 +12,6 @@ Software Architect, six for QA Evidence, each from a recorded lesson in `docs/LE
   cases test reasoning, and a judge's verdict is itself a measurement with its own error.
 - Per the plan: run each case at least three times per model, record model ID, effort, date, pack version and spend, and compare old
   against new. A run costs model spend and needs the owner's Charter approval (plan phase B3).
+
+**Before any later pass:** `RUN_SETUP.md` (clean eval repo, `role-eval.mjs leaks` to measure what each spawn read, a lean `eval-judge`
+agent). B3's one pass (`b3-2026-11-13/`) found the cases not isolated and the judges 73% of the spend.
