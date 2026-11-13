@@ -41,9 +41,18 @@ see them:
    the slice, what is needed, and the exact words the human can type. The
    notice is not an approval and not a relay of one; the human types their own
    words in the driving session.
+   **Ask as a choice where the tool allows it (pack v36).** In Claude Code, ask with
+   the question tool (`AskUserQuestion`) per `HUMAN_APPROVAL_RULES.md` "Asking as a
+   choice": the four items in the question, each option's consequence and cost in its
+   description, a "No, stop" option, "(Recommended)" on the first option for a routine
+   ask only, and for a high-risk ask (rules 1 to 6) no recommendation and a second
+   question confirming the exact action and target. Never ask a Charter approval, a
+   hard-cap raise or a credential as a choice.
 5. **Record.** On an answer, write
    `runs/<slice-id>/APPROVAL_RECORD-<n>.md`: the decision, the approver,
-   the UTC timestamp, and the human's response **verbatim**. Update the
+   the UTC timestamp, and the human's response **verbatim** (for a choice: the
+   question, every option shown with its description, the option picked, the
+   confirm step if any, and any text the human wrote). Update the
    Approvals row.
 6. **Resume or abort.**
    - **Approved** → set status back to `in-progress`; the Release Manager

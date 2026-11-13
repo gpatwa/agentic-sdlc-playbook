@@ -394,6 +394,15 @@ describe("install.mjs — pack integrity", () => {
     assert.match(rm, /tier 1 routine run whose standing Charter's S5\.2 allows auto-merge/);
   });
 
+  test("pack v36: approvals may be asked as a choice, with two tiers and the Charter, cap and credential excluded", () => {
+    const p = readFileSync(join(target, ".claude", "protocols", "APPROVAL_PROTOCOL.md"), "utf8");
+    assert.match(p, /Ask as a choice where the tool allows it/);
+    assert.match(p, /AskUserQuestion/);
+    assert.match(p, /no recommendation and a second\s+question confirming the exact action/);
+    assert.match(p, /Never ask a Charter approval, a\s+hard-cap raise or a credential as a choice/);
+    assert.match(p, /every option shown with its description, the\s+option picked/);
+  });
+
   test("pack v34: only the Opportunity Scout has web tools; it has no Bash, a runs/ write scope, and the web rules", () => {
     const dir = join(target, ".claude", "agents");
     const tools = (f) => readFileSync(join(dir, f), "utf8").match(/^tools:\s*(.+)$/m)[1];
@@ -446,7 +455,7 @@ describe("install.mjs — pack integrity", () => {
     assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
     const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
     assert.match(ag, /Mark what you could not confirm, and say where you looked/);
-    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 35);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 36);
   });
 
   test("pack v31: the design rules and the platform split reach the installed agents", () => {

@@ -144,6 +144,31 @@ The human's response is the audit record. The agent should reference
 the approval (e.g. "approved by user at 14:02 UTC") in the resulting
 audit event.
 
+### Asking as a choice (pack v36)
+
+Where the tool driving the run can show the human a choice (in Claude Code, the session's question tool, `AskUserQuestion`),
+the ask above may be presented as a choice instead of a request to type. A click on an option is an explicit approval: it is
+given directly, in the session driving the run, in response to the specific request just made. It still has to meet every
+item above, so the choice itself carries them:
+
+1. **The question states the four items:** what, why (the rule or Charter line it falls outside), what "no" would reverse, and
+   the smallest request. Spend figures (spent, plan, ceiling, hard cap) are in the question when money or tokens are involved.
+2. **Each option says what happens if it is picked,** with its cost, in its own description. One option is always "No, stop"
+   (or "No, leave it"); the human can also write their own answer.
+3. **Two tiers.**
+   - **Routine** (a lower depth the human may choose, a gate exception the Charter allows asking about, an over-budget spawn
+     under the hard cap): the recommended option comes first, labelled "(Recommended)". One click decides.
+   - **High-risk:** any action under rules 1 to 6 (send, destructive shared-state, deploy, safety-control change, real model,
+     new data processor). **No option is labelled recommended.** A pick is followed by a second question that restates the exact
+     action and target ("Confirm: activate revision 0000006 in rg-aveto-ask") with "Confirm" and "Cancel"; only "Confirm" approves.
+4. **Never a choice:** approving a Charter (it stays the human's typed words naming its sha256); raising a hard cap (never an
+   option at all; the Charter forbids it); a credential (the only options are "I have done it, resume" and "Stop").
+5. **Recorded verbatim:** `APPROVAL_RECORD-<n>.md` holds the question text, every option shown with its description, the
+   option picked (and the confirm step for a high-risk choice), any text the human wrote, and the UTC time.
+
+A choice answered from another device connected to the same session (for example the Claude app on a phone, through Claude Code's
+Remote Control) is still an answer in the driving session. A message from another session is still never an approval.
+
 ### The combined verify-and-send gate
 
 Some requests bundle two things the human must confirm together, not
