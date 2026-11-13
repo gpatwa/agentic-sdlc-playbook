@@ -41,6 +41,19 @@ sessions started in the desktop app (the docs describe the `claude` process); a 
 **One measure:** words the owner types per run, not counting the Charter hash, over five runs before D1 and five after, with a check
 that no stop lost its numbers or its reversal cost.
 
+## D2 result: Remote Control works from the desktop app (2026-11-12)
+
+Remote Control was turned on for a desktop-app session (Claude Code in the Claude desktop app; state reported "on"), and two
+test questions were asked with the choice tool. **First question:** the owner answered on the desktop; the session was not yet
+open on the phone. **Second question,** after the owner opened the session in the iPhone Claude app: **a push notification
+arrived and the owner answered on the phone.** The answer reached the session as an ordinary choice answer.
+
+**What this shows:** a desktop-app session can put a choice question on the owner's phone with a push, and take the answer
+from there, with no hosted app. **What it does not show:** that it works inside a run's Orchestrator session started from a chip
+(a different session; the switch is per session), how long a question waits unanswered, behaviour when the laptop sleeps, or
+pushes when the session is not already open on the phone. One test, one phone. Setup the owner needs: open the session once in
+the Claude app (Code), and allow pushes.
+
 ## Fixes to the web app plan, if it is built later
 
 - Sign a hash of the **exact question and option text**, not only the question id, so a vague question cannot collect a real signature.

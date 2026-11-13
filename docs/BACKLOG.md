@@ -1900,7 +1900,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
   Charter shown as a diff before the hash is typed), D4 (regenerate `/runs` at the end of each run; see T48), and D5, the web app
   (`docs/WEB_APP_PLAN.md`, with the design review's fixes: sign the exact question text, guard the verifier and key, one channel
   wins, no long polling). Full proposal: `docs/design/WORKFLOW_UX_DESIGN.md`. **Now:** the Claude desktop app first: D1 is built
-  (pack v36, approvals asked as choices) and D2, answering from the phone through Claude Code's Remote Control, is being tested.
+  (pack v36, approvals asked as choices) and D2 passed one test on 2026-11-12: with Remote Control on for a desktop-app session, a choice question arrived on the owner's iPhone as a push and was answered there (`docs/design/WORKFLOW_UX_DESIGN.md`, "D2 result").
   **Trigger to revisit:** D2 fails, or a second person must see or approve runs.
 
 ## Decided NO / parked — recorded so they don't return
