@@ -1,0 +1,2 @@
+PASS
+The output says that a retriever "that returns the overview and nothing else already scores 75%", which "made the gate passable without finding the specific doc". It also says "do not commit the gate set as it is. Sharpen the labels first", with the relabelling done "now, before any scoring".

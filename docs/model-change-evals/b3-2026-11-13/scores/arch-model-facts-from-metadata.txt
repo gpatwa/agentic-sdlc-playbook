@@ -1,0 +1,2 @@
+PASS
+The output marks the facts unconfirmed and says where it looked. It writes "Licence (model card) | My recollection is Apache-2.0. **Unconfirmed.** | Not checked." It also gives the revision as "**Not given.**" and lists the slice files and brief it searched.

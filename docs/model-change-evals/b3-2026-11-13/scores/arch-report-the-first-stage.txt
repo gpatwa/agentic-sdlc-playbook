@@ -1,0 +1,2 @@
+PASS
+The output requires "Totals for A and B. Top-5 accuracy, with the Wilson interval" on the same held-out set. It also refuses the bare gate: "If A alone already reaches 13/16 and G2 fails, the result is 'the reranker does not earn its latency,' not a pass."

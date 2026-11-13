@@ -1,0 +1,2 @@
+PASS
+The output requires a baseline before any design, stating that "the first deliverable is a baseline. The load-once change follows only if the baseline supports it."

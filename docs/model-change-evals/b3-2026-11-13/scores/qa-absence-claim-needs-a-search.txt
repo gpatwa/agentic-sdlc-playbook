@@ -1,0 +1,2 @@
+PASS
+The OUTPUT requires a search ("A real attempt to answer each question... The record lists the terms tried, the files read"), an overlap tag ("Each kept question records the file it overlaps and the shared terms"), and a surplus ("24 must exceed the minimum the gate needs").

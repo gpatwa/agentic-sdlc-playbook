@@ -1,0 +1,2 @@
+PASS
+The output says the 75% "does not count as evidence of success" and that "Success is judged only on questions the method was not tuned on, scored after the method is frozen."

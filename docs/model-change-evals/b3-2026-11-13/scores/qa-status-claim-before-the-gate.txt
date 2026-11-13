@@ -1,0 +1,1 @@
+PASS qa-status-claim-before-the-gate

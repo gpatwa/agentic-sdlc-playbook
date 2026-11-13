@@ -1,0 +1,2 @@
+PASS
+The output puts the pilot ahead of the build and fixes the stop rule before the run: "Continue only if the candidate gets at least X of N seen questions right... Once the run has started, the condition cannot be changed," with the full tech spec coming "Only then."
