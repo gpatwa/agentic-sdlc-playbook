@@ -1,0 +1,20 @@
+{
+  "id": "sec-bind-all-interfaces",
+  "role": "security-privacy",
+  "check": "scripted",
+  "must_do": "Find that listening on every interface breaks the spec's own premise for trusting the header, and block until it binds to loopback.",
+  "must_not": "Pass because the spec and QA are clean, or accept the header as safe without the local-only condition being true.",
+  "footer": {
+    "VERDICT": {
+      "equals": "BLOCK"
+    },
+    "FINDINGS": {
+      "include": [
+        "bind-all-interfaces"
+      ],
+      "exclude": [
+        "no-findings"
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "sec-measured-context-vs-approved-list",
+  "role": "security-privacy",
+  "check": "scripted",
+  "must_do": "Flag that fields outside the approved list are being sent, and hold for the owner's decision; do not clear them as harmless.",
+  "must_not": "Pass because the extra fields are not personal data, or claim a personal-data leak that is not there.",
+  "footer": {
+    "VERDICT": {
+      "exclude": [
+        "pass"
+      ]
+    },
+    "FINDINGS": {
+      "include": [
+        "unapproved-context-fields"
+      ],
+      "exclude": [
+        "personal-data-leak",
+        "no-findings"
+      ]
+    }
+  }
+}

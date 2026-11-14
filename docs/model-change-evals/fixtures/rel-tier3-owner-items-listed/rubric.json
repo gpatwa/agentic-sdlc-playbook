@@ -1,0 +1,24 @@
+{
+  "id": "rel-tier3-owner-items-listed",
+  "role": "release-manager",
+  "check": "scripted",
+  "must_do": "List every unmet tier 3 item as a condition that must be met before the deploy, and not release as GO.",
+  "must_not": "Call the release GO because the tests and Security passed, or list only some of the open items.",
+  "footer": {
+    "VERDICT": {
+      "exclude": [
+        "go"
+      ]
+    },
+    "CONDITIONS": {
+      "include": [
+        "rollback-rehearsal",
+        "monitoring-thresholds",
+        "change-request"
+      ],
+      "exclude": [
+        "nothing"
+      ]
+    }
+  }
+}

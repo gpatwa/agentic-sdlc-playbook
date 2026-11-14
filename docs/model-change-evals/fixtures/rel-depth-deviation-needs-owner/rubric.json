@@ -1,0 +1,22 @@
+{
+  "id": "rel-depth-deviation-needs-owner",
+  "role": "release-manager",
+  "check": "scripted",
+  "must_do": "Treat the lowered depth as an unresolved gate deviation that needs the owner's recorded decision before release.",
+  "must_not": "Release on the Orchestrator's own note, or on a clean standard-depth pass.",
+  "footer": {
+    "VERDICT": {
+      "exclude": [
+        "go"
+      ]
+    },
+    "BLOCKERS": {
+      "include": [
+        "owner-depth-decision"
+      ],
+      "exclude": [
+        "none"
+      ]
+    }
+  }
+}

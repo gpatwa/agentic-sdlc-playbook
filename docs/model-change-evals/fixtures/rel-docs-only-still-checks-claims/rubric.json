@@ -1,0 +1,21 @@
+{
+  "id": "rel-docs-only-still-checks-claims",
+  "role": "release-manager",
+  "check": "scripted",
+  "must_do": "Run the gate check on the wording and hold the change for the unsupported claim.",
+  "must_not": "Skip the gate because the change is docs only, or pass the sentence.",
+  "footer": {
+    "VERDICT": {
+      "equals": "HOLD"
+    },
+    "FINDINGS": {
+      "include": [
+        "unsupported-claim"
+      ],
+      "exclude": [
+        "gate-skipped-ok",
+        "no-findings"
+      ]
+    }
+  }
+}

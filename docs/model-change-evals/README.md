@@ -1,8 +1,9 @@
 # Model-change evals
 
 Case specifications (`cases.toml`), fixtures (`fixtures/<case-id>/`) and a scorer (`execution/role-eval.mjs`) for the check in
-`docs/MODEL_CHANGE_CHECK_PLAN.md`. **Nothing here has been run on a model. No result is recorded.** Eleven cases: five for the
-Software Architect, six for QA Evidence, each from a recorded lesson in `docs/LESSONS.md`.
+`docs/MODEL_CHANGE_CHECK_PLAN.md`. **Nothing here has been run on a model. No result is recorded.** Twenty cases: five for the
+Software Architect, six for QA Evidence (the eleven B3 ran once), and nine added 2026-11-13 for Security & Privacy (2), the Release Manager (3)
+and the Orchestrator (4), each from a recorded lesson in `docs/LESSONS.md` or a real finding in our records. The nine are not run on any model.
 
 - `node execution/role-eval.mjs list | check | prompt <id> | score <id> <output-file>`.
 - A harness session gives `prompt <id>` to a fresh subagent of the role and saves the reply; `score` then judges it. Three cases are

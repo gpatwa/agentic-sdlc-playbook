@@ -14,14 +14,14 @@ const cli = join(here, "..", "role-eval.mjs");
 describe("role-eval: fixtures", () => {
   test("every case in cases.toml has a fixture, and the reverse", () => {
     assert.deepEqual(caseIds(), specIds());
-    assert.equal(caseIds().length, 11);
+    assert.equal(caseIds().length, 20);
     assert.deepEqual(checkFixtures(), []);
   });
-  test("five architect cases and six QA cases; three scripted, eight judged", () => {
+  test("by role: 5 architect, 6 QA, 2 security, 3 release manager, 4 orchestrator; twelve scripted, eight judged", () => {
     const rs = caseIds().map((i) => loadCase(i).rubric);
-    assert.equal(rs.filter((r) => r.role === "software-architect").length, 5);
-    assert.equal(rs.filter((r) => r.role === "qa-evidence").length, 6);
-    assert.equal(rs.filter((r) => r.check === "scripted").length, 3);
+    const n = (role) => rs.filter((r) => r.role === role).length;
+    assert.deepEqual([n("software-architect"), n("qa-evidence"), n("security-privacy"), n("release-manager"), n("orchestrator")], [5, 6, 2, 3, 4]);
+    assert.equal(rs.filter((r) => r.check === "scripted").length, 12);
     assert.equal(rs.filter((r) => r.check === "judged").length, 8);
   });
   test("a broken fixture directory is caught: missing spec case, orphan fixture, an input that never asks for its footer line", () => {
@@ -38,7 +38,7 @@ describe("role-eval: fixtures", () => {
 });
 
 describe("role-eval: scripted cases separate known-good from known-bad", () => {
-  for (const id of ["qa-failed-by-one-still-fails", "qa-report-end-to-end-beside-the-gate", "qa-status-claim-before-the-gate"]) {
+  for (const id of caseIds().filter((i) => loadCase(i).rubric.check === "scripted")) {
     test(id, () => {
       const c = loadCase(id);
       const good = readFileSync(join(c.dir, "sample-good.md"), "utf8");
@@ -76,12 +76,12 @@ describe("role-eval: judged cases and the command line", () => {
     assert.match(r.stdout, /OUTPUT sha256: [0-9a-f]{64}/);
     assert.match(judgePacket({ id: "x", role: "r", must_do: "a", must_not: "b" }, "text"), /--- OUTPUT ---\ntext\n--- END OUTPUT ---/);
   });
-  test("score exits 0 on a pass and 1 on a fail; check passes; list shows eleven rows; prompt names the role's brief", () => {
+  test("score exits 0 on a pass and 1 on a fail; check passes; list shows twenty rows; prompt names the role's brief", () => {
     const d = join(EVAL_DIR, "fixtures", "qa-status-claim-before-the-gate");
     assert.equal(spawnSync("node", [cli, "score", "qa-status-claim-before-the-gate", join(d, "sample-good.md")]).status, 0);
     assert.equal(spawnSync("node", [cli, "score", "qa-status-claim-before-the-gate", join(d, "sample-bad.md")]).status, 1);
-    assert.match(execFileSync("node", [cli, "check"], { encoding: "utf8" }), /^ok: 11 cases/);
-    assert.equal(execFileSync("node", [cli, "list"], { encoding: "utf8" }).trim().split("\n").length, 11);
+    assert.match(execFileSync("node", [cli, "check"], { encoding: "utf8" }), /^ok: 20 cases/);
+    assert.equal(execFileSync("node", [cli, "list"], { encoding: "utf8" }).trim().split("\n").length, 20);
     assert.match(promptFor(loadCase("arch-seen-set-is-not-evidence")), /agents\/software-architect\.md/);
     assert.equal(spawnSync("node", [cli, "score", "no-such-case", "x"]).status, 2);
   });

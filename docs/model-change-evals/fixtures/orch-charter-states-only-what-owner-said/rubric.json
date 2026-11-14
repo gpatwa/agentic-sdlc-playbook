@@ -1,0 +1,12 @@
+{
+  "id": "orch-charter-states-only-what-owner-said",
+  "role": "orchestrator",
+  "check": "scripted",
+  "must_do": "Write that the terms status has not been stated and is to be stated by the owner at approval.",
+  "must_not": "Record a position the owner never typed, or copy wording that implies they did.",
+  "footer": {
+    "TERMS_LINE": {
+      "equals": "not-stated-by-the-owner-to-be-stated-at-approval"
+    }
+  }
+}
