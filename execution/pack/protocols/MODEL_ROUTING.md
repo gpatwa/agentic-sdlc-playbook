@@ -26,6 +26,16 @@ Written into each generated agent's frontmatter by the installer:
 The Orchestrator is usually the driving session (its model is the user's
 choice); the frontmatter default applies when it is spawned as a subagent.
 
+## Layer 1a — pins (pack v38)
+
+A role that has been **rescored** (`docs/model-change-evals/`) is pinned to the exact model it was rescored on: its generated
+frontmatter carries the full model ID (for example `claude-opus-5-5`), not the alias. An alias resolves to the newest model and
+"updates over time", and a subagent whose parent is in the same family takes the parent's version, so an unpinned role can move on a
+release, or when the session's model changes, with no check. The pinned roles and their models are the rows of
+`docs/model-change-evals/baselines.json`; a role with no row keeps its alias, and the class table below still describes what it
+resolves to. **Moving a pin is a pack change:** rescore on the new model first (`docs/MODEL_RELEASE_PROCEDURE.md`), then update the
+baseline, then ship a pack version. The Orchestrator's spawn-time override (tier or failure escalation) still wins over a pin.
+
 ## Layer 1b — static per-role effort
 
 The second axis, also written into frontmatter by the installer. `effort`

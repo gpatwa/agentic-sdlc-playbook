@@ -98,6 +98,17 @@ const MODEL_FOR_ROLE = {
 };
 const DEFAULT_MODEL = "sonnet";
 
+// Pins (pack v38). A role last rescored on a model runs on that exact model ID, so a release (an alias resolving to a newer
+// model, or the session's own model, which a same-family alias takes) cannot move it before a rescore. The source is
+// docs/model-change-evals/baselines.json: the model each role was last rescored on (B3/B4). Changing a baseline changes what
+// generated agents do, so it ships as a pack version. A role with no baseline keeps its alias. See docs/MODEL_RELEASE_PROCEDURE.md.
+const PINS = (() => {
+  try {
+    const b = JSON.parse(readFileSync(join(playbookRoot, "docs", "model-change-evals", "baselines.json"), "utf8"));
+    return Object.fromEntries(Object.entries(b).filter(([k, v]) => !k.startsWith("_") && typeof v?.model === "string" && /^claude-[a-z0-9.-]+$/.test(v.model)).map(([k, v]) => [k, v.model]));
+  } catch { return {}; }
+})();
+
 // Static effort defaults — the second routing axis (MODEL_ROUTING.md layer 1b).
 // Same principle as the model axis: depth is bought where a wrong call is
 // expensive, not where the task is large. Gates keep `high`; producers work
@@ -139,7 +150,7 @@ for (const file of readdirSync(join(playbookRoot, "agents")).filter((f) => f.end
     : WEB_ROLES.has(slug)
       ? "Read, Write, Edit, Grep, Glob, WebSearch, WebFetch"
       : "Read, Write, Edit, Grep, Glob";
-  const model = MODEL_FOR_ROLE[slug] ?? DEFAULT_MODEL;
+  const model = PINS[slug] ?? MODEL_FOR_ROLE[slug] ?? DEFAULT_MODEL;
   const effort = HIGH_EFFORT_ROLES.has(slug) ? "high" : DEFAULT_EFFORT;
 
   // Roles without Bash plan, specify and review; they do not build. Withholding
@@ -306,7 +317,7 @@ writeFileSync(join(productDir, "CLAUDE.md"), claudeMd);
 // Pack version. Bump when a regeneration changes what agents *do* — new
 // frontmatter the harness acts on, a changed tool boundary, a protocol whose
 // absence would change a decision. Cosmetic edits do not earn a bump.
-const PACK_VERSION = 37;
+const PACK_VERSION = 38;
 
 // Read the previous install back before overwriting it. Until now this field
 // was written and never read, so a product repo could drift arbitrarily far

@@ -1,7 +1,7 @@
 {
   "name": "aveto",
   "displayName": "Aveto",
-  "version": "37",
+  "version": "38",
   "description": "Assess a codebase Aveto did not build: a read-only review copy, a map, a plan, two model families as reviewers, a cross-family judge, a report and a before-and-after re-assessment. Records and reviews; it never certifies.",
   "author": {
     "name": "Gopal Patwa"

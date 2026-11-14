@@ -148,12 +148,26 @@ describe("install.mjs — model and effort routing", () => {
     "release-manager", "compliance-reviewer", "ai-governance", "data-governance",
   ];
 
-  test("opus is reserved for the judgment-heavy roles", () => {
+  test("opus is reserved for the judgment-heavy roles (the pinned Architect carries its full ID instead)", () => {
     const opus = readdirSync(join(target, ".claude", "agents"))
       .map((f) => f.replace(/\.md$/, ""))
       .filter((slug) => frontmatter(slug).model === "opus")
       .sort();
-    assert.deepEqual(opus, [...OPUS].sort());
+    assert.deepEqual(opus, OPUS.filter((r) => r !== "software-architect").sort());
+  });
+
+  test("pack v38: roles with a baseline are pinned to the model they were rescored on; the rest keep their alias", () => {
+    const base = JSON.parse(readFileSync(join(playbook, "docs", "model-change-evals", "baselines.json"), "utf8"));
+    const pinned = Object.keys(base).filter((k) => !k.startsWith("_"));
+    assert.ok(pinned.includes("software-architect") && pinned.includes("qa-evidence"));
+    for (const role of pinned) assert.equal(frontmatter(role).model, base[role].model, `${role} is pinned to its baseline`);
+    assert.equal(frontmatter("software-architect").model, "claude-opus-5-5");
+    assert.equal(frontmatter("qa-evidence").model, "claude-sonnet-5-5");
+    for (const f of readdirSync(join(target, ".claude", "agents"))) {
+      const slug = f.replace(/\.md$/, "");
+      if (!pinned.includes(slug)) assert.match(frontmatter(slug).model, /^(opus|sonnet|haiku)$/, `${slug} keeps its alias`);
+    }
+    assert.match(readFileSync(join(target, ".claude", "protocols", "MODEL_ROUTING.md"), "utf8"), /Layer 1a — pins/);
   });
 
   test("every agent declares an effort level", () => {
@@ -464,7 +478,7 @@ describe("install.mjs — pack integrity", () => {
     assert.match(ap, /\*\*Blocked on me\*\*.*\*\*Changed\*\*, \*\*Found\*\*/s);
     const ag = readFileSync(join(target, "AGENTS.md"), "utf8");
     assert.match(ag, /Mark what you could not confirm, and say where you looked/);
-    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 37);
+    assert.equal(JSON.parse(readFileSync(join(target, ".claude", "agentic.config.json"), "utf8")).packVersion, 38);
   });
 
   test("pack v31: the design rules and the platform split reach the installed agents", () => {
