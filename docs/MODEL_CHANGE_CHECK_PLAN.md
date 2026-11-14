@@ -53,3 +53,6 @@ Per role: 6 to 8 cases, three runs, two models, so about 36 to 48 spawns. At the
 1. Which roles after the first three, and whether the Scout belongs (it has the least stable output).
 2. Whether C3.R becomes a per-role line in the Charter template (a template change and a `charter-check` change).
 3. The spend ceiling for B3.
+
+**2026-11-13:** what happens at each model release, step by step, is `docs/MODEL_RELEASE_PROCEDURE.md`; `execution/model-drift.mjs`
+shows which model each role ran on and flags a baselined role that has moved (`docs/model-change-evals/baselines.json`).

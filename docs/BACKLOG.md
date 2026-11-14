@@ -1855,7 +1855,7 @@ from the run" pattern as effort / operator / executor / gateCatches.
 - **T44 · A model-change check for more than the review step.** *Raised 2026-11-10 ("how do agents improve with each model
   release?").* Today only the review step is rescored on a model or effort change (Charter C3.R), and `docs/review-evals/RESULTS.md`
   holds almost no recorded rescore. Plan: `docs/MODEL_CHANGE_CHECK_PLAN.md`. Start with two or three roles; memory
-  (`docs/MEMORY_PLAN.md`) waits until this exists, because without a check we could not tell whether memory helped.
+  (`docs/MEMORY_PLAN.md`) waits until this exists, because without a check we could not tell whether memory helped. **2026-11-13:** release procedure `docs/MODEL_RELEASE_PROCEDURE.md` (proposal) and the drift detector `execution/model-drift.mjs` (built); open: pin baselined roles to full model IDs (a pack change, owner's call), cases for Security, Release Manager and Orchestrator, and B4 on the next release.
 - **T45 · Takeaways from the Levi Strauss talk** (GitHub Universe 2026, read 2026-11-10 from the video transcript; one app, one
   team, no cost, defect or model data). (a) Sequential agents with one fixer, after parallel committing agents produced merge
   conflicts: already our shape; keep. (b) An "AI does / human does / human decides" matrix: proposed in `docs/ORG_MODEL.md`.
