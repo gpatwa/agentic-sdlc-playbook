@@ -1,0 +1,5 @@
+{
+  "_note": "Per role: the model a role was last rescored on (the baseline). model-drift.mjs flags a role whose runs now use a different model. Update a row only after a rescore run (B3/B4) on that model, with the owner's approval; never from memory.",
+  "software-architect": { "model": "claude-opus-5-5", "date": "2026-11-13", "source": "docs/model-change-evals/b3-2026-11-13/RESULT.md (one pass, 11 of 11 PASS; cases not isolated)" },
+  "qa-evidence": { "model": "claude-sonnet-5-5", "date": "2026-11-13", "source": "docs/model-change-evals/b3-2026-11-13/RESULT.md (one pass, 11 of 11 PASS; cases not isolated)" }
+}
