@@ -83,6 +83,12 @@ B plus the AI Engineer and an eval gate.
   post-merge fixes (Q2) and token cost. If catches or fixes get worse, the roles stay. It needs a baseline from the same repo, so it
   waits on the P5 pilot repo.
 
+## Status
+
+**Adopted by the owner 2026-11-13 as a proposal:** profiles A to E are the vocabulary the Engineering Manager records in each slice
+plan ("profile B, plus AI Engineer"). No brief, gate or installer changes. Fold into `docs/AGENT_ROLES.md` after a real slice uses it.
+The site wording risk this raised is backlog T51 (record only).
+
 ## Open decisions for the owner
 
 1. Adopt the profiles A to E as the vocabulary the Engineering Manager records in each slice plan ("profile B, plus AI Engineer"),

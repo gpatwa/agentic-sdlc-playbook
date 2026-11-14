@@ -1917,6 +1917,17 @@ from the run" pattern as effort / operator / executor / gateCatches.
   engineering (the pipeline role does not exist); the owner's wording to decide. Adding a role changes the count (29), the site,
   `docs/MESSAGING.md` C1 and the installer tests in one commit.
 
+- **T51 · The home page's case for 29 specialists is not backed for coding work: `intentional deferred`.** *Found 2026-11-13 by the
+  research note `docs/research/2026-11-company-agent-team-shapes.md`; owner chose "record only".* The home page section "Twenty-nine
+  specialists, not one generalist" argues that one agent "makes every decision from the same context, with the same blind spots".
+  Anthropic's multi-agent post calls multi-agent a poor fit for most coding tasks (about 15 times the tokens), its Claude Code docs
+  say delegating the same task to a subagent does not by itself improve the answer, and OpenAI's agent guide says to maximise a single
+  agent first. What the four companies do support is **separating checking from producing** (a fresh-context checker), which the
+  site's Verify group already says. **Fix when taken:** reword that section around checking and shorter chains by profile; wording
+  is the owner's; a claims-register row (C1 limit) and a deploy. **Related:** `docs/ROLE_PROFILES.md` (adopted 2026-11-13 as a
+  proposal: profiles A to E are the vocabulary the Engineering Manager records in each slice plan, no brief changed; to be folded
+  into `docs/AGENT_ROLES.md` after a real slice uses it); O3 is the test that would measure the producing roles.
+
 ## Decided NO / parked — recorded so they don't return
 
 - **A2A** — parked. Re-checked 2026-10-26: v1.0 is stable, but every Aveto agent runs in one harness, so it buys
