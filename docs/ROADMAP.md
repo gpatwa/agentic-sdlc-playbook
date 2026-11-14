@@ -81,6 +81,23 @@ compared with what Vorflux packages:
 Limit to keep in view: Vorflux connects a customer's Claude plan to a third-party product; whether that use fits Anthropic's
 consumer terms was **not checked**. Aveto runs inside the owner's own Claude Code; we still should not describe it as free.
 
+
+**Subscription strategy compared with Vorflux (added 2026-11-13).** Aveto runs inside the owner's own Claude Code session on their plan,
+holds no plan credentials and runs on no vendor machine, so the build step has no platform fee. Vorflux sells the same idea as a
+product: machine hours plus tokens, and the tokens can be covered by a Claude or Codex plan, the customer's own keys or Vorflux credits.
+From its billing page (read in part, 2026-11-11; not re-read since): a Claude Pro or Max plan runs with "zero platform fee", a
+banner shows quota with a stop at a remaining-quota percentage, and a per-session hard cap (default $1,000) stops the session.
+- **Take:** a visible stop-at-a-percentage control and a hard cap that stops a running step. On desktop neither is possible today
+  (no quota visibility, two tests; nothing stops a step once started, T43e), so the substitutes are a turn limit per agent
+  (`maxTurns`, after B3 measures turns per run) and a running spend total in `STATE.md`.
+- **Refuse:** "practically free" and "almost free" wording (never "no marginal cost"); running agents on a vendor's machines with a
+  customer's plan credentials.
+- **Not unique:** "built for the subscription you already pay for" is also Vorflux's offer; the difference is where it runs and who
+  holds the credentials.
+- **Unverified:** whether third-party use of a consumer Claude plan fits Anthropic's terms. It is Vorflux's open question; Aveto
+  runs in the owner's own session.
+- **To verify before relying on it:** the quota banner and stop-at-percentage details, by reading Vorflux's billing and credits docs in full.
+
 ### Theme 4 · Model-change check, first measured run (next)
 
 B3: the 11 cases on the current model, to measure spend and variance. Needs the owner's spend approval and a Charter typed in
